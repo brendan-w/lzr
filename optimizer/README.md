@@ -6,9 +6,6 @@ This optimizer is mainly concerned with the order in which points get drawn by t
 The mechanism works by first splitting the frame into seperate `path` segments. A point is considered the start (or end) of a `path` when it meets one (or both) of the following criteria:
 
 - Blanking is toggled (or the color is set to black)
-
-or
-
 - The point creates a corner of less than 135 degrees (45 deviation from a straight line)
 
 Each one of these "path boundry" points is considered an opportunity for the laser to leave, and draw something else. A simply cost function is used to make this descision. Most of the time, when drawing contiguous shapes, that cost function will overwhelmingly choose to stay until the shape is finished, rather than leave in the middle.

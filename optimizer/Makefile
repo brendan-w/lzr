@@ -8,11 +8,11 @@ EXE_NAME=optimize
 HEADERS=\
 	../include/lzr_types.h \
 	src/optimize.h \
-	src/path_split.h
+	src/find_paths.h
 
 OBJ=\
 	src/main.o \
-	src/path_split.o
+	src/find_paths.o
 
 
 # compile settings
