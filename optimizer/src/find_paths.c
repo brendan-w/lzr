@@ -83,6 +83,7 @@ static void path_split(lzr_point_buffer* points, lzr_path_buffer* paths)
     paths->length = n;
 }
 
+//computes the entrance angles on either side of each path
 static void fill_angle(lzr_point_buffer* points, lzr_path_buffer* paths)
 {
     for(size_t i = 0; i < paths->length; i++)
@@ -112,5 +113,21 @@ static void fill_angle(lzr_point_buffer* points, lzr_path_buffer* paths)
 
 static void fill_cycle(lzr_point_buffer* points, lzr_path_buffer* paths)
 {
+    for(size_t i = 0; i < paths->length; i++)
+    {
+        lzr_path* path = (paths->paths + i);
+        lzr_point a = points->points[path->ai];
+        lzr_point b = points->points[path->bi];
 
+        //if they're in the same position, and there are at least 3 points
+        if(POINTS_SAME_POS(a, b) && (path->bi - path->ai > 1))
+        {
+            //fetch the points on either side of the joint
+            lzr_point next = points->points[path->ai + 1];
+            lzr_point prev = points->points[path->bi - 1];
+
+            //if it DOESN'T creates too much of an angle, then it's a cycle
+            path->cycle = (ANGLE_FORMED(prev, a, next) <= PATH_SPLIT_ANGLE);
+        }
+    }
 }
