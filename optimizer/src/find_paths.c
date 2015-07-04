@@ -43,30 +43,22 @@ static void path_split(lzr_point_buffer* points, lzr_path_buffer* paths)
             if(in_path)
             {
                 //test the angle this point makes with previous/next points
-
                 //TODO: clean this up
-                //is there a previous point to check against
-                if(i - paths->paths[n].ai > 0)
+
+                if((i - paths->paths[n].ai > 0) &&                               //is there a previous point to check against
+                   (i+1 < points->length) && !IS_BLANKED(points->points[i + 1])) //is the next point valid to check against
                 {
-                    //is the next point valid to check against
-                    if((i+1 < points->length) && !IS_BLANKED(points->points[i + 1]))
+                    lzr_point prev_p = points->points[i - 1];
+                    lzr_point next_p = points->points[i + 1];
+
+                    //if it creates too much of an angle
+                    if(ANGLE_FORMED(prev_p, p, next_p) > PATH_SPLIT_ANGLE)
                     {
-                        printf("in\n");
-                        lzr_point prev_p = points->points[i - 1];
-                        lzr_point next_p = points->points[i + 1];
-
-                        //if it creates too much of an angle
-                        if(ANGLE_FORMED(prev_p, p, next_p) > PATH_SPLIT_ANGLE)
-                        {
-                            //close the current path
-                            paths->paths[n].bi = i;
-                            n++;
-                            // in_path = false;
-
-                            //open a new one
-                            paths->paths[n].ai = i;
-                            // in_path = true;
-                        }
+                        //close the current path
+                        paths->paths[n].bi = i;
+                        n++;
+                        //open a new one
+                        paths->paths[n].ai = i;
                     }
                 }
             }
