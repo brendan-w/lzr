@@ -6,11 +6,11 @@
 #include <stdbool.h>
 #include <math.h>
 
-#include <lzr_types.h>
+#include <lzr.h>
 
 
 //tunable settings
-#define POINT_BUFFER_SIZE 10      //
+#define POINT_BUFFER_SIZE 1000    //
 #define PATH_SPLIT_ANGLE (PI / 8) //max angle deviation for points to be considered contiguous
 
 
@@ -28,14 +28,20 @@
 #define ANGLE_FORMED(a, b, c) ( ANGLE(a, b) - ANGLE(b, c) ) //angle formed by three points [0, PI] (0 = straight line, PI = folded backward)
 
 
+typedef double lzr_angle;
+
+//specialized point class for handling the endpoints of a path
+typedef struct {
+    lzr_point point;       //copy of actual point data
+    size_t i;          //index of the point in the point buffer
+    lzr_angle angle; //the angle for entering the path at this point (radians)
+} lzr_path_point;
+
 //struct defining a "continguous" segment of the lasers path
 typedef struct {
-    size_t ai;      //index of front point
-    size_t bi;      //index of back point (guaranteed that bi > ai)
-    double a_angle; //the angle for entering the path at point A (radians)
-    double b_angle; //the angle for entering the path at point B (radians)
-    bool cycle;     //whether or not this path is cyclic (points A and B are equal)
-    bool used;      //whether or not the algorithm has handled this segment before
+    lzr_path_point a;
+    lzr_path_point b;    
+    // bool cycle;     //whether or not this path is cyclic (points A and B are equal) (EXPERIMENTAL)
 } lzr_path;
 
 //point buffer
