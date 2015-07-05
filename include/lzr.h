@@ -15,6 +15,10 @@ typedef struct {
 } lzr_point;
 
 
+#define POSITION_MAX 65535
+#define COLOR_MAX    65535
+
+
 #define POINT_INIT(_x, _y, _r, _g, _b, _i) { .x=_x, .y=_y, .r=_r, .g=_g, .b=_b, .i=_i }
 #define POINT_INIT_ZERO() { .x=0, .y=0, .r=0, .g=0, .b=0, .i=0 }
 #define POINT_BLANKED(p)        ( (p.i == 0) || (p.r + p.g + p.b == 0) ) // returns boolean for whether the given point is blanked

@@ -10,7 +10,7 @@
 
 
 //tunable settings
-#define POINT_BUFFER_SIZE 1000    //
+#define POINT_BUFFER_SIZE 1800    //
 #define PATH_SPLIT_ANGLE (PI / 8) //max angle deviation for points to be considered contiguous
 
 
