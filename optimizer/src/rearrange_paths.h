@@ -1,7 +1,9 @@
 
 
-#ifndef FIND_PATHS_H
-#define FIND_PATHS_H
+#ifndef REARRANGE_PATHS_H
+#define REARRANGE_PATHS_H
+
+#include "optimize.h"
 
 /*
     Arranges the paths in the path buffer to minimize blank time,
@@ -10,4 +12,4 @@
 void rearrange_paths(lzr_point_buffer* points, lzr_path_buffer* paths);
 
 
-#endif /* FIND_PATHS_H */
+#endif /* REARRANGE_PATHS_H */

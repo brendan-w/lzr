@@ -1,6 +1,5 @@
 
 
-#include "optimize.h"
 #include "rearrange_paths.h"
 
 
@@ -11,15 +10,15 @@ typedef struct {
 
 
 //forward declare
-static path_descriptor find_next(lzr_path_buffer* paths, size_t start, lzr_path_point current);
-static size_t cost(lzr_path_point a, lzr_path_point b);
+static path_descriptor find_next(lzr_path_buffer* paths, size_t start, opt_point current);
+static size_t cost(opt_point a, opt_point b);
 static void swap_paths(lzr_path_buffer* paths, size_t a, size_t b);
 static void invert_path(lzr_path_buffer* paths, size_t i);
 
 
 void rearrange_paths(lzr_point_buffer* points, lzr_path_buffer* paths)
 {
-    lzr_path_point current; //current position/angle of the laser
+    opt_point current; //current position/angle of the laser
     current.point.x = 0;
     current.point.y = 0;
     current.angle = 0.0;
@@ -37,7 +36,7 @@ void rearrange_paths(lzr_point_buffer* points, lzr_path_buffer* paths)
 }
 
 //scan for the best path to enter next
-static path_descriptor find_next(lzr_path_buffer* paths, size_t start, lzr_path_point current)
+static path_descriptor find_next(lzr_path_buffer* paths, size_t start, opt_point current)
 {
 
     //optimize for least cost
@@ -45,7 +44,7 @@ static path_descriptor find_next(lzr_path_buffer* paths, size_t start, lzr_path_
 
     //running vars
     path_descriptor choice; //the best path
-    lzr_path_point possible;
+    opt_point possible;
     size_t c;
 
     //initiail check
@@ -84,7 +83,7 @@ static path_descriptor find_next(lzr_path_buffer* paths, size_t start, lzr_path_
 }
 
 //the cost function for a blank jump between points A and B 
-static size_t cost(lzr_path_point a, lzr_path_point b)
+static size_t cost(opt_point a, opt_point b)
 {
     return DISTANCE(a.point, b.point);
 }
@@ -101,7 +100,7 @@ static void swap_paths(lzr_path_buffer* paths, size_t a, size_t b)
 
 static void invert_path(lzr_path_buffer* paths, size_t i)
 {
-    lzr_path_point temp = paths->paths[i].a;
+    opt_point temp = paths->paths[i].a;
     paths->paths[i].a = paths->paths[i].b;
     paths->paths[i].b = temp;
 }

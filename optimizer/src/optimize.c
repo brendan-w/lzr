@@ -1,17 +1,67 @@
 
+#include <stdio.h>
 
 #include "optimize.h"
+
 #include "find_paths.h"
 #include "rearrange_paths.h"
 #include "compile_paths.h"
 
 
+
+lzr_optimizer* create_optimizer(size_t max_points)
+{
+    lzr_optimizer* opt = malloc(sizeof(lzr_optimizer));
+
+    opt->max_points = max_points;
+    opt->points     = calloc(max_points, sizeof(opt_point));
+    opt->paths      = calloc(max_points, sizeof(opt_path));
+    opt->n_points   = 0;
+    opt->n_paths    = 0;
+
+    return opt;
+}
+
+void destroy_optimizer(lzr_optimizer* opt)
+{
+    free(opt->points);
+    free(opt->paths);
+    free(opt);
+}
+
+/*
+    Main optimizer function. Accepts an array of lzr_points as input,
+
+    opt    - the optimizer context
+    points - an array of lzr_points
+    n      - length of the points array
+*/
+size_t optimize(lzr_optimizer* opt, lzr_point* points, size_t n)
+{
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //the two main working buffers
-lzr_point_buffer points;
+lzr_point_buffer input_points;
+lzr_point_buffer output_points;
 lzr_path_buffer  paths;
 
 //accessors
-#define points(i) (points.points[i])
+#define points(i) (input_points.points[i])
 #define paths(i)  (paths.paths[i])
 
 
@@ -42,13 +92,13 @@ static void load()
     lzr_point p3 = POINT_INIT(2, 8, 1, 1, 1, 1); points(7) = p3;
     lzr_point p5 = POINT_INIT(2, 8, 1, 1, 1, 0); points(8) = p5;
 
-    points.length = 9;
+    input_points.length = 9;
 }
 
 static void print_buffers()
 {
     printf("\nPoint buffer:\n");
-    for(size_t i = 0; i < points.length; i++)
+    for(size_t i = 0; i < input_points.length; i++)
     {
         printf("%zu: (%d, %d) i=%d\n", i, points(i).x, points(i).y, points(i).i);
     }
@@ -60,15 +110,21 @@ static void print_buffers()
     }
 }
 
+
+
+
+
+
+
 // int main(int argc, char* argv[])
 int main()
 {
     load();
 
     //pretty simple
-    find_paths(&points, &paths);
-    rearrange_paths(&points, &paths);
-    compile_paths(&points, &paths);
+    find_paths(&input_points, &paths);
+    rearrange_paths(&input_points, &paths);
+    compile_paths(&input_points, &paths);
 
     print_buffers();
     return 0;

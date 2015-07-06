@@ -2,11 +2,13 @@
 #ifndef OPTIMIZE_H
 #define OPTIMIZE_H
 
-#include <stdio.h>
+#include <stdlib.h>
 #include <stdbool.h>
 #include <math.h>
-
 #include <lzr.h>
+
+
+
 
 
 //tunable settings
@@ -35,26 +37,30 @@ typedef struct {
     lzr_point point;       //copy of actual point data
     size_t i;          //index of the point in the point buffer
     lzr_angle angle; //the angle for entering the path at this point (radians)
-} lzr_path_point;
+} opt_point;
 
 //struct defining a "continguous" segment of the lasers path
 typedef struct {
-    lzr_path_point a;
-    lzr_path_point b;    
+    opt_point a;
+    opt_point b;    
     // bool cycle;     //whether or not this path is cyclic (points A and B are equal) (EXPERIMENTAL)
-} lzr_path;
+} opt_path;
 
-//point buffer
-typedef struct {
-    lzr_point points[POINT_BUFFER_SIZE];
-    size_t length;
-} lzr_point_buffer;
 
-//path buffer
+
+//optimizer context
 typedef struct {
-    lzr_path paths[PATH_BUFFER_SIZE];
-    size_t length;
-} lzr_path_buffer;
+    size_t     max_points;
+
+    //point buffer
+    opt_point* points;   //array of opt_points, the size of max_points
+    size_t     n_points; //number of points currently in the buffer
+
+    //path buffer
+    opt_path*  paths;    //array of opt_paths, the size of max_points
+    size_t     n_paths;  //number of paths currently in the buffer
+} lzr_optimizer;
+
 
 
 #endif /* OPTIMIZE_H */

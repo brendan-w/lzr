@@ -1,6 +1,5 @@
 
 
-#include "optimize.h"
 #include "find_paths.h"
 
 
@@ -12,23 +11,23 @@
 
 
 //forward declare
-static void path_split(lzr_point_buffer* points, lzr_path_buffer* paths);
-static void fill_angle(lzr_point_buffer* points, lzr_path_buffer* paths);
-// static void fill_cycle(lzr_point_buffer* points, lzr_path_buffer* paths);
+static void path_split(opt_point_buffer* points, opt_path_buffer* paths);
+static void fill_angle(opt_point_buffer* points, opt_path_buffer* paths);
+// static void fill_cycle(opt_point_buffer* points, opt_path_buffer* paths);
 
 
-void find_paths(lzr_point_buffer* points, lzr_path_buffer* paths)
+void find_paths(opt_point_buffer* points, opt_path_buffer* paths)
 {
     path_split(points, paths);
     fill_angle(points, paths);
     // fill_cycle(points, paths);
 }
 
-static void path_split(lzr_point_buffer* points, lzr_path_buffer* paths)
+static void path_split(opt_point_buffer* points, opt_path_buffer* paths)
 {
     size_t n = 0;         //number of completed paths (index of the path currently being built)
     bool in_path = false; //whether the loop is inside an unterminated path
-    lzr_point p;          //the current point being checked
+    opt_point p;          //the current point being checked
 
     for(size_t i = 0; i < points->length; i++)
     {
@@ -57,8 +56,8 @@ static void path_split(lzr_point_buffer* points, lzr_path_buffer* paths)
                 if((i - paths->paths[n].a.i > 0) &&                                 //is there a previous point to check against
                    (i+1 < points->length) && !POINT_BLANKED(points->points[i + 1])) //is the next point valid to check against
                 {
-                    lzr_point prev_p = points->points[i - 1];
-                    lzr_point next_p = points->points[i + 1];
+                    opt_point prev_p = points->points[i - 1];
+                    opt_point next_p = points->points[i + 1];
 
                     //if it creates too much of an angle
                     if(ANGLE_FORMED(prev_p, p, next_p) > PATH_SPLIT_ANGLE)
@@ -97,11 +96,11 @@ static void path_split(lzr_point_buffer* points, lzr_path_buffer* paths)
 }
 
 //computes the entrance angles on either side of each path
-static void fill_angle(lzr_point_buffer* points, lzr_path_buffer* paths)
+static void fill_angle(opt_point_buffer* points, opt_path_buffer* paths)
 {
     for(size_t i = 0; i < paths->length; i++)
     {
-        lzr_path* path = (paths->paths + i);
+        opt_path* path = (paths->paths + i);
 
         switch(path->b.i - path->a.i)
         {
@@ -125,20 +124,20 @@ static void fill_angle(lzr_point_buffer* points, lzr_path_buffer* paths)
 }
 
 /*
-static void fill_cycle(lzr_point_buffer* points, lzr_path_buffer* paths)
+static void fill_cycle(opt_point_buffer* points, opt_path_buffer* paths)
 {
     for(size_t i = 0; i < paths->length; i++)
     {
-        lzr_path* path = (paths->paths + i);
-        lzr_point a = points->points[path->a.i];
-        lzr_point b = points->points[path->b.i];
+        opt_path* path = (paths->paths + i);
+        opt_point a = points->points[path->a.i];
+        opt_point b = points->points[path->b.i];
 
         //if they're in the same position, and there are at least 3 points
         if(POINTS_SAME_POS(a, b) && (path->b.i - path->a.i > 1))
         {
             //fetch the points on either side of the joint
-            lzr_point next = points->points[path->a.i + 1];
-            lzr_point prev = points->points[path->b.i - 1];
+            opt_point next = points->points[path->a.i + 1];
+            opt_point prev = points->points[path->b.i - 1];
 
             //if it DOESN'T creates too much of an angle, then it's a cycle
             path->cycle = (ANGLE_FORMED(prev, a, next) <= PATH_SPLIT_ANGLE);

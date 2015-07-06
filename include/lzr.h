@@ -15,8 +15,14 @@ typedef struct {
 } lzr_point;
 
 
+typedef struct {
+	lzr_point* points;
+
+} lzr_frame;
+
 #define POSITION_MAX 65535
 #define COLOR_MAX    65535
+
 
 
 #define POINT_INIT(_x, _y, _r, _g, _b, _i) { .x=_x, .y=_y, .r=_r, .g=_g, .b=_b, .i=_i }

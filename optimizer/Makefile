@@ -26,7 +26,6 @@ $(EXE_NAME): $(OBJ)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 .PHONY: clean
-
 clean:
 	rm -f $(OBJ) $(EXE_NAME)
 
