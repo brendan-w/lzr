@@ -20,7 +20,7 @@
 #define PATH_BUFFER_SIZE (POINT_BUFFER_SIZE / 2) //the shortest path is 2 points
 
 //constants
-# define PI 3.14159265358979323846
+#define PI 3.14159265358979323846
 
 //functions
 #define DISTANCE(a, b)        ( (a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y) ) //square of the distance between two points
@@ -30,21 +30,20 @@
 #define ANGLE_FORMED(a, b, c) ( ANGLE(a, b) - ANGLE(b, c) ) //angle formed by three points [0, PI] (0 = straight line, PI = folded backward)
 
 
-typedef double lzr_angle;
+typedef double opt_angle_t;
 
 //specialized point class for handling the endpoints of a path
 typedef struct {
-    lzr_point point;       //copy of actual point data
-    size_t i;          //index of the point in the point buffer
-    lzr_angle angle; //the angle for entering the path at this point (radians)
-} opt_point;
+    lzr_point   base_point; //copy of actual point data
+    opt_angle_t angle;      //the angle for entering the path at this point (radians)
+} opt_point_t;
 
 //struct defining a "continguous" segment of the lasers path
 typedef struct {
-    opt_point a;
-    opt_point b;    
-    // bool cycle;     //whether or not this path is cyclic (points A and B are equal) (EXPERIMENTAL)
-} opt_path;
+    size_t a;   //index of the front point
+    size_t b;   //index of the back point
+    bool cycle; //whether or not this path is cyclic (EXPERIMENTAL)
+} opt_path_t;
 
 
 
@@ -53,11 +52,11 @@ typedef struct {
     size_t     max_points;
 
     //point buffer
-    opt_point* points;   //array of opt_points, the size of max_points
+    opt_point_t* points; //array of points, the size of max_points
     size_t     n_points; //number of points currently in the buffer
 
     //path buffer
-    opt_path*  paths;    //array of opt_paths, the size of max_points
+    opt_path_t*  paths;  //array of paths, the size of max_points
     size_t     n_paths;  //number of paths currently in the buffer
 } lzr_optimizer;
 

@@ -9,7 +9,7 @@
     Arranges the paths in the path buffer to minimize blank time,
     and route the laser in a sensical path.
 */
-void rearrange_paths(lzr_point_buffer* points, lzr_path_buffer* paths);
+void rearrange_paths(lzr_optimizer* opt);
 
 
 #endif /* REARRANGE_PATHS_H */

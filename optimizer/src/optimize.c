@@ -14,8 +14,8 @@ lzr_optimizer* create_optimizer(size_t max_points)
     lzr_optimizer* opt = malloc(sizeof(lzr_optimizer));
 
     opt->max_points = max_points;
-    opt->points     = calloc(max_points, sizeof(opt_point));
-    opt->paths      = calloc(max_points, sizeof(opt_path));
+    opt->points     = calloc(max_points, sizeof(opt_point_t));
+    opt->paths      = calloc(max_points, sizeof(opt_path_t));
     opt->n_points   = 0;
     opt->n_paths    = 0;
 
@@ -32,85 +32,59 @@ void destroy_optimizer(lzr_optimizer* opt)
 /*
     Main optimizer function. Accepts an array of lzr_points as input,
 
-    opt    - the optimizer context
-    points - an array of lzr_points
-    n      - length of the points array
+    params:
+           opt : the optimizer context
+        points : pointer to an array of lzr_points
+             n : length of the points array
+
+    returns:
+        The number of new points written to the array. Original data
+        is overwritten.
 */
 size_t optimize(lzr_optimizer* opt, lzr_point* points, size_t n)
 {
-    return 0;
+    //load the points into the working buffer
+    for(size_t i = 0; i < n; i++)
+    {
+        opt->points[i].base_point = points[i];
+    }
+    opt->n_points = n;
+
+
+    find_paths(opt);      //populates the path buffer
+    // rearrange_paths(opt); //sorts the path buffer
+    // compile_paths(opt);   //updates the point buffer and generates blanking jumps
+
+
+    //copy the working buffer back to the source
+    for(size_t i = 0; i < n; i++)
+    {
+        opt->points[i].base_point = points[i];
+    }
+    return opt->n_points;
 }
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-//the two main working buffers
-lzr_point_buffer input_points;
-lzr_point_buffer output_points;
-lzr_path_buffer  paths;
-
-//accessors
-#define points(i) (input_points.points[i])
-#define paths(i)  (paths.paths[i])
-
-
-static void load()
-{
-    //create some bogus data to play with
-    //                        x, y, r, g, b, i
-    // lzr_point p0 = POINT_INIT(0, 0, 1, 1, 1, 1); points(0) = p0;
-    // lzr_point p1 = POINT_INIT(9, 1, 1, 1, 1, 1); points(1) = p1;
-    // lzr_point p2 = POINT_INIT(2, 2, 1, 1, 1, 1); points(2) = p2;
-    // lzr_point p3 = POINT_INIT(3, 3, 1, 1, 1, 1); points(3) = p3;
-    // lzr_point p4 = POINT_INIT(4, 4, 1, 1, 1, 1); points(4) = p4;
-    // lzr_point p5 = POINT_INIT(5, 5, 1, 1, 1, 0); points(5) = p5;
-    // lzr_point p6 = POINT_INIT(6, 6, 1, 1, 1, 1); points(6) = p6;
-    // lzr_point p7 = POINT_INIT(7, 7, 1, 1, 1, 1); points(7) = p7;
-    // lzr_point p8 = POINT_INIT(8, 8, 1, 1, 1, 0); points(8) = p8;
-    // lzr_point p9 = POINT_INIT(9, 9, 1, 1, 1, 1); points(9) = p9;
-    //                        x, y, r, g, b, i
-    lzr_point p0 = POINT_INIT(0, 0, 1, 1, 1, 1); points(0) = p0;
-    lzr_point p1 = POINT_INIT(0, 8, 1, 1, 1, 1); points(1) = p1;
-    lzr_point p2 = POINT_INIT(0, 8, 1, 1, 1, 0); points(2) = p2;
-
-    lzr_point p6 = POINT_INIT(1, 0, 1, 1, 1, 1); points(3) = p6;
-    lzr_point p7 = POINT_INIT(1, 8, 1, 1, 1, 1); points(4) = p7;
-    lzr_point p8 = POINT_INIT(1, 8, 1, 1, 1, 0); points(5) = p8;
-
-    lzr_point p4 = POINT_INIT(2, 0, 1, 1, 1, 1); points(6) = p4;
-    lzr_point p3 = POINT_INIT(2, 8, 1, 1, 1, 1); points(7) = p3;
-    lzr_point p5 = POINT_INIT(2, 8, 1, 1, 1, 0); points(8) = p5;
-
-    input_points.length = 9;
-}
-
-static void print_buffers()
+static void opt_log(lzr_optimizer* opt)
 {
     printf("\nPoint buffer:\n");
-    for(size_t i = 0; i < input_points.length; i++)
+    for(size_t i = 0; i < opt->n_points; i++)
     {
-        printf("%zu: (%d, %d) i=%d\n", i, points(i).x, points(i).y, points(i).i);
+        opt_point_t point = opt->points[i];
+        lzr_point base_point  = point.base_point;
+        printf("%zu: (%d, %d) i=%d\n", i, base_point.x, base_point.y, base_point.i);
     }
 
     printf("\nPath buffer:\n");
-    for(size_t i = 0; i < paths.length; i++)
+    for(size_t i = 0; i < opt->n_paths; i++)
     {
-        printf("%zu: [%zu, %zu] a=%f b=%f\n", i, paths(i).a.i, paths(i).b.i, paths(i).a.angle, paths(i).b.angle);        
+        opt_path_t path = opt->paths[i];
+        printf("%zu: [%zu, %zu] c=%d\n", i, path.a, path.b, path.cycle);        
     }
 }
-
-
 
 
 
@@ -119,13 +93,23 @@ static void print_buffers()
 // int main(int argc, char* argv[])
 int main()
 {
-    load();
+    lzr_point points[9];
+    //                        x, y, r, g, b, i
+    lzr_point p0 = POINT_INIT(0, 0, 1, 1, 1, 1); points[0] = p0;
+    lzr_point p1 = POINT_INIT(0, 8, 1, 1, 1, 1); points[1] = p1;
+    lzr_point p2 = POINT_INIT(0, 8, 1, 1, 1, 0); points[2] = p2;
 
-    //pretty simple
-    find_paths(&input_points, &paths);
-    rearrange_paths(&input_points, &paths);
-    compile_paths(&input_points, &paths);
+    lzr_point p6 = POINT_INIT(1, 0, 1, 1, 1, 1); points[3] = p6;
+    lzr_point p7 = POINT_INIT(1, 8, 1, 1, 1, 1); points[4] = p7;
+    lzr_point p8 = POINT_INIT(1, 8, 1, 1, 1, 0); points[5] = p8;
 
-    print_buffers();
+    lzr_point p4 = POINT_INIT(2, 0, 1, 1, 1, 1); points[6] = p4;
+    lzr_point p3 = POINT_INIT(2, 8, 1, 1, 1, 1); points[7] = p3;
+    lzr_point p5 = POINT_INIT(2, 8, 1, 1, 1, 0); points[8] = p5;
+
+    lzr_optimizer* opt = create_optimizer(1000);
+    optimize(opt, points, 9);
+    opt_log(opt);
+    destroy_optimizer(opt);
     return 0;
 }

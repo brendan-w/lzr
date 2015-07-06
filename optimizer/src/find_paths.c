@@ -2,45 +2,27 @@
 
 #include "find_paths.h"
 
-
-//store the index of the last point in the path
-#define CLOSE_PATH(p, i) paths->paths[n].b.point  = (p);\
-                         paths->paths[n].b.i = (i);\
-                         n++;\
-                         in_path = false;\
+#define OPT_POINT_BLANKED(p) POINT_BLANKED(p.base_point)
+#define OPT_ANGLE_FORMED(a, b, c) ANGLE_FORMED(a.base_point, b.base_point, c.base_point)
 
 
-//forward declare
-static void path_split(opt_point_buffer* points, opt_path_buffer* paths);
-static void fill_angle(opt_point_buffer* points, opt_path_buffer* paths);
-// static void fill_cycle(opt_point_buffer* points, opt_path_buffer* paths);
-
-
-void find_paths(opt_point_buffer* points, opt_path_buffer* paths)
-{
-    path_split(points, paths);
-    fill_angle(points, paths);
-    // fill_cycle(points, paths);
-}
-
-static void path_split(opt_point_buffer* points, opt_path_buffer* paths)
+static void path_split(lzr_optimizer* opt)
 {
     size_t n = 0;         //number of completed paths (index of the path currently being built)
     bool in_path = false; //whether the loop is inside an unterminated path
-    opt_point p;          //the current point being checked
+    opt_point_t p;        //the current point being checked
 
-    for(size_t i = 0; i < points->length; i++)
+    for(size_t i = 0; i < opt->n_points; i++)
     {
-        p = points->points[i];
+        p = opt->points[i];
 
-        if(POINT_BLANKED(p))
+        if(OPT_POINT_BLANKED(p))
         {
             if(in_path)
             {
                 //encountered first blanked point when IN a path
                 //close the open path
-                paths->paths[n].b.point = p;
-                paths->paths[n].b.i = i - 1;
+                opt->paths[n].b = i - 1;
                 n++;
                 in_path = false;
             }
@@ -53,22 +35,20 @@ static void path_split(opt_point_buffer* points, opt_path_buffer* paths)
                 //test the angle this point makes with previous/next points
                 //TODO: clean this up
 
-                if((i - paths->paths[n].a.i > 0) &&                                 //is there a previous point to check against
-                   (i+1 < points->length) && !POINT_BLANKED(points->points[i + 1])) //is the next point valid to check against
+                if((i - opt->paths[n].a > 0) &&                                 //is there a previous point to check against
+                   (i+1 < opt->n_points) && !OPT_POINT_BLANKED(opt->points[i + 1])) //is the next point valid to check against
                 {
-                    opt_point prev_p = points->points[i - 1];
-                    opt_point next_p = points->points[i + 1];
+                    opt_point_t prev = opt->points[i - 1];
+                    opt_point_t next = opt->points[i + 1];
 
                     //if it creates too much of an angle
-                    if(ANGLE_FORMED(prev_p, p, next_p) > PATH_SPLIT_ANGLE)
+                    if(OPT_ANGLE_FORMED(prev, p, next) > PATH_SPLIT_ANGLE)
                     {
                         //close the current path
-                        paths->paths[n].b.point = p;
-                        paths->paths[n].b.i = i;
+                        opt->paths[n].b = i;
                         n++;
                         //open a new one
-                        paths->paths[n].a.point = p;
-                        paths->paths[n].a.i = i;
+                        opt->paths[n].a = i;
                     }
                 }
             }
@@ -76,8 +56,7 @@ static void path_split(opt_point_buffer* points, opt_path_buffer* paths)
             {
                 //encountered first lit point when not in a path
                 //open a new path
-                paths->paths[n].a.point = p;
-                paths->paths[n].a.i = i; //store the index of the first point in the path
+                opt->paths[n].a = i; //store the index of the first point in the path
                 in_path = true;
             }
         }
@@ -86,58 +65,59 @@ static void path_split(opt_point_buffer* points, opt_path_buffer* paths)
     //if a path is still open, close it
     if(in_path)
     {
-        paths->paths[n].b.point = p;
-        paths->paths[n].b.i = points->length - 1;
+        opt->paths[n].b = opt->n_points - 1;
         n++;
         in_path = false;
     }
 
-    paths->length = n;
+    opt->n_paths = n;
 }
 
 //computes the entrance angles on either side of each path
-static void fill_angle(opt_point_buffer* points, opt_path_buffer* paths)
+/*
+static void fill_angle(lzr_optimizer* opt)
 {
-    for(size_t i = 0; i < paths->length; i++)
+    for(size_t i = 0; i < opt->n_paths; i++)
     {
         opt_path* path = (paths->paths + i);
 
-        switch(path->b.i - path->a.i)
+        switch(path->b - path->a)
         {
             case 0: //a single point
                 //do nothing: single points can be approached from any direction
                 path->a.angle = path->b.angle = 0;
                 break;
             case 1: //two points
-                path->a.angle = ANGLE(points->points[path->a.i],
-                                      points->points[path->b.i]);
+                path->a.angle = ANGLE(opt->points[path->a],
+                                      opt->points[path->b]);
                 path->b.angle = ANGLE_OPPOSITE(path->a.angle + PI);
                 break;
             default: //more than two points
-                path->a.angle = ANGLE(points->points[path->a.i],
-                                      points->points[path->a.i + 1]);
-                path->b.angle = ANGLE(points->points[path->b.i],
-                                      points->points[path->b.i - 1]);
+                path->a.angle = ANGLE(opt->points[path->a],
+                                      opt->points[path->a + 1]);
+                path->b.angle = ANGLE(opt->points[path->b],
+                                      opt->points[path->b - 1]);
                 break;
         }
     }
 }
+*/
 
 /*
-static void fill_cycle(opt_point_buffer* points, opt_path_buffer* paths)
+static void fill_cycle(lzr_optimizer* opt)
 {
-    for(size_t i = 0; i < paths->length; i++)
+    for(size_t i = 0; i < opt->n_paths; i++)
     {
         opt_path* path = (paths->paths + i);
-        opt_point a = points->points[path->a.i];
-        opt_point b = points->points[path->b.i];
+        opt_point_t a = opt->points[path->a];
+        opt_point_t b = opt->points[path->b];
 
         //if they're in the same position, and there are at least 3 points
-        if(POINTS_SAME_POS(a, b) && (path->b.i - path->a.i > 1))
+        if(POINTS_SAME_POS(a, b) && (path->b - path->a > 1))
         {
             //fetch the points on either side of the joint
-            opt_point next = points->points[path->a.i + 1];
-            opt_point prev = points->points[path->b.i - 1];
+            opt_point_t next = opt->points[path->a + 1];
+            opt_point_t prev = opt->points[path->b - 1];
 
             //if it DOESN'T creates too much of an angle, then it's a cycle
             path->cycle = (ANGLE_FORMED(prev, a, next) <= PATH_SPLIT_ANGLE);
@@ -145,3 +125,12 @@ static void fill_cycle(opt_point_buffer* points, opt_path_buffer* paths)
     }
 }
 */
+
+
+//public function
+void find_paths(lzr_optimizer* opt)
+{
+    path_split(opt);
+    // fill_angle(opt);
+    // fill_cycle(opt);
+}

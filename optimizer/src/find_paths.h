@@ -9,7 +9,7 @@
     Splits a point buffer into individual path segments.
     Loads the result into the given path buffer.
 */
-void find_paths(lzr_point_buffer* points, lzr_path_buffer* paths);
+void find_paths(lzr_optimizer* opt);
 
 
 #endif /* FIND_PATHS_H */
