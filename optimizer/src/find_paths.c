@@ -2,8 +2,49 @@
 
 #include "find_paths.h"
 
-#define OPT_POINT_BLANKED(p) POINT_BLANKED(p.base_point)
-#define OPT_ANGLE_FORMED(a, b, c) ANGLE_FORMED(a.base_point, b.base_point, c.base_point)
+/*
+    The angle formed between three points. Because of the way point
+    angles are stored, only points B and C are neccessary.
+    (see fill_angle() for details)
+
+              C .
+               /
+              /
+    A      B /
+    ._______.
+*/
+#define ANGLE_FORMED(b, c) (b.angle - c.angle)
+
+
+//computes the angles from one point to the next
+static void fill_angle(lzr_optimizer* opt)
+{
+    /*
+
+        When computing the angles from one point to the next,
+        the angle stored on each point is the INCOMING angle for that point.
+        ie, for the outgoing angle, use the value from the next point.
+        (the first point's angle is computed based on the last_known_point)
+
+                                   angle
+                |---->|           |---->|
+
+                *    [P     P     P     P     P     P     ...]
+
+                |                       |
+        last_known_point           stored here
+
+    */
+
+    opt->points[0].angle = ANGLE(opt->last_known_point.base_point,
+                                 opt->points[0].base_point);
+
+    for(size_t i = 1; i < opt->n_points; i++)
+    {
+        opt->points[i].angle = ANGLE(opt->points[i - 1].base_point,
+                                     opt->points[i].base_point);
+    }
+}
 
 
 static void path_split(lzr_optimizer* opt)
@@ -16,7 +57,7 @@ static void path_split(lzr_optimizer* opt)
     {
         p = opt->points[i];
 
-        if(OPT_POINT_BLANKED(p))
+        if(POINT_BLANKED(p.base_point))
         {
             if(in_path)
             {
@@ -35,14 +76,12 @@ static void path_split(lzr_optimizer* opt)
                 //test the angle this point makes with previous/next points
                 //TODO: clean this up
 
-                if((i - opt->paths[n].a > 0) &&                                 //is there a previous point to check against
-                   (i+1 < opt->n_points) && !OPT_POINT_BLANKED(opt->points[i + 1])) //is the next point valid to check against
+                if((i+1 < opt->n_points) && !POINT_BLANKED(opt->points[i + 1].base_point)) //is the next point valid to check against
                 {
-                    opt_point_t prev = opt->points[i - 1];
                     opt_point_t next = opt->points[i + 1];
 
                     //if it creates too much of an angle
-                    if(OPT_ANGLE_FORMED(prev, p, next) > PATH_SPLIT_ANGLE)
+                    if(ANGLE_FORMED(p, next) > PATH_SPLIT_ANGLE)
                     {
                         //close the current path
                         opt->paths[n].b = i;
@@ -73,35 +112,6 @@ static void path_split(lzr_optimizer* opt)
     opt->n_paths = n;
 }
 
-//computes the entrance angles on either side of each path
-/*
-static void fill_angle(lzr_optimizer* opt)
-{
-    for(size_t i = 0; i < opt->n_paths; i++)
-    {
-        opt_path* path = (paths->paths + i);
-
-        switch(path->b - path->a)
-        {
-            case 0: //a single point
-                //do nothing: single points can be approached from any direction
-                path->a.angle = path->b.angle = 0;
-                break;
-            case 1: //two points
-                path->a.angle = ANGLE(opt->points[path->a],
-                                      opt->points[path->b]);
-                path->b.angle = ANGLE_OPPOSITE(path->a.angle + PI);
-                break;
-            default: //more than two points
-                path->a.angle = ANGLE(opt->points[path->a],
-                                      opt->points[path->a + 1]);
-                path->b.angle = ANGLE(opt->points[path->b],
-                                      opt->points[path->b - 1]);
-                break;
-        }
-    }
-}
-*/
 
 /*
 static void fill_cycle(lzr_optimizer* opt)
@@ -130,7 +140,7 @@ static void fill_cycle(lzr_optimizer* opt)
 //public function
 void find_paths(lzr_optimizer* opt)
 {
+    fill_angle(opt);
     path_split(opt);
-    // fill_angle(opt);
     // fill_cycle(opt);
 }

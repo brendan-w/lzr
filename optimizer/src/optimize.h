@@ -27,7 +27,7 @@
 #define ANGLE(a, b)           ( atan2(b.y - a.y, b.x - a.y) * -1 ) //the angle from point A to point B on range (-PI, PI] in screen coords
 #define ANGLE_NORM(a)         ( fmod(a, PI) ) //constrains angles to (-PI, PI]
 #define ANGLE_OPPOSITE(a)     ( ANGLE_NORM(a + PI) )
-#define ANGLE_FORMED(a, b, c) ( ANGLE(a, b) - ANGLE(b, c) ) //angle formed by three points [0, PI] (0 = straight line, PI = folded backward)
+//#define ANGLE_FORMED(a, b, c) ( ANGLE(a, b) - ANGLE(b, c) ) //angle formed by three points [0, PI] (0 = straight line, PI = folded backward)
 
 
 typedef double opt_angle_t;
@@ -49,7 +49,8 @@ typedef struct {
 
 //optimizer context
 typedef struct {
-    size_t     max_points;
+    size_t      max_points;       //the max number of points the buffers can hold
+    opt_point_t last_known_point; //the last point from the previously optimized frame
 
     //point buffer
     opt_point_t* points; //array of points, the size of max_points
@@ -60,6 +61,14 @@ typedef struct {
     size_t     n_paths;  //number of paths currently in the buffer
 } lzr_optimizer;
 
+
+#define zero_opt_point(p) (p)->angle = 0.0f;     \
+                          (p)->base_point.x = 0; \
+                          (p)->base_point.y = 0; \
+                          (p)->base_point.r = 0; \
+                          (p)->base_point.g = 0; \
+                          (p)->base_point.b = 0; \
+                          (p)->base_point.i = 0;
 
 
 #endif /* OPTIMIZE_H */
