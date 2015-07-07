@@ -27,7 +27,6 @@
 #define ANGLE(a, b)           ( atan2(b.y - a.y, b.x - a.y) * -1 ) //the angle from point A to point B on range (-PI, PI] in screen coords
 #define ANGLE_NORM(a)         ( fmod(a, PI) ) //constrains angles to (-PI, PI]
 #define ANGLE_OPPOSITE(a)     ( ANGLE_NORM(a + PI) )
-//#define ANGLE_FORMED(a, b, c) ( ANGLE(a, b) - ANGLE(b, c) ) //angle formed by three points [0, PI] (0 = straight line, PI = folded backward)
 
 
 typedef double opt_angle_t;

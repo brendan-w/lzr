@@ -120,12 +120,14 @@ int main()
     */
 
     lzr_point p0 = POINT_INIT(1, 1, 1, 1, 1, 1); points[0] = p0;
-    lzr_point p1 = POINT_INIT(8, 2, 1, 1, 1, 1); points[1] = p1;
-    lzr_point p2 = POINT_INIT(3, 3, 1, 1, 1, 1); points[2] = p2;
+    lzr_point p1 = POINT_INIT(1, 2, 1, 1, 1, 1); points[1] = p1;
+    lzr_point p2 = POINT_INIT(2, 2, 1, 1, 1, 1); points[2] = p2;
+    lzr_point p3 = POINT_INIT(2, 1, 1, 1, 1, 1); points[3] = p3;
+    lzr_point p4 = POINT_INIT(1, 1, 1, 1, 1, 1); points[4] = p4;
 
 
     lzr_optimizer* opt = lzr_create_optimizer(1000);
-    lzr_optimize(opt, points, 3);
+    lzr_optimize(opt, points, 5);
     opt_log(opt);
     lzr_destroy_optimizer(opt);
     return 0;

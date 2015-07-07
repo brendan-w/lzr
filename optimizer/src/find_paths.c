@@ -13,7 +13,7 @@
     A      B /
     ._______.
 */
-#define ANGLE_FORMED(b, c) (b.angle - c.angle)
+#define ANGLE_FORMED(b, c) (abs(b.angle - c.angle))
 
 
 //computes the angles from one point to the next
@@ -23,8 +23,8 @@ static void fill_angle(lzr_optimizer* opt)
 
         When computing the angles from one point to the next,
         the angle stored on each point is the INCOMING angle for that point.
-        ie, for the outgoing angle, use the value from the next point.
-        (the first point's angle is computed based on the last_known_point)
+        For the outgoing angle, use the value from the next point.
+        The first point's angle is computed based on the last_known_point.
 
                                    angle
                 |---->|           |---->|
@@ -113,28 +113,25 @@ static void path_split(lzr_optimizer* opt)
 }
 
 
-/*
 static void fill_cycle(lzr_optimizer* opt)
 {
     for(size_t i = 0; i < opt->n_paths; i++)
     {
-        opt_path* path = (paths->paths + i);
+        opt_path_t* path = (opt->paths + i);
         opt_point_t a = opt->points[path->a];
         opt_point_t b = opt->points[path->b];
 
         //if they're in the same position, and there are at least 3 points
-        if(POINTS_SAME_POS(a, b) && (path->b - path->a > 1))
+        if(POINTS_SAME_POS(a.base_point, b.base_point) && (path->b - path->a > 1))
         {
-            //fetch the points on either side of the joint
+            //fetch the point one forward of the joint
             opt_point_t next = opt->points[path->a + 1];
-            opt_point_t prev = opt->points[path->b - 1];
 
             //if it DOESN'T creates too much of an angle, then it's a cycle
-            path->cycle = (ANGLE_FORMED(prev, a, next) <= PATH_SPLIT_ANGLE);
+            path->cycle = (ANGLE_FORMED(b, next) <= PATH_SPLIT_ANGLE);
         }
     }
 }
-*/
 
 
 //public function
