@@ -66,7 +66,7 @@ size_t lzr_optimize(lzr_optimizer* opt, lzr_point* points, size_t n)
 {
     to_buffer(opt, points, n); //load the points into the working buffer
     find_paths(opt);           //populates the path buffer
-    // rearrange_paths(opt);      //sorts the path buffer
+    rearrange_paths(opt);      //sorts the path buffer
     // compile_paths(opt);        //updates the point buffer and generates blanking jumps
     from_buffer(opt, points);  //copy the working buffer back to the source
     return opt->n_points;      //return the new number of points in the frame

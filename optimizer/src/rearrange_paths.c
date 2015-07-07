@@ -4,103 +4,93 @@
 
 
 typedef struct {
-    size_t i;    //index of the path in the path buffer
-    bool invert; //whether or not the path should be entered at it's B point
+    opt_path_t* path; //pointer to the path in the path buffer
+    bool invert;      //whether or not the path should be entered at it's B point
 } path_descriptor;
 
 
-//forward declare
-static path_descriptor find_next(lzr_path_buffer* paths, size_t start, opt_point current);
-static size_t cost(opt_point a, opt_point b);
-static void swap_paths(lzr_path_buffer* paths, size_t a, size_t b);
-static void invert_path(lzr_path_buffer* paths, size_t i);
-
-
-void rearrange_paths(lzr_point_buffer* points, lzr_path_buffer* paths)
+//the cost function for a blank jump between points A and B
+static size_t cost(opt_point_t* a, opt_point_t* b)
 {
-    opt_point current; //current position/angle of the laser
-    current.point.x = 0;
-    current.point.y = 0;
-    current.angle = 0.0;
+    return DISTANCE(a->base_point, b->base_point);
+}
 
-    for(size_t i = 0; i < paths->length; i++)
+static void swap_paths(opt_path_t* path_a, opt_path_t* path_b)
+{
+    if(path_a != path_b)
     {
-        path_descriptor next = find_next(paths, i, current);
-        swap_paths(paths, i, next.i);
-        if(next.invert)
-            invert_path(paths, next.i);
-
-        //update the laser's current location
-        current = paths->paths[i].b;
+        opt_path_t temp = *path_a;
+        *path_a = *path_b;
+        *path_b = temp;
     }
 }
 
-//scan for the best path to enter next
-static path_descriptor find_next(lzr_path_buffer* paths, size_t start, opt_point current)
+static void invert_path(opt_path_t* path)
 {
+    size_t temp = path->a;
+    path->a = path->b;
+    path->b = temp;
+}
 
+//scan for the best path to enter next
+static path_descriptor find_next(lzr_optimizer* opt, size_t start)
+{
     //optimize for least cost
     size_t min_cost = 0;
 
     //running vars
-    path_descriptor choice; //the best path
-    opt_point possible;
-    size_t c;
+    path_descriptor pd;    //the best path
+    opt_point_t* possible; //temp var for testing a path
+    size_t c;              //temp var for computing cost
+
 
     //initiail check
-    possible = paths->paths[start].a;
-    c = cost(current, possible);
+    possible = (opt->paths[start].a);
+    c = cost(opt->last_known_point, possible);
     min_cost = c;
-    choice.i = start;
-    choice.invert = false;
-
+    pd.path = possible;
+    pd.invert = false;
     
     for(size_t i = start; i < paths->length; i++)
     {
 
         //test the front point (A)
         possible = paths->paths[i].a;
-        c = cost(current, possible);
+        c = cost(opt->last_known_point, possible);
         if(c < min_cost)
         {
             min_cost = c;
-            choice.i = i;
-            choice.invert = false;
+            pd.path = possible;
+            pd.invert = false;
         }
 
         //test the back point (B)
         possible = paths->paths[i].b;
-        c = cost(current, possible);
+        c = cost(opt->last_known_point, possible);
         if(c < min_cost)
         {
             min_cost = c;
-            choice.i = i;
-            choice.invert = true;
+            pd.path = possible;
+            pd.invert = true;
         }
     }
 
-    return choice;
+    return pd;
 }
 
-//the cost function for a blank jump between points A and B 
-static size_t cost(opt_point a, opt_point b)
+void rearrange_paths(lzr_optimizer* opt)
 {
-    return DISTANCE(a.point, b.point);
-}
-
-static void swap_paths(lzr_path_buffer* paths, size_t a, size_t b)
-{
-    if(a != b)
+    for(size_t i = 0; i < paths->length; i++)
     {
-        lzr_path temp = paths->paths[a];
-        paths->paths[a] = paths->paths[b];
-        paths->paths[b] = temp;
-    }
-}
+        opt_path_t* current = (opt->paths + i);
 
-static void invert_path(lzr_path_buffer* paths, size_t i)
-{
-    opt_point temp = paths->paths[i].a;
-    paths->paths[i].a = paths->paths[i].b;
-    paths->paths[i].b = temp;
+        path_descriptor next = find_next(opt, i);
+        swap_paths(current, next.path);
+
+        if(next.invert)
+            invert_path(current);
+
+        //update the laser's current location
+        opt->last_known_point = opt->points[current->b];
+    }
 }
