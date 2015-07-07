@@ -1,11 +1,8 @@
 
 #include <stdio.h>
 
-#include "optimize.h"
-
-#include "find_paths.h"
-#include "rearrange_paths.h"
-#include "compile_paths.h"
+#include <optimize.h>
+#include <internals.h>
 
 
 

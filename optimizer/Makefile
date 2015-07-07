@@ -5,14 +5,14 @@
 
 EXE_NAME=optimize
 
-HEADERS = src/optimize.h src/find_paths.h src/rearrange_paths.h src/compile_paths.h ../include/lzr.h
+HEADERS = include/optimize.h include/internals.h ../include/lzr.h
 OBJ =     src/optimize.o src/find_paths.o src/rearrange_paths.o src/compile_paths.o
 
 
 # compile settings
 
 CC=gcc
-CFLAGS=-std=c99 -Wall -Wextra -pedantic -ggdb -I../include
+CFLAGS=-std=c99 -Wall -Wextra -pedantic -ggdb -I./include -I../include
 LIBS=-lm
 
 

@@ -1,6 +1,6 @@
 
 
-#include "rearrange_paths.h"
+#include <internals.h>
 
 
 typedef struct {
