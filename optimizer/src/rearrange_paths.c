@@ -2,6 +2,13 @@
 
 #include <internals.h>
 
+/*
+    Returns a pointer to an opt_point_t.
+    Supply a pointer to a path, and a choice of the A or B point.
+*/
+
+#define GET_POINT_PTR(i) (opt->points + (i))
+#define GET_PATH_PTR(i) (opt->paths + (i))
 
 typedef struct {
     opt_path_t* path; //pointer to the path in the path buffer
@@ -45,32 +52,33 @@ static path_descriptor find_next(lzr_optimizer* opt, size_t start)
 
 
     //initiail check
-    possible = (opt->paths[start].a);
-    c = cost(opt->last_known_point, possible);
+    possible = GET_POINT_PTR(opt->paths[start].a);
+    c = cost(&(opt->last_known_point), possible);
     min_cost = c;
-    pd.path = possible;
+    pd.path = GET_PATH_PTR(start);
     pd.invert = false;
     
-    for(size_t i = start; i < paths->length; i++)
+    for(size_t i = start; i < opt->n_paths; i++)
     {
+        opt_path_t* current = GET_PATH_PTR(i);
 
         //test the front point (A)
-        possible = paths->paths[i].a;
-        c = cost(opt->last_known_point, possible);
+        possible = GET_POINT_PTR(opt->paths[i].a);
+        c = cost(&(opt->last_known_point), possible);
         if(c < min_cost)
         {
             min_cost = c;
-            pd.path = possible;
+            pd.path = current;
             pd.invert = false;
         }
 
         //test the back point (B)
-        possible = paths->paths[i].b;
-        c = cost(opt->last_known_point, possible);
+        possible = GET_POINT_PTR(opt->paths[i].b);
+        c = cost(&(opt->last_known_point), possible);
         if(c < min_cost)
         {
             min_cost = c;
-            pd.path = possible;
+            pd.path = current;
             pd.invert = true;
         }
     }
@@ -80,9 +88,9 @@ static path_descriptor find_next(lzr_optimizer* opt, size_t start)
 
 void rearrange_paths(lzr_optimizer* opt)
 {
-    for(size_t i = 0; i < paths->length; i++)
+    for(size_t i = 0; i < opt->n_paths; i++)
     {
-        opt_path_t* current = (opt->paths + i);
+        opt_path_t* current = GET_PATH_PTR(i);
 
         path_descriptor next = find_next(opt, i);
         swap_paths(current, next.path);
