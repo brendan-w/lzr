@@ -19,10 +19,11 @@ void find_paths(lzr_optimizer* opt);
 void rearrange_paths(lzr_optimizer* opt);
 
 /*
-    Rebuilds the point buffer according to the modified path buffer.
-    Inserts/generates new blanking jumps.
+    Fills the given output buffer according to the modified path buffer.
+    Inserts/generates new blanking jumps. Returns the new size of the
+    output buffer.
 */
-void compile_paths(lzr_optimizer* opt);
+size_t compile_paths(lzr_optimizer* opt, lzr_point* output);
 
 
 #endif /* OPTIMIZER_INTERNALS_H */

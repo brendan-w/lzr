@@ -40,7 +40,7 @@ static void invert_path(opt_path_t* path)
 }
 
 //scan for the best path to enter next
-static path_descriptor find_next(lzr_optimizer* opt, size_t start)
+static path_descriptor find_next(lzr_optimizer* opt, size_t start, opt_point_t* laser)
 {
     //optimize for least cost
     size_t min_cost = 0;
@@ -53,7 +53,7 @@ static path_descriptor find_next(lzr_optimizer* opt, size_t start)
 
     //initiail check
     possible = GET_POINT_PTR(opt->paths[start].a);
-    c = cost(&(opt->last_known_point), possible);
+    c = cost(laser, possible);
     min_cost = c;
     pd.path = GET_PATH_PTR(start);
     pd.invert = false;
@@ -64,7 +64,7 @@ static path_descriptor find_next(lzr_optimizer* opt, size_t start)
 
         //test the front point (A)
         possible = GET_POINT_PTR(opt->paths[i].a);
-        c = cost(&(opt->last_known_point), possible);
+        c = cost(laser, possible);
         if(c < min_cost)
         {
             min_cost = c;
@@ -74,7 +74,7 @@ static path_descriptor find_next(lzr_optimizer* opt, size_t start)
 
         //test the back point (B)
         possible = GET_POINT_PTR(opt->paths[i].b);
-        c = cost(&(opt->last_known_point), possible);
+        c = cost(laser, possible);
         if(c < min_cost)
         {
             min_cost = c;
@@ -88,17 +88,20 @@ static path_descriptor find_next(lzr_optimizer* opt, size_t start)
 
 void rearrange_paths(lzr_optimizer* opt)
 {
+    opt_point_t laser = opt->last_known_point;
+
     for(size_t i = 0; i < opt->n_paths; i++)
     {
         opt_path_t* current = GET_PATH_PTR(i);
 
-        path_descriptor next = find_next(opt, i);
+        path_descriptor next = find_next(opt, i, &laser);
         swap_paths(current, next.path);
 
         if(next.invert)
             invert_path(current);
 
         //update the laser's current location
-        opt->last_known_point = opt->points[current->b];
+        laser = opt->points[current->b];
     }
 }
+

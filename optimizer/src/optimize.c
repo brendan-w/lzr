@@ -13,12 +13,6 @@ static void to_buffer(lzr_optimizer* opt, lzr_point* points, size_t n)
         opt->points[i].base_point = points[i];
 }
 
-static void from_buffer(lzr_optimizer* opt, lzr_point* points)
-{
-    for(size_t i = 0; i < opt->n_points; i++)
-        points[i] = opt->points[i].base_point;
-}
-
 
 /*
     Allocates and returns a point to a new optimizer context.
@@ -61,12 +55,11 @@ void lzr_destroy_optimizer(lzr_optimizer* opt)
 */
 size_t lzr_optimize(lzr_optimizer* opt, lzr_point* points, size_t n)
 {
-    to_buffer(opt, points, n); //load the points into the working buffer
-    find_paths(opt);           //populates the path buffer
-    rearrange_paths(opt);      //sorts the path buffer
-    // compile_paths(opt);        //updates the point buffer and generates blanking jumps
-    from_buffer(opt, points);  //copy the working buffer back to the source
-    return opt->n_points;      //return the new number of points in the frame
+    to_buffer(opt, points, n);  //load the points into the working buffer
+    find_paths(opt);            //populates the path buffer
+    rearrange_paths(opt);       //sorts the path buffer
+    //return compile_paths(opt, points); //updates the point buffer and generates blanking jumps
+    return 0;
 }
 
 

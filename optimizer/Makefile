@@ -6,7 +6,9 @@
 EXE_NAME=optimize
 
 HEADERS = include/optimize.h include/internals.h ../include/lzr.h
-OBJ =     src/optimize.o src/find_paths.o src/rearrange_paths.o src/compile_paths.o
+OBJ =     src/optimize.o src/find_paths.o src/rearrange_paths.o
+
+#src/compile_paths.o
 
 
 # compile settings
