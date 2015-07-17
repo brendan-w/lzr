@@ -1,30 +1,24 @@
 
-import timeline
+#include <string>
+#include "timeline.h"
 
+typedef double Time;     //seconds
+typedef double TimeNorm; //[0,1]
 
-class Lazer(object):
-    def __init__(self):
-        pass
-
-    def new_show(self, filepath):
-        """ creates an empty show structure at filepath """
-        pass
-
-    def load_show(self, filepath):
-        pass
-
-    def save_show(self, filepath):
-        pass
-
-    def start(self, time):
-        pass
-
-    def stop(self, time):
-        pass
-
-    def pause(self, time):
-        pass
-
-
-if __name__ == "__main__":
-    lzr = Lazer()
+class Lazer
+{
+    public:
+        Lazer();
+        void new_show(std::string filepath);
+        void load_show(std::string filepath);
+        void save_show(std::string filepath);
+        void start();
+        void stop();
+        void pause();
+        void seek(Time t);
+    private:
+        bool loaded = false;
+        std::string path = "";
+        Time time;
+        Timeline* timeline;
+};
