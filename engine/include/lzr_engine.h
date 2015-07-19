@@ -1,9 +1,10 @@
 
 #include <string>
-#include "timeline.h"
+#include <timeline.h>
 
 typedef double Time;     //seconds
 typedef double TimeNorm; //[0,1]
+
 
 class Lazer
 {

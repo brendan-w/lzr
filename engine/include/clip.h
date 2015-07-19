@@ -1,13 +1,13 @@
 
 #include <vector>
-#include "frame.h"
+#include <frame.h>
 
 
 class Clip
 {
     public:
         Clip();
-        Frame* time_to_frame(TimeNorm t);
+        Frame* render(TimeNorm t);
     private:
         std::vector<Frame*> frames;
 };
