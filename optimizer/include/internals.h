@@ -3,7 +3,7 @@
 #ifndef OPTIMIZER_INTERNALS_H
 #define OPTIMIZER_INTERNALS_H
 
-#include <optimize.h>
+#include <lzr_optimize.h>
 
 
 

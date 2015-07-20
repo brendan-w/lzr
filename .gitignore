@@ -1,6 +1,7 @@
 # Created by https://www.gitignore.io
 
-optimize
+editor/
+lzr_optimize
 
 ### C ###
 # Object files

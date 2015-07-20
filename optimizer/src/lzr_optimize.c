@@ -1,7 +1,7 @@
 
 #include <stdio.h>
 
-#include <optimize.h>
+#include <lzr_optimize.h>
 #include <internals.h>
 
 

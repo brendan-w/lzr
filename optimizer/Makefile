@@ -3,10 +3,10 @@
 
 # files and paths
 
-EXE_NAME=optimize
+EXE_NAME=lzr_optimize
 
-HEADERS = include/optimize.h include/internals.h ../include/lzr.h
-OBJ =     src/optimize.o src/find_paths.o src/rearrange_paths.o
+HEADERS = include/lzr_optimize.h include/internals.h ../include/lzr.h
+OBJ =     src/lzr_optimize.o src/find_paths.o src/rearrange_paths.o
 
 #src/compile_paths.o
 
@@ -29,5 +29,6 @@ $(EXE_NAME): $(OBJ)
 
 .PHONY: clean
 clean:
-	rm -f $(OBJ) $(EXE_NAME)
+	rm src/*.o
+	rm $(EXE_NAME)
 
