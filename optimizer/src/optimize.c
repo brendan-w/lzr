@@ -6,7 +6,7 @@
 
 
 
-static void to_buffer(lzr_optimizer* opt, lzr_point* points, size_t n)
+static void to_buffer(opt_t* opt, lzr_point* points, size_t n)
 {
     opt->n_points = n;
     for(size_t i = 0; i < n; i++)
@@ -19,7 +19,7 @@ static void to_buffer(lzr_optimizer* opt, lzr_point* points, size_t n)
 */
 lzr_optimizer* lzr_create_optimizer(size_t max_points)
 {
-    lzr_optimizer* opt = malloc(sizeof(lzr_optimizer));
+    opt_t* opt = malloc(sizeof(opt_t));
 
     zero_opt_point(&opt->last_known_point);
     opt->max_points = max_points;
@@ -28,14 +28,15 @@ lzr_optimizer* lzr_create_optimizer(size_t max_points)
     opt->n_points   = 0;
     opt->n_paths    = 0;
 
-    return opt;
+    return (lzr_optimizer*) opt;
 }
 
 /*
     Deallocator for the optimizer context
 */
-void lzr_destroy_optimizer(lzr_optimizer* opt)
+void lzr_destroy_optimizer(lzr_optimizer* _opt)
 {
+    opt_t* opt = (opt_t*) _opt;
     free(opt->points);
     free(opt->paths);
     free(opt);
@@ -53,8 +54,10 @@ void lzr_destroy_optimizer(lzr_optimizer* opt)
         The number of new points written to the array. Original data
         is overwritten.
 */
-size_t lzr_optimize(lzr_optimizer* opt, lzr_point* points, size_t n)
+size_t lzr_optimize(lzr_optimizer* _opt, lzr_point* points, size_t n)
 {
+    opt_t* opt = (opt_t*) _opt;
+
     to_buffer(opt, points, n);  //load the points into the working buffer
     find_paths(opt);            //populates the path buffer
     rearrange_paths(opt);       //sorts the path buffer
@@ -73,8 +76,10 @@ size_t lzr_optimize(lzr_optimizer* opt, lzr_point* points, size_t n)
 
 
 
-static void opt_log(lzr_optimizer* opt)
+static void opt_log(lzr_optimizer* _opt)
 {
+    opt_t* opt = (opt_t*) _opt;
+
     printf("\nPoint buffer:\n");
     for(size_t i = 0; i < opt->n_points; i++)
     {

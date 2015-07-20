@@ -17,7 +17,7 @@
 
 
 //computes the angles from one point to the next
-static void fill_angle(lzr_optimizer* opt)
+static void fill_angle(opt_t* opt)
 {
     /*
 
@@ -47,7 +47,7 @@ static void fill_angle(lzr_optimizer* opt)
 }
 
 
-static void path_split(lzr_optimizer* opt)
+static void path_split(opt_t* opt)
 {
     size_t n = 0;         //number of completed paths (index of the path currently being built)
     bool in_path = false; //whether the loop is inside an unterminated path
@@ -113,7 +113,7 @@ static void path_split(lzr_optimizer* opt)
 }
 
 
-static void fill_cycle(lzr_optimizer* opt)
+static void fill_cycle(opt_t* opt)
 {
     for(size_t i = 0; i < opt->n_paths; i++)
     {
@@ -135,7 +135,7 @@ static void fill_cycle(lzr_optimizer* opt)
 
 
 //public function
-void find_paths(lzr_optimizer* opt)
+void find_paths(opt_t* opt)
 {
     fill_angle(opt);
     path_split(opt);

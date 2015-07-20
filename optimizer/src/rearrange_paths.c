@@ -40,7 +40,7 @@ static void invert_path(opt_path_t* path)
 }
 
 //scan for the best path to enter next
-static path_descriptor find_next(lzr_optimizer* opt, size_t start, opt_point_t* laser)
+static path_descriptor find_next(opt_t* opt, size_t start, opt_point_t* laser)
 {
     //optimize for least cost
     size_t min_cost = 0;
@@ -86,7 +86,7 @@ static path_descriptor find_next(lzr_optimizer* opt, size_t start, opt_point_t* 
     return pd;
 }
 
-void rearrange_paths(lzr_optimizer* opt)
+void rearrange_paths(opt_t* opt)
 {
     opt_point_t laser = opt->last_known_point;
 

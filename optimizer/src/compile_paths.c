@@ -16,7 +16,7 @@ static blank_jump blank_between(opt_point_t* a, opt_point_t* b)
 }
 
 
-size_t compile_paths(lzr_optimizer* opt, lzr_point* output)
+size_t compile_paths(opt_t* opt, lzr_point* output)
 {
     size_t n = 0;
 
