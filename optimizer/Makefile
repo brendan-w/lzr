@@ -1,34 +1,46 @@
 
 
-
 # files and paths
 
-EXE_NAME=lzr_optimize
-
-HEADERS = include/lzr_optimize.h include/internals.h ../include/lzr.h
-OBJ =     src/lzr_optimize.o src/find_paths.o src/rearrange_paths.o
-
-#src/compile_paths.o
+VPATH = src
+PREFIX ?= /usr/local
+OBJS  = lzr_optimize.o find_paths.o rearrange_paths.o
 
 
 # compile settings
 
 CC=gcc
-CFLAGS=-std=c99 -Wall -Wextra -pedantic -ggdb -I./include -I../include
+CFLAGS += -std=c99 -Wall -Wextra -pedantic -fPIC
+CFLAGS += -I./include -I../include
 LIBS=-lm
 
+ARFLAGS=rvs
 
 
 # targets
 
-$(EXE_NAME): $(OBJ) 
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+.PHONY: all
+all: liblzr_optimize.a liblzr_optimize.so
 
-%.o: %.c $(HEADERS)
+
+liblzr_optimize.so: $(OBJS)
+	$(CC) -shared -o $@ $^ $(LIBS)
+
+
+liblzr_optimize.a: $(OBJS) 
+	$(AR) $(ARFLAGS) $@ $^
+
+
+%.o: %.c
 	$(CC) -c -o $@ $< $(CFLAGS)
+
+
+.PHONY: test
+test: all
+	$(CC) $(CFLAGS) test/test.c ./liblzr_optimize.so -o test-optimizer
+	./test-optimizer
+
 
 .PHONY: clean
 clean:
-	rm src/*.o
-	rm $(EXE_NAME)
-
+	rm -f *.a *.o *.so test-optimizer
