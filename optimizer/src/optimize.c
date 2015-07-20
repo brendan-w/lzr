@@ -14,9 +14,6 @@ static void to_buffer(opt_t* opt, lzr_point* points, size_t n)
 }
 
 
-/*
-    Allocates and returns a point to a new optimizer context.
-*/
 lzr_optimizer* lzr_create_optimizer(size_t max_points)
 {
     opt_t* opt = malloc(sizeof(opt_t));
@@ -31,9 +28,7 @@ lzr_optimizer* lzr_create_optimizer(size_t max_points)
     return (lzr_optimizer*) opt;
 }
 
-/*
-    Deallocator for the optimizer context
-*/
+
 void lzr_destroy_optimizer(lzr_optimizer* _opt)
 {
     opt_t* opt = (opt_t*) _opt;
@@ -42,18 +37,7 @@ void lzr_destroy_optimizer(lzr_optimizer* _opt)
     free(opt);
 }
 
-/*
-    Main optimizer function. Accepts an array of lzr_points as input,
 
-    params:
-           opt : the optimizer context
-        points : pointer to an array of lzr_points
-             n : length of the points array
-
-    returns:
-        The number of new points written to the array. Original data
-        is overwritten.
-*/
 size_t lzr_optimize(lzr_optimizer* _opt, lzr_point* points, size_t n)
 {
     opt_t* opt = (opt_t*) _opt;
@@ -64,11 +48,6 @@ size_t lzr_optimize(lzr_optimizer* _opt, lzr_point* points, size_t n)
     //return compile_paths(opt, points); //updates the point buffer and generates blanking jumps
     return 0;
 }
-
-
-
-
-
 
 
 
