@@ -41,6 +41,13 @@ test: all
 	./test-optimizer
 
 
+.PHONY: install
+install:
+	install -m 0755 liblzr_optimize.a $(PREFIX)/lib
+	install -m 0755 liblzr_optimize.so $(PREFIX)/lib
+	install -m 0755 include/lzr_optimize.h $(PREFIX)/include
+
+
 .PHONY: clean
 clean:
 	rm -f *.a *.o *.so test-optimizer
