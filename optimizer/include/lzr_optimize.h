@@ -10,6 +10,13 @@
 
 typedef void lzr_optimizer;
 
+
+typedef enum {
+    LZR_OPT_MAX_POINTS,
+    LZR_OPT_ANCHOR_POINTS,
+} opt_property;
+
+
 /*
     Allocates and returns a point to a new optimizer context.
 */
@@ -33,6 +40,16 @@ void lzr_destroy_optimizer(lzr_optimizer* opt);
         is overwritten.
 */
 size_t lzr_optimize(lzr_optimizer* opt, lzr_point* points, size_t n);
+
+//settings modifier
+void lzr_optimizer_set(lzr_optimizer* _opt, opt_property prop, int value);
+
+//settings getter
+int lzr_optimizer_get(lzr_optimizer* _opt, opt_property prop);
+
+
+//void pointer casters
+
 
 
 #endif /* OPTIMIZE_H */

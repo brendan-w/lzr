@@ -4,7 +4,7 @@
 
 VPATH = src
 PREFIX ?= /usr/local
-OBJS  = lzr_optimize.o find_paths.o rearrange_paths.o
+OBJS  = lzr_optimize.o find_paths.o rearrange_paths.o compile_paths.o
 
 
 # compile settings

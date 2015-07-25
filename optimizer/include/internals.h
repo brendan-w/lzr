@@ -43,7 +43,7 @@ typedef struct {
 //optimizer context
 typedef struct {
     size_t      max_points;       //the max number of points the buffers can hold
-    size_t      anchor_points;    //number of end points to place when performing blankin jumps
+    size_t      anchor_points;    //number of end points to place when performing blanking jumps
     opt_point_t last_known_point; //the last point from the previously optimized frame
 
     //point buffer
