@@ -139,5 +139,5 @@ void find_paths(opt_t* opt)
 {
     fill_angle(opt);
     path_split(opt);
-    // fill_cycle(opt);
+    fill_cycle(opt);
 }

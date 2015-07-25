@@ -11,7 +11,7 @@ OBJS  = lzr_optimize.o find_paths.o rearrange_paths.o compile_paths.o
 
 CC=gcc
 CFLAGS += -std=c99 -Wall -Wextra -pedantic -fPIC
-CFLAGS += -I./include -I../include
+CFLAGS += -I./include -I../../include
 LIBS=-lm
 
 ARFLAGS=rvs
