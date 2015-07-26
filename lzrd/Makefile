@@ -4,14 +4,14 @@
 
 VPATH = src
 # PREFIX ?= /usr/local
-OBJS  = main.o
+OBJS  = lzrd.o
 
 
 # compile settings
 
 CC      = gcc
 CFLAGS += -std=c99 -Wall -Wextra -pedantic
-CFLAGS += -I./include -I../include -I./libetherdream -I./liboptimizer/include
+CFLAGS += -I./include -I../include
 LIBS    = -lzmq -lpthread
 
 
@@ -31,7 +31,7 @@ lzrd: optimizer etherdream $(OBJS)
 
 .PHONY: optimizer
 optimizer:
-	cd liboptimizer/; $(MAKE)
+	cd liboptimize/; $(MAKE)
 
 
 .PHONY: etherdream
@@ -46,11 +46,11 @@ test: all
 
 .PHONY: install
 install:
-	# cd liboptimizer/; $(MAKE) install
+	# cd liboptimize/; $(MAKE) install
 
 
 .PHONY: clean
 clean:
 	cd libetherdream/; $(MAKE) clean
-	cd liboptimizer/; $(MAKE) clean
+	cd liboptimize/; $(MAKE) clean
 	rm -f *.o lzrd frame_server

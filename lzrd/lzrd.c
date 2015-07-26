@@ -11,7 +11,8 @@
 
 #include <lzr.h>
 #include <lzr_zmq.h>
-#include <etherdream.h>
+#include "liboptimize/include/lzr_optimize.h"
+#include "libetherdream/etherdream.h"
 
 
 typedef struct etherdream etherdream;
