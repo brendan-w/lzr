@@ -24,13 +24,16 @@ int main()
     frame->points[3].x = 100;
     frame->n_points = 4;
 
-
     for(int i = 0; i < 3; i++)
     {
+        lzr_send_topic(tx, LZR_ZMQ_FRAME);
         lzr_send_frame(tx, frame);
         printf("sent\n");
         sleep(1);
     }
+
+    lzr_send_topic(tx, LZR_ZMQ_TERMINATE);
+    lzr_send_empty(tx);
 
     free(frame);
     zmq_close(tx);
