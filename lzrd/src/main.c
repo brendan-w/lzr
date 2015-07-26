@@ -79,10 +79,10 @@ int main()
     etherdream_lib_start();
 
     //discover DACs
-    printf("Searching for Etherdream...\n");
     int dac_count = 0;
     while(dac_count == 0)
     {
+        printf("Searching for Etherdream...\n");
         sleep(1);
         dac_count = etherdream_dac_count();
     }
