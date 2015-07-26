@@ -5,6 +5,8 @@
 #include <lzr_optimize.h>
 #include <internals.h>
 
+
+#define POINT_INIT(_x, _y, _r, _g, _b, _i) { .x=_x, .y=_y, .r=_r, .g=_g, .b=_b, .i=_i }
 #define MAX_POINTS 1000
 
 
