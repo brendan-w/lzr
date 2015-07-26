@@ -2,7 +2,9 @@
 #ifndef LZR_ZMQ_H
 #define LZR_ZMQ_H
 
-
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #include <lzr.h>
 #include <zmq.h>
@@ -116,5 +118,8 @@ static void lzr_recv_frame(void* rx, lzr_frame* frame)
 }
 
 
+#ifdef __cplusplus
+} // extern "c"
+#endif
 
 #endif /* LZR_ZMQ_H */

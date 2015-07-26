@@ -2,6 +2,10 @@
 #ifndef LZR_TYPES_H
 #define LZR_TYPES_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdint.h>
 
 
@@ -10,8 +14,8 @@
 */
 
 typedef struct {
-    uint16_t x; //position X
-    uint16_t y; //position Y
+    int16_t x;  //position X
+    int16_t y;  //position Y
     uint16_t r; //Red
     uint16_t g; //Green
     uint16_t b; //Blue
@@ -43,5 +47,8 @@ typedef struct {
 } lzr_frame;
 
 
+#ifdef __cplusplus
+} // extern "c"
+#endif
 
 #endif /* LZR_TYPES_H */
