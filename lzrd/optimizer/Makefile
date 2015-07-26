@@ -37,8 +37,8 @@ liblzr_optimize.a: $(OBJS)
 
 .PHONY: test
 test: all
-	$(CC) $(CFLAGS) test/test.c ./liblzr_optimize.so -o test-optimizer
-	./test-optimizer
+	$(CC) $(CFLAGS) test/test.c ./liblzr_optimize.so -o test_optimizer
+	./test_optimizer
 
 
 .PHONY: install
@@ -50,4 +50,4 @@ install:
 
 .PHONY: clean
 clean:
-	rm -f *.a *.o *.so test-optimizer
+	rm -f *.a *.o *.so test_optimizer

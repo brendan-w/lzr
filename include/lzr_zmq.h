@@ -11,7 +11,7 @@
 
 // the default LZR endpoing
 #ifndef LZR_ZMQ_ENDPOINT
-#define LZR_ZMQ_ENDPOINT "tcp://localhost:5555"
+#define LZR_ZMQ_ENDPOINT "tcp://127.0.0.1:5555"
 #endif
 
 

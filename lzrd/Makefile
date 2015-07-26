@@ -34,6 +34,11 @@ optimizer:
 	cd optimizer/; $(MAKE)
 
 
+.PHONY: test
+test: all
+	$(CC) $(CFLAGS) $(LIBS) test/frame_server.c -o frame_server
+
+
 .PHONY: install
 install:
 	cd optimizer/; $(MAKE) install
@@ -42,4 +47,4 @@ install:
 .PHONY: clean
 clean:
 	cd optimizer/; $(MAKE) clean
-	rm -f *.o lzrd
+	rm -f *.o lzrd frame_server
