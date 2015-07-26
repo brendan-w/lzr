@@ -5,6 +5,9 @@
 #include <stdint.h>
 
 
+/*
+    POINTS
+*/
 
 typedef struct {
     uint16_t x; //position X
@@ -18,7 +21,7 @@ typedef struct {
 #define POSITION_MAX 65535
 #define COLOR_MAX    65535
 
-#define ANTINORM_POSITION(nv) (nv / POSITION_MAX) //un-normalizes a value ( [0, 1] ---> [0, POSITION_MAX] )
+#define ANTINORM_POSITION(nv) (nv / POSITION_MAX) //de-normalizes a value ( [0, 1] ---> [0, POSITION_MAX] )
 #define ANTINORM_COLOR(nv)    (nv / COLOR_MAX)
 
 #define POINT_INIT(_x, _y, _r, _g, _b, _i) { .x=_x, .y=_y, .r=_r, .g=_g, .b=_b, .i=_i }
@@ -30,11 +33,17 @@ typedef struct {
 #define POINTS_EQUAL(a, b)      ( POINTS_SAME_POS(a, b) && POINTS_SAME_COLOR(a, b) )
 
 
+/*
+    FRAMES
+*/
+
+#define FRAME_MAX_POINTS 1800
 
 typedef struct {
-  size_t n_points;
-  lzr_point* points;
+  lzr_point points[FRAME_MAX_POINTS];
+  uint16_t n_points;
 } lzr_frame;
+
 
 
 #endif /* LZR_TYPES_H */
