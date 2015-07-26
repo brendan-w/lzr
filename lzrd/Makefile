@@ -9,10 +9,10 @@ OBJS  = main.o
 
 # compile settings
 
-CC=gcc
+CC      = gcc
 CFLAGS += -std=c99 -Wall -Wextra -pedantic
-CFLAGS += -I./include -I../include
-LIBS=-lzmq
+CFLAGS += -I./include -I../include -I./libetherdream -I./liboptimizer/include
+LIBS    = -lzmq -lpthread
 
 
 # targets
@@ -21,8 +21,8 @@ LIBS=-lzmq
 all: lzrd
 
 
-lzrd: optimizer $(OBJS)
-	$(CC) -o $@ $(OBJS) $(LIBS)
+lzrd: optimizer etherdream $(OBJS)
+	$(CC) $(OBJS) ./libetherdream/etherdream.a $(LIBS) -o $@
 
 
 %.o: %.c
@@ -31,7 +31,12 @@ lzrd: optimizer $(OBJS)
 
 .PHONY: optimizer
 optimizer:
-	cd optimizer/; $(MAKE)
+	cd liboptimizer/; $(MAKE)
+
+
+.PHONY: etherdream
+etherdream:
+	cd libetherdream/; $(MAKE)
 
 
 .PHONY: test
@@ -41,10 +46,11 @@ test: all
 
 .PHONY: install
 install:
-	cd optimizer/; $(MAKE) install
+	# cd liboptimizer/; $(MAKE) install
 
 
 .PHONY: clean
 clean:
-	cd optimizer/; $(MAKE) clean
+	cd libetherdream/; $(MAKE) clean
+	cd liboptimizer/; $(MAKE) clean
 	rm -f *.o lzrd frame_server

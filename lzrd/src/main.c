@@ -11,6 +11,7 @@
 
 #include <lzr.h>
 #include <lzr_zmq.h>
+#include <etherdream.h>
 
 
 typedef struct etherdream etherdream;
@@ -39,9 +40,9 @@ static void send_frame()
         points[i].i = frame->points[i].i;
     }
 
-    int rc = etherdream_write(d, points, frame->n_points, 30000, 1);
+    int rc = etherdream_write(dac, points, frame->n_points, 30000, 1);
     printf("SEND frame (%d points)\n", rc);
-    etherdream_wait_for_ready(d);
+    etherdream_wait_for_ready(dac);
 
     free(points);
 }
@@ -90,7 +91,7 @@ int main()
     printf("Connecting to Etherdream...\n");
 
     dac = etherdream_get(0);
-    rc = etherdream_connect(d);
+    rc = etherdream_connect(dac);
     assert(rc == 0);
 
     printf("Connection successful...\n");
