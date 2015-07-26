@@ -1,11 +1,54 @@
+#define _GNU_SOURCE
 
-
-#include <stdlib.h>
+#include <math.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <stdlib.h>
 
 #include <lzr.h>
 #include <lzr_zmq.h>
+
+
+#define CIRCLE_POINTS 600
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
+
+uint16_t colorsin(float pos) {
+    int res = (sin(pos) + 1) * 32768;
+    if (res < 0) return 0;
+    if (res > 65535) return 65535;
+    return res;
+}
+
+void calc_frame(lzr_frame* frame, float phase)
+{
+    for(int i = 0; i < CIRCLE_POINTS; i++)
+    {
+        lzr_point* pt = (frame->points + i);
+
+        float ip = (float)i * 2.0 * M_PI / (float)CIRCLE_POINTS;
+        float ipf = fmod(ip + phase, 2.0 * M_PI);;
+
+        //pattern
+        ip *= 3;
+        float R = 5;
+        float r = 3;
+        float D = 5;
+
+        pt->x = 2500 * ((R-r)*cos(ip + phase) + D*cos((R-r)*ip/r));
+        pt->y = 2500 * ((R-r)*sin(ip + phase) - D*sin((R-r)*ip/r));
+
+        //color
+        pt->r = colorsin(ipf);
+        pt->g = colorsin(ipf + (2.0 * M_PI / 3.0));
+        pt->b = colorsin(ipf + (4.0 * M_PI / 3.0));
+    }
+
+    frame->n_points = CIRCLE_POINTS;  
+}
 
 
 //test laser server
@@ -17,23 +60,18 @@ int main()
     //create the working frame
     lzr_frame* frame = (lzr_frame*) malloc(sizeof(lzr_frame));
 
-    //load it with some data
-    frame->points[0].x = 0;
-    frame->points[1].x = 1;
-    frame->points[2].x = 2;
-    frame->points[3].x = 100;
-    frame->n_points = 4;
-
-    for(int i = 0; i < 3; i++)
+    for(int i = 0; i < 40; i++)
     {
+        calc_frame(frame, (float) i);
+
         lzr_send_topic(tx, LZR_ZMQ_FRAME);
         lzr_send_frame(tx, frame);
         printf("sent\n");
-        sleep(1);
+        usleep(1000000 / 10);
     }
 
-    lzr_send_topic(tx, LZR_ZMQ_TERMINATE);
-    lzr_send_empty(tx);
+    // lzr_send_topic(tx, LZR_ZMQ_TERMINATE);
+    // lzr_send_empty(tx);
 
     free(frame);
     zmq_close(tx);

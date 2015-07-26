@@ -40,8 +40,8 @@ etherdream:
 
 
 .PHONY: test
-test: all
-	$(CC) $(CFLAGS) $(LIBS) test/frame_server.c -o frame_server
+test: all test/frame_server.c
+	$(CC) $(CFLAGS) $(LIBS) -lm test/frame_server.c -o frame_server
 
 
 .PHONY: install
