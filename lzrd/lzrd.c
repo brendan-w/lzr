@@ -27,25 +27,29 @@ static etherdream* dac;
 
 static void send_frame()
 {
-    printf("RECV frame (%d points)\n", frame->n_points);
-    
-    etherdream_point* points = (etherdream_point*) calloc(sizeof(etherdream_point), frame->n_points);
-    
-    for(size_t i = 0; i < frame->n_points; i++)
+    //if the laser is ready for another frame
+    if(etherdream_is_ready(dac) == 1)
     {
-        points[i].x = frame->points[i].x;
-        points[i].y = frame->points[i].y;
-        points[i].r = frame->points[i].r;
-        points[i].g = frame->points[i].g;
-        points[i].b = frame->points[i].b;
-        points[i].i = frame->points[i].i;
+        printf("RECV frame (%d points)\n", frame->n_points);
+
+        etherdream_point* points = (etherdream_point*) calloc(sizeof(etherdream_point), frame->n_points);
+
+        for(size_t i = 0; i < frame->n_points; i++)
+        {
+            points[i].x = frame->points[i].x;
+            points[i].y = frame->points[i].y;
+            points[i].r = frame->points[i].r;
+            points[i].g = frame->points[i].g;
+            points[i].b = frame->points[i].b;
+            points[i].i = frame->points[i].i;
+        }
+
+        int rc = etherdream_write(dac, points, frame->n_points, 30000, -1);
+        printf("SEND frame (%d points)\n", rc);
+        free(points);
     }
-
-    int rc = etherdream_write(dac, points, frame->n_points, 30000, -1);
-    printf("SEND frame (%d points)\n", rc);
-    etherdream_wait_for_ready(dac);
-
-    free(points);
+    //else, dump the frame, an old one is still being drawn
+    //TODO: ^ is this really a good idea? Could create a stutterring animation
 }
 
 

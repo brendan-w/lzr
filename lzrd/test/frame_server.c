@@ -71,7 +71,7 @@ int main()
         lzr_send_topic(tx, LZR_ZMQ_FRAME);
         lzr_send_frame(tx, frame);
         printf("sent\n");
-        usleep(1000000 / 30);
+        usleep(1000000 / 300);
         i++;
     }
 
