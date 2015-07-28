@@ -39,7 +39,7 @@ typedef struct {
     FRAMES
 */
 
-#define FRAME_MAX_POINTS 1800
+#define FRAME_MAX_POINTS 2000
 
 typedef struct {
   lzr_point points[FRAME_MAX_POINTS];

@@ -41,7 +41,7 @@ static void send_frame()
         points[i].i = frame->points[i].i;
     }
 
-    int rc = etherdream_write(dac, points, frame->n_points, 30000, 1);
+    int rc = etherdream_write(dac, points, frame->n_points, 30000, -1);
     printf("SEND frame (%d points)\n", rc);
     etherdream_wait_for_ready(dac);
 

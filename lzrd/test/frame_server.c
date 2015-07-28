@@ -57,17 +57,22 @@ int main()
     void* zmq_ctx = zmq_ctx_new();
     void* tx      = lzr_create_tx(zmq_ctx);
 
+    usleep(1200000);
+
     //create the working frame
     lzr_frame* frame = (lzr_frame*) malloc(sizeof(lzr_frame));
 
-    for(int i = 0; i < 40; i++)
+    int i = 0;
+
+    while(1)
     {
-        calc_frame(frame, (float) i);
+        calc_frame(frame, (float) i / 50);
 
         lzr_send_topic(tx, LZR_ZMQ_FRAME);
         lzr_send_frame(tx, frame);
         printf("sent\n");
-        usleep(1000000 / 10);
+        usleep(1000000 / 30);
+        i++;
     }
 
     // lzr_send_topic(tx, LZR_ZMQ_TERMINATE);
