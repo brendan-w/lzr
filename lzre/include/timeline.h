@@ -1,30 +1,32 @@
 
 #include <vector>
 #include <clip.h>
+#include <lzr.h>
+
 
 
 class TimelineClip
 {
     public:
         TimelineClip();
-        Frame* render(Time t);
+        virtual ~TimelineClip();
+        lzr_frame render(lzr_time t);
         void set_clip(Clip* c);
-        void set_zone(Zone* z);
-        void set_start(Time t);
-        void set_stop(Time t);
+        void set_start(lzr_time t);
+        void set_stop(lzr_time t);
 
     private:
         Clip* clip;
-        Zone* zone;
-        Time start;
-        Time stop;        
+        lzr_time start;
+        lzr_time stop;        
 };
 
 class Timeline
 {
     public:
         Timeline();
-        Frame* render(Time t);
+        virtual ~Timeline();
+        lzr_frame render(lzr_time t);
         void add_clip(TimelineClip* c);
         void remove_clip(TimelineClip* c);
     private:

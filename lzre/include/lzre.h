@@ -2,8 +2,6 @@
 #include <string>
 #include <timeline.h>
 
-typedef double Time;     //seconds
-typedef double TimeNorm; //[0,1]
 
 
 class Lazer
@@ -16,10 +14,10 @@ class Lazer
         void start();
         void stop();
         void pause();
-        void seek(Time t);
+        void seek(lzr_time t);
     private:
         bool loaded = false;
         std::string path = "";
-        Time time;
+        lzr_time time;
         Timeline* timeline;
 };

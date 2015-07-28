@@ -47,6 +47,16 @@ typedef struct {
 } lzr_frame;
 
 
+/*
+    TIME
+*/
+
+//sometimes this represents seconds, others, it represents normallized time
+//Normalized time is ussually notated `nt` while time in seconds is simply `t`
+typedef double lzr_time;
+
+
+
 #ifdef __cplusplus
 } // extern "c"
 #endif
