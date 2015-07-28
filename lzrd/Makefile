@@ -10,7 +10,7 @@ OBJS  = lzrd.o
 # compile settings
 
 CC      = gcc
-CFLAGS += -std=c99 -Wall -Wextra -pedantic
+CFLAGS += -std=c99 -Wall -Wextra -pedantic -ggdb
 CFLAGS += -I./include -I../include
 LIBS    = -lzmq -lpthread
 
