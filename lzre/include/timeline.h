@@ -18,7 +18,7 @@ class TimelineClip
     private:
         Clip* clip;
         lzr_time start;
-        lzr_time stop;        
+        lzr_time stop;
 };
 
 class Timeline

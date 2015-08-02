@@ -6,14 +6,14 @@ all: lzrd
 
 .PHONY: lzrd
 lzrd:
-	cd lzrd/; $(MAKE)
+	$(MAKE) -C lzrd/
 
 
 .PHONY: install
 install:
-	cd lzrd/; $(MAKE) install
+	$(MAKE) -C lzrd/ install
 
 
 .PHONY: clean
 clean:
-	cd lzrd/; $(MAKE) clean
+	$(MAKE) -C lzrd/ clean
