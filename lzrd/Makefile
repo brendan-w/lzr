@@ -31,7 +31,7 @@ lzrd: optimizer etherdream $(OBJS)
 
 .PHONY: optimizer
 optimizer:
-	$(MAKE) -C liboptimize/
+	$(MAKE) -C liblzr_optimize/
 
 
 .PHONY: etherdream
@@ -46,11 +46,11 @@ test: all test/frame_server.c
 
 .PHONY: install
 install:
-	# $(MAKE) -C liboptimize/ install
+	# $(MAKE) -C liblzr_optimize/ install
 
 
 .PHONY: clean
 clean:
 	$(MAKE) -C libetherdream/ clean
-	$(MAKE) -C liboptimize/ clean
+	$(MAKE) -C liblzr_optimize/ clean
 	rm -f *.o lzrd frame_server
