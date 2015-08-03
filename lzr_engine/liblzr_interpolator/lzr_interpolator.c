@@ -66,6 +66,50 @@ static double lerp(double v0, double v1, double t)
     return (1-t)*v0 + t*v1;
 }
 
+static int lerp_lzr(interp_t* interp, lzr_point start, lzr_point end)
+{
+    size_t sq_dist     = LZR_POINT_SQ_DISTANCE(start, end);
+    size_t sq_max_dist = interp->max_distance * interp->max_distance;
+
+    if(sq_dist > sq_max_dist)
+    {
+        //root everything back to actual values
+        size_t dist     = (size_t) round(sqrt((double) sq_dist));
+        size_t max_dist = interp->max_distance;
+
+        //interpolate
+        //number of intersticial points to generate
+        size_t n = dist / max_dist; //integer division provides flooring
+        if(dist % max_dist == 0) n--; //correct for paths that evenly divide
+
+        n += 2; //include the two endpoints, which arleady exist
+
+        lzr_point prev_new = start;
+
+        //loop through the intersticial points
+        for(size_t i = 1; i < (n-1); i++)
+        {
+            lzr_point p_new = start; //load color information into the new point
+
+            double t = (double) i / n;
+            p_new.x = (int16_t) round(lerp((double) start.x, (double) end.x, t));
+            p_new.y = (int16_t) round(lerp((double) start.y, (double) end.y, t));
+
+            //prevent multiple points at the same location
+            if(!LZR_POINTS_SAME_POS(prev_new, p_new) &&
+               !LZR_POINTS_SAME_POS(end, p_new))
+            {
+                if(add_point(interp, p_new))
+                    return -1;
+
+                prev_new = p_new;
+            }
+        }
+    }
+
+    return 0;
+}
+
 int lzr_interpolator_run(lzr_interpolator* _interp, lzr_frame* frame)
 {
     interp_t* interp = (interp_t*) _interp;
@@ -78,7 +122,6 @@ int lzr_interpolator_run(lzr_interpolator* _interp, lzr_frame* frame)
 
     bool in_path = false; //whether or not the previous point was a lit point
     lzr_point prev;
-    size_t sq_max_dist = interp->max_distance * interp->max_distance;
 
     for(size_t i = 0; i < frame->n_points; i++)
     {
@@ -94,42 +137,9 @@ int lzr_interpolator_run(lzr_interpolator* _interp, lzr_frame* frame)
         }
         else
         {
-            size_t sq_dist = LZR_POINT_SQ_DISTANCE(prev, p);
-            if(sq_dist > sq_max_dist)
-            {
-                //root everything back to actual values
-                size_t dist     = (size_t) round(sqrt((double) sq_dist));
-                size_t max_dist = (size_t) round(sqrt((double) sq_max_dist));
-
-                //interpolate
-                //number of intersticial points to generate
-                size_t n = dist / max_dist; //integer division provides flooring
-                if(dist % max_dist == 0) n--; //correct for paths that evenly divide
-
-                n += 2; //include the two endpoints, which arleady exist
-
-                lzr_point prev_new = prev;
-
-                //loop through the intersticial points
-                for(size_t i = 1; i < (n-1); i++)
-                {
-                    lzr_point p_new = prev; //load color information into the new point
-
-                    double t = (double) i / n;
-                    p_new.x = (int16_t) round(lerp((double) prev.x, (double) p.x, t));
-                    p_new.y = (int16_t) round(lerp((double) prev.y, (double) p.y, t));
-
-                    //prevent multiple points at the same location
-                    if(!LZR_POINTS_SAME_POS(prev_new, p_new) &&
-                       !LZR_POINTS_SAME_POS(p, p_new))
-                    {
-                        if(add_point(interp, p_new))
-                            return -1;
-
-                        prev_new = p_new;
-                    }
-                }
-            }
+            int error = lerp_lzr(interp, prev, p);
+            if(error)
+                return error;
         }
 
         prev = p;
