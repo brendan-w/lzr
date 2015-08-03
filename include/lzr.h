@@ -36,10 +36,10 @@ typedef struct {
     FRAMES
 */
 
-#define FRAME_MAX_POINTS 2000  // = 60,000 pps / 30 fps
+#define LZR_FRAME_MAX_POINTS 2000  // = 60,000 pps / 30 fps
 
 typedef struct {
-  lzr_point points[FRAME_MAX_POINTS];
+  lzr_point points[LZR_FRAME_MAX_POINTS];
   uint16_t n_points;
 } lzr_frame;
 

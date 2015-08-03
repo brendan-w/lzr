@@ -40,7 +40,7 @@ int lzr_interpolator_get(lzr_interpolator* _opt, interp_property prop);
         0  : success
         -1 : error, not enough room for additional points
 */
-int lzr_interpolate(lzr_interpolator* interp, lzr_frame* frame);
+int lzr_interpolator_run(lzr_interpolator* interp, lzr_frame* frame);
 
 
 #endif /* LZR_INTERPOLATE_H */

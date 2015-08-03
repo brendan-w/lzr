@@ -30,8 +30,8 @@ lzr_interpolator.a: $(OBJS)
 
 
 .PHONY: test
-test: all
-	$(CC) $(CFLAGS) test/test.c ./lzr_interpolator.a -o test_interpolator
+test: all test.c
+	$(CC) $(CFLAGS) $(LIBS) test.c ./lzr_interpolator.a -o test_interpolator
 	./test_interpolator
 
 

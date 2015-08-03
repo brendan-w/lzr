@@ -108,7 +108,7 @@ static void lzr_recv_frame(void* rx, lzr_frame* frame)
     //TODO: error checking
 
     //max number of bytes for the max number of points in a frame
-    size_t max_len = (FRAME_MAX_POINTS * sizeof(lzr_point));
+    size_t max_len = (LZR_FRAME_MAX_POINTS * sizeof(lzr_point));
 
     //recieve and block
     int n = zmq_recv(rx, (void*) (frame->points), max_len, 0);

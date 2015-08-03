@@ -77,7 +77,7 @@ int main()
     zmq_ctx      = zmq_ctx_new();
     rx           = lzr_create_rx(zmq_ctx);
     frame        = (lzr_frame*) malloc(sizeof(lzr_frame));
-    ether_points = (etherdream_point*) calloc(sizeof(etherdream_point), FRAME_MAX_POINTS);
+    ether_points = (etherdream_point*) calloc(sizeof(etherdream_point), LZR_FRAME_MAX_POINTS);
 
     etherdream_lib_start();
 
