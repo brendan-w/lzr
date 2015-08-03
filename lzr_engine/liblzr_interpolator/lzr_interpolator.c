@@ -6,7 +6,7 @@
 #include "lzr_interpolator.h"
 
 
-#define DEFAULT_MAX_DISTANCE (LZR_POINT_MAX_POSITION / 512);
+#define DEFAULT_MAX_DISTANCE (LZR_POINT_MAX_POSITION / 2048);
 
 
 typedef struct {
