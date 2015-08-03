@@ -50,6 +50,7 @@ int lzr_interpolator_get(lzr_interpolator* _interp, interp_property prop)
     return 0;
 }
 
+//returns success of failure due to frame size constraint
 static int add_point(interp_t* interp, lzr_point p)
 {
     if(interp->frame.n_points >= LZR_FRAME_MAX_POINTS)
@@ -107,17 +108,26 @@ int lzr_interpolator_run(lzr_interpolator* _interp, lzr_frame* frame)
 
                 n += 2; //include the two endpoints, which arleady exist
 
+                lzr_point prev_new = prev;
+
                 //loop through the intersticial points
                 for(size_t i = 1; i < (n-1); i++)
                 {
-                    lzr_point new = prev; //load color information into the new point
+                    lzr_point p_new = prev; //load color information into the new point
 
                     double t = (double) i / n;
-                    new.x = (int16_t) round(lerp((double) prev.x, (double) p.x, t));
-                    new.y = (int16_t) round(lerp((double) prev.y, (double) p.y, t));
+                    p_new.x = (int16_t) round(lerp((double) prev.x, (double) p.x, t));
+                    p_new.y = (int16_t) round(lerp((double) prev.y, (double) p.y, t));
 
-                    if(add_point(interp, new))
-                        return -1;
+                    //prevent multiple points at the same location
+                    if(!LZR_POINTS_SAME_POS(prev_new, p_new) &&
+                       !LZR_POINTS_SAME_POS(p, p_new))
+                    {
+                        if(add_point(interp, p_new))
+                            return -1;
+
+                        prev_new = p_new;
+                    }
                 }
             }
         }
