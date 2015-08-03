@@ -39,6 +39,7 @@ int lzr_interpolator_get(lzr_interpolator* _opt, interp_property prop);
     returns:
         0  : success
         -1 : error, not enough room for additional points
+        -2 : error, LZR_INTERP_MAX_DISTANCE was set to zero
 */
 int lzr_interpolator_run(lzr_interpolator* interp, lzr_frame* frame);
 

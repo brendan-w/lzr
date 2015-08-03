@@ -1,4 +1,5 @@
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <math.h>
@@ -68,6 +69,9 @@ int lzr_interpolator_run(lzr_interpolator* _interp, lzr_frame* frame)
 {
     interp_t* interp = (interp_t*) _interp;
 
+    if(interp->max_distance == 0)
+        return -2;
+
     //wipe the working buffer
     interp->frame.n_points = 0;
 
@@ -92,11 +96,14 @@ int lzr_interpolator_run(lzr_interpolator* _interp, lzr_frame* frame)
             size_t sq_dist = LZR_POINT_SQ_DISTANCE(prev, p);
             if(sq_dist > sq_max_dist)
             {
-                //interpolate
+                //root everything back to actual values
+                size_t dist     = (size_t) round(sqrt((double) sq_dist));
+                size_t max_dist = (size_t) round(sqrt((double) sq_max_dist));
 
+                //interpolate
                 //number of intersticial points to generate
-                size_t n = sq_dist / sq_max_dist; //integer division provides flooring
-                if(sq_dist % sq_max_dist == 0) n--; //correct for paths that evenly divide
+                size_t n = dist / max_dist; //integer division provides flooring
+                if(dist % max_dist == 0) n--; //correct for paths that evenly divide
 
                 n += 2; //include the two endpoints, which arleady exist
 
