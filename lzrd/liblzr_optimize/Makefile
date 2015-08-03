@@ -27,7 +27,7 @@ liblzr_optimize.so: $(OBJS)
 	$(CC) -shared -o $@ $^ $(LIBS)
 
 
-liblzr_optimize.a: $(OBJS) 
+liblzr_optimize.a: $(OBJS)
 	$(AR) $(ARFLAGS) $@ $^
 
 
