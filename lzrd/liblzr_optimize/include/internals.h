@@ -19,7 +19,6 @@
 #define PI 3.14159265358979323846
 
 //functions
-#define DISTANCE(a, b)        ( (a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y) ) //square of the distance between two points
 #define ANGLE(a, b)           ( atan2(b.y - a.y, b.x - a.y) * -1 ) //the angle from point A to point B on range (-PI, PI] in screen coords
 #define ANGLE_NORM(a)         ( fmod(a, PI) ) //constrains angles to (-PI, PI]
 #define ANGLE_OPPOSITE(a)     ( ANGLE_NORM(a + PI) )

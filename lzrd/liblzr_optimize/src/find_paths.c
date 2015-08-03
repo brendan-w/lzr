@@ -57,7 +57,7 @@ static void path_split(opt_t* opt)
     {
         p = opt->points[i];
 
-        if(POINT_BLANKED(p.base_point))
+        if(LZR_POINT_IS_BLANKED(p.base_point))
         {
             if(in_path)
             {
@@ -76,7 +76,7 @@ static void path_split(opt_t* opt)
                 //test the angle this point makes with previous/next points
                 //TODO: clean this up
 
-                if((i+1 < opt->n_points) && !POINT_BLANKED(opt->points[i + 1].base_point)) //is the next point valid to check against
+                if((i+1 < opt->n_points) && !LZR_POINT_IS_BLANKED(opt->points[i + 1].base_point)) //is the next point valid to check against
                 {
                     opt_point_t next = opt->points[i + 1];
 
@@ -122,7 +122,7 @@ static void fill_cycle(opt_t* opt)
         opt_point_t b = opt->points[path->b];
 
         //if they're in the same position, and there are at least 3 points
-        if(POINTS_SAME_POS(a.base_point, b.base_point) && (path->b - path->a > 1))
+        if(LZR_POINTS_SAME_POS(a.base_point, b.base_point) && (path->b - path->a > 1))
         {
             //fetch the point one forward of the joint
             opt_point_t next = opt->points[path->a + 1];

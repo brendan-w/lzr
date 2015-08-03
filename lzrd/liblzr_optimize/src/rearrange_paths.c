@@ -19,7 +19,7 @@ typedef struct {
 //the cost function for a blank jump between points A and B
 static size_t cost(opt_point_t* a, opt_point_t* b)
 {
-    return DISTANCE(a->base_point, b->base_point);
+    return LZR_POINT_SQ_DISTANCE(a->base_point, b->base_point);
 }
 
 static void swap_paths(opt_path_t* path_a, opt_path_t* path_b)

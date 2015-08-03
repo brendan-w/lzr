@@ -13,13 +13,13 @@ static size_t blank_between(opt_t* opt, lzr_point* points, opt_point_t* a, opt_p
     for(; i < opt->anchor_points; i++)
     {
         points[i] = a->base_point;
-        POINT_BLANK(points[i]);
+        LZR_POINT_BLANK(points[i]);
     }
 
     for(; i < (opt->anchor_points * 2); i++)
     {
         points[i] = b->base_point;
-        POINT_BLANK(points[i]);
+        LZR_POINT_BLANK(points[i]);
     }
 
     return i;
@@ -42,7 +42,7 @@ size_t compile_paths(opt_t* opt, lzr_point* points)
         //starting point, then an introductory blanking jump
         //is neccessary.
 
-        if( !POINTS_SAME_POS(a.base_point, b.base_point) )
+        if( !LZR_POINTS_SAME_POS(a.base_point, b.base_point) )
         {
             //create a blanking jump
             n += blank_between(opt, (points + n), &a, &b);

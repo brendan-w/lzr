@@ -38,18 +38,6 @@ void lzr_destroy_optimizer(lzr_optimizer* _opt)
     free(opt);
 }
 
-
-size_t lzr_optimize(lzr_optimizer* _opt, lzr_point* points, size_t n)
-{
-    opt_t* opt = (opt_t*) _opt;
-
-    to_buffer(opt, points, n);  //load the points into the working buffer
-    find_paths(opt);            //populates the path buffer
-    rearrange_paths(opt);       //sorts the path buffer
-    return compile_paths(opt, points); //updates the point buffer and generates blanking jumps
-}
-
-
 void lzr_optimizer_set(lzr_optimizer* _opt, opt_property prop, int value)
 {
     opt_t* opt = (opt_t*) _opt;
@@ -71,3 +59,14 @@ int lzr_optimizer_get(lzr_optimizer* _opt, opt_property prop)
 
     return 0;
 }
+
+size_t lzr_optimize(lzr_optimizer* _opt, lzr_point* points, size_t n)
+{
+    opt_t* opt = (opt_t*) _opt;
+
+    to_buffer(opt, points, n);  //load the points into the working buffer
+    find_paths(opt);            //populates the path buffer
+    rearrange_paths(opt);       //sorts the path buffer
+    return compile_paths(opt, points); //updates the point buffer and generates blanking jumps
+}
+
