@@ -54,7 +54,7 @@ void calc_frame(lzr_frame* frame, float phase)
 //test laser server
 int main()
 {
-    void* zmq_ctx = zmq_ctx_new();
+    void* zmq_ctx = lzr_create_zmq_ctx();
     void* tx      = lzr_create_frame_tx(zmq_ctx, LZR_ZMQ_ENDPOINT);
 
     usleep(1200000);
@@ -78,8 +78,8 @@ int main()
     // lzr_send_empty(tx);
 
     free(frame);
-    zmq_close(tx);
-    zmq_ctx_destroy(zmq_ctx);
+    lzr_destroy_frame_tx(tx);
+    lzr_destroy_zmq_ctx(zmq_ctx);
 
     return 0;
 }

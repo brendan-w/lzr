@@ -1,7 +1,12 @@
 
 
 .PHONY: all
-all: lzrd
+all: liblzr lzrd
+
+
+.PHONY: liblzr
+liblzr:
+	$(MAKE) -C liblzr/
 
 
 .PHONY: lzrd
@@ -11,9 +16,10 @@ lzrd:
 
 .PHONY: install
 install:
-	$(MAKE) -C lzrd/ install
+	# $(MAKE) -C lzrd/ install
 
 
 .PHONY: clean
 clean:
+	$(MAKE) -C liblzr/ clean
 	$(MAKE) -C lzrd/ clean

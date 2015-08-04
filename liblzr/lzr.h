@@ -23,6 +23,7 @@
 extern "C" {
 #endif
 
+#include <zmq.h>
 #include <stdint.h>
 
 
@@ -102,6 +103,13 @@ int lzr_send_frame(void* tx, lzr_frame* frame);
 //recieve a single frame
 int lzr_recv_frame(void* rx, lzr_frame* frame);
 
+//zmq macros
+
+//wrappers for handling ZMQ contexts
+#define lzr_create_zmq_ctx()     zmq_ctx_new()
+#define lzr_destroy_zmq_ctx(ctx) zmq_ctx_destroy(ctx)
+#define lzr_destroy_frame_rx(rx) zmq_close(rx)
+#define lzr_destroy_frame_tx(tx) zmq_close(tx)
 
 //the default LZR endpoint
 #ifndef LZR_ZMQ_ENDPOINT
