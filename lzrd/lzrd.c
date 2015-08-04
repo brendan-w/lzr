@@ -1,7 +1,7 @@
 
 /*
-    Right now, this is mostly just glue that puts the laser
-    on a ZMQ subscriber socket.
+    Right now, this is mostly just glue that puts an
+    etherdream on a ZMQ subscriber socket.
 */
 
 #include <stdlib.h>
@@ -10,8 +10,7 @@
 #include <assert.h>
 
 #include <lzr.h>
-#include <lzr_zmq.h>
-#include "liboptimize/include/lzr_optimize.h"
+#include <zmq.h>
 #include "libetherdream/etherdream.h"
 
 
@@ -50,32 +49,12 @@ static void send_frame()
 }
 
 
-static int loop()
-{
-    while(1)
-    {
-        switch(lzr_recv_topic(rx))
-        {
-            case LZR_ZMQ_ERROR:
-                return 1;
-            case LZR_ZMQ_TERMINATE:
-                return 0;
-            case LZR_ZMQ_FRAME:
-                lzr_recv_frame(rx, frame);
-                send_frame();
-                break;
-        }
-    }
-}
-
-
-
 //main laser client
 int main()
 {
     int rc       = 0;
     zmq_ctx      = zmq_ctx_new();
-    rx           = lzr_create_rx(zmq_ctx);
+    rx           = lzr_create_frame_rx(zmq_ctx, LZR_ZMQ_ENDPOINT);
     frame        = (lzr_frame*) malloc(sizeof(lzr_frame));
     ether_points = (etherdream_point*) calloc(sizeof(etherdream_point), LZR_FRAME_MAX_POINTS);
 
@@ -101,7 +80,11 @@ int main()
 
     //enter the main loop
     //-------------------
-    rc = loop(rx, frame);
+    while(1)
+    {
+        lzr_recv_frame(rx, frame);
+        send_frame();
+    }
     //-------------------
 
     etherdream_stop(dac);

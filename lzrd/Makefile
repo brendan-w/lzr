@@ -11,7 +11,7 @@ OBJS  = lzrd.o
 
 CC      = gcc
 CFLAGS += -std=c99 -Wall -Wextra -pedantic -ggdb
-CFLAGS += -I./include -I../include
+CFLAGS += -I../liblzr
 LIBS    = -lzmq -lpthread
 
 
@@ -21,12 +21,16 @@ LIBS    = -lzmq -lpthread
 all: lzrd
 
 
-lzrd: optimizer etherdream $(OBJS)
-	$(CC) $(OBJS) ./libetherdream/etherdream.a $(LIBS) -o $@
+lzrd: ../liblzr/liblzr.a etherdream $(OBJS)
+	$(CC) $(OBJS) ./libetherdream/etherdream.a ../liblzr/liblzr.a $(LIBS) -o $@
 
 
 %.o: %.c
 	$(CC) -c -o $@ $< $(CFLAGS)
+
+
+../liblzr/liblzr.a:
+	$(MAKE) -C ../liblzr/
 
 
 .PHONY: etherdream
@@ -47,5 +51,4 @@ install:
 .PHONY: clean
 clean:
 	$(MAKE) -C libetherdream/ clean
-	$(MAKE) -C liblzr_optimize/ clean
 	rm -f *.o lzrd frame_server
