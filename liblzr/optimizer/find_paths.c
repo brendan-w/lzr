@@ -1,6 +1,6 @@
 
 
-#include <internals.h>
+#include "lzr_optimizer.h"
 
 /*
     The angle formed between three points. Because of the way point

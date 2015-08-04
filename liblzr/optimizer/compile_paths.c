@@ -1,7 +1,6 @@
 
 
-#include <math.h>
-#include <internals.h>
+#include "lzr_optimizer.h"
 
 #define PATH_LENGTH(p) abs(p->b - p->a)
 

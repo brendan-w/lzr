@@ -1,7 +1,5 @@
 
-
-#include <lzr_optimize.h>
-#include <internals.h>
+#include "lzr_optimizer.h"
 
 
 

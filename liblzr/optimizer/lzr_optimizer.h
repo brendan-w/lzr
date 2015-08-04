@@ -3,7 +3,10 @@
 #ifndef OPTIMIZER_INTERNALS_H
 #define OPTIMIZER_INTERNALS_H
 
-#include <lzr_optimize.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <math.h>
+#include <lzr.h>
 
 
 
@@ -62,9 +65,6 @@ typedef struct {
                           (p)->base_point.g = 0; \
                           (p)->base_point.b = 0; \
                           (p)->base_point.i = 0;
-
-
-
 
 
 /*

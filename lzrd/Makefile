@@ -29,11 +29,6 @@ lzrd: optimizer etherdream $(OBJS)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 
-.PHONY: optimizer
-optimizer:
-	$(MAKE) -C liblzr_optimize/
-
-
 .PHONY: etherdream
 etherdream:
 	$(MAKE) -C libetherdream/

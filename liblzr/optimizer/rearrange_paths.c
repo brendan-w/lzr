@@ -1,6 +1,6 @@
 
 
-#include <internals.h>
+#include "lzr_optimizer.h"
 
 /*
     Returns a pointer to an opt_point_t.

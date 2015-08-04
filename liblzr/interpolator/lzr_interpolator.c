@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <math.h>
-#include "lzr_interpolator.h"
+#include <lzr.h>
 
 
 #define DEFAULT_MAX_DISTANCE (LZR_POINT_MAX_POSITION / 2048);
