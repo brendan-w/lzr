@@ -6,7 +6,7 @@
 #include <stdlib.h>
 
 #include <lzr.h>
-#include <lzr_zmq.h>
+#include <zmq.h>
 
 
 #define CIRCLE_POINTS 600
@@ -55,7 +55,7 @@ void calc_frame(lzr_frame* frame, float phase)
 int main()
 {
     void* zmq_ctx = zmq_ctx_new();
-    void* tx      = lzr_create_tx(zmq_ctx);
+    void* tx      = lzr_create_frame_tx(zmq_ctx, LZR_ZMQ_ENDPOINT);
 
     usleep(1200000);
 
@@ -68,7 +68,6 @@ int main()
     {
         calc_frame(frame, (float) i / 50);
 
-        lzr_send_topic(tx, LZR_ZMQ_FRAME);
         lzr_send_frame(tx, frame);
         printf("sent\n");
         usleep(1000000 / 300);

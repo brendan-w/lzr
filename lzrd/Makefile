@@ -40,7 +40,7 @@ etherdream:
 
 .PHONY: test
 test: all test/frame_server.c
-	$(CC) $(CFLAGS) $(LIBS) -lm test/frame_server.c -o frame_server
+	$(CC) $(CFLAGS) $(LIBS) -lm test/frame_server.c ../liblzr/liblzr.a -o frame_server
 
 
 .PHONY: install
