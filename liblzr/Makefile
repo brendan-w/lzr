@@ -1,7 +1,7 @@
 
 
+# ============================= compile settings =============================
 
-# compile settings
 
 CC      = gcc
 CFLAGS += -std=c99 -Wall -Wextra -pedantic -fPIC
@@ -10,9 +10,10 @@ LIBS    = -lzmq -lm
 ARFLAGS = rs
 
 
-# files and paths
+# ============================= files and paths =============================
 
-# PREFIX ?= /usr/local
+
+INSTALL_PREFIX ?= /usr/local
 
 OBJS += interpolator/lzr_interpolator.o
 
@@ -24,8 +25,8 @@ OBJS += optimizer/lzr_optimizer.o \
 OBJS += zmq/lzr_zmq.o
 
 
+# ============================= main targets =============================
 
-# targets
 
 .PHONY: all
 all: liblzr.so liblzr.a
@@ -43,21 +44,32 @@ liblzr.a: $(OBJS)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 
-
-
-
-
-# .PHONY: test
-# test: all test/frame_server.c
-# 	$(CC) $(CFLAGS) $(LIBS) -lm test/frame_server.c -o frame_server
-
-
 .PHONY: install
 install:
-	# $(MAKE) -C liblzr/ install
+	install -m 0755 liblzr.a  $(INSTALL_PREFIX)/lib
+	install -m 0755 liblzr.so $(INSTALL_PREFIX)/lib
+	install -m 0755 lzr.h     $(INSTALL_PREFIX)/include
 
 
 .PHONY: clean
 clean:
 	rm -f *.a *.o *.so
 	rm -f interpolator/*.o optimizer/*.o zmq/*.o
+	rm -f test_optimizer test_interpolator
+
+
+# ============================= test targets =============================
+
+
+.PHONY: test
+test: test_interpolator test_optimizer
+
+
+test_optimizer: all tests/test_optimizer.c
+	$(CC) $(CFLAGS) $(LIBS) tests/test_optimizer.c ./liblzr.a -o test_optimizer
+	./test_optimizer
+
+
+test_interpolator: all tests/test_interpolator.c
+	$(CC) $(CFLAGS) $(LIBS) tests/test_interpolator.c ./liblzr.a -o test_interpolator
+	./test_interpolator
