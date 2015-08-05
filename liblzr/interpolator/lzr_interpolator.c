@@ -82,27 +82,27 @@ static int lerp_lzr(interp_t* interp, lzr_point start, lzr_point end)
         size_t n = dist / max_dist; //integer division provides flooring
         if(dist % max_dist == 0) n--; //correct for paths that evenly divide
 
-        n += 2; //include the two endpoints, which arleady exist
+        n += 2; //include the two endpoints, which already exist
 
-        lzr_point prev_new = start;
+        lzr_point prev = start;
 
         //loop through the intersticial points
         for(size_t i = 1; i < (n-1); i++)
         {
-            lzr_point p_new = start; //load color information into the new point
+            lzr_point p = start; //load color information into the new point
 
             double t = (double) i / n;
-            p_new.x = (int16_t) round(lerp((double) start.x, (double) end.x, t));
-            p_new.y = (int16_t) round(lerp((double) start.y, (double) end.y, t));
+            p.x = (int16_t) round(lerp((double) start.x, (double) end.x, t));
+            p.y = (int16_t) round(lerp((double) start.y, (double) end.y, t));
 
             //prevent multiple points at the same location
-            if(!LZR_POINTS_SAME_POS(prev_new, p_new) &&
-               !LZR_POINTS_SAME_POS(end, p_new))
+            if(!LZR_POINTS_SAME_POS(prev, p) &&
+               !LZR_POINTS_SAME_POS(end, p))
             {
-                if(add_point(interp, p_new))
+                if(add_point(interp, p))
                     return -1;
 
-                prev_new = p_new;
+                prev = p;
             }
         }
     }
