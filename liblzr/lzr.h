@@ -172,10 +172,10 @@ lzr_interpolator* lzr_interpolator_create();
 void lzr_interpolator_destroy(lzr_interpolator* interp);
 
 //settings modifier
-void lzr_interpolator_set(lzr_interpolator* _opt, interp_property prop, int value);
+void lzr_interpolator_set(lzr_interpolator* interp, interp_property prop, int value);
 
 //settings getter
-int lzr_interpolator_get(lzr_interpolator* _opt, interp_property prop);
+int lzr_interpolator_get(lzr_interpolator* interp, interp_property prop);
 
 /*
     Main interpolator function.
