@@ -192,6 +192,14 @@ int lzr_interpolator_get(lzr_interpolator* interp, interp_property prop);
 int lzr_interpolator_run(lzr_interpolator* interp, lzr_frame* frame);
 
 
+/******************************************************************************/
+/*  (wishlist) ILDA File Handlers                                             */
+/******************************************************************************/
+
+
+
+
+
 
 #ifdef __cplusplus
 } // extern "c"
