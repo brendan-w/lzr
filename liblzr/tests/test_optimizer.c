@@ -3,11 +3,10 @@
 #include <stdio.h>
 
 #include <lzr.h>
-#include "../optimizer/lzr_optimizer.h"
+#include "../optimizer/lzr_optimizer.h" //used for reading internal state
 
 
 #define POINT_INIT(_x, _y, _r, _g, _b, _i) { .x=_x, .y=_y, .r=_r, .g=_g, .b=_b, .i=_i }
-#define MAX_POINTS 1000
 
 
 static void opt_log(lzr_optimizer* _opt)
@@ -32,26 +31,27 @@ static void opt_log(lzr_optimizer* _opt)
 
 int main()
 {
-    lzr_point points[MAX_POINTS];
+    lzr_frame frame;
     //                        x, y, r, g, b, i
-    lzr_point p0 = POINT_INIT(0, 0, 1, 1, 1, 1); points[0] = p0;
-    lzr_point p1 = POINT_INIT(0, 8, 1, 1, 1, 1); points[1] = p1;
-    lzr_point p2 = POINT_INIT(0, 8, 1, 1, 1, 0); points[2] = p2;
+    lzr_point p0 = POINT_INIT(0, 0, 1, 1, 1, 1); frame.points[0] = p0;
+    lzr_point p1 = POINT_INIT(0, 8, 1, 1, 1, 1); frame.points[1] = p1;
+    lzr_point p2 = POINT_INIT(0, 8, 1, 1, 1, 0); frame.points[2] = p2;
 
-    lzr_point p4 = POINT_INIT(1, 0, 1, 1, 1, 1); points[3] = p4;
-    lzr_point p3 = POINT_INIT(1, 8, 1, 1, 1, 1); points[4] = p3;
-    lzr_point p5 = POINT_INIT(1, 8, 1, 1, 1, 0); points[5] = p5;
+    lzr_point p4 = POINT_INIT(1, 0, 1, 1, 1, 1); frame.points[3] = p4;
+    lzr_point p3 = POINT_INIT(1, 8, 1, 1, 1, 1); frame.points[4] = p3;
+    lzr_point p5 = POINT_INIT(1, 8, 1, 1, 1, 0); frame.points[5] = p5;
 
-    lzr_point p6 = POINT_INIT(2, 0, 1, 1, 1, 1); points[6] = p6;
-    lzr_point p7 = POINT_INIT(2, 8, 1, 1, 1, 1); points[7] = p7;
-    lzr_point p8 = POINT_INIT(2, 8, 1, 1, 1, 0); points[8] = p8;
+    lzr_point p6 = POINT_INIT(2, 0, 1, 1, 1, 1); frame.points[6] = p6;
+    lzr_point p7 = POINT_INIT(2, 8, 1, 1, 1, 1); frame.points[7] = p7;
+    lzr_point p8 = POINT_INIT(2, 8, 1, 1, 1, 0); frame.points[8] = p8;
 
-    lzr_optimizer* opt = lzr_create_optimizer(MAX_POINTS);
+    frame.n_points = 9;
 
-    lzr_optimizer_set(opt, LZR_OPT_MAX_POINTS, 1000);
+    lzr_optimizer* opt = lzr_create_optimizer();
+
     lzr_optimizer_set(opt, LZR_OPT_ANCHOR_POINTS, 1);
 
-    lzr_optimize(opt, points, 9);
+    lzr_optimizer_run(opt, &frame);
     opt_log(opt);
     lzr_destroy_optimizer(opt);
     return 0;

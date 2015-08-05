@@ -25,7 +25,7 @@ static size_t blank_between(opt_t* opt, lzr_point* points, opt_point_t* a, opt_p
 }
 
 
-size_t compile_paths(opt_t* opt, lzr_point* points)
+int compile_paths(opt_t* opt, lzr_frame* frame)
 {
     //the number of points currently in the output buffer
     //NOTE: must not exceed opt->max_points
@@ -44,7 +44,7 @@ size_t compile_paths(opt_t* opt, lzr_point* points)
         if( !LZR_POINTS_SAME_POS(a.base_point, b.base_point) )
         {
             //create a blanking jump
-            n += blank_between(opt, (points + n), &a, &b);
+            n += blank_between(opt, (frame->points + n), &a, &b);
         }
 
 
@@ -56,7 +56,7 @@ size_t compile_paths(opt_t* opt, lzr_point* points)
         {
             //ascending from the path's A point
             for(size_t i = 0; i < l; i++)
-                points[n + i] = opt->points[path->a + i].base_point;
+                frame->points[n + i] = opt->points[path->a + i].base_point;
 
             n += l;
         }
@@ -64,7 +64,7 @@ size_t compile_paths(opt_t* opt, lzr_point* points)
         {
             //descending from the path's B point
             for(size_t i = 0; i < l; i++)
-                points[n + i] = opt->points[path->a - i].base_point;
+                frame->points[n + i] = opt->points[path->a - i].base_point;
 
             n += l;
         }
@@ -73,5 +73,6 @@ size_t compile_paths(opt_t* opt, lzr_point* points)
         opt->last_known_point = opt->points[path->b];
     }
 
-    return n;
+    frame->n_points = n;
+    return 0;
 }

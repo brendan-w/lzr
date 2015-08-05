@@ -44,7 +44,6 @@ typedef struct {
 
 //optimizer context
 typedef struct {
-    size_t      max_points;       //the max number of points the buffers can hold
     size_t      anchor_points;    //number of end points to place when performing blanking jumps
     opt_point_t last_known_point; //the last point from the previously optimized frame
 
@@ -84,7 +83,7 @@ void rearrange_paths(opt_t* opt);
     Inserts/generates new blanking jumps. Returns the new size of the
     output buffer.
 */
-size_t compile_paths(opt_t* opt, lzr_point* output);
+int compile_paths(opt_t* opt, lzr_frame* frame);
 
 
 #endif /* OPTIMIZER_INTERNALS_H */
