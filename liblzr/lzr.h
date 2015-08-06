@@ -31,8 +31,8 @@ extern "C" {
 /*  LZR Return Codes                                                          */
 /******************************************************************************/
 
-#define LZR_SUCCESS 0
-#define LZR_ERROR_TOO_MANY_POINTS -1
+#define LZR_SUCCESS                 0
+#define LZR_ERROR_TOO_MANY_POINTS  -1
 #define LZR_ERROR_INVALID_PROPERTY -2
 
 
