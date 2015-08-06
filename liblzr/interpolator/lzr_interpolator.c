@@ -54,7 +54,7 @@ int lzr_interpolator_get(lzr_interpolator* _interp, interp_property prop)
 static int add_point(interp_t* interp, lzr_point p)
 {
     if(interp->frame.n_points >= LZR_FRAME_MAX_POINTS)
-        return -1;
+        return LZR_ERROR_TOO_MANY_POINTS;
 
     interp->frame.points[interp->frame.n_points] = p;
     interp->frame.n_points++;
@@ -70,6 +70,7 @@ static int lerp_lzr(interp_t* interp, lzr_point start, lzr_point end)
 {
     size_t sq_dist     = LZR_POINT_SQ_DISTANCE(start, end);
     size_t sq_max_dist = interp->max_distance * interp->max_distance;
+    printf("num: %zu\n", sq_dist);
 
     if(sq_dist > sq_max_dist)
     {
@@ -116,7 +117,7 @@ int lzr_interpolator_run(lzr_interpolator* _interp, lzr_frame* frame)
     interp_t* interp = (interp_t*) _interp;
 
     if(interp->max_distance == 0)
-        return -2;
+        return LZR_ERROR_INVALID_PROPERTY;
 
     //wipe the working buffer
     interp->frame.n_points = 0;
@@ -145,10 +146,10 @@ int lzr_interpolator_run(lzr_interpolator* _interp, lzr_frame* frame)
 
         prev = p;
         if(add_point(interp, p))
-            return -1;
+            return LZR_ERROR_TOO_MANY_POINTS;
     }
 
     //write the finished frame to the output buffer
     *frame = interp->frame;
-    return 0;
+    return LZR_SUCCESS;
 }
