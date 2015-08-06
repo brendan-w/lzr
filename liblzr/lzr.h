@@ -32,7 +32,7 @@ extern "C" {
 /******************************************************************************/
 
 //point constants
-#define LZR_POINT_MAX_POSITION 32768
+#define LZR_POINT_MAX_POSITION 32767
 #define LZR_POINT_MAX_COLOR    65535
 
 typedef struct {
@@ -46,8 +46,8 @@ typedef struct {
 
 //point macros
 
-//square of the distance between two points
-#define LZR_POINT_SQ_DISTANCE(a, b) ( (a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y) )
+//square of the distance between two points (cast ensures that we won't overflow the int16_t type)
+#define LZR_POINT_SQ_DISTANCE(a, b) ( ((size_t)a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y) )
 
 //blanks the given point
 #define LZR_POINT_BLANK(p)          p.r = p.g = p.b = p.i = 0

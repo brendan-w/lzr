@@ -6,7 +6,7 @@
 #include <lzr.h>
 
 
-#define DEFAULT_MAX_DISTANCE (LZR_POINT_MAX_POSITION / 2048);
+#define DEFAULT_MAX_DISTANCE (LZR_POINT_MAX_POSITION / 100);
 
 
 typedef struct {
@@ -85,6 +85,7 @@ static int lerp_lzr(interp_t* interp, lzr_point start, lzr_point end)
         n += 2; //include the two endpoints, which already exist
 
         lzr_point prev = start;
+
 
         //loop through the intersticial points
         for(size_t i = 1; i < (n-1); i++)
