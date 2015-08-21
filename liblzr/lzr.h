@@ -56,7 +56,7 @@ typedef struct {
 //point macros
 
 //square of the distance between two points (cast ensures that we won't overflow the int16_t type)
-#define LZR_POINT_SQ_DISTANCE(a, b) (size_t) ( ((int64_t)a.x - b.x)*((int64_t)a.x - b.x) + ((int64_t)a.y - b.y)*((int64_t)a.y - b.y) )
+#define LZR_POINT_SQ_DISTANCE(a, b) (int64_t) ( ((int64_t)a.x - b.x)*((int64_t)a.x - b.x) + ((int64_t)a.y - b.y)*((int64_t)a.y - b.y) )
 
 //blanks the given point
 #define LZR_POINT_BLANK(p)          p.r = p.g = p.b = p.i = 0

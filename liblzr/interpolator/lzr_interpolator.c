@@ -68,8 +68,8 @@ static double lerp(double v0, double v1, double t)
 
 static int lerp_lzr(interp_t* interp, lzr_point start, lzr_point end)
 {
-    size_t sq_dist     = LZR_POINT_SQ_DISTANCE(start, end);
-    size_t sq_max_dist = interp->max_distance * interp->max_distance;
+    int64_t sq_dist     = LZR_POINT_SQ_DISTANCE(start, end);
+    int64_t sq_max_dist = interp->max_distance * interp->max_distance;
 
     if(sq_dist > sq_max_dist)
     {
