@@ -74,9 +74,6 @@ int main()
         i++;
     }
 
-    // lzr_send_topic(tx, LZR_ZMQ_TERMINATE);
-    // lzr_send_empty(tx);
-
     free(frame);
     lzr_destroy_frame_tx(tx);
     lzr_destroy_zmq_ctx(zmq_ctx);

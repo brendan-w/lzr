@@ -39,8 +39,9 @@ etherdream:
 
 
 .PHONY: test
-test: all test/frame_server.c
-	$(CC) $(CFLAGS) $(LIBS) -lm test/frame_server.c ../liblzr/liblzr.a -o frame_server
+test: all test/spiro_server.c test/interp_server.c
+	$(CC) $(CFLAGS) $(LIBS) -lm test/spiro_server.c  ../liblzr/liblzr.a -o spiro_server
+	$(CC) $(CFLAGS) $(LIBS) -lm test/interp_server.c ../liblzr/liblzr.a -o interp_server
 
 
 .PHONY: install
@@ -51,4 +52,4 @@ install:
 .PHONY: clean
 clean:
 	$(MAKE) -C libetherdream/ clean
-	rm -f *.o lzrd frame_server
+	rm -f *.o lzrd spiro_server interp_server
