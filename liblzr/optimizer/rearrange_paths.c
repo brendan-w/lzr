@@ -17,9 +17,11 @@ typedef struct {
 
 
 //the cost function for a blank jump between points A and B
-static size_t cost(opt_point_t* a, opt_point_t* b)
+static double cost(opt_point_t* a, opt_point_t* b)
 {
-    return LZR_POINT_SQ_DISTANCE(a->base_point, b->base_point);
+    int64_t sq_dist = LZR_POINT_SQ_DISTANCE(a->base_point, b->base_point);
+    double dist     = (double) round(sqrt((double) sq_dist));
+    return dist;
 }
 
 static void swap_paths(opt_path_t* path_a, opt_path_t* path_b)
@@ -42,19 +44,16 @@ static void invert_path(opt_path_t* path)
 //scan for the best path to enter next
 static path_descriptor find_next(opt_t* opt, size_t start, opt_point_t* laser)
 {
-    //optimize for least cost
-    size_t min_cost = 0;
-
     //running vars
     path_descriptor pd;    //the best path
     opt_point_t* possible; //temp var for testing a path
-    size_t c;              //temp var for computing cost
+    double c;              //temp var for computing cost
+    double min_cost = 0.0; //optimize for least cost
 
 
     //initiail check
     possible = GET_POINT_PTR(opt->paths[start].a);
-    c = cost(laser, possible);
-    min_cost = c;
+    min_cost = c = cost(laser, possible);
     pd.path = GET_PATH_PTR(start);
     pd.invert = false;
     
