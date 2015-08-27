@@ -41,22 +41,22 @@ extern "C" {
 /******************************************************************************/
 
 //point constants
-#define LZR_POINT_MAX_POSITION 32767
-#define LZR_POINT_MAX_COLOR    65535
+#define LZR_POINT_MAX_POSITION 1.0
+#define LZR_POINT_MAX_COLOR    255
 
 typedef struct {
-    int16_t x;  //position X
-    int16_t y;  //position Y
-    uint16_t r; //Red
-    uint16_t g; //Green
-    uint16_t b; //Blue
-    uint16_t i; //Blanking
+    double x;  //Position X - [-1.0, 1.0]
+    double y;  //Position Y - [-1.0, 1.0]
+    uint8_t r; //Red        - [0, 255]
+    uint8_t g; //Green      - [0, 255]
+    uint8_t b; //Blue       - [0, 255]
+    uint8_t i; //Blanking   - [0, 255]
 } lzr_point;
 
 //point macros
 
 //square of the distance between two points (cast ensures that we won't overflow the int16_t type)
-#define LZR_POINT_SQ_DISTANCE(a, b) (int64_t) ( ((int64_t)a.x - b.x)*((int64_t)a.x - b.x) + ((int64_t)a.y - b.y)*((int64_t)a.y - b.y) )
+#define LZR_POINT_SQ_DISTANCE(a, b) ( (a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y) )
 
 //blanks the given point
 #define LZR_POINT_BLANK(p)          p.r = p.g = p.b = p.i = 0
@@ -181,7 +181,7 @@ lzr_interpolator* lzr_interpolator_create();
 void lzr_interpolator_destroy(lzr_interpolator* interp);
 
 //settings modifier
-void lzr_interpolator_set(lzr_interpolator* interp, interp_property prop, int value);
+void lzr_interpolator_set(lzr_interpolator* interp, interp_property prop, unsigned long value);
 
 //settings getter
 int lzr_interpolator_get(lzr_interpolator* interp, interp_property prop);

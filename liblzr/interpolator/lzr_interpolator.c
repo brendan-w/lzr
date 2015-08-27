@@ -6,12 +6,12 @@
 #include <lzr.h>
 
 
-#define DEFAULT_MAX_DISTANCE (LZR_POINT_MAX_POSITION / 100);
+#define DEFAULT_MAX_DISTANCE (LZR_POINT_MAX_POSITION / 100.0);
 
 
 typedef struct {
     lzr_frame frame;
-    size_t max_distance;
+    double max_distance;
 } interp_t;
 
 
@@ -30,12 +30,12 @@ void lzr_interpolator_destroy(lzr_interpolator* _interp)
     free(interp);
 }
 
-void lzr_interpolator_set(lzr_interpolator* _interp, interp_property prop, int value)
+void lzr_interpolator_set(lzr_interpolator* _interp, interp_property prop, unsigned long value)
 {
     interp_t* interp = (interp_t*) _interp;
     switch(prop)
     {
-        case LZR_INTERP_MAX_DISTANCE: interp->max_distance = (size_t) value; break;
+        case LZR_INTERP_MAX_DISTANCE: interp->max_distance = (double) value; break;
     }
 }
 
@@ -68,19 +68,18 @@ static double lerp(double v0, double v1, double t)
 
 static int lerp_lzr(interp_t* interp, lzr_point start, lzr_point end)
 {
-    int64_t sq_dist     = LZR_POINT_SQ_DISTANCE(start, end);
-    int64_t sq_max_dist = interp->max_distance * interp->max_distance;
+    double sq_dist     = LZR_POINT_SQ_DISTANCE(start, end);
+    double sq_max_dist = interp->max_distance * interp->max_distance;
 
     if(sq_dist > sq_max_dist)
     {
         //root everything back to actual values
-        size_t dist     = (size_t) round(sqrt((double) sq_dist));
-        size_t max_dist = interp->max_distance;
+        double dist     = sqrt(sq_dist);
+        double max_dist = interp->max_distance;
 
         //interpolate
         //number of intersticial points to generate
-        size_t n = dist / max_dist; //integer division provides flooring
-        if(dist % max_dist == 0) n--; //correct for paths that evenly divide
+        size_t n = (size_t) (dist / max_dist); //integer division provides flooring
 
         n += 2; //include the two endpoints, which already exist
 
@@ -93,8 +92,8 @@ static int lerp_lzr(interp_t* interp, lzr_point start, lzr_point end)
             lzr_point p = start; //load color information into the new point
 
             double t = (double) i / n;
-            p.x = (int16_t) round(lerp((double) start.x, (double) end.x, t));
-            p.y = (int16_t) round(lerp((double) start.y, (double) end.y, t));
+            p.x = lerp(start.x, end.x, t);
+            p.y = lerp(start.y, end.y, t);
 
             //prevent multiple points at the same location
             if(!LZR_POINTS_SAME_POS(prev, p) &&
