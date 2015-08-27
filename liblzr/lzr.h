@@ -25,6 +25,7 @@ extern "C" {
 
 #include <zmq.h>
 #include <stdint.h>
+#include <stdbool.h>
 
 
 /******************************************************************************/
@@ -197,6 +198,28 @@ void lzr_interpolator_set(lzr_interpolator* interp, interp_property prop, unsign
         -2 : error, LZR_INTERP_MAX_DISTANCE was set to zero
 */
 int lzr_interpolator_run(lzr_interpolator* interp, lzr_frame* frame);
+
+
+/******************************************************************************/
+/*  Point Utilities                                                           */
+/******************************************************************************/
+
+//will interpolate position, color, and intensity
+lzr_point lzr_point_lerp(lzr_point* a, lzr_point* b, double t);
+
+
+/******************************************************************************/
+/*  Frame Utilities                                                           */
+/******************************************************************************/
+
+//rotates a frame around position specified by axis
+int lzr_frame_rotate(lzr_frame* frame, lzr_point axis, double theta);
+
+//translate all points within a frame
+int lzr_frame_translate(lzr_frame* frame, lzr_point offset);
+
+//linearly duplicate the current frame
+int lzr_frame_dup_linear(lzr_frame* frame, lzr_point end_point, size_t n_dups, bool blank);
 
 
 /******************************************************************************/

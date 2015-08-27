@@ -24,6 +24,7 @@ OBJS += optimizer/lzr_optimizer.o \
 
 OBJS += zmq/lzr_zmq.o
 
+OBJS += transforms/frame_transforms.o
 
 # ============================= main targets =============================
 
@@ -54,7 +55,10 @@ install:
 .PHONY: clean
 clean:
 	rm -f *.a *.o *.so
-	rm -f interpolator/*.o optimizer/*.o zmq/*.o
+	rm -f interpolator/*.o
+	rm -f transforms/*.o
+	rm -f optimizer/*.o
+	rm -f zmq/*.o
 	rm -f test_optimizer test_interpolator
 
 
