@@ -8,11 +8,14 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <assert.h>
+#include <math.h>
 
 #include <lzr.h>
 #include <zmq.h>
 #include "libetherdream/etherdream.h"
 
+
+#define CLAMP(d) ( fmin(fmax(d, -1.0), 1.0) )
 
 typedef struct etherdream etherdream;
 typedef struct etherdream_point etherdream_point;
@@ -34,12 +37,13 @@ static void send_frame()
 
         for(size_t i = 0; i < frame->n_points; i++)
         {
-            ether_points[i].x = frame->points[i].x;
-            ether_points[i].y = frame->points[i].y;
-            ether_points[i].r = frame->points[i].r;
-            ether_points[i].g = frame->points[i].g;
-            ether_points[i].b = frame->points[i].b;
-            ether_points[i].i = frame->points[i].i;
+            //convert LZR point into etherdream point
+            ether_points[i].x = (int16_t) CLAMP(frame->points[i].x) * 32767;
+            ether_points[i].y = (int16_t) CLAMP(frame->points[i].y) * 32767;
+            ether_points[i].r = (uint16_t) frame->points[i].r * 255;
+            ether_points[i].g = (uint16_t) frame->points[i].g * 255;
+            ether_points[i].b = (uint16_t) frame->points[i].b * 255;
+            ether_points[i].i = (uint16_t) frame->points[i].i * 255;
         }
 
         etherdream_write(dac, ether_points, frame->n_points, 30000, -1);

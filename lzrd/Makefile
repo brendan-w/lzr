@@ -12,7 +12,7 @@ OBJS  = lzrd.o
 CC      = gcc
 CFLAGS += -std=c99 -Wall -Wextra -pedantic -ggdb
 CFLAGS += -I../liblzr
-LIBS    = -lzmq -lpthread
+LIBS    = -lzmq -lm -lpthread
 
 
 # targets
