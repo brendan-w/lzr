@@ -30,6 +30,8 @@ void lzr_interpolator_destroy(lzr_interpolator* _interp)
     free(interp);
 }
 
+//remove the value casting macro
+#undef lzr_interpolator_set
 void lzr_interpolator_set(lzr_interpolator* _interp, interp_property prop, unsigned long value)
 {
     interp_t* interp = (interp_t*) _interp;
@@ -37,17 +39,6 @@ void lzr_interpolator_set(lzr_interpolator* _interp, interp_property prop, unsig
     {
         case LZR_INTERP_MAX_DISTANCE: interp->max_distance = (double) value; break;
     }
-}
-
-int lzr_interpolator_get(lzr_interpolator* _interp, interp_property prop)
-{
-    interp_t* interp = (interp_t*) _interp;
-    switch(prop)
-    {
-        case LZR_INTERP_MAX_DISTANCE: return (int) interp->max_distance;
-    }
-
-    return 0;
 }
 
 //returns success of failure due to frame size constraint

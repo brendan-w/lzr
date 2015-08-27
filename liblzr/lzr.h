@@ -144,10 +144,9 @@ lzr_optimizer* lzr_create_optimizer();
 void lzr_destroy_optimizer(lzr_optimizer* opt);
 
 //settings modifier
-void lzr_optimizer_set(lzr_optimizer* opt, opt_property prop, int value);
-
-//settings getter
-int lzr_optimizer_get(lzr_optimizer* opt, opt_property prop);
+void lzr_optimizer_set(lzr_optimizer* opt, opt_property prop, unsigned long value);
+#define lzr_optimizer_set(opt, prop, value) \
+        lzr_optimizer_set(opt, prop, (unsigned long) value)
 
 /*
     Main optimizer function.
@@ -182,9 +181,8 @@ void lzr_interpolator_destroy(lzr_interpolator* interp);
 
 //settings modifier
 void lzr_interpolator_set(lzr_interpolator* interp, interp_property prop, unsigned long value);
-
-//settings getter
-int lzr_interpolator_get(lzr_interpolator* interp, interp_property prop);
+#define lzr_interpolator_set(interp, prop, value) \
+        lzr_interpolator_set(interp, prop, (unsigned long) value)
 
 /*
     Main interpolator function.

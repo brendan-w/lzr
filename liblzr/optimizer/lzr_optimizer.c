@@ -35,24 +35,15 @@ void lzr_destroy_optimizer(lzr_optimizer* _opt)
     free(opt);
 }
 
-void lzr_optimizer_set(lzr_optimizer* _opt, opt_property prop, int value)
+//remove the value casting macro
+#undef lzr_optimizer_set
+void lzr_optimizer_set(lzr_optimizer* _opt, opt_property prop, unsigned long value)
 {
     opt_t* opt = (opt_t*) _opt;
     switch(prop)
     {
         case LZR_OPT_ANCHOR_POINTS: opt->anchor_points = (size_t) value; break;
     }
-}
-
-int lzr_optimizer_get(lzr_optimizer* _opt, opt_property prop)
-{
-    opt_t* opt = (opt_t*) _opt;
-    switch(prop)
-    {
-        case LZR_OPT_ANCHOR_POINTS: return (int) opt->anchor_points;
-    }
-
-    return 0;
 }
 
 int lzr_optimizer_run(lzr_optimizer* _opt, lzr_frame* frame)
