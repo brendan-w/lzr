@@ -18,7 +18,5 @@ int main()
     assert(sizeof(ilda_point_3d_true)    == 10);
     printf("struct sizes OK\n");
 
-    
-
     return 0;
 }

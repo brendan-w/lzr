@@ -2,6 +2,7 @@
 # LZR test binaries
 test_optimizer
 test_interpolator
+test_ilda
 
 editor/
 
