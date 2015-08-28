@@ -6,19 +6,45 @@
 
 
 //macros for reading parser state
-#define CURRENT_FORMAT(ilda) (ilda->h.format_code)
+#define FORMAT(ilda)            (ilda->h.format_code)
+#define NUMBER_OF_RECORDS(ilda) (ilda->h.number_of_records)
 
 
 //helper function to safely free the old table
 static void clear_color_table(ilda_parser* ilda)
 {
+    ilda->nc = 0;
     if(ilda->c != NULL) free(ilda->c);
+}
+
+static ilda_color lookup_color(ilda_parser* ilda, size_t i)
+{
+    if(ilda->c == NULL)
+    {
+        //if no palette was defined, lookup in the default
+        if(i < ILDA_PALETTE_COUNT) return ilda_palette[i];
+        else                       return ilda_palette[ILDA_WHITE];
+    }
+    else
+    {
+        //use the custom palette
+        if(i < ilda->nc) return ilda->c[i];
+        else             return ilda->c[ILDA_WHITE];
+    }
 }
 
 
 
 static bool read_colors(ilda_parser* ilda)
 {
+    clear_color_table(ilda);
+
+    for(size_t i = 0; i < NUMBER_OF_RECORDS(ilda); i++)
+    {
+        //read one color record
+
+    }
+
     return true;
 }
 
@@ -56,8 +82,12 @@ static bool read_section(ilda_parser* ilda)
     //pull out the next header
     if(!read_header(ilda)) return false;
 
+    //this section contains no records, skip it
+    if(NUMBER_OF_RECORDS(ilda) == 0)
+        return true;
+
     //invoke to the corresponding parser for this section type
-    switch(CURRENT_FORMAT(ilda))
+    switch(FORMAT(ilda))
     {
         case 0:
             break;

@@ -75,7 +75,7 @@ typedef struct {
 
 
 // the ILDA default color table
-ilda_color ilda_default_palette[64] = {
+ilda_color ilda_palette[] = {
 //    R    G    B
     { 255, 0,   0   }, // Red
     { 255, 16,  0   },
@@ -146,14 +146,26 @@ ilda_color ilda_default_palette[64] = {
     { 255, 32,  32  }
 };
 
+#define ILDA_PALETTE_COUNT (sizeof(ilda_palette) / sizeof(ilda_color))
+
+// solid color indices
+#define ILDA_RED     0
+#define ILDA_YELLOW  16
+#define ILDA_GREEN   24
+#define ILDA_CYAN    31
+#define ILDA_BLUE    40
+#define ILDA_MAGENTA 48
+#define ILDA_WHITE   56
+
 
 /******************************************************************************/
 /*  Parser Context                                                            */
 /******************************************************************************/
 
 typedef struct {
-    FILE*       f; // the current file
-    ilda_header h; // the current section header
-    ilda_color* c; // the current color table
+    FILE*       f;  // the current file
+    ilda_header h;  // the current section header
+    ilda_color* c;  // the current color table
+    size_t      nc; // number of colors in the palette
     lzr_frame* frames;
 } ilda_parser;
