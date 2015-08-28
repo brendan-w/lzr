@@ -10,19 +10,21 @@
 #define NUMBER_OF_RECORDS(ilda) (ilda->h.number_of_records)
 
 
-//helper function to safely free the old table
-static void clear_color_table(ilda_parser* ilda)
+//helper function to safely free any old color palette
+static void free_color_table(ilda_parser* ilda)
 {
     ilda->nc = 0;
     if(ilda->c != NULL) free(ilda->c);
 }
 
+//safe color lookup
+//if a palette hasn't been defined, then the default ILDA palette is used
 static ilda_color lookup_color(ilda_parser* ilda, size_t i)
 {
     if(ilda->c == NULL)
     {
         //if no palette was defined, lookup in the default
-        if(i < ILDA_PALETTE_COUNT) return ilda_palette[i];
+        if(i < ilda_color_count) return ilda_palette[i];
         else                       return ilda_palette[ILDA_WHITE];
     }
     else
@@ -37,7 +39,10 @@ static ilda_color lookup_color(ilda_parser* ilda, size_t i)
 
 static bool read_colors(ilda_parser* ilda)
 {
-    clear_color_table(ilda);
+    free_color_table(ilda);
+
+    ilda->nc = NUMBER_OF_RECORDS(ilda);
+    ilda->c = (ilda_color*)calloc(sizeof(ilda_color), ilda->nc);
 
     for(size_t i = 0; i < NUMBER_OF_RECORDS(ilda); i++)
     {
@@ -82,9 +87,9 @@ static bool read_section(ilda_parser* ilda)
     //pull out the next header
     if(!read_header(ilda)) return false;
 
-    //this section contains no records, skip it
+    //this section contains no records, halt parsing
     if(NUMBER_OF_RECORDS(ilda) == 0)
-        return true;
+        return false;
 
     //invoke to the corresponding parser for this section type
     switch(FORMAT(ilda))
@@ -110,7 +115,7 @@ static bool read_section(ilda_parser* ilda)
 
 //Main function
 
-int read_ilda(char* filename)
+int lzr_ilda_read(char* filename)
 {
     //init a parser
     ilda_parser* ilda = (ilda_parser*) malloc(sizeof(ilda_parser));
@@ -122,5 +127,8 @@ int read_ilda(char* filename)
 
     //destruct the parser
     fclose(ilda->f);
+    free_color_table(ilda);
     free(ilda);
+
+    return LZR_SUCCESS;
 }
