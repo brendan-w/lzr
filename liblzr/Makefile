@@ -26,6 +26,8 @@ OBJS += zmq/lzr_zmq.o
 
 OBJS += transforms/frame_transforms.o
 
+OBJS += ilda/lzr_ilda.o
+
 # ============================= main targets =============================
 
 
@@ -58,6 +60,7 @@ clean:
 	rm -f interpolator/*.o
 	rm -f transforms/*.o
 	rm -f optimizer/*.o
+	rm -f ilda/*.o
 	rm -f zmq/*.o
 	rm -f test_optimizer test_interpolator
 
@@ -66,7 +69,7 @@ clean:
 
 
 .PHONY: test
-test: test_interpolator test_optimizer
+test: test_interpolator test_optimizer test_ilda
 
 
 test_optimizer: all tests/test_optimizer.c
@@ -77,3 +80,8 @@ test_optimizer: all tests/test_optimizer.c
 test_interpolator: all tests/test_interpolator.c
 	$(CC) $(CFLAGS) $(LIBS) tests/test_interpolator.c ./liblzr.a -o test_interpolator
 	./test_interpolator
+
+
+test_ilda: all tests/test_ilda.c
+	$(CC) $(CFLAGS) $(LIBS) tests/test_ilda.c ./liblzr.a -o test_ilda
+	./test_ilda
