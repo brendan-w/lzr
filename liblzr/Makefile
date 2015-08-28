@@ -4,7 +4,7 @@
 
 
 CC      = gcc
-CFLAGS += -std=c99 -Wall -Wextra -pedantic -fPIC
+CFLAGS += -std=c99 -Wall -Wextra -pedantic -fPIC -ggdb
 CFLAGS += -I.
 LIBS    = -lzmq -lm
 ARFLAGS = rs
@@ -75,14 +75,11 @@ test: test_interpolator test_optimizer test_ilda
 
 test_optimizer: all tests/test_optimizer.c
 	$(CC) $(CFLAGS) $(LIBS) tests/test_optimizer.c ./liblzr.a -o test_optimizer
-	./test_optimizer
 
 
 test_interpolator: all tests/test_interpolator.c
 	$(CC) $(CFLAGS) $(LIBS) tests/test_interpolator.c ./liblzr.a -o test_interpolator
-	./test_interpolator
 
 
 test_ilda: all tests/test_ilda.c
 	$(CC) $(CFLAGS) $(LIBS) tests/test_ilda.c ./liblzr.a -o test_ilda
-	./test_ilda

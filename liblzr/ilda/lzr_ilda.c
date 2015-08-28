@@ -60,7 +60,7 @@ static bool read_header(ilda_parser* ilda)
     void* h = (void*) &(ilda->h);
 
     //read one ILDA header
-    size_t r = fread(h, sizeof(ilda_header), 1, ilda->f);
+    size_t r = fread(h, 1, sizeof(ilda_header), ilda->f);
 
     //did we capture a full header?
     if(r != sizeof(ilda_header))
@@ -119,8 +119,14 @@ int lzr_ilda_read(char* filename)
 {
     //init a parser
     ilda_parser* ilda = (ilda_parser*) malloc(sizeof(ilda_parser));
-    ilda->f = fopen(filename, "rb");
     ilda->c = NULL;
+    ilda->f = fopen(filename, "rb");
+
+    if(ilda->f == NULL)
+    {
+        perror("Failed to open file");
+        return LZR_FAILURE;
+    }
 
     //read each section in the file
     while(true) { if(!read_section(ilda)) break; }
