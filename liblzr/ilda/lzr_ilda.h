@@ -123,4 +123,32 @@ void endian_3d_indexed(ilda_point_3d_indexed* p);
 void endian_3d_true(ilda_point_3d_true* p);
 
 
+/*
+ * Point conversion macros
+ * These were done with macros to handle both 2D and 3D types
+ *
+ * These macros assume that all point types have `x` and `y` members
+ * extra dimensions are outright ignored (3D is orthographically projected)
+ */
+
+#define ilda_true_to_lzr(ilda, ilda_p, lzr_p) {             \
+    (lzr_p).x = (double) (ilda_p).x / INT16_MAX;            \
+    (lzr_p).y = (double) (ilda_p).y / INT16_MAX;            \
+    (lzr_p).r = (ilda_p).r;                                 \
+    (lzr_p).g = (ilda_p).g;                                 \
+    (lzr_p).b = (ilda_p).b;                                 \
+    (lzr_p).i = (ilda_p).status.blanked ? UINT8_MAX : 0;    \
+}
+
+#define ilda_indexed_to_lzr(ilda, ilda_p, lzr_p) {          \
+    (lzr_p).x = (double) (ilda_p).x / INT16_MAX;            \
+    (lzr_p).y = (double) (ilda_p).y / INT16_MAX;            \
+    ilda_color c = lookup_color((ilda), (ilda_p).color);    \
+    (lzr_p).r = c.r;                                        \
+    (lzr_p).g = c.g;                                        \
+    (lzr_p).b = c.b;                                        \
+    (lzr_p).i = (ilda_p).status.blanked ? UINT8_MAX : 0;    \
+}
+
+
 #endif /* LZR_ILDA_H */

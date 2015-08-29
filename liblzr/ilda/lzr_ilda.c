@@ -10,35 +10,45 @@
 #define NUMBER_OF_RECORDS(ilda) (ilda->h.number_of_records)
 
 
-// Format 0
-static bool read_3d_indexed(ilda_parser* ilda)
+
+//reads a single record, and error checks teh size
+static bool read_record(ilda_parser* ilda, void* buffer, size_t buffer_size)
 {
+    size_t r = fread(buffer, 1, buffer_size, ilda->f);
 
-    for(size_t i = 0; i < NUMBER_OF_RECORDS(ilda); i++)
+    //make sure we got everything...
+    if(r != buffer_size)
     {
-        ilda_point_3d_indexed p;
-
-        //read one point record
-        size_t r = fread((void*) &p,
-                         1,
-                         sizeof(ilda_point_3d_indexed),
-                         ilda->f);
-
-        if(r != sizeof(ilda_point_3d_indexed))
-        {
-            perror("Encountered incomplete ILDA section header");
-            return false;
-        }
-
-        endian_3d_indexed(&p);
-
-        printf("(%d, %d, %d)\n", p.x, p.y, p.z);
+        perror("Encountered incomplete record");
+        return false;
     }
 
     return true;
 }
 
-// Format 2
+// -------------------- Format 0 --------------------
+static bool read_3d_indexed(ilda_parser* ilda)
+{
+    for(size_t i = 0; i < NUMBER_OF_RECORDS(ilda); i++)
+    {
+        ilda_point_3d_indexed p;
+
+        if(!read_record(ilda, (void*) &p, sizeof(ilda_point_3d_indexed)))
+            return false;
+
+        endian_3d_indexed(&p);
+
+        lzr_point lzr_p;
+        ilda_indexed_to_lzr(ilda, p, lzr_p);
+
+        // printf("(%d, %d, %d)\n", p.x, p.y, p.z);
+        printf("(%f, %f)\n", lzr_p.x, lzr_p.y);
+    }
+
+    return true;
+}
+
+// -------------------- Format 2 --------------------
 static bool read_colors(ilda_parser* ilda)
 {
     free_color_table(ilda);
