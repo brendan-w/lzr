@@ -104,7 +104,7 @@ typedef struct {
 //same as GET_PROJECTOR, but returns the projector corresponding to
 //`projector_id` in the header
 //arguments (ilda_parser*)
-#define GET_CURRENT_PROJECTOR(ilda) ( GET_PROJECTOR( (ilda)->h.projector_id ) )
+#define GET_CURRENT_PROJECTOR(ilda) ( GET_PROJECTOR((ilda), (ilda)->h.projector_id ) )
 
 /******************************************************************************/
 /*  ILDA Utils                                                                */
@@ -139,23 +139,23 @@ ilda_color current_palette_lookup(ilda_parser* ilda, size_t i);
  */
 
 //arguments: (ilda_header*)
-#define endian_header(header) {                                            /
-    (header)->number_of_records = be16toh((header)->number_of_records);    /
-    (header)->record_number     = be16toh((header)->record_number);        /
-    (header)->total_records     = be16toh((header)->total_records);        /
+#define endian_header(header) {                                            \
+    (header)->number_of_records = be16toh((header)->number_of_records);    \
+    (header)->record_number     = be16toh((header)->record_number);        \
+    (header)->total_records     = be16toh((header)->total_records);        \
 }
 
 //arguments: (ilda_point_2d_true* | ilda_point_2d_indexed*)
-#define endian_2d(point) {                                    /
-    (point)->x = (int16_t) be16toh((uint16_t) (point)->x);    /
-    (point)->y = (int16_t) be16toh((uint16_t) (point)->y);    /
+#define endian_2d(point) {                                    \
+    (point)->x = (int16_t) be16toh((uint16_t) (point)->x);    \
+    (point)->y = (int16_t) be16toh((uint16_t) (point)->y);    \
 }
 
 //arguments: (ilda_point_3d_true* | ilda_point_3d_indexed*)
-#define endian_3d(point) {                                    /
-    (point)->x = (int16_t) be16toh((uint16_t) (point)->x);    /
-    (point)->y = (int16_t) be16toh((uint16_t) (point)->y);    /
-    (point)->z = (int16_t) be16toh((uint16_t) (point)->z);    /
+#define endian_3d(point) {                                    \
+    (point)->x = (int16_t) be16toh((uint16_t) (point)->x);    \
+    (point)->y = (int16_t) be16toh((uint16_t) (point)->y);    \
+    (point)->z = (int16_t) be16toh((uint16_t) (point)->z);    \
 }
 
 
