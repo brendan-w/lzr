@@ -4,7 +4,7 @@
 
 
 CC      = gcc
-CFLAGS += -std=c99 -Wall -Wextra -pedantic -fPIC -ggdb
+CFLAGS += -std=gnu99 -Wall -Wextra -pedantic -fPIC -ggdb
 CFLAGS += -I.
 LIBS    = -lzmq -lm
 ARFLAGS = rs
@@ -27,7 +27,7 @@ OBJS += zmq/lzr_zmq.o
 OBJS += transforms/frame_transforms.o
 
 OBJS += ilda/lzr_ilda.o \
-        ilda/ilda_palette.o
+        ilda/ilda_utils.o
 
 # ============================= main targets =============================
 
@@ -63,7 +63,7 @@ clean:
 	rm -f optimizer/*.o
 	rm -f ilda/*.o
 	rm -f zmq/*.o
-	rm -f test_optimizer test_interpolator
+	rm -f test_optimizer test_interpolator test_ilda
 
 
 # ============================= test targets =============================

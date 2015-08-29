@@ -37,6 +37,27 @@ static ilda_color lookup_color(ilda_parser* ilda, size_t i)
 
 
 
+// Format 0
+static bool read_3d_indexed(ilda_parser* ilda)
+{
+
+    for(size_t i = 0; i < NUMBER_OF_RECORDS(ilda); i++)
+    {
+        ilda_point_3d_indexed p;
+
+        //read one point record
+        size_t r = fread((void*) &p,
+                         1,
+                         sizeof(ilda_point_3d_indexed),
+                         ilda->f);
+
+        // printf("(%d, %d, %d)\n", p.x, p.y, p.z);
+    }
+
+    return true;
+}
+
+// Format 2
 static bool read_colors(ilda_parser* ilda)
 {
     free_color_table(ilda);
@@ -56,11 +77,11 @@ static bool read_colors(ilda_parser* ilda)
 
 static bool read_header(ilda_parser* ilda)
 {
-    //get a pointer to the header struct
-    void* h = (void*) &(ilda->h);
-
     //read one ILDA header
-    size_t r = fread(h, 1, sizeof(ilda_header), ilda->f);
+    size_t r = fread((void*) &(ilda->h),
+                     1,
+                     sizeof(ilda_header),
+                     ilda->f);
 
     //did we capture a full header?
     if(r != sizeof(ilda_header))
@@ -77,6 +98,15 @@ static bool read_header(ilda_parser* ilda)
         perror("Section header did not contain \"ILDA\"");
         return false;
     }
+
+    //correct endianness of 16 bit fields
+    ilda->h.number_of_records = be16toh(ilda->h.number_of_records);
+    ilda->h.record_number     = be16toh(ilda->h.record_number);
+    ilda->h.total_records     = be16toh(ilda->h.total_records);
+
+    printf("%s\n", ilda->h.name);
+    printf("%s\n", ilda->h.company_name);
+    printf("records: %d\n", ilda->h.number_of_records);
 
     return true;
 }
@@ -95,6 +125,7 @@ static bool read_section(ilda_parser* ilda)
     switch(FORMAT(ilda))
     {
         case 0:
+            if(!read_3d_indexed(ilda)) return false;
             break;
         case 1:
             break;

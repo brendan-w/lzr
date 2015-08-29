@@ -4,8 +4,8 @@
 #define LZR_ILDA_H
 
 #include <stdio.h>
+#include <endian.h>
 #include <lzr.h>
-
 
 
 /******************************************************************************/
@@ -77,8 +77,7 @@ typedef struct {
     uint8_t     r;
 } ilda_point_3d_true;
 
-
-// the ILDA default color table
+// the ILDA default color table (defined in ilda_utils.c)
 extern const ilda_color ilda_palette[];
 extern const int ilda_color_count;
 
