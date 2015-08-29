@@ -74,3 +74,28 @@ const ilda_color ilda_palette[] = {
 };
 
 const int ilda_color_count = sizeof(ilda_palette) / sizeof(ilda_color);
+
+//helper function to safely free any old color palette
+void free_color_table(ilda_parser* ilda)
+{
+    ilda->nc = 0;
+    if(ilda->c != NULL) free(ilda->c);
+}
+
+//safe color lookup
+//if a palette hasn't been defined, then the default ILDA palette is used
+ilda_color lookup_color(ilda_parser* ilda, size_t i)
+{
+    if((ilda->c == NULL) || (ilda->nc == 0))
+    {
+        //if no palette was defined, lookup in the default
+        if(i < ilda_color_count) return ilda_palette[i];
+        else                       return ilda_palette[ILDA_WHITE];
+    }
+    else
+    {
+        //use the custom palette
+        if(i < ilda->nc) return ilda->c[i];
+        else             return ilda->c[ILDA_WHITE];
+    }
+}

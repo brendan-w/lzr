@@ -77,6 +77,24 @@ typedef struct {
     uint8_t     r;
 } ilda_point_3d_true;
 
+
+/******************************************************************************/
+/*  Parser Context                                                            */
+/******************************************************************************/
+
+typedef struct {
+    FILE*       f;  // the current file
+    ilda_header h;  // the current section header
+    ilda_color* c;  // the current color table
+    size_t      nc; // number of colors in the palette
+    lzr_frame* frames;
+} ilda_parser;
+
+
+/******************************************************************************/
+/*  ILDA Utils                                                                */
+/******************************************************************************/
+
 // the ILDA default color table (defined in ilda_utils.c)
 extern const ilda_color ilda_palette[];
 extern const int ilda_color_count;
@@ -90,18 +108,12 @@ extern const int ilda_color_count;
 #define ILDA_MAGENTA 48
 #define ILDA_WHITE   56
 
+//helper function to safely free any old color palette
+void free_color_table(ilda_parser* ilda);
 
-/******************************************************************************/
-/*  Parser Context                                                            */
-/******************************************************************************/
-
-typedef struct {
-    FILE*       f;  // the current file
-    ilda_header h;  // the current section header
-    ilda_color* c;  // the current color table
-    size_t      nc; // number of colors in the palette
-    lzr_frame* frames;
-} ilda_parser;
+//safe color lookup
+//if a palette hasn't been defined, then the default ILDA palette is used
+ilda_color lookup_color(ilda_parser* ilda, size_t i);
 
 
 #endif /* LZR_ILDA_H */
