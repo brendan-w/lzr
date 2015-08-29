@@ -24,7 +24,15 @@ static bool read_3d_indexed(ilda_parser* ilda)
                          sizeof(ilda_point_3d_indexed),
                          ilda->f);
 
-        // printf("(%d, %d, %d)\n", p.x, p.y, p.z);
+        if(r != sizeof(ilda_point_3d_indexed))
+        {
+            perror("Encountered incomplete ILDA section header");
+            return false;
+        }
+
+        endian_3d_indexed(&p);
+
+        printf("(%d, %d, %d)\n", p.x, p.y, p.z);
     }
 
     return true;
@@ -72,13 +80,9 @@ static bool read_header(ilda_parser* ilda)
         return false;
     }
 
-    //correct endianness of 16 bit fields
-    ilda->h.number_of_records = be16toh(ilda->h.number_of_records);
-    ilda->h.record_number     = be16toh(ilda->h.record_number);
-    ilda->h.total_records     = be16toh(ilda->h.total_records);
+    //correct for the big-endianness of the file
+    endian_header(&(ilda->h));
 
-    printf("%s\n", ilda->h.name);
-    printf("%s\n", ilda->h.company_name);
     printf("records: %d\n", ilda->h.number_of_records);
 
     return true;

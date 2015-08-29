@@ -99,3 +99,39 @@ ilda_color lookup_color(ilda_parser* ilda, size_t i)
         else             return ilda->c[ILDA_WHITE];
     }
 }
+
+
+//endian handlers
+
+void endian_header(ilda_header* h)
+{
+    h->number_of_records = be16toh(h->number_of_records);
+    h->record_number     = be16toh(h->record_number);
+    h->total_records     = be16toh(h->total_records);
+}
+
+void endian_2d_indexed(ilda_point_2d_indexed* p)
+{
+    p->x = (int16_t) be16toh((uint16_t) p->x);
+    p->y = (int16_t) be16toh((uint16_t) p->y);
+}
+
+void endian_2d_true(ilda_point_2d_true* p)
+{
+    p->x = (int16_t) be16toh((uint16_t) p->x);
+    p->y = (int16_t) be16toh((uint16_t) p->y);
+}
+
+void endian_3d_indexed(ilda_point_3d_indexed* p)
+{
+    p->x = (int16_t) be16toh((uint16_t) p->x);
+    p->y = (int16_t) be16toh((uint16_t) p->y);
+    p->z = (int16_t) be16toh((uint16_t) p->z);
+}
+
+void endian_3d_true(ilda_point_3d_true* p)
+{
+    p->x = (int16_t) be16toh((uint16_t) p->x);
+    p->y = (int16_t) be16toh((uint16_t) p->y);
+    p->z = (int16_t) be16toh((uint16_t) p->z);
+}

@@ -115,5 +115,12 @@ void free_color_table(ilda_parser* ilda);
 //if a palette hasn't been defined, then the default ILDA palette is used
 ilda_color lookup_color(ilda_parser* ilda, size_t i);
 
+//endian handlers
+void endian_header(ilda_header* h);
+void endian_2d_indexed(ilda_point_2d_indexed* p);
+void endian_2d_true(ilda_point_2d_true* p);
+void endian_3d_indexed(ilda_point_3d_indexed* p);
+void endian_3d_true(ilda_point_3d_true* p);
+
 
 #endif /* LZR_ILDA_H */
