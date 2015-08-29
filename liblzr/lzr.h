@@ -47,12 +47,12 @@ extern "C" {
 #define LZR_POINT_MAX_COLOR    255
 
 typedef struct {
-    double x;  //Position X - [-1.0, 1.0]
-    double y;  //Position Y - [-1.0, 1.0]
-    uint8_t r; //Red        - [0, 255]
-    uint8_t g; //Green      - [0, 255]
-    uint8_t b; //Blue       - [0, 255]
-    uint8_t i; //Blanking   - [0, 255]
+    double x;  //Position X   [-1.0, 1.0]
+    double y;  //Position Y   [-1.0, 1.0]
+    uint8_t r; //Red          [0, 255]
+    uint8_t g; //Green        [0, 255]
+    uint8_t b; //Blue         [0, 255]
+    uint8_t i; //Blanking     [0, 255]
 } lzr_point;
 
 //point macros
@@ -63,7 +63,7 @@ typedef struct {
 //blanks the given point
 #define LZR_POINT_BLANK(p)          p.r = p.g = p.b = p.i = 0
 
-// returns boolean for whether the given point is blanked
+//returns boolean for whether the given point is blanked
 #define LZR_POINT_IS_BLANKED(p)     ( (p.i == 0) || (p.r + p.g + p.b == 0) )
 
 //are two points at the same position

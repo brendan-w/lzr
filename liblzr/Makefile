@@ -27,7 +27,7 @@ OBJS += zmq/lzr_zmq.o
 OBJS += transforms/frame_transforms.o \
         transforms/point_transforms.o
 
-OBJS += ilda/lzr_ilda.o \
+OBJS += ilda/ilda_read.o \
         ilda/ilda_utils.o
 
 # ============================= main targets =============================

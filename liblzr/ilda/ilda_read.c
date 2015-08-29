@@ -11,7 +11,7 @@
 
 
 
-//reads a single record, and error checks teh size
+//reads a single record, and error checks the size
 static bool read_record(ilda_parser* ilda, void* buffer, size_t buffer_size)
 {
     size_t r = fread(buffer, 1, buffer_size, ilda->f);
@@ -40,7 +40,7 @@ static bool read_3d_indexed(ilda_parser* ilda)
         if(p.status.last_point)
             break;
 
-        endian_3d_indexed(&p);
+        endian_3d(&p);
         ilda_indexed_to_lzr(ilda, p, lzr_p);
 
         // printf("(%d, %d, %d)\n", p.x, p.y, p.z);
@@ -53,10 +53,11 @@ static bool read_3d_indexed(ilda_parser* ilda)
 // -------------------- Format 2 --------------------
 static bool read_colors(ilda_parser* ilda)
 {
-    free_color_table(ilda);
+    ilda_projector* proj = GET_CURRENT_PROJECTOR(ilda);
+    free_projector_palette(proj);
 
-    ilda->nc = NUMBER_OF_RECORDS(ilda);
-    ilda->c = (ilda_color*)calloc(sizeof(ilda_color), ilda->nc);
+    proj->n_colors = NUMBER_OF_RECORDS(ilda);
+    proj->colors = (ilda_color*)calloc(sizeof(ilda_color), proj->n_colors);
 
     for(size_t i = 0; i < NUMBER_OF_RECORDS(ilda); i++)
     {
@@ -139,7 +140,17 @@ int lzr_ilda_read(char* filename)
 {
     //init a parser
     ilda_parser* ilda = (ilda_parser*) malloc(sizeof(ilda_parser));
-    ilda->c = NULL;
+
+    //wipe the projector data (color and frame arrays)
+    for(size_t p = 0; p < MAX_PROJECTORS; p++)
+    {
+        ilda_projector* proj = GET_PROJECTOR(ilda, p);
+        proj->colors = NULL;
+        proj->frames = NULL;
+        proj->n_colors = 0;
+        proj->n_frames = 0;
+    }
+
     ilda->f = fopen(filename, "rb");
 
     if(ilda->f == NULL)
@@ -148,12 +159,21 @@ int lzr_ilda_read(char* filename)
         return LZR_FAILURE;
     }
 
-    //read each section in the file
+    //============================================
+
+    //read each section in the ILDA file
     while(true) { if(!read_section(ilda)) break; }
 
+    //============================================
+
     //destruct the parser
+    for(size_t p = 0; p < MAX_PROJECTORS; p++)
+    {
+        ilda_projector* proj = GET_PROJECTOR(ilda, p);
+        free_projector_palette(proj);
+    }
+
     fclose(ilda->f);
-    free_color_table(ilda);
     free(ilda);
 
     return LZR_SUCCESS;

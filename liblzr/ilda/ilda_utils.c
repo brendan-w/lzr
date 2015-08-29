@@ -75,63 +75,29 @@ const ilda_color ilda_palette[] = {
 
 const int ilda_color_count = sizeof(ilda_palette) / sizeof(ilda_color);
 
-//helper function to safely free any old color palette
-void free_color_table(ilda_parser* ilda)
+
+void free_projector_palette(ilda_projector* p)
 {
-    ilda->nc = 0;
-    if(ilda->c != NULL) free(ilda->c);
+    if(p->colors != NULL) free(p->colors);
+    p->n_colors = 0;
 }
 
-//safe color lookup
-//if a palette hasn't been defined, then the default ILDA palette is used
-ilda_color lookup_color(ilda_parser* ilda, size_t i)
+
+ilda_color current_palette_lookup(ilda_parser* ilda, size_t i)
 {
-    if((ilda->c == NULL) || (ilda->nc == 0))
+    //get the data for the current projector we're working with
+    ilda_projector* p = GET_CURRENT_PROJECTOR(ilda);
+
+    if((p->colors == NULL) || (p->n_colors == 0))
     {
         //if no palette was defined, lookup in the default
         if(i < ilda_color_count) return ilda_palette[i];
-        else                       return ilda_palette[ILDA_WHITE];
+        else                     return ilda_palette[ILDA_WHITE];
     }
     else
     {
         //use the custom palette
-        if(i < ilda->nc) return ilda->c[i];
-        else             return ilda->c[ILDA_WHITE];
+        if(i < p->n_colors) return p->colors[i];
+        else                return p->colors[ILDA_WHITE];
     }
-}
-
-
-//endian handlers
-
-void endian_header(ilda_header* h)
-{
-    h->number_of_records = be16toh(h->number_of_records);
-    h->record_number     = be16toh(h->record_number);
-    h->total_records     = be16toh(h->total_records);
-}
-
-void endian_2d_indexed(ilda_point_2d_indexed* p)
-{
-    p->x = (int16_t) be16toh((uint16_t) p->x);
-    p->y = (int16_t) be16toh((uint16_t) p->y);
-}
-
-void endian_2d_true(ilda_point_2d_true* p)
-{
-    p->x = (int16_t) be16toh((uint16_t) p->x);
-    p->y = (int16_t) be16toh((uint16_t) p->y);
-}
-
-void endian_3d_indexed(ilda_point_3d_indexed* p)
-{
-    p->x = (int16_t) be16toh((uint16_t) p->x);
-    p->y = (int16_t) be16toh((uint16_t) p->y);
-    p->z = (int16_t) be16toh((uint16_t) p->z);
-}
-
-void endian_3d_true(ilda_point_3d_true* p)
-{
-    p->x = (int16_t) be16toh((uint16_t) p->x);
-    p->y = (int16_t) be16toh((uint16_t) p->y);
-    p->z = (int16_t) be16toh((uint16_t) p->z);
 }
