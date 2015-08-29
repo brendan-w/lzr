@@ -31,14 +31,16 @@ static bool read_3d_indexed(ilda_parser* ilda)
 {
     for(size_t i = 0; i < NUMBER_OF_RECORDS(ilda); i++)
     {
+        lzr_point lzr_p;
         ilda_point_3d_indexed p;
 
         if(!read_record(ilda, (void*) &p, sizeof(ilda_point_3d_indexed)))
             return false;
 
-        endian_3d_indexed(&p);
+        if(p.status.last_point)
+            break;
 
-        lzr_point lzr_p;
+        endian_3d_indexed(&p);
         ilda_indexed_to_lzr(ilda, p, lzr_p);
 
         // printf("(%d, %d, %d)\n", p.x, p.y, p.z);
