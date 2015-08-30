@@ -10,40 +10,40 @@
 void calc_frame(lzr_frame* frame)
 {
     //
-    frame->points[0].x = -LZR_POINT_MAX_POSITION;
-    frame->points[0].y = -LZR_POINT_MAX_POSITION;
-    frame->points[0].r = LZR_POINT_MAX_COLOR;
+    frame->points[0].x = -1.0;
+    frame->points[0].y = -1.0;
+    frame->points[0].r = 255;
     frame->points[0].g = 0;
     frame->points[0].b = 0;
-    frame->points[0].i = LZR_POINT_MAX_COLOR;
+    frame->points[0].i = 255;
     //red
-    frame->points[1].x = LZR_POINT_MAX_POSITION;
-    frame->points[1].y = -LZR_POINT_MAX_POSITION;
+    frame->points[1].x = 1.0;
+    frame->points[1].y = -1.0;
     frame->points[1].r = 0;
-    frame->points[1].g = LZR_POINT_MAX_COLOR;
+    frame->points[1].g = 255;
     frame->points[1].b = 0;
-    frame->points[1].i = LZR_POINT_MAX_COLOR;
+    frame->points[1].i = 255;
     //green
-    frame->points[2].x = LZR_POINT_MAX_POSITION;
-    frame->points[2].y = LZR_POINT_MAX_POSITION;
+    frame->points[2].x = 1.0;
+    frame->points[2].y = 1.0;
     frame->points[2].r = 0;
     frame->points[2].g = 0;
-    frame->points[2].b = LZR_POINT_MAX_COLOR;
-    frame->points[2].i = LZR_POINT_MAX_COLOR;
+    frame->points[2].b = 255;
+    frame->points[2].i = 255;
     //blue
-    frame->points[3].x = -LZR_POINT_MAX_POSITION;
-    frame->points[3].y = LZR_POINT_MAX_POSITION;
-    frame->points[3].r = LZR_POINT_MAX_COLOR;
+    frame->points[3].x = -1.0;
+    frame->points[3].y = 1.0;
+    frame->points[3].r = 255;
     frame->points[3].g = 0;
-    frame->points[3].b = LZR_POINT_MAX_COLOR;
-    frame->points[3].i = LZR_POINT_MAX_COLOR;
+    frame->points[3].b = 255;
+    frame->points[3].i = 255;
     //magenta
-    frame->points[4].x = -LZR_POINT_MAX_POSITION;
-    frame->points[4].y = -LZR_POINT_MAX_POSITION;
-    frame->points[4].r = LZR_POINT_MAX_COLOR;
+    frame->points[4].x = -1.0;
+    frame->points[4].y = -1.0;
+    frame->points[4].r = 255;
     frame->points[4].g = 0;
     frame->points[4].b = 0;
-    frame->points[4].i = LZR_POINT_MAX_COLOR;
+    frame->points[4].i = 255;
 
     frame->n_points = 5;
 }
@@ -62,7 +62,7 @@ int main()
     lzr_frame* frame = (lzr_frame*) malloc(sizeof(lzr_frame));
 
     calc_frame(frame);
-    lzr_interpolator_set(interp, LZR_INTERP_MAX_DISTANCE, 150);
+    // lzr_interpolator_set(interp, LZR_INTERP_MAX_DISTANCE, 150);
     int r = lzr_interpolator_run(interp, frame);
     if(r != LZR_SUCCESS)
     {
