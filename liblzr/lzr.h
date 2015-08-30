@@ -61,7 +61,7 @@ typedef struct {
 } lzr_point;
 
 
-//square of the distance between two points (cast ensures that we won't overflow the int16_t type)
+//square of the distance between two points
 #define LZR_POINT_SQ_DISTANCE(a, b) ( (a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y) )
 
 //blanks the given point
@@ -107,68 +107,29 @@ typedef double lzr_time;
 
 
 /******************************************************************************/
-/*  LZR ZeroMQ Facilities                                                     */
+/*  Point Transforms                                                          */
 /******************************************************************************/
 
-//create a ZMQ transmitter (publisher)
-void* lzr_create_frame_tx(void* zmq_ctx, char* address);
-
-//create a ZMQ reciever (subscriber)
-void* lzr_create_frame_rx(void* zmq_ctx, char* address);
-
-//send a single frame
-int lzr_send_frame(void* tx, lzr_frame* frame);
-
-//recieve a single frame
-int lzr_recv_frame(void* rx, lzr_frame* frame);
-
-//wrappers for handling ZMQ contexts
-#define lzr_create_zmq_ctx()     zmq_ctx_new()
-#define lzr_destroy_zmq_ctx(ctx) zmq_ctx_destroy(ctx)
-#define lzr_destroy_frame_rx(rx) zmq_close(rx)
-#define lzr_destroy_frame_tx(tx) zmq_close(tx)
-
-//the default LZR endpoint
-#ifndef LZR_ZMQ_ENDPOINT
-# define LZR_ZMQ_ENDPOINT "tcp://127.0.0.1:5555"
-#endif
+//will interpolate position, color, and intensity
+lzr_point lzr_point_lerp(lzr_point* a, lzr_point* b, double t);
 
 
 
 /******************************************************************************/
-/*  LZR Optimizer                                                             */
+/*  Frame Transforms                                                          */
 /******************************************************************************/
 
-typedef void lzr_optimizer;
+//rotates a frame around position specified by axis
+int lzr_frame_rotate(lzr_frame* frame, lzr_point axis, double theta);
 
-typedef enum {
-    LZR_OPT_ANCHOR_POINTS,
-} opt_property;
+//translate all points within a frame
+int lzr_frame_translate(lzr_frame* frame, lzr_point offset);
 
+//scales all points within a frame
+int lzr_frame_scale(lzr_frame* frame, double x, double y);
 
-//Allocates and returns a point to a new optimizer context.
-lzr_optimizer* lzr_optimizer_create();
-
-//Deallocator for the optimizer context
-void lzr_optimizer_destroy(lzr_optimizer* opt);
-
-//settings modifier
-void lzr_optimizer_set(lzr_optimizer* opt, opt_property prop, unsigned long value);
-#define lzr_optimizer_set(opt, prop, value) \
-        lzr_optimizer_set(opt, prop, (unsigned long) value)
-
-/*
-    Main optimizer function.
-
-    params:
-           opt : the optimizer context
-         frame : the frame of points to be optimized
-
-    returns:
-        0  : success
-        -1 : error, not enough room for additional points
-*/
-int lzr_optimizer_run(lzr_optimizer* opt, lzr_frame* frame);
+//linearly duplicate the current frame
+int lzr_frame_dup_linear(lzr_frame* frame, lzr_point end_point, size_t n_dups, bool blank);
 
 
 
@@ -211,29 +172,39 @@ int lzr_interpolator_run(lzr_interpolator* interp, lzr_frame* frame);
 
 
 /******************************************************************************/
-/*  Point Transforms                                                          */
+/*  LZR Optimizer                                                             */
 /******************************************************************************/
 
-//will interpolate position, color, and intensity
-lzr_point lzr_point_lerp(lzr_point* a, lzr_point* b, double t);
+typedef void lzr_optimizer;
+
+typedef enum {
+    LZR_OPT_ANCHOR_POINTS,
+} opt_property;
 
 
+//Allocates and returns a point to a new optimizer context.
+lzr_optimizer* lzr_optimizer_create();
 
-/******************************************************************************/
-/*  Frame Transforms                                                          */
-/******************************************************************************/
+//Deallocator for the optimizer context
+void lzr_optimizer_destroy(lzr_optimizer* opt);
 
-//rotates a frame around position specified by axis
-int lzr_frame_rotate(lzr_frame* frame, lzr_point axis, double theta);
+//settings modifier
+void lzr_optimizer_set(lzr_optimizer* opt, opt_property prop, unsigned long value);
+#define lzr_optimizer_set(opt, prop, value) \
+        lzr_optimizer_set(opt, prop, (unsigned long) value)
 
-//translate all points within a frame
-int lzr_frame_translate(lzr_frame* frame, lzr_point offset);
+/*
+    Main optimizer function.
 
-//scales all points within a frame
-int lzr_frame_scale(lzr_frame* frame, double x, double y);
+    params:
+           opt : the optimizer context
+         frame : the frame of points to be optimized
 
-//linearly duplicate the current frame
-int lzr_frame_dup_linear(lzr_frame* frame, lzr_point end_point, size_t n_dups, bool blank);
+    returns:
+        0  : success
+        -1 : error, not enough room for additional points
+*/
+int lzr_optimizer_run(lzr_optimizer* opt, lzr_frame* frame);
 
 
 
@@ -243,6 +214,35 @@ int lzr_frame_dup_linear(lzr_frame* frame, lzr_point end_point, size_t n_dups, b
 
 //parse the given ILDA file
 int lzr_ilda_read(char* filename);
+
+
+
+/******************************************************************************/
+/*  LZR ZeroMQ Facilities                                                     */
+/******************************************************************************/
+
+//create a ZMQ transmitter (publisher)
+void* lzr_create_frame_tx(void* zmq_ctx, char* address);
+
+//create a ZMQ reciever (subscriber)
+void* lzr_create_frame_rx(void* zmq_ctx, char* address);
+
+//send a single frame
+int lzr_send_frame(void* tx, lzr_frame* frame);
+
+//recieve a single frame
+int lzr_recv_frame(void* rx, lzr_frame* frame);
+
+//wrappers for handling ZMQ contexts
+#define lzr_create_zmq_ctx()     zmq_ctx_new()
+#define lzr_destroy_zmq_ctx(ctx) zmq_ctx_destroy(ctx)
+#define lzr_destroy_frame_rx(rx) zmq_close(rx)
+#define lzr_destroy_frame_tx(tx) zmq_close(tx)
+
+//the default LZR endpoint
+#ifndef LZR_ZMQ_ENDPOINT
+# define LZR_ZMQ_ENDPOINT "tcp://127.0.0.1:5555"
+#endif
 
 
 
