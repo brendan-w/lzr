@@ -38,12 +38,12 @@ static void send_frame()
         for(size_t i = 0; i < frame->n_points; i++)
         {
             //convert LZR point into etherdream point
-            ether_points[i].x = (int16_t) CLAMP(frame->points[i].x) * 32767;
-            ether_points[i].y = (int16_t) CLAMP(frame->points[i].y) * 32767;
-            ether_points[i].r = (uint16_t) frame->points[i].r * 255;
-            ether_points[i].g = (uint16_t) frame->points[i].g * 255;
-            ether_points[i].b = (uint16_t) frame->points[i].b * 255;
-            ether_points[i].i = (uint16_t) frame->points[i].i * 255;
+            ether_points[i].x = (int16_t) (CLAMP(frame->points[i].x) * 32767);
+            ether_points[i].y = (int16_t) (CLAMP(frame->points[i].y) * 32767);
+            ether_points[i].r = (uint16_t) (frame->points[i].r * 255);
+            ether_points[i].g = (uint16_t) (frame->points[i].g * 255);
+            ether_points[i].b = (uint16_t) (frame->points[i].b * 255);
+            ether_points[i].i = (uint16_t) (frame->points[i].i * 255);
         }
 
         etherdream_write(dac, ether_points, frame->n_points, 30000, -1);

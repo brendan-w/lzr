@@ -71,12 +71,17 @@ int main()
     }
     printf("%zu\n", frame->n_points);
 
+    for(size_t i = 0; i < frame->n_points; i++)
+    {
+        printf("(%f, %f)\n", frame->points[i].x, frame->points[i].y);
+    }
+
     int i = 0;
+    printf("sending...\n");
     while(1)
     {
 
         lzr_send_frame(tx, frame);
-        printf("sent\n");
         usleep(1000000 / 300);
         i++;
     }
