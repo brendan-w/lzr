@@ -229,6 +229,9 @@ int lzr_frame_rotate(lzr_frame* frame, lzr_point axis, double theta);
 //translate all points within a frame
 int lzr_frame_translate(lzr_frame* frame, lzr_point offset);
 
+//scales all points within a frame
+int lzr_frame_scale(lzr_frame* frame, double x, double y);
+
 //linearly duplicate the current frame
 int lzr_frame_dup_linear(lzr_frame* frame, lzr_point end_point, size_t n_dups, bool blank);
 

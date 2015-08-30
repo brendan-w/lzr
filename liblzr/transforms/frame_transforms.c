@@ -36,6 +36,17 @@ int lzr_frame_translate(lzr_frame* frame, lzr_point offset)
     return LZR_SUCCESS;
 }
 
+int lzr_frame_scale(lzr_frame* frame, double x, double y)
+{
+    for(size_t i = 0; i < frame->n_points; i++)
+    {
+        frame->points[i].x *= x;
+        frame->points[i].y *= y;
+    }
+
+    return LZR_SUCCESS;
+}
+
 int lzr_frame_dup_linear(lzr_frame* frame, lzr_point end_point, size_t n_dups, bool blank)
 {
     //TODO: handle blanking jumps
