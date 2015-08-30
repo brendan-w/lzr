@@ -13,7 +13,7 @@ static void to_buffer(opt_t* opt, lzr_frame* frame)
 }
 
 
-lzr_optimizer* lzr_create_optimizer()
+lzr_optimizer* lzr_optimizer_create()
 {
     opt_t* opt = malloc(sizeof(opt_t));
 
@@ -27,7 +27,7 @@ lzr_optimizer* lzr_create_optimizer()
     return (lzr_optimizer*) opt;
 }
 
-void lzr_destroy_optimizer(lzr_optimizer* _opt)
+void lzr_optimizer_destroy(lzr_optimizer* _opt)
 {
     opt_t* opt = (opt_t*) _opt;
     free(opt->points);

@@ -47,12 +47,12 @@ int main()
 
     frame.n_points = 9;
 
-    lzr_optimizer* opt = lzr_create_optimizer();
+    lzr_optimizer* opt = lzr_optimizer_create();
 
     lzr_optimizer_set(opt, LZR_OPT_ANCHOR_POINTS, 1);
 
     lzr_optimizer_run(opt, &frame);
     opt_log(opt);
-    lzr_destroy_optimizer(opt);
+    lzr_optimizer_destroy(opt);
     return 0;
 }

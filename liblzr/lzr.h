@@ -28,6 +28,7 @@ extern "C" {
 #include <stdbool.h>
 
 
+
 /******************************************************************************/
 /*  LZR Return Codes                                                          */
 /******************************************************************************/
@@ -38,13 +39,17 @@ extern "C" {
 #define LZR_ERROR_INVALID_PROPERTY -3
 
 
+
 /******************************************************************************/
 /*  LZR Points                                                                */
 /******************************************************************************/
 
-//point constants
-#define LZR_POINT_MAX_POSITION 1.0
-#define LZR_POINT_MAX_COLOR    255
+//point limits
+#define LZR_POINT_POSITION_MIN -1.0
+#define LZR_POINT_POSITION_MAX 1.0
+#define LZR_POINT_COLOR_MIN    0
+#define LZR_POINT_COLOR_MAX    255
+
 
 typedef struct {
     double x;  //Position X   [-1.0, 1.0]
@@ -55,13 +60,12 @@ typedef struct {
     uint8_t i; //Blanking     [0, 255]
 } lzr_point;
 
-//point macros
 
 //square of the distance between two points (cast ensures that we won't overflow the int16_t type)
 #define LZR_POINT_SQ_DISTANCE(a, b) ( (a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y) )
 
 //blanks the given point
-#define LZR_POINT_BLANK(p)          p.r = p.g = p.b = p.i = 0
+#define LZR_POINT_BLANK(p)          { p.r = p.g = p.b = p.i = 0; }
 
 //returns boolean for whether the given point is blanked
 #define LZR_POINT_IS_BLANKED(p)     ( (p.i == 0) || (p.r + p.g + p.b == 0) )
@@ -76,17 +80,20 @@ typedef struct {
 #define LZR_POINTS_EQUAL(a, b)      ( POINTS_SAME_POS(a, b) && POINTS_SAME_COLOR(a, b) )
 
 
+
 /******************************************************************************/
 /*  LZR Frames                                                                */
 /******************************************************************************/
 
-//frame constants
+//frame limits
 #define LZR_FRAME_MAX_POINTS 2000  // = 60,000 pps / 30 fps
+
 
 typedef struct {
   lzr_point points[LZR_FRAME_MAX_POINTS];
   uint16_t n_points;
 } lzr_frame;
+
 
 
 /******************************************************************************/
@@ -96,6 +103,7 @@ typedef struct {
 //sometimes this represents seconds, others, it represents normallized time
 //Normalized time is ussually notated `nt` while time in seconds is simply `t`
 typedef double lzr_time;
+
 
 
 /******************************************************************************/
@@ -114,8 +122,6 @@ int lzr_send_frame(void* tx, lzr_frame* frame);
 //recieve a single frame
 int lzr_recv_frame(void* rx, lzr_frame* frame);
 
-//zmq macros
-
 //wrappers for handling ZMQ contexts
 #define lzr_create_zmq_ctx()     zmq_ctx_new()
 #define lzr_destroy_zmq_ctx(ctx) zmq_ctx_destroy(ctx)
@@ -124,8 +130,9 @@ int lzr_recv_frame(void* rx, lzr_frame* frame);
 
 //the default LZR endpoint
 #ifndef LZR_ZMQ_ENDPOINT
-#define LZR_ZMQ_ENDPOINT "tcp://127.0.0.1:5555"
+# define LZR_ZMQ_ENDPOINT "tcp://127.0.0.1:5555"
 #endif
+
 
 
 /******************************************************************************/
@@ -140,10 +147,10 @@ typedef enum {
 
 
 //Allocates and returns a point to a new optimizer context.
-lzr_optimizer* lzr_create_optimizer();
+lzr_optimizer* lzr_optimizer_create();
 
 //Deallocator for the optimizer context
-void lzr_destroy_optimizer(lzr_optimizer* opt);
+void lzr_optimizer_destroy(lzr_optimizer* opt);
 
 //settings modifier
 void lzr_optimizer_set(lzr_optimizer* opt, opt_property prop, unsigned long value);
@@ -162,6 +169,7 @@ void lzr_optimizer_set(lzr_optimizer* opt, opt_property prop, unsigned long valu
         -1 : error, not enough room for additional points
 */
 int lzr_optimizer_run(lzr_optimizer* opt, lzr_frame* frame);
+
 
 
 /******************************************************************************/
@@ -201,16 +209,18 @@ void lzr_interpolator_set(lzr_interpolator* interp, interp_property prop, unsign
 int lzr_interpolator_run(lzr_interpolator* interp, lzr_frame* frame);
 
 
+
 /******************************************************************************/
-/*  Point Utilities                                                           */
+/*  Point Transforms                                                          */
 /******************************************************************************/
 
 //will interpolate position, color, and intensity
 lzr_point lzr_point_lerp(lzr_point* a, lzr_point* b, double t);
 
 
+
 /******************************************************************************/
-/*  Frame Utilities                                                           */
+/*  Frame Transforms                                                          */
 /******************************************************************************/
 
 //rotates a frame around position specified by axis
@@ -221,6 +231,7 @@ int lzr_frame_translate(lzr_frame* frame, lzr_point offset);
 
 //linearly duplicate the current frame
 int lzr_frame_dup_linear(lzr_frame* frame, lzr_point end_point, size_t n_dups, bool blank);
+
 
 
 /******************************************************************************/
