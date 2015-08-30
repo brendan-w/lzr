@@ -52,16 +52,18 @@ static bool read_3d_indexed(ilda_parser* ilda)
 // -------------------- Format 2 --------------------
 static bool read_colors(ilda_parser* ilda)
 {
-    ilda_projector* proj = GET_CURRENT_PROJECTOR(ilda);
-    free_projector_palette(proj);
-
-    proj->n_colors = NUMBER_OF_RECORDS(ilda);
-    proj->colors = (ilda_color*)calloc(sizeof(ilda_color), proj->n_colors);
+    current_palette_init(ilda, NUMBER_OF_RECORDS(ilda));
 
     for(size_t i = 0; i < NUMBER_OF_RECORDS(ilda); i++)
     {
-        //read one color record
+        ilda_color c;
 
+        //read one color record
+        if(!read_record(ilda, (void*) &c, sizeof(ilda_color)))
+            return false;
+
+        //store the new color
+        current_palette_set(ilda, i, c);
     }
 
     return true;

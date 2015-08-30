@@ -18,7 +18,7 @@ int main()
     assert(sizeof(ilda_point_3d_true)    == 10);
     printf("struct sizes OK\n");
 
-    lzr_ilda_read("../../Downloads/ildatest.ild");
+    lzr_ilda_read("../../../Downloads/ildatest.ild");
 
     return 0;
 }

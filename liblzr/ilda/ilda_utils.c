@@ -76,6 +76,21 @@ const ilda_color ilda_palette[] = {
 const size_t ilda_color_count = sizeof(ilda_palette) / sizeof(ilda_color);
 
 
+
+void current_palette_init(ilda_parser* ilda, size_t n_colors)
+{
+    //get the data for the current projector we're working with
+    ilda_projector* proj = GET_CURRENT_PROJECTOR(ilda);
+
+    //free any old palette
+    free_projector_palette(proj);
+
+    //malloc the new array of colors
+    proj->n_colors = n_colors;
+    proj->colors = (ilda_color*) calloc(sizeof(ilda_color), n_colors);
+}
+
+
 void free_projector_palette(ilda_projector* p)
 {
     if(p->colors != NULL) free(p->colors);
@@ -83,12 +98,29 @@ void free_projector_palette(ilda_projector* p)
 }
 
 
-ilda_color current_palette_lookup(ilda_parser* ilda, size_t i)
+void current_palette_set(ilda_parser* ilda, size_t i, ilda_color c)
 {
     //get the data for the current projector we're working with
-    ilda_projector* p = GET_CURRENT_PROJECTOR(ilda);
+    ilda_projector* proj = GET_CURRENT_PROJECTOR(ilda);
 
-    if((p->colors == NULL) || (p->n_colors == 0))
+    //check that we're inside the array
+    if(i > proj->n_colors)
+    {
+        perror("Error setting palette color: index out of range");
+        return;
+    }
+
+    //set the color
+    proj->colors[i] = c;
+}
+
+
+ilda_color current_palette_get(ilda_parser* ilda, size_t i)
+{
+    //get the data for the current projector we're working with
+    ilda_projector* proj = GET_CURRENT_PROJECTOR(ilda);
+
+    if((proj->colors == NULL) || (proj->n_colors == 0))
     {
         //if no palette was defined, lookup in the default
         if(i < ilda_color_count) return ilda_palette[i];
@@ -97,7 +129,7 @@ ilda_color current_palette_lookup(ilda_parser* ilda, size_t i)
     else
     {
         //use the custom palette
-        if(i < p->n_colors) return p->colors[i];
-        else                return p->colors[ILDA_WHITE];
+        if(i < proj->n_colors) return proj->colors[i];
+        else                return proj->colors[ILDA_WHITE];
     }
 }

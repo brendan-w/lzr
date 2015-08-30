@@ -9,6 +9,7 @@
 #include <lzr.h>
 
 
+
 /******************************************************************************/
 /*  ILDA Structure Definitions                                                */
 /******************************************************************************/
@@ -79,6 +80,7 @@ typedef struct {
 } ilda_point_3d_true;
 
 
+
 /******************************************************************************/
 /*  Parser Context                                                            */
 /******************************************************************************/
@@ -99,18 +101,11 @@ typedef struct {
 } ilda_parser;
 
 
+
 /******************************************************************************/
-/*  ILDA Utils                                                                */
+/*  ILDA Color Utils                                                          */
 /******************************************************************************/
 
-//returns a pointer to the ilda_projector element
-//arguments (ilda_parser*, uint8_t)
-#define GET_PROJECTOR(ilda, i) ( (ilda)->projectors + (i) )
-
-//same as GET_PROJECTOR, but returns the projector corresponding to
-//`projector_id` in the header
-//arguments (ilda_parser*)
-#define GET_CURRENT_PROJECTOR(ilda) ( GET_PROJECTOR((ilda), (ilda)->h.projector_id ) )
 
 // the ILDA default color table (defined in ilda_utils.c)
 extern const ilda_color ilda_palette[];
@@ -125,12 +120,34 @@ extern const size_t ilda_color_count;
 #define ILDA_MAGENTA 48
 #define ILDA_WHITE   56
 
+
+//malloc's a new color palette, freeing any previous one
+void current_palette_init(ilda_parser* ilda, size_t n_colors);
+
 //helper function to safely free the color palette for the given projector
 void free_projector_palette(ilda_projector* p);
 
+//safe color set for the current projector's palette
+void current_palette_set(ilda_parser* ilda, size_t i, ilda_color c);
+
 //safe color lookup for the current projector
 //if a palette hasn't been defined, then the default ILDA palette is used
-ilda_color current_palette_lookup(ilda_parser* ilda, size_t i);
+ilda_color current_palette_get(ilda_parser* ilda, size_t i);
+
+
+
+/******************************************************************************/
+/*  ILDA Utils                                                                */
+/******************************************************************************/
+
+//returns a pointer to the ilda_projector element
+//arguments (ilda_parser*, uint8_t)
+#define GET_PROJECTOR(ilda, i) ( (ilda)->projectors + (i) )
+
+//same as GET_PROJECTOR, but returns the projector corresponding to
+//`projector_id` in the header
+//arguments (ilda_parser*)
+#define GET_CURRENT_PROJECTOR(ilda) ( GET_PROJECTOR((ilda), (ilda)->h.projector_id ) )
 
 
 /*
@@ -180,14 +197,14 @@ ilda_color current_palette_lookup(ilda_parser* ilda, size_t i);
 }
 
 //Arguments: (ilda_parser*, ilda_point_2d_indexed | ilda_point_3d_indexed, lzr_point)
-#define ilda_indexed_to_lzr(ilda, ilda_p, lzr_p) {                    \
-    (lzr_p).x = (double) (ilda_p).x / INT16_MAX;                      \
-    (lzr_p).y = (double) (ilda_p).y / INT16_MAX;                      \
-    ilda_color c = current_palette_lookup((ilda), (ilda_p).color);    \
-    (lzr_p).r = c.r;                                                  \
-    (lzr_p).g = c.g;                                                  \
-    (lzr_p).b = c.b;                                                  \
-    (lzr_p).i = (ilda_p).status.blanked ? UINT8_MAX : 0;              \
+#define ilda_indexed_to_lzr(ilda, ilda_p, lzr_p) {                 \
+    (lzr_p).x = (double) (ilda_p).x / INT16_MAX;                   \
+    (lzr_p).y = (double) (ilda_p).y / INT16_MAX;                   \
+    ilda_color c = current_palette_get((ilda), (ilda_p).color);    \
+    (lzr_p).r = c.r;                                               \
+    (lzr_p).g = c.g;                                               \
+    (lzr_p).b = c.b;                                               \
+    (lzr_p).i = (ilda_p).status.blanked ? UINT8_MAX : 0;           \
 }
 
 

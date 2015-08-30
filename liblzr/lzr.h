@@ -224,7 +224,7 @@ int lzr_frame_dup_linear(lzr_frame* frame, lzr_point end_point, size_t n_dups, b
 
 
 /******************************************************************************/
-/*  (wishlist) ILDA File Handlers                                             */
+/*  ILDA File Handlers                                                        */
 /******************************************************************************/
 
 //parse the given ILDA file
