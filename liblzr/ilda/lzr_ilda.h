@@ -97,6 +97,11 @@ typedef struct {
     ilda_projector projectors[MAX_PROJECTORS]; // the per-projector data (colors and frames)
 } ilda_parser;
 
+
+/******************************************************************************/
+/*  ILDA Utils                                                                */
+/******************************************************************************/
+
 //returns a pointer to the ilda_projector element
 //arguments (ilda_parser*, uint8_t)
 #define GET_PROJECTOR(ilda, i) ( (ilda)->projectors + (i) )
@@ -105,10 +110,6 @@ typedef struct {
 //`projector_id` in the header
 //arguments (ilda_parser*)
 #define GET_CURRENT_PROJECTOR(ilda) ( GET_PROJECTOR((ilda), (ilda)->h.projector_id ) )
-
-/******************************************************************************/
-/*  ILDA Utils                                                                */
-/******************************************************************************/
 
 // the ILDA default color table (defined in ilda_utils.c)
 extern const ilda_color ilda_palette[];
@@ -123,8 +124,8 @@ extern const int ilda_color_count;
 #define ILDA_MAGENTA 48
 #define ILDA_WHITE   56
 
-//helper function to safely free the color palette for the current projector
-void free_current_palette(ilda_parser* ilda);
+//helper function to safely free the color palette for the given projector
+void free_projector_palette(ilda_projector* p);
 
 //safe color lookup for the current projector
 //if a palette hasn't been defined, then the default ILDA palette is used
