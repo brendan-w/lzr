@@ -1,6 +1,5 @@
 
-#include <stdlib.h>
-#include <string.h>
+#include <string.h> //strcmp() for "ILDA" header
 #include <lzr.h>
 #include "lzr_ilda.h"
 

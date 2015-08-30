@@ -3,6 +3,7 @@
 #ifndef LZR_ILDA_H
 #define LZR_ILDA_H
 
+#include <stdlib.h>
 #include <stdio.h>
 #include <endian.h>
 #include <lzr.h>
@@ -113,7 +114,7 @@ typedef struct {
 
 // the ILDA default color table (defined in ilda_utils.c)
 extern const ilda_color ilda_palette[];
-extern const int ilda_color_count;
+extern const size_t ilda_color_count;
 
 // solid color indices
 #define ILDA_RED     0

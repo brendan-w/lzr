@@ -73,7 +73,7 @@ const ilda_color ilda_palette[] = {
     { 255, 32,  32  }
 };
 
-const int ilda_color_count = sizeof(ilda_palette) / sizeof(ilda_color);
+const size_t ilda_color_count = sizeof(ilda_palette) / sizeof(ilda_color);
 
 
 void free_projector_palette(ilda_projector* p)

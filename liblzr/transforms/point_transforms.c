@@ -23,4 +23,5 @@ lzr_point lzr_point_lerp(lzr_point* a, lzr_point* b, double t)
     p.g = lerp_uint8(a->g, b->g, t);
     p.b = lerp_uint8(a->b, b->b, t);
     p.i = lerp_uint8(a->i, b->i, t);
+    return p;
 }
