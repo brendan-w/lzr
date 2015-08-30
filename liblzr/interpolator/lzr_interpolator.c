@@ -24,14 +24,15 @@ lzr_interpolator* lzr_interpolator_create()
     return (lzr_interpolator*) interp;
 }
 
+
 void lzr_interpolator_destroy(lzr_interpolator* _interp)
 {
     interp_t* interp = (interp_t*) _interp;
     free(interp);
 }
 
-//remove the value casting macro
-#undef lzr_interpolator_set
+
+#undef lzr_interpolator_set //remove the value casting macro
 void lzr_interpolator_set(lzr_interpolator* _interp, interp_property prop, unsigned long value)
 {
     interp_t* interp = (interp_t*) _interp;
@@ -40,6 +41,7 @@ void lzr_interpolator_set(lzr_interpolator* _interp, interp_property prop, unsig
         case LZR_INTERP_MAX_DISTANCE: interp->max_distance = (double) value; break;
     }
 }
+
 
 //returns success of failure due to frame size constraint
 static int add_point(interp_t* interp, lzr_point p)
@@ -52,10 +54,6 @@ static int add_point(interp_t* interp, lzr_point p)
     return 0;
 }
 
-static double lerp(double v0, double v1, double t)
-{
-    return (1-t)*v0 + t*v1;
-}
 
 static int lerp_lzr(interp_t* interp, lzr_point start, lzr_point end)
 {
@@ -80,11 +78,8 @@ static int lerp_lzr(interp_t* interp, lzr_point start, lzr_point end)
         //loop through the intersticial points
         for(size_t i = 1; i < (n-1); i++)
         {
-            lzr_point p = start; //load color information into the new point
-
             double t = (double) i / n;
-            p.x = lerp(start.x, end.x, t);
-            p.y = lerp(start.y, end.y, t);
+            lzr_point p = lzr_point_lerp(&start, &end, t);
 
             //prevent multiple points at the same location
             if(!LZR_POINTS_SAME_POS(prev, p) &&
@@ -100,6 +95,7 @@ static int lerp_lzr(interp_t* interp, lzr_point start, lzr_point end)
 
     return 0;
 }
+
 
 int lzr_interpolator_run(lzr_interpolator* _interp, lzr_frame* frame)
 {
