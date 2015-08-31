@@ -337,7 +337,7 @@ size_t lzr_ilda_frame_count(void* f, size_t pd)
 }
 
 
-void lzr_ilda_get_frames(void* f, size_t pd, lzr_frame* buffer)
+int lzr_ilda_read_frames(void* f, size_t pd, lzr_frame* buffer)
 {
     ilda_parser* ilda = (ilda_parser*) f;
 
@@ -353,4 +353,6 @@ void lzr_ilda_get_frames(void* f, size_t pd, lzr_frame* buffer)
         if(!read_section_for_projector(ilda, (uint8_t) pd, buffer))
             break;
     }
+
+    return LZR_SUCCESS;
 }

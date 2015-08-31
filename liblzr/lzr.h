@@ -217,21 +217,44 @@ int lzr_optimizer_run(lzr_optimizer* opt, lzr_frame* frame);
 
 typedef void lzr_ilda_file;
 
+
+
+// ILDA reading functions ----------------------------------
+
 //opens the given ILDA file, and returns a parsing context
 lzr_ilda_file* lzr_ilda_read(char* filename);
+
+
+//Reads all frames for the the given projector, and saves them
+//in the given frame buffer. The frame buffer must be the size
+//returned by `lzr_ilda_frame_count()`.
+int lzr_ilda_read_frames(lzr_ilda_file* f, size_t pd, lzr_frame* buffer);
+
+
+
+// ILDA writing functions ----------------------------------
 
 //opens or creates an ILDA file for writing, and returns a parsing context
 lzr_ilda_file* lzr_ilda_write(char* filename);
 
+//write a single frame (for the given projector) to the ILDA file
+int lzr_ilda_write_frame(lzr_ilda_file* f, size_t pd, lzr_frame* frame);
+
+//Helper function for writing an array of frames.
+int lzr_ilda_write_frames(lzr_ilda_file* f, size_t pd, lzr_frame* frames, size_t n_frames);
+
+
+
+//ILDA read OR write functions -----------------------------
+
 //closes the ILDA file, and releases the parsing context 
 void lzr_ilda_close(lzr_ilda_file* f);
 
-
-// ILDA reading functions
+//returns the number of projectors that the ILDA specifies graphics for
 size_t lzr_ilda_projector_count(lzr_ilda_file* f);
-size_t lzr_ilda_frame_count(lzr_ilda_file* f, size_t pd);
-void lzr_ilda_get_frames(lzr_ilda_file* f, size_t pd, lzr_frame* buffer);
 
+//returns the number of frames for a given projector
+size_t lzr_ilda_frame_count(lzr_ilda_file* f, size_t pd);
 
 
 
