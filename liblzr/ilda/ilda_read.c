@@ -14,13 +14,15 @@
  */
 
 //arguments: (ilda_parser*, ilda_point_2d_true | ilda_point_3d_true, lzr_point)
-#define ilda_true_to_lzr(ilda, ilda_p, lzr_p) {             \
-    (lzr_p).x = (double) (ilda_p).x / INT16_MAX;            \
-    (lzr_p).y = (double) (ilda_p).y / INT16_MAX;            \
-    (lzr_p).r = (ilda_p).r;                                 \
-    (lzr_p).g = (ilda_p).g;                                 \
-    (lzr_p).b = (ilda_p).b;                                 \
-    (lzr_p).i = (ilda_p).status.blanked ? UINT8_MAX : 0;    \
+#define ilda_true_to_lzr(ilda, ilda_p, lzr_p) {     \
+    (lzr_p).x = (double) (ilda_p).x / INT16_MAX;    \
+    (lzr_p).y = (double) (ilda_p).y / INT16_MAX;    \
+    (lzr_p).r = (ilda_p).r;                         \
+    (lzr_p).g = (ilda_p).g;                         \
+    (lzr_p).b = (ilda_p).b;                         \
+    (lzr_p).i = UINT8_MAX;                          \
+    if((ilda_p).status.blanked)                     \
+        LZR_POINT_BLANK((lzr_p));                   \
 }
 
 //Arguments: (ilda_parser*, ilda_point_2d_indexed | ilda_point_3d_indexed, lzr_point)
@@ -31,7 +33,9 @@
     (lzr_p).r = c.r;                                               \
     (lzr_p).g = c.g;                                               \
     (lzr_p).b = c.b;                                               \
-    (lzr_p).i = (ilda_p).status.blanked ? UINT8_MAX : 0;           \
+    (lzr_p).i = UINT8_MAX;                                         \
+    if((ilda_p).status.blanked)                                    \
+        LZR_POINT_BLANK((lzr_p));                                  \
 }
 
 
@@ -82,11 +86,9 @@ static bool read_3d_indexed(ilda_parser* ilda, lzr_frame* buffer)
         if(!read_record(ilda, (void*) &p, sizeof(ilda_point_3d_indexed)))
             return false;
 
+        //convert the ILDA point to a lzr_point
         endian_3d(&p);
         ilda_indexed_to_lzr(ilda, p, lzr_p);
-
-        // printf("(%d, %d, %d)\n", p.x, p.y, p.z);
-        // printf("(%f, %f)\n", lzr_p.x, lzr_p.y);
 
         //save the new point to the user's buffer
         buffer[ilda->current_frame].points[i] = lzr_p;

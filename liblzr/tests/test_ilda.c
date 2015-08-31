@@ -35,13 +35,11 @@ int main()
 
     printf("n_points: %zu\n", frames[0].n_points);
 
-    /*
     for(size_t i = 0; i < frames[0].n_points; i++)
     {
         lzr_point p = frames[0].points[i];
-        printf("(%f, %f)\n", p.x, p.y);
+        printf("(%f, %f) i=%d\n", p.x, p.y, p.i);
     }
-    */
 
     free(frames);
     lzr_ilda_close(f);

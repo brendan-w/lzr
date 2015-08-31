@@ -33,7 +33,8 @@ int main()
     printf("%zu\n", frame.n_points);
     for(size_t i = 0; i < frame.n_points; i++)
     {
-        printf("(%f, %f)\n", frame.points[i].x, frame.points[i].y);
+        lzr_point p = frame.points[i];
+        printf("(%f, %f) r=%d, g=%d, b=%d, i=%d\n", p.x, p.y, p.r, p.g, p.b, p.i);
     }
 
     int i = 0;

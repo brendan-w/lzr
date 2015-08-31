@@ -29,9 +29,9 @@ typedef struct {
 
 
 typedef struct {
-    uint8_t last_point : 1;
-    uint8_t blanked    : 1;
     uint8_t            : 6; // the rest of the byte is unused
+    uint8_t blanked    : 1;
+    uint8_t last_point : 1;
 } ilda_status;
 
 
