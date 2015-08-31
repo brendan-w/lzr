@@ -31,7 +31,7 @@ int main()
 
 
     //read the frames
-    lzr_ilda_get_frames(f, 0, frames);
+    lzr_ilda_read_frames(f, 0, frames);
 
     printf("n_points: %zu\n", frames[0].n_points);
 

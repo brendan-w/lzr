@@ -25,7 +25,7 @@ int main()
     lzr_frame* frames = (lzr_frame*) calloc(sizeof(lzr_frame), frame_count);
 
     //read the frames
-    lzr_ilda_get_frames(f, 0, frames);
+    lzr_ilda_read_frames(f, 0, frames);
 
     //use the first frame
     lzr_frame frame = frames[0];
