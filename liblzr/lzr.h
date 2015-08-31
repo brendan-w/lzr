@@ -12,6 +12,7 @@
 /*      frame transformations                                                 */
 /*      frame interpolator                                                    */
 /*      frame optimizer                                                       */
+/*      ILDA file reader/writer                                               */
 /*      ZeroMQ transport                                                      */
 /*                                                                            */
 /******************************************************************************/
