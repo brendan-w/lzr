@@ -30,6 +30,11 @@ OBJS += transforms/frame_transforms.o \
 OBJS += ilda/lzr_ilda.o \
         ilda/ilda_read.o
 
+
+HEADERS += lzr.h \
+           ilda/lzr_ilda.h \
+           optimizer/lzr_optimizer.h
+
 # ============================= main targets =============================
 
 
@@ -45,7 +50,7 @@ liblzr.a: $(OBJS)
 	$(AR) $(ARFLAGS) $@ $^
 
 
-%.o: %.c
+%.o: %.c $(HEADERS)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 
