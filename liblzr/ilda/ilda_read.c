@@ -281,59 +281,14 @@ void* lzr_ilda_read(char* filename)
 
     if(ilda->f == NULL)
     {
-        perror("Failed to open file");
+        perror("Failed to open file for reading");
         return NULL;
     }
 
-    //scan the file
+    //scan the file, populate the frame counts
     scan_file(ilda);
 
     return (void*) ilda;
-}
-
-
-
-
-void lzr_ilda_close(void* f)
-{
-    ilda_parser* ilda = (ilda_parser*) f;
-    
-    //destruct the parser
-    for(size_t pd = 0; pd < MAX_PROJECTORS; pd++)
-    {
-        ilda_projector* proj = GET_PROJECTOR_DATA(ilda, pd);
-        free_projector_palette(proj);
-    }
-
-    fclose(ilda->f);
-    free(ilda);
-}
-
-
-size_t lzr_ilda_projector_count(void* f)
-{
-    ilda_parser* ilda = (ilda_parser*) f;
-
-    size_t n = 0;
-    for(size_t pd = 0; pd < MAX_PROJECTORS; pd++)
-    {
-        ilda_projector* proj = GET_PROJECTOR_DATA(ilda, pd);
-        if(proj->n_frames > 0)
-            n++;
-    }
-
-    return n;
-}
-
-size_t lzr_ilda_frame_count(void* f, size_t pd)
-{
-    ilda_parser* ilda = (ilda_parser*) f;
-
-    if(pd > MAX_PROJECTORS)
-        return 0;
-
-    ilda_projector* proj = GET_PROJECTOR_DATA(ilda, pd);
-    return (size_t) proj->n_frames;
 }
 
 
