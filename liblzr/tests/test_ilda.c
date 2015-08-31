@@ -18,7 +18,11 @@ int main()
     assert(sizeof(ilda_point_3d_true)    == 10);
     printf("struct sizes OK\n");
 
-    lzr_ilda_read("../../../Downloads/ildatest.ild");
+    lzr_ilda_file* f = lzr_ilda_read("../../../Downloads/ildatest.ild");
+
+    printf("n_projectors: %zu\n", lzr_ilda_projector_count(f));
+
+    lzr_ilda_close(f);
 
     return 0;
 }

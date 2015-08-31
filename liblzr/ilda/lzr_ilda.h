@@ -88,16 +88,19 @@ typedef struct {
 #define MAX_PROJECTORS 256
 
 typedef struct {
+    // NOTE: We don't actually store the frames here,
+    // they are copied directly to the user's array.
+    // This struct is mostly for book-keeping
+    size_t      n_frames; // the size of the frame array
     ilda_color* colors;   // the current color table
     size_t      n_colors; // number of colors in the palette
-    lzr_frame*  frames;   // the array of frames
-    size_t      n_frames; // the size of the frame array
 } ilda_projector;
 
 typedef struct {
     FILE*          f;                          // the current file
-    ilda_header    h;                          // the current section header
     ilda_projector projectors[MAX_PROJECTORS]; // the per-projector data (colors and frames)
+    ilda_header    h;                          // the current section header
+    size_t         n;                          // the current frame number for a given
 } ilda_parser;
 
 
@@ -140,14 +143,19 @@ ilda_color current_palette_get(ilda_parser* ilda, size_t i);
 /*  ILDA Utils                                                                */
 /******************************************************************************/
 
+//macros for reading parser state
+#define FORMAT(ilda)            (ilda->h.format_code)
+#define NUMBER_OF_RECORDS(ilda) (ilda->h.number_of_records)
+#define PROJECTOR(ilda)         (ilda->h.projector_id)
+
 //returns a pointer to the ilda_projector element
 //arguments (ilda_parser*, uint8_t)
-#define GET_PROJECTOR(ilda, i) ( (ilda)->projectors + (i) )
+#define GET_PROJECTOR_DATA(ilda, i) ( (ilda)->projectors + (i) )
 
-//same as GET_PROJECTOR, but returns the projector corresponding to
+//same as GET_PROJECTOR_DATA, but returns the projector corresponding to
 //`projector_id` in the header
 //arguments (ilda_parser*)
-#define GET_CURRENT_PROJECTOR(ilda) ( GET_PROJECTOR((ilda), (ilda)->h.projector_id ) )
+#define GET_CURRENT_PROJECTOR_DATA(ilda) ( GET_PROJECTOR_DATA((ilda), (ilda)->h.projector_id ) )
 
 
 /*

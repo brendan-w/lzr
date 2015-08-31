@@ -7,9 +7,11 @@
 /*  Provides:                                                                 */
 /*      point structures                                                      */
 /*      frame structures                                                      */
-/*      frame optimizer                                                       */
-/*      frame interpolator                                                    */
 /*      time definitions                                                      */
+/*      point transformations                                                 */
+/*      frame transformations                                                 */
+/*      frame interpolator                                                    */
+/*      frame optimizer                                                       */
 /*      ZeroMQ transport                                                      */
 /*                                                                            */
 /******************************************************************************/
@@ -36,7 +38,8 @@ extern "C" {
 #define LZR_SUCCESS                 0
 #define LZR_FAILURE                -1
 #define LZR_ERROR_TOO_MANY_POINTS  -2
-#define LZR_ERROR_INVALID_PROPERTY -3
+#define LZR_ERROR_TOO_MANY_FRAMES  -3
+#define LZR_ERROR_INVALID_PROPERTY -4
 
 
 
@@ -90,8 +93,8 @@ typedef struct {
 
 
 typedef struct {
-  lzr_point points[LZR_FRAME_MAX_POINTS];
-  uint16_t n_points;
+    lzr_point points[LZR_FRAME_MAX_POINTS];
+    uint16_t n_points;
 } lzr_frame;
 
 
@@ -212,8 +215,23 @@ int lzr_optimizer_run(lzr_optimizer* opt, lzr_frame* frame);
 /*  ILDA File Handlers                                                        */
 /******************************************************************************/
 
-//parse the given ILDA file
-int lzr_ilda_read(char* filename);
+typedef void lzr_ilda_file;
+
+//opens the given ILDA file, and returns a parsing context
+lzr_ilda_file* lzr_ilda_read(char* filename);
+
+//opens or creates an ILDA file for writing, and returns a parsing context
+lzr_ilda_file* lzr_ilda_write(char* filename);
+
+//closes the ILDA file, and releases the parsing context 
+void lzr_ilda_close(lzr_ilda_file* f);
+
+
+// ILDA reading functions
+size_t lzr_ilda_projector_count(lzr_ilda_file* f);
+size_t lzr_ilda_frame_count(lzr_ilda_file* f, size_t pd);
+void lzr_ilda_get_frames(lzr_ilda_file* f, size_t pd, lzr_frame* buffer);
+
 
 
 

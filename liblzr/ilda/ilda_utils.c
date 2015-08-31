@@ -80,7 +80,7 @@ const size_t ilda_color_count = sizeof(ilda_palette) / sizeof(ilda_color);
 void current_palette_init(ilda_parser* ilda, size_t n_colors)
 {
     //get the data for the current projector we're working with
-    ilda_projector* proj = GET_CURRENT_PROJECTOR(ilda);
+    ilda_projector* proj = GET_CURRENT_PROJECTOR_DATA(ilda);
 
     //free any old palette
     free_projector_palette(proj);
@@ -94,6 +94,7 @@ void current_palette_init(ilda_parser* ilda, size_t n_colors)
 void free_projector_palette(ilda_projector* p)
 {
     if(p->colors != NULL) free(p->colors);
+    p->colors = NULL;
     p->n_colors = 0;
 }
 
@@ -101,7 +102,7 @@ void free_projector_palette(ilda_projector* p)
 void current_palette_set(ilda_parser* ilda, size_t i, ilda_color c)
 {
     //get the data for the current projector we're working with
-    ilda_projector* proj = GET_CURRENT_PROJECTOR(ilda);
+    ilda_projector* proj = GET_CURRENT_PROJECTOR_DATA(ilda);
 
     //check that we're inside the array
     if(i > proj->n_colors)
@@ -118,7 +119,7 @@ void current_palette_set(ilda_parser* ilda, size_t i, ilda_color c)
 ilda_color current_palette_get(ilda_parser* ilda, size_t i)
 {
     //get the data for the current projector we're working with
-    ilda_projector* proj = GET_CURRENT_PROJECTOR(ilda);
+    ilda_projector* proj = GET_CURRENT_PROJECTOR_DATA(ilda);
 
     if((proj->colors == NULL) || (proj->n_colors == 0))
     {
