@@ -99,8 +99,12 @@ typedef struct {
 typedef struct {
     FILE*          f;                          // the current file
     ilda_projector projectors[MAX_PROJECTORS]; // the per-projector data (colors and frames)
-    ilda_header    h;                          // the current section header
-    size_t         n;                          // the current frame number for a given
+
+    //the following fields are only relevant during ONE
+    //API call. Once the call is complete, these should be
+    //considered invalid. They're only here for convenience.
+    ilda_header    h;             // the current section header
+    size_t         current_frame; // the current frame number being read
 } ilda_parser;
 
 
@@ -183,36 +187,6 @@ ilda_color current_palette_get(ilda_parser* ilda, size_t i);
     (point)->x = (int16_t) be16toh((uint16_t) (point)->x);    \
     (point)->y = (int16_t) be16toh((uint16_t) (point)->y);    \
     (point)->z = (int16_t) be16toh((uint16_t) (point)->z);    \
-}
-
-
-/*
- * Point conversion
- * These were done with macros to handle both 2D and 3D types
- *
- * These assume that all point types have `x` and `y` members
- * extra dimensions are outright ignored (3D is orthographically projected)
- */
-
-//arguments: (ilda_parser*, ilda_point_2d_true | ilda_point_3d_true, lzr_point)
-#define ilda_true_to_lzr(ilda, ilda_p, lzr_p) {             \
-    (lzr_p).x = (double) (ilda_p).x / INT16_MAX;            \
-    (lzr_p).y = (double) (ilda_p).y / INT16_MAX;            \
-    (lzr_p).r = (ilda_p).r;                                 \
-    (lzr_p).g = (ilda_p).g;                                 \
-    (lzr_p).b = (ilda_p).b;                                 \
-    (lzr_p).i = (ilda_p).status.blanked ? UINT8_MAX : 0;    \
-}
-
-//Arguments: (ilda_parser*, ilda_point_2d_indexed | ilda_point_3d_indexed, lzr_point)
-#define ilda_indexed_to_lzr(ilda, ilda_p, lzr_p) {                 \
-    (lzr_p).x = (double) (ilda_p).x / INT16_MAX;                   \
-    (lzr_p).y = (double) (ilda_p).y / INT16_MAX;                   \
-    ilda_color c = current_palette_get((ilda), (ilda_p).color);    \
-    (lzr_p).r = c.r;                                               \
-    (lzr_p).g = c.g;                                               \
-    (lzr_p).b = c.b;                                               \
-    (lzr_p).i = (ilda_p).status.blanked ? UINT8_MAX : 0;           \
 }
 
 

@@ -5,6 +5,36 @@
 
 
 
+/*
+ * Point conversion
+ * These were done with macros to handle both 2D and 3D types
+ *
+ * These assume that all point types have `x` and `y` members
+ * extra dimensions are outright ignored (3D is orthographically projected)
+ */
+
+//arguments: (ilda_parser*, ilda_point_2d_true | ilda_point_3d_true, lzr_point)
+#define ilda_true_to_lzr(ilda, ilda_p, lzr_p) {             \
+    (lzr_p).x = (double) (ilda_p).x / INT16_MAX;            \
+    (lzr_p).y = (double) (ilda_p).y / INT16_MAX;            \
+    (lzr_p).r = (ilda_p).r;                                 \
+    (lzr_p).g = (ilda_p).g;                                 \
+    (lzr_p).b = (ilda_p).b;                                 \
+    (lzr_p).i = (ilda_p).status.blanked ? UINT8_MAX : 0;    \
+}
+
+//Arguments: (ilda_parser*, ilda_point_2d_indexed | ilda_point_3d_indexed, lzr_point)
+#define ilda_indexed_to_lzr(ilda, ilda_p, lzr_p) {                 \
+    (lzr_p).x = (double) (ilda_p).x / INT16_MAX;                   \
+    (lzr_p).y = (double) (ilda_p).y / INT16_MAX;                   \
+    ilda_color c = current_palette_get((ilda), (ilda_p).color);    \
+    (lzr_p).r = c.r;                                               \
+    (lzr_p).g = c.g;                                               \
+    (lzr_p).b = c.b;                                               \
+    (lzr_p).i = (ilda_p).status.blanked ? UINT8_MAX : 0;           \
+}
+
+
 
 //reads a single record, and error checks the size
 static bool read_record(ilda_parser* ilda, void* buffer, size_t buffer_size)
@@ -21,10 +51,30 @@ static bool read_record(ilda_parser* ilda, void* buffer, size_t buffer_size)
     return true;
 }
 
+
+/*
+ * Section body readers
+ * These functions iterate over their section's records
+ *
+ * Points are saved off to the given buffer.
+ * Colors are placed in that projector's color palette array
+ */
+
 // -------------------- Format 0 --------------------
-static bool read_3d_indexed(ilda_parser* ilda)
+static bool read_3d_indexed(ilda_parser* ilda, lzr_frame* buffer)
 {
-    for(size_t i = 0; i < NUMBER_OF_RECORDS(ilda); i++)
+    size_t n_points = NUMBER_OF_RECORDS(ilda);
+    if(n_points > LZR_FRAME_MAX_POINTS)
+    {
+        perror("Too many points for lzr_frame. Partial frame loaded.");
+        n_points = LZR_FRAME_MAX_POINTS;
+    }
+
+    //save the frame length to the user's buffer
+    buffer[ilda->current_frame].n_points = n_points;
+
+    //iterate over the records
+    for(size_t i = 0; i < n_points; i++)
     {
         lzr_point lzr_p;
         ilda_point_3d_indexed p;
@@ -36,8 +86,12 @@ static bool read_3d_indexed(ilda_parser* ilda)
         ilda_indexed_to_lzr(ilda, p, lzr_p);
 
         // printf("(%d, %d, %d)\n", p.x, p.y, p.z);
-        printf("(%f, %f)\n", lzr_p.x, lzr_p.y);
+        // printf("(%f, %f)\n", lzr_p.x, lzr_p.y);
 
+        //save the new point to the user's buffer
+        buffer[ilda->current_frame].points[i] = lzr_p;
+
+        //if this was the last point, stop
         if(p.status.last_point)
             break;
     }
@@ -66,6 +120,9 @@ static bool read_colors(ilda_parser* ilda)
 }
 
 
+/*
+ * Header Reader
+ */
 static bool read_header(ilda_parser* ilda)
 {
     //read one ILDA header
@@ -98,7 +155,7 @@ static bool read_header(ilda_parser* ilda)
 
 
 
-//reads a single section of the ILDA file
+//reads a single section (frame) of the ILDA file
 //returns boolean for whether to continue parsing
 static bool read_section_for_projector(ilda_parser* ilda, uint8_t pd, lzr_frame* buffer)
 {
@@ -118,7 +175,7 @@ static bool read_section_for_projector(ilda_parser* ilda, uint8_t pd, lzr_frame*
     switch(FORMAT(ilda))
     {
         case 0:
-            if(!read_3d_indexed(ilda), buffer) return false;
+            if(!read_3d_indexed(ilda, buffer)) return false;
             break;
         case 1:
             break;
@@ -169,7 +226,7 @@ static bool skip_to_next_section(ilda_parser* ilda)
 
 //this function looks at each section header in the ILDA file,
 //and caches the number of frames per projector.
-static bool scan_file(ilda_parser* ilda)
+static void scan_file(ilda_parser* ilda)
 {
     //wipe the projector data (color and frame arrays)
     for(size_t pd = 0; pd < MAX_PROJECTORS; pd++)
@@ -206,9 +263,6 @@ static bool scan_file(ilda_parser* ilda)
 
         skip_to_next_section(ilda);
     }
-
-    printf("%zu\n", ilda->projectors[0].n_frames);
-    printf("%zu\n", ilda->projectors[1].n_frames);
 }
 
 
@@ -230,11 +284,7 @@ void* lzr_ilda_read(char* filename)
     }
 
     //scan the file
-    if(!scan_file(ilda))
-    {
-        lzr_ilda_close((void*) ilda);
-        return NULL;
-    }
+    scan_file(ilda);
 
     return (void*) ilda;
 }
@@ -293,7 +343,7 @@ void lzr_ilda_get_frames(void* f, size_t pd, lzr_frame* buffer)
     fseek(ilda->f, 0, SEEK_SET);
 
     //zero out the frame counter
-    ilda->n = 0;
+    ilda->current_frame = 0;
 
     //read all sections until the end is reached
     while(true)

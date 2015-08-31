@@ -39,9 +39,10 @@ etherdream:
 
 
 .PHONY: test
-test: all test/spiro_server.c test/interp_server.c
+test: all test/spiro_server.c test/interp_server.c test/ilda_server.c
 	$(CC) $(CFLAGS) $(LIBS) -lm test/spiro_server.c  ../liblzr/liblzr.a -o spiro_server
 	$(CC) $(CFLAGS) $(LIBS) -lm test/interp_server.c ../liblzr/liblzr.a -o interp_server
+	$(CC) $(CFLAGS) $(LIBS) -lm test/ilda_server.c   ../liblzr/liblzr.a -o ilda_server
 
 
 .PHONY: install

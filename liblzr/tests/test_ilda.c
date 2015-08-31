@@ -20,8 +20,30 @@ int main()
 
     lzr_ilda_file* f = lzr_ilda_read("../../../Downloads/ildatest.ild");
 
-    printf("n_projectors: %zu\n", lzr_ilda_projector_count(f));
+    size_t n_projectors = lzr_ilda_projector_count(f);
+    printf("n_projectors: %zu\n", n_projectors);
+    if(n_projectors == 0) return -1;
 
+    size_t n_frames = lzr_ilda_frame_count(f, 0); //projector 0
+    printf("n_frames: %zu\n", n_frames);
+
+    lzr_frame* frames = (lzr_frame*) calloc(sizeof(lzr_frame), n_frames);
+
+
+    //read the frames
+    lzr_ilda_get_frames(f, 0, frames);
+
+    printf("n_points: %zu\n", frames[0].n_points);
+
+    /*
+    for(size_t i = 0; i < frames[0].n_points; i++)
+    {
+        lzr_point p = frames[0].points[i];
+        printf("(%f, %f)\n", p.x, p.y);
+    }
+    */
+
+    free(frames);
     lzr_ilda_close(f);
 
     return 0;
