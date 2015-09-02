@@ -141,6 +141,9 @@ void current_palette_set(ilda_parser* ilda, size_t i, ilda_color c);
 //if a palette hasn't been defined, then the default ILDA palette is used
 ilda_color current_palette_get(ilda_parser* ilda, size_t i);
 
+//skips from the end of the current header,
+//to the start of the next header
+bool skip_to_next_section(ilda_parser* ilda);
 
 
 /******************************************************************************/

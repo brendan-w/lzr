@@ -199,32 +199,6 @@ static bool read_section_for_projector(ilda_parser* ilda, uint8_t pd, lzr_frame*
     return true;
 }
 
-//skips from the end of the current header, to the start
-//of the next header
-static bool skip_to_next_section(ilda_parser* ilda)
-{
-    int skip_bytes = 0;
-
-    switch(FORMAT(ilda))
-    {
-        case 0: skip_bytes = sizeof(ilda_point_3d_indexed); break;
-        case 1: skip_bytes = sizeof(ilda_point_2d_indexed); break;
-        case 2: skip_bytes = sizeof(ilda_color);            break;
-        case 4: skip_bytes = sizeof(ilda_point_3d_true);    break;
-        case 5: skip_bytes = sizeof(ilda_point_2d_true);    break;
-        default:
-            /*
-                In this case, we can't skip past an unknown
-                section type, since we don't know the record size.
-            */
-            return false;
-    }
-
-    skip_bytes *= NUMBER_OF_RECORDS(ilda);
-
-    return (fseek(ilda->f, skip_bytes, SEEK_CUR) == 0);
-}
-
 
 //this function looks at each section header in the ILDA file,
 //and caches the number of frames per projector.

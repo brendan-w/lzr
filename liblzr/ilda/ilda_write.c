@@ -13,6 +13,14 @@ static int write_frame(ilda_parser* ilda, lzr_frame* f, size_t pd)
     return LZR_SUCCESS;
 }
 
+static bool write_new_total(ilda_parser* ilda, size_t total)
+{
+    //seek to the beginning of the file
+    fseek(ilda->f, 0, SEEK_SET);
+
+    return LZR_SUCCESS;
+}
+
 
 /******************************************************************************/
 /*  Public Functions                                                          */
