@@ -76,7 +76,7 @@ clean:
 
 
 .PHONY: test
-test: test_interpolator test_optimizer test_ilda
+test: test_interpolator test_optimizer test_ilda test_transformations
 
 
 test_optimizer: all tests/test_optimizer.c
@@ -89,3 +89,7 @@ test_interpolator: all tests/test_interpolator.c
 
 test_ilda: all tests/test_ilda.c
 	$(CC) $(CFLAGS) $(LIBS) tests/test_ilda.c ./liblzr.a -o test_ilda
+
+
+test_transformations: all tests/test_transformations.c
+	$(CC) $(CFLAGS) $(LIBS) tests/test_transformations.c ./liblzr.a -o test_transformations

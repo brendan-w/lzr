@@ -47,9 +47,10 @@ int lzr_frame_scale(lzr_frame* frame, double x, double y)
     return LZR_SUCCESS;
 }
 
-int lzr_frame_dup_linear(lzr_frame* frame, lzr_point end_point, size_t n_dups, bool blank)
+int lzr_frame_dup_linear(lzr_frame* frame, lzr_point offset, size_t n_dups, bool blank)
 {
     //TODO: handle blanking jumps
+    //check the point limits before any modifications are made
     if(frame->n_points * n_dups > LZR_FRAME_MAX_POINTS)
         return LZR_ERROR_TOO_MANY_POINTS;
 
@@ -58,13 +59,22 @@ int lzr_frame_dup_linear(lzr_frame* frame, lzr_point end_point, size_t n_dups, b
 
     for(size_t i = 0; i < n_dups; i++)
     {
+        //TODO: generate blanking jump
+
         //duplicate the frame
         for(size_t p = 0; p < orig; p++)
         {
-            frame->points[(i * orig) + p] = frame->points[p];
-        }
+            lzr_point start = frame->points[p];
+            lzr_point end = start;
+            end.x += offset.x;
+            end.y += offset.y;
 
-        frame->n_points += orig;
+            double t = (double) i / n_dups;
+
+            //set the new point
+            frame->points[frame->n_points] = lzr_point_lerp(&start, &end, t);
+            frame->n_points++;
+        }
     }
 
     return LZR_SUCCESS;

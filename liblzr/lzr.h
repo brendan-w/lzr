@@ -133,7 +133,7 @@ int lzr_frame_translate(lzr_frame* frame, lzr_point offset);
 int lzr_frame_scale(lzr_frame* frame, double x, double y);
 
 //linearly duplicate the current frame
-int lzr_frame_dup_linear(lzr_frame* frame, lzr_point end_point, size_t n_dups, bool blank);
+int lzr_frame_dup_linear(lzr_frame* frame, lzr_point offset, size_t n_dups, bool blank);
 
 
 

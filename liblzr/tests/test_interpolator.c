@@ -24,8 +24,6 @@ int main()
     lzr_point p1 = POINT_INIT(-1.0, 1.0,  1, 1, 1, 1); frame.points[1] = p1;
     lzr_point p2 = POINT_INIT(-1.0, -1.0, 1, 1, 1, 1); frame.points[2] = p2;
     lzr_point p3 = POINT_INIT(1.0,  -1.0, 1, 1, 1, 1); frame.points[3] = p3;
-
-
     frame.n_points = 4;
 
     lzr_interpolator* interp = lzr_interpolator_create();
