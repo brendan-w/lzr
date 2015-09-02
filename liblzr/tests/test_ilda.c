@@ -18,7 +18,7 @@ int main()
     assert(sizeof(ilda_point_3d_true)    == 10);
     printf("struct sizes OK\n");
 
-    lzr_ilda_file* f = lzr_ilda_read("../../../Downloads/ildatest.ild");
+    lzr_ilda_file* f = lzr_ilda_read("../../Downloads/CanadaFlag.ild");
 
     size_t n_projectors = lzr_ilda_projector_count(f);
     printf("n_projectors: %zu\n", n_projectors);
@@ -33,12 +33,12 @@ int main()
     //read the frames
     lzr_ilda_read_frames(f, 0, frames);
 
-    printf("n_points: %zu\n", frames[0].n_points);
+    printf("n_points: %d\n", frames[0].n_points);
 
     for(size_t i = 0; i < frames[0].n_points; i++)
     {
         lzr_point p = frames[0].points[i];
-        printf("(%f, %f) i=%d\n", p.x, p.y, p.i);
+        // printf("(%f, %f) i=%d\n", p.x, p.y, p.i);
     }
 
     free(frames);

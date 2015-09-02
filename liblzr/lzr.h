@@ -238,10 +238,7 @@ int lzr_ilda_read_frames(lzr_ilda_file* f, size_t pd, lzr_frame* buffer);
 //opens or creates an ILDA file for writing, and returns a parsing context
 lzr_ilda_file* lzr_ilda_write(char* filename);
 
-//write a single frame (for the given projector) to the ILDA file
-int lzr_ilda_write_frame(lzr_ilda_file* f, size_t pd, lzr_frame* frame);
-
-//Helper function for writing an array of frames.
+//write frame(s) for the given projector to the ILDA file
 int lzr_ilda_write_frames(lzr_ilda_file* f, size_t pd, lzr_frame* frames, size_t n_frames);
 
 
