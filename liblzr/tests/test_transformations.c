@@ -19,15 +19,12 @@ int main()
 {
     lzr_frame frame;
 
-    //                        x,    y,    r, g, b, i
-    lzr_point p0 = POINT_INIT(0.25,  0.25,  1, 1, 1, 1); frame.points[0] = p0;
-    lzr_point p1 = POINT_INIT(-0.25, 0.25,  1, 1, 1, 1); frame.points[1] = p1;
-    lzr_point p2 = POINT_INIT(-0.25, -0.25, 1, 1, 1, 1); frame.points[2] = p2;
-    lzr_point p3 = POINT_INIT(0.25,  -0.25, 1, 1, 1, 1); frame.points[3] = p3;
-    frame.n_points = 4;
+    //                        x,     y,     r, g, b, i
+    lzr_point p0 = POINT_INIT(-1.0,  -1.0,  1, 1, 1, 1); frame.points[0] = p0;
+    frame.n_points = 1;
 
-    lzr_point offset = POINT_INIT(0.25, 0.25, 1, 1, 1, 1);
-    int r = lzr_frame_dup_linear(&frame, offset, 3, false);
+    lzr_point offset = POINT_INIT(2.0, 2.0, 0, 0, 0, 0);
+    int r = lzr_frame_dup_linear(&frame, offset, 5, false);
 
     print_frame(&frame);
     printf("frame transformation returned: %d\n", r);

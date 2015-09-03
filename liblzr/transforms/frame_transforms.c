@@ -57,7 +57,7 @@ int lzr_frame_dup_linear(lzr_frame* frame, lzr_point offset, size_t n_dups, bool
     //mark the section of original points
     size_t orig = frame->n_points;
 
-    for(size_t i = 0; i < n_dups; i++)
+    for(size_t i = 1; i < n_dups; i++)
     {
         //TODO: generate blanking jump
 
@@ -69,7 +69,7 @@ int lzr_frame_dup_linear(lzr_frame* frame, lzr_point offset, size_t n_dups, bool
             end.x += offset.x;
             end.y += offset.y;
 
-            double t = (double) i / n_dups;
+            double t = (double) i / (n_dups - 1);
 
             //set the new point
             frame->points[frame->n_points] = lzr_point_lerp(&start, &end, t);
