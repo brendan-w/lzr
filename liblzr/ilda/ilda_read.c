@@ -87,7 +87,7 @@ static bool read_3d_indexed(ilda_parser* ilda, lzr_frame* buffer)
             return false;
 
         //convert the ILDA point to a lzr_point
-        endian_3d(&p);
+        betoh_3d(&p);
         ilda_indexed_to_lzr(ilda, p, lzr_p);
 
         //save the new point to the user's buffer
@@ -150,7 +150,7 @@ static bool read_header(ilda_parser* ilda)
     }
 
     //correct for the big-endianness of the file
-    endian_header(&(ilda->h));
+    betoh_header(&(ilda->h));
 
     return true;
 }

@@ -172,25 +172,50 @@ bool skip_to_next_section(ilda_parser* ilda);
  * These were done with macros to handle both indexed and true color types
  */
 
+/*
+ * From Big-Endian to Host
+ */
+
 //arguments: (ilda_header*)
-#define endian_header(header) {                                            \
+#define betoh_header(header) {                                             \
     (header)->number_of_records = be16toh((header)->number_of_records);    \
     (header)->record_number     = be16toh((header)->record_number);        \
     (header)->total_records     = be16toh((header)->total_records);        \
 }
 
 //arguments: (ilda_point_2d_true* | ilda_point_2d_indexed*)
-#define endian_2d(point) {                                    \
+#define betoh_2d(point) {                                     \
     (point)->x = (int16_t) be16toh((uint16_t) (point)->x);    \
     (point)->y = (int16_t) be16toh((uint16_t) (point)->y);    \
 }
 
 //arguments: (ilda_point_3d_true* | ilda_point_3d_indexed*)
-#define endian_3d(point) {                                    \
+#define betoh_3d(point) {                                     \
     (point)->x = (int16_t) be16toh((uint16_t) (point)->x);    \
     (point)->y = (int16_t) be16toh((uint16_t) (point)->y);    \
     (point)->z = (int16_t) be16toh((uint16_t) (point)->z);    \
 }
 
+
+/*
+ * From Host to Big-Endian
+ */
+
+#define htobe_header(header) {                                             \
+    (header)->number_of_records = htobe16((header)->number_of_records);    \
+    (header)->record_number     = htobe16((header)->record_number);        \
+    (header)->total_records     = htobe16((header)->total_records);        \
+}
+
+#define htobe_2d(point) {                                     \
+    (point)->x = (int16_t) htobe16((uint16_t) (point)->x);    \
+    (point)->y = (int16_t) htobe16((uint16_t) (point)->y);    \
+}
+
+#define htobe_3d(point) {                                     \
+    (point)->x = (int16_t) htobe16((uint16_t) (point)->x);    \
+    (point)->y = (int16_t) htobe16((uint16_t) (point)->y);    \
+    (point)->z = (int16_t) htobe16((uint16_t) (point)->z);    \
+}
 
 #endif /* LZR_ILDA_H */
