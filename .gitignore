@@ -1,10 +1,14 @@
 
-# LZR test binaries
+# liblzr test binaries
 test_optimizer
 test_interpolator
 test_ilda
 
-editor/
+# lzrd test binaries
+lzrd
+spiro_server
+interp_server
+ilda_server
 
 # Created by https://www.gitignore.io
 

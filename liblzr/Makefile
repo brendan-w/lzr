@@ -70,7 +70,7 @@ clean:
 	rm -f optimizer/*.o
 	rm -f ilda/*.o
 	rm -f zmq/*.o
-	rm -f test_optimizer test_interpolator test_ilda
+	rm -f test_optimizer test_interpolator test_ilda test_transformations
 
 
 # ============================= test targets =============================

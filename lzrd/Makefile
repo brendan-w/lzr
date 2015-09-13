@@ -53,4 +53,4 @@ install:
 .PHONY: clean
 clean:
 	$(MAKE) -C libetherdream/ clean
-	rm -f *.o lzrd spiro_server interp_server
+	rm -f *.o lzrd spiro_server interp_server ilda_server
