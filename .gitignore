@@ -2,6 +2,7 @@
 # liblzr test binaries
 test_optimizer
 test_interpolator
+test_transformations
 test_ilda
 
 # lzrd test binaries
