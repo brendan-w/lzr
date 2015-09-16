@@ -144,7 +144,7 @@ int lzr_frame_dup_linear(lzr_frame* frame, lzr_point offset, size_t n_dups, bool
 typedef void lzr_interpolator;
 
 typedef enum {
-    LZR_INTERP_MAX_DISTANCE,
+    LZR_INTERP_MAX_DISTANCE
 } interp_property;
 
 
@@ -182,7 +182,7 @@ int lzr_interpolator_run(lzr_interpolator* interp, lzr_frame* frame);
 typedef void lzr_optimizer;
 
 typedef enum {
-    LZR_OPT_ANCHOR_POINTS,
+    LZR_OPT_ANCHOR_POINTS
 } opt_property;
 
 

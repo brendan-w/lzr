@@ -11,6 +11,9 @@ spiro_server
 interp_server
 ilda_server
 
+#lzrv binaries
+lzrv
+
 # Created by https://www.gitignore.io
 
 ### C ###
