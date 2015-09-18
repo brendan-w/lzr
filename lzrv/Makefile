@@ -26,7 +26,7 @@ all: lzrv
 
 
 lzrv: $(OBJS)
-	$(CXX) $^ $(LIBS) -o $@
+	$(CXX) $^ ../liblzr/liblzr.a $(LIBS) -o $@
 
 
 %.o: %.c $(HEADERS)
