@@ -23,3 +23,4 @@ install:
 clean:
 	$(MAKE) -C liblzr/ clean
 	$(MAKE) -C lzrd/ clean
+	$(MAKE) -C lzrv/ clean

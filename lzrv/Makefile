@@ -3,9 +3,9 @@
 # ============================= compile settings =============================
 
 
-CXX      = g++
-CXXFLAGS += -Wall -Wextra -pedantic -ggdb
-CXXFLAGS += -I../liblzr -I/usr/include/SDL2
+CC      = gcc
+CFLAGS += -std=gnu99 -Wall -Wextra -pedantic -ggdb
+CFLAGS += -I../liblzr -I/usr/include/SDL2
 LIBS    = -lzmq -lm -lpthread -lSDL2
 
 
@@ -26,11 +26,11 @@ all: lzrv
 
 
 lzrv: $(OBJS) ../liblzr/liblzr.a
-	$(CXX) $^ ../liblzr/liblzr.a $(LIBS) -o $@
+	$(CC) $^ ../liblzr/liblzr.a $(LIBS) -o $@
 
 
 %.o: %.c $(HEADERS)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 
 .PHONY: install
