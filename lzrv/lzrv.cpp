@@ -12,6 +12,7 @@ SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
 Uint32 NEW_FRAME; //SDL event for new lzr frames
 
+void* zmq_ctx;
 pthread_t zmq_thread;
 
 pthread_mutex_t frame_lock = PTHREAD_MUTEX_INITIALIZER;
@@ -22,29 +23,32 @@ lzr_frame* frame;
 //ZMQ recv loop
 static void* loop_recv(void* data)
 {
-    void* zmq_ctx = lzr_create_zmq_ctx();
-    void* rx      = lzr_create_frame_rx(zmq_ctx, LZR_ZMQ_ENDPOINT);
-    lzr_frame* temp_frame = new lzr_frame;
+    void* rx = lzr_create_frame_rx(zmq_ctx, LZR_ZMQ_ENDPOINT);
+    lzr_frame temp_frame;
 
     while(1)
     {
-        std::cout << "waiting to recv" << std::endl;
-        int r = lzr_recv_frame(rx, temp_frame);
-        std::cout << "recv: " << r << std::endl;
+        // std::cout << "waiting to recv" << std::endl;
+        int r = lzr_recv_frame(rx, &temp_frame);
+        // std::cout << "recv: " << r << std::endl;
 
         //since the recv is blocking, it *should* always
         //be true, but who knows...
         if(r > 0)
         {
             pthread_mutex_lock(&frame_lock);
-            *frame = *temp_frame;
+            *frame = temp_frame;
             pthread_mutex_unlock(&frame_lock);
+        }
+        else if((r == -1) && (errno == ETERM))
+        {
+            //zmq_ctx has been terminated, stop looping
+            //and prepare for the join()
+            break;
         }
     }
 
-    delete temp_frame;
-    lzr_destroy_frame_rx(rx);
-    lzr_destroy_zmq_ctx(zmq_ctx);
+    zmq_close(rx);
 }
 
 static inline int lzr_coord_to_screen(double v)
@@ -124,6 +128,7 @@ static void loop()
 
 int main(int argc, char * argv[])
 {
+    zmq_ctx = zmq_ctx_new();
     frame = new lzr_frame;
 
     //start SDL
@@ -188,7 +193,10 @@ int main(int argc, char * argv[])
     //start the main loop
     loop();
 
-    //stop ZMQ
+    //shut off 
+    zmq_ctx_term(zmq_ctx);
+
+    //join the ZMQ reading thread
     pthread_join(zmq_thread, NULL);
 
 

@@ -278,7 +278,7 @@ int lzr_recv_frame_no_block(void* rx, lzr_frame* frame);
 
 //wrappers for handling ZMQ contexts
 #define lzr_create_zmq_ctx()     zmq_ctx_new()
-#define lzr_destroy_zmq_ctx(ctx) zmq_ctx_destroy(ctx)
+#define lzr_destroy_zmq_ctx(ctx) zmq_ctx_term(ctx)
 #define lzr_destroy_frame_rx(rx) zmq_close(rx)
 #define lzr_destroy_frame_tx(tx) zmq_close(tx)
 
