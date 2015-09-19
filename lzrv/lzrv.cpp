@@ -73,8 +73,9 @@ static void* loop_recv(void*)
     return NULL;
 }
 
-static inline int lzr_coord_to_screen(double v)
+static inline int lzr_coord_to_screen(double v, bool invert)
 {
+    v = invert ? (v * -1.0) : v;
     return (int) (((v + 1.0) / 2.0) * DEFAULT_WINDOW_SIZE);
 }
 
@@ -108,10 +109,10 @@ static void render()
                                !LZR_POINT_IS_BLANKED(p1) * 255);
 
         SDL_RenderDrawLine(renderer,
-                           lzr_coord_to_screen(p1.x),
-                           lzr_coord_to_screen(p1.y),
-                           lzr_coord_to_screen(p2.x),
-                           lzr_coord_to_screen(p2.y));
+                           lzr_coord_to_screen(p1.x, false),
+                           lzr_coord_to_screen(p1.y, true),
+                           lzr_coord_to_screen(p2.x, false),
+                           lzr_coord_to_screen(p2.y, true));
     }
 
     pthread_mutex_unlock(&frame_lock);
