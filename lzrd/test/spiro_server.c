@@ -17,9 +17,9 @@
 
 
 uint16_t colorsin(float pos) {
-    int res = (sin(pos) + 1) * 32768;
+    int res = (sin(pos) + 1) * 128;
     if (res < 0) return 0;
-    if (res > 65535) return 65535;
+    if (res > 255) return 255;
     return res;
 }
 
@@ -41,10 +41,15 @@ void calc_frame(lzr_frame* frame, float phase)
         pt->x = 2500 * ((R-r)*cos(ip + phase) + D*cos((R-r)*ip/r));
         pt->y = 2500 * ((R-r)*sin(ip + phase) - D*sin((R-r)*ip/r));
 
+        //normalize to [-1, 1]
+        pt->x /= 32768;
+        pt->y /= 32768;
+
         //color
         pt->r = colorsin(ipf);
         pt->g = colorsin(ipf + (2.0 * M_PI / 3.0));
         pt->b = colorsin(ipf + (4.0 * M_PI / 3.0));
+        pt->i = 255;
     }
 
     frame->n_points = CIRCLE_POINTS;  
@@ -55,7 +60,7 @@ void calc_frame(lzr_frame* frame, float phase)
 int main()
 {
     void* zmq_ctx = lzr_create_zmq_ctx();
-    void* tx      = lzr_create_frame_tx(zmq_ctx, LZR_ZMQ_ENDPOINT);
+    void* tx = lzr_create_frame_tx(zmq_ctx, LZR_ZMQ_ENDPOINT);
 
     usleep(1200000);
 

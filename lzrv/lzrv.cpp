@@ -51,6 +51,7 @@ static void* loop_recv(void*)
     while(1)
     {
         int r = lzr_recv_frame(rx, temp_frame);
+        std::cout << "recv frame" << std::endl;
 
         if(r > 0)
         {
