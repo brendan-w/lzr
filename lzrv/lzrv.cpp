@@ -19,36 +19,58 @@ pthread_mutex_t frame_lock = PTHREAD_MUTEX_INITIALIZER;
 lzr_frame* frame;
 
 
+static void trigger_new_frame()
+{
+    SDL_Event e;
+    SDL_zero(e);
 
-//ZMQ recv loop
-static void* loop_recv(void* data)
+    e.type = NEW_FRAME;
+    e.user.data1 = NULL; //don't bother with data
+    e.user.data2 = NULL;
+
+    //try to push onto SDL event queue
+    int r = SDL_PushEvent(&e);
+
+    if(r < 0)
+    {
+        std::cerr << "SDL_PushEvent() failed" << std::endl;
+        std::cerr << SDL_GetError() << std::endl;
+    }
+    else if(r == 0)
+    {
+        std::cerr << "SDL_PushEvent() was filtered" << std::endl;
+    }
+}
+
+//ZMQ recv thread
+static void* loop_recv(void*)
 {
     void* rx = lzr_create_frame_rx(zmq_ctx, LZR_ZMQ_ENDPOINT);
-    lzr_frame temp_frame;
+    lzr_frame* temp_frame = new lzr_frame;
 
     while(1)
     {
-        // std::cout << "waiting to recv" << std::endl;
-        int r = lzr_recv_frame(rx, &temp_frame);
-        // std::cout << "recv: " << r << std::endl;
+        int r = lzr_recv_frame(rx, temp_frame);
 
-        //since the recv is blocking, it *should* always
-        //be true, but who knows...
         if(r > 0)
         {
             pthread_mutex_lock(&frame_lock);
-            *frame = temp_frame;
+            *frame = *temp_frame;
             pthread_mutex_unlock(&frame_lock);
+            trigger_new_frame();
         }
         else if((r == -1) && (errno == ETERM))
         {
-            //zmq_ctx has been terminated, stop looping
-            //and prepare for the join()
+            //zmq_ctx has been terminated, stop looping,
+            //close the socket, and prepare for the join()
             break;
         }
     }
 
     zmq_close(rx);
+    delete temp_frame;
+
+    return NULL;
 }
 
 static inline int lzr_coord_to_screen(double v)
@@ -56,9 +78,8 @@ static inline int lzr_coord_to_screen(double v)
     return (int) (((v + 1.0) / 2.0) * DEFAULT_WINDOW_SIZE);
 }
 
-static void draw_frame()
+static void render()
 {
-    pthread_mutex_lock(&frame_lock);
 
     // clear the screen to black
     SDL_SetRenderDrawColor(renderer,
@@ -66,9 +87,14 @@ static void draw_frame()
                            0,
                            0,
                            255);
+
     SDL_RenderClear(renderer);
 
-    for(size_t i = 0; i < (frame->n_points - 1); i++)
+    //begin drawing the current frame
+    pthread_mutex_lock(&frame_lock);
+
+    //NOTE: cast to int to avoid rollover problems with -1
+    for(int i = 0; i < (frame->n_points - 1); i++)
     {
         lzr_point p1 = frame->points[i];
         lzr_point p2 = frame->points[i+1];
@@ -89,6 +115,8 @@ static void draw_frame()
     }
 
     pthread_mutex_unlock(&frame_lock);
+
+    SDL_RenderPresent(renderer);
 }
 
 static void loop()
@@ -114,8 +142,7 @@ static void loop()
                     if(e.type == NEW_FRAME)
                     {
                         //draw the new lzr_frame
-                        draw_frame();
-                        SDL_RenderPresent(renderer);
+                        render();
                     }
             }
         }
@@ -126,7 +153,7 @@ static void loop()
 }
 
 
-int main(int argc, char * argv[])
+int main()
 {
     zmq_ctx = zmq_ctx_new();
     frame = new lzr_frame;
@@ -174,13 +201,8 @@ int main(int argc, char * argv[])
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
     // clear the screen to black
-    SDL_SetRenderDrawColor(renderer,
-                           0,
-                           0,
-                           0,
-                           255);
-    SDL_RenderClear(renderer);
-    SDL_RenderPresent(renderer);
+    frame->n_points = 0;
+    render();
 
 
     //start a ZMQ worker thread
@@ -193,7 +215,7 @@ int main(int argc, char * argv[])
     //start the main loop
     loop();
 
-    //shut off 
+    //shut off all zmq activites. This will free up any blocking recv() calls
     zmq_ctx_term(zmq_ctx);
 
     //join the ZMQ reading thread

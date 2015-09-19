@@ -4,7 +4,7 @@
 
 
 CXX      = g++
-CXXFLAGS += -Wall -Wextra -pedantic
+CXXFLAGS += -Wall -Wextra -pedantic -ggdb
 CXXFLAGS += -I../liblzr -I/usr/include/SDL2
 LIBS    = -lzmq -lm -lpthread -lSDL2
 
