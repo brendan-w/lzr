@@ -1,4 +1,5 @@
 
+#include <pthread.h>
 #include <string>
 #include <iostream>
 #include <SDL.h>
@@ -9,13 +10,42 @@
 
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
+Uint32 NEW_FRAME; //SDL event for new lzr frames
 
-void* zmq_ctx = NULL;
-void* rx = NULL;
+pthread_t zmq_thread;
 
+pthread_mutex_t frame_lock = PTHREAD_MUTEX_INITIALIZER;
 lzr_frame* frame;
 
 
+
+//ZMQ recv loop
+static void* loop_recv(void* data)
+{
+    void* zmq_ctx = lzr_create_zmq_ctx();
+    void* rx      = lzr_create_frame_rx(zmq_ctx, LZR_ZMQ_ENDPOINT);
+    lzr_frame* temp_frame = new lzr_frame;
+
+    while(1)
+    {
+        std::cout << "waiting to recv" << std::endl;
+        int r = lzr_recv_frame(rx, temp_frame);
+        std::cout << "recv: " << r << std::endl;
+
+        //since the recv is blocking, it *should* always
+        //be true, but who knows...
+        if(r > 0)
+        {
+            pthread_mutex_lock(&frame_lock);
+            *frame = *temp_frame;
+            pthread_mutex_unlock(&frame_lock);
+        }
+    }
+
+    delete temp_frame;
+    lzr_destroy_frame_rx(rx);
+    lzr_destroy_zmq_ctx(zmq_ctx);
+}
 
 static inline int lzr_coord_to_screen(double v)
 {
@@ -24,6 +54,8 @@ static inline int lzr_coord_to_screen(double v)
 
 static void draw_frame()
 {
+    pthread_mutex_lock(&frame_lock);
+
     // clear the screen to black
     SDL_SetRenderDrawColor(renderer,
                            0,
@@ -51,6 +83,8 @@ static void draw_frame()
                            lzr_coord_to_screen(p2.x),
                            lzr_coord_to_screen(p2.y));
     }
+
+    pthread_mutex_unlock(&frame_lock);
 }
 
 static void loop()
@@ -60,7 +94,8 @@ static void loop()
 
     while(running)
     {
-        // SDL_WaitEvent(NULL);
+        std::cout << "loop" << std::endl;
+        SDL_WaitEvent(NULL);
 
         //event pump
         while(SDL_PollEvent(&e))
@@ -71,21 +106,17 @@ static void loop()
                 case SDL_QUIT:        running = false; break;
                 case SDL_WINDOWEVENT: break;
                 case SDL_KEYDOWN:     break;
+                default:
+                    if(e.type == NEW_FRAME)
+                    {
+                        //draw the new lzr_frame
+                        draw_frame();
+                        SDL_RenderPresent(renderer);
+                    }
             }
         }
 
-        //TODO: this sucks, and is temporary
-        int r = lzr_recv_frame_no_block(rx, frame);
-        // std::cout << r << std::endl;
-
-
-        if(r > 0)
-        {
-            draw_frame();
-        }
-
-        //render changes
-        SDL_RenderPresent(renderer);
+        //cap at ~30 fps
         SDL_Delay(33);
     }
 }
@@ -93,15 +124,13 @@ static void loop()
 
 int main(int argc, char * argv[])
 {
-    frame   = new lzr_frame;
-    zmq_ctx = lzr_create_zmq_ctx();
-    rx      = lzr_create_frame_rx(zmq_ctx, LZR_ZMQ_ENDPOINT);
+    frame = new lzr_frame;
 
     //start SDL
     if(SDL_Init(SDL_INIT_VIDEO) != 0)
     {
-        std::cout << "SDL_Init Error" << std::endl;
-        std::cout << SDL_GetError() << std::endl;
+        std::cerr << "SDL_Init Error" << std::endl;
+        std::cerr << SDL_GetError() << std::endl;
         return EXIT_FAILURE;
     }
 
@@ -114,8 +143,8 @@ int main(int argc, char * argv[])
 
     if(window == NULL)
     {
-        std::cout << "SDL_CreateWindow Error" << std::endl;
-        std::cout << SDL_GetError() << std::endl;
+        std::cerr << "SDL_CreateWindow Error" << std::endl;
+        std::cerr << SDL_GetError() << std::endl;
         goto err_window;
     }
 
@@ -124,10 +153,18 @@ int main(int argc, char * argv[])
                                   SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if(renderer == NULL)
     {
-        std::cout << "SDL_CreateRenderer Error" << std::endl;
-        std::cout << SDL_GetError() << std::endl;
+        std::cerr << "SDL_CreateRenderer Error" << std::endl;
+        std::cerr << SDL_GetError() << std::endl;
         goto err_render;
     }
+
+    NEW_FRAME = SDL_RegisterEvents(1);
+    if(NEW_FRAME == ((Uint32) -1 ))
+    {
+        std::cerr << "Failed to register custom events" << std::endl;
+        goto err_events;
+    }
+
 
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
@@ -141,22 +178,29 @@ int main(int argc, char * argv[])
     SDL_RenderPresent(renderer);
 
 
+    //start a ZMQ worker thread
+    if(pthread_create(&zmq_thread, NULL, loop_recv, NULL))
+    {
+        std::cerr << "Failed to start ZMQ thread" << std::endl;
+        goto err_thread;
+    }
 
-    /*
-        start the main loop
-    */
+    //start the main loop
     loop();
+
+    //stop ZMQ
+    pthread_join(zmq_thread, NULL);
 
 
     //cleanup
+err_events:
+err_thread:
     SDL_DestroyRenderer(renderer);
 err_render:
     SDL_DestroyWindow(window);
 err_window:
     SDL_Quit();
 
-    lzr_destroy_frame_rx(rx);
-    lzr_destroy_zmq_ctx(zmq_ctx);
     delete frame;
 
     return 0;

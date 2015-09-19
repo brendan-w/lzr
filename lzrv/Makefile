@@ -6,7 +6,7 @@
 CXX      = g++
 CXXFLAGS += -Wall -Wextra -pedantic
 CXXFLAGS += -I../liblzr -I/usr/include/SDL2
-LIBS    = -lzmq -lm -lSDL2
+LIBS    = -lzmq -lm -lpthread -lSDL2
 
 
 # ============================= files and paths =============================
