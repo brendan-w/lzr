@@ -44,9 +44,8 @@ int lzr_send_frame(void* tx, lzr_frame* frame)
     return zmq_send(tx, (void*)(frame->points), len, 0);
 }
 
-
-
-static int recv_frame(void* rx, lzr_frame* frame, int flags)
+//recieve a single frame (blocking)
+int lzr_recv_frame(void* rx, lzr_frame* frame)
 {
     //TODO: error checking
 
@@ -54,22 +53,10 @@ static int recv_frame(void* rx, lzr_frame* frame, int flags)
     size_t max_len = (LZR_FRAME_MAX_POINTS * sizeof(lzr_point));
 
     //recieve and block
-    int n = zmq_recv(rx, (void*) (frame->points), max_len, flags);
+    int n = zmq_recv(rx, (void*) (frame->points), max_len, 0);
 
     //record the number of points sent
     frame->n_points = (uint16_t) (n / sizeof(lzr_point));
 
     return n;
-}
-
-//recieve a single frame (blocking)
-int lzr_recv_frame(void* rx, lzr_frame* frame)
-{
-    return recv_frame(rx, frame, 0);
-}
-
-//recieve a single frame (NON blocking)
-int lzr_recv_frame_no_block(void* rx, lzr_frame* frame)
-{
-    return recv_frame(rx, frame, ZMQ_DONTWAIT);
 }

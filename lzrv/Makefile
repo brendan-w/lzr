@@ -25,7 +25,7 @@ HEADERS += ../liblzr/lzr.h lzrv.h
 all: lzrv
 
 
-lzrv: $(OBJS)
+lzrv: $(OBJS) ../liblzr/liblzr.a
 	$(CXX) $^ ../liblzr/liblzr.a $(LIBS) -o $@
 
 

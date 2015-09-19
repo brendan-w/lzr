@@ -272,9 +272,6 @@ int lzr_send_frame(void* tx, lzr_frame* frame);
 //recieve a single frame (blocking)
 int lzr_recv_frame(void* rx, lzr_frame* frame);
 
-//recieve a single frame (NON blocking)
-int lzr_recv_frame_no_block(void* rx, lzr_frame* frame);
-
 
 //wrappers for handling ZMQ contexts
 #define lzr_create_zmq_ctx()     zmq_ctx_new()
