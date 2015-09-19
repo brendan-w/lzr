@@ -25,7 +25,7 @@ static void opt_log(lzr_optimizer* _opt)
     for(size_t i = 0; i < opt->n_paths; i++)
     {
         opt_path_t path = opt->paths[i];
-        printf("%zu: [%zu, %zu] c=%d\n", i, path.a, path.b, path.cycle);        
+        printf("%zu: [%zu, %zu] c=%d\n", i, path.a, path.b, path.cycle);
     }
 }
 

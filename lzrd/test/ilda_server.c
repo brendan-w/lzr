@@ -11,12 +11,11 @@ int main()
 {
     void* zmq_ctx = lzr_create_zmq_ctx();
     void* tx      = lzr_create_frame_tx(zmq_ctx, LZR_ZMQ_ENDPOINT);
-    void* interp  = lzr_interpolator_create();
 
     usleep(1200000);
 
     //open the ILDA file
-    lzr_ilda_file* f = lzr_ilda_read("../../../Downloads/ildatest.ild");
+    lzr_ilda_file* f = lzr_ilda_read("../../Downloads/ildatest.ild");
 
     size_t frame_count = lzr_ilda_frame_count(f, 0);
 
@@ -48,7 +47,6 @@ int main()
     }
 
     free(frames);
-    lzr_interpolator_destroy(interp);
     lzr_destroy_frame_tx(tx);
     lzr_destroy_zmq_ctx(zmq_ctx);
 

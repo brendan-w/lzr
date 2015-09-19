@@ -55,4 +55,3 @@ int lzr_optimizer_run(lzr_optimizer* _opt, lzr_frame* frame)
     rearrange_paths(opt);       //sorts the path buffer
     return compile_paths(opt, frame); //updates the point buffer and generates blanking jumps
 }
-

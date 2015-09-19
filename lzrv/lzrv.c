@@ -17,16 +17,19 @@ pthread_t zmq_thread;
 
 pthread_mutex_t frame_lock = PTHREAD_MUTEX_INITIALIZER;
 lzr_frame* frame;
+lzr_optimizer* opt;
 
 
 static void trigger_new_frame()
 {
     SDL_Event e;
     SDL_zero(e);
-
     e.type = NEW_FRAME;
     e.user.data1 = NULL; //don't bother with data
     e.user.data2 = NULL;
+
+    //flush any existing frame events, so they don't pile up
+    SDL_FlushEvent(NEW_FRAME);
 
     //try to push onto SDL event queue
     int r = SDL_PushEvent(&e);
@@ -109,8 +112,12 @@ static void render()
 
     SDL_RenderClear(renderer);
 
-    //begin drawing the current frame
+    //begin processing the current frame
     pthread_mutex_lock(&frame_lock);
+
+    printf("before: %d\n", frame->n_points);
+    lzr_optimizer_run(opt, frame);
+    printf("after: %d\n", frame->n_points);
 
     //NOTE: cast to int to avoid rollover problems with -1
     for(int i = 0; i < (frame->n_points - 1); i++)
@@ -139,7 +146,6 @@ static void loop()
 
     while(running)
     {
-        printf("loop\n");
         SDL_WaitEvent(NULL);
 
         //event pump
@@ -149,14 +155,15 @@ static void loop()
             {
                 //dispatch SDL events to their respective handlers
                 case SDL_QUIT:        running = false; break;
-                case SDL_WINDOWEVENT: break;
                 case SDL_KEYDOWN:     break;
+                case SDL_WINDOWEVENT:
+                        if((e.window.event == SDL_WINDOWEVENT_RESIZED) ||
+                           (e.window.event == SDL_WINDOWEVENT_MAXIMIZED) ||
+                           (e.window.event == SDL_WINDOWEVENT_RESTORED))
+                            render();
                 default:
                     if(e.type == NEW_FRAME)
-                    {
-                        //draw the new lzr_frame
                         render();
-                    }
             }
         }
 
@@ -170,6 +177,8 @@ int main()
 {
     zmq_ctx = zmq_ctx_new();
     frame = (lzr_frame*) malloc(sizeof(lzr_frame));
+    opt = lzr_optimizer_create();
+
 
     //start SDL
     if(SDL_Init(SDL_INIT_VIDEO) != 0)
@@ -241,6 +250,7 @@ err_render:
 err_window:
     SDL_Quit();
 
+    lzr_optimizer_destroy(opt);
     free(frame);
 
     return 0;
