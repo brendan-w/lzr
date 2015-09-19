@@ -6,7 +6,7 @@ liblzr/test_transformations
 liblzr/test_ilda
 
 # lzrd test binaries
-lzrd/lzrv
+lzrd/lzrd
 lzrd/spiro_server
 lzrd/interp_server
 lzrd/ilda_server
