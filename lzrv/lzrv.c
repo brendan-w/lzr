@@ -115,9 +115,7 @@ static void render()
     //begin processing the current frame
     pthread_mutex_lock(&frame_lock);
 
-    printf("before: %d\n", frame->n_points);
     lzr_optimizer_run(opt, frame);
-    printf("after: %d\n", frame->n_points);
 
     //NOTE: cast to int to avoid rollover problems with -1
     for(int i = 0; i < (frame->n_points - 1); i++)

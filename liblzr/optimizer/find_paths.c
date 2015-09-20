@@ -141,11 +141,4 @@ void find_paths(opt_t* opt)
     fill_angle(opt);
     path_split(opt);
     fill_cycle(opt);
-
-    printf("\nPath buffer:\n");
-    for(size_t i = 0; i < opt->n_paths; i++)
-    {
-        opt_path_t path = opt->paths[i];
-        printf("%zu: [%zu, %zu] c=%d\n", i, path.a, path.b, path.cycle);
-    }
 }
