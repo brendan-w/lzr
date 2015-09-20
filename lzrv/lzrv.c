@@ -19,6 +19,8 @@ pthread_mutex_t frame_lock = PTHREAD_MUTEX_INITIALIZER;
 lzr_frame* frame;
 lzr_optimizer* opt;
 
+//settings
+bool show_blanks = false;
 
 static void trigger_new_frame()
 {
@@ -97,7 +99,16 @@ static inline SDL_Color lzr_color_to_screen(lzr_point p)
     c.r = p.r;
     c.g = p.g;
     c.b = p.b;
-    c.a = LZR_POINT_IS_BLANKED(p) ? 0 : 255; 
+    c.a = LZR_POINT_IS_BLANKED(p) ? 0 : 255;
+
+    if(show_blanks && LZR_POINT_IS_BLANKED(p))
+    {
+        c.r = 255;
+        c.g = 255;
+        c.b = 255;
+        c.a = 255;
+    }
+
     return c;
 }
 
@@ -115,7 +126,7 @@ static void render()
     //begin processing the current frame
     pthread_mutex_lock(&frame_lock);
 
-    lzr_optimizer_run(opt, frame);
+    // lzr_optimizer_run(opt, frame);
 
     //NOTE: cast to int to avoid rollover problems with -1
     for(int i = 0; i < (frame->n_points - 1); i++)
@@ -147,23 +158,40 @@ static void loop()
         SDL_WaitEvent(NULL);
 
         //event pump
+
+        bool do_render = false;
+
         while(SDL_PollEvent(&e))
         {
             switch(e.type)
             {
                 //dispatch SDL events to their respective handlers
-                case SDL_QUIT:        running = false; break;
-                case SDL_KEYDOWN:     break;
+                case SDL_QUIT:
+                    running = false;
+                    break;
+                case SDL_KEYDOWN:
+                    switch(e.key.keysym.sym)
+                    {
+                        case SDLK_b:
+                            show_blanks = !show_blanks;
+                            do_render = true;
+                            break;
+                    }
+                    break;
                 case SDL_WINDOWEVENT:
                         if((e.window.event == SDL_WINDOWEVENT_RESIZED) ||
                            (e.window.event == SDL_WINDOWEVENT_MAXIMIZED) ||
                            (e.window.event == SDL_WINDOWEVENT_RESTORED))
-                            render();
+                            do_render = true;
+                        break;
                 default:
                     if(e.type == NEW_FRAME)
-                        render();
+                        do_render = true;
             }
         }
+
+        if(do_render)
+            render();
 
         //cap at ~30 fps
         SDL_Delay(33);

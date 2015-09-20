@@ -39,16 +39,15 @@ int compile_paths(opt_t* opt, lzr_frame* frame)
         opt_path_t* path = (opt->paths + i);
         printf("%zu: [%zu, %zu] c=%d\n", i, path->a, path->b, path->cycle);
 
+        //number of points to skip at the start of the path
+        size_t skip = 0;
+
         opt_point_t a = opt->last_known_point;
         opt_point_t b = opt->points[ path->a ]; //first point on the current path
 
         //if the last_known_point is different than this frames
         //starting point, then an introductory blanking jump
         //is neccessary.
-
-        //number of points to skip at the start of the path
-        size_t skip = 0;
-
         if( !LZR_POINTS_SAME_POS(a.base_point, b.base_point) )
         {
             //create a blanking jump
