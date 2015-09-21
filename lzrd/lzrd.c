@@ -57,7 +57,7 @@ static void send_frame()
 int main()
 {
     int rc       = 0;
-    zmq_ctx      = lzr_create_zmq_ctx();
+    zmq_ctx      = zmq_ctx_new();
     rx           = lzr_create_frame_rx(zmq_ctx, LZR_ZMQ_ENDPOINT);
     frame        = (lzr_frame*) malloc(sizeof(lzr_frame));
     ether_points = (etherdream_point*) calloc(sizeof(etherdream_point), LZR_FRAME_MAX_POINTS);
@@ -96,8 +96,8 @@ int main()
 
     free(ether_points);
     free(frame);
-    lzr_destroy_frame_rx(rx);
-    lzr_destroy_zmq_ctx(zmq_ctx);
+    zmq_close(rx);
+    zmq_ctx_term(zmq_ctx);
 
     return rc;
 }

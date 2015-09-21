@@ -9,7 +9,7 @@
 //test laser server
 int main()
 {
-    void* zmq_ctx = lzr_create_zmq_ctx();
+    void* zmq_ctx = zmq_ctx_new();
     void* tx      = lzr_create_frame_tx(zmq_ctx, LZR_ZMQ_ENDPOINT);
 
     usleep(1200000);
@@ -47,8 +47,8 @@ int main()
     }
 
     free(frames);
-    lzr_destroy_frame_tx(tx);
-    lzr_destroy_zmq_ctx(zmq_ctx);
+    zmq_close(tx);
+    zmq_ctx_term(zmq_ctx);
 
     return 0;
 }

@@ -220,39 +220,30 @@ typedef void lzr_ilda_file;
 
 
 
-// ILDA reading functions ----------------------------------
+// open ILDA file for reading or writing ----------------------------------
 
 //opens the given ILDA file, and returns a parsing context
 lzr_ilda_file* lzr_ilda_read(char* filename);
 
-
-//Reads all frames for the the given projector, and saves them
-//in the given frame buffer. The frame buffer must be the size
-//returned by `lzr_ilda_frame_count()`.
-int lzr_ilda_read_frames(lzr_ilda_file* f, size_t pd, lzr_frame* buffer);
-
-
-
-// ILDA writing functions ----------------------------------
-
 //opens or creates an ILDA file for writing, and returns a parsing context
 lzr_ilda_file* lzr_ilda_write(char* filename);
 
-//write frame(s) for the given projector to the ILDA file
+//Reads all frames for the the given projector, and saves them
+//in the given frame buffer. The frame buffer must be the size
+//returned by `lzr_ilda_frame_count()`
+int lzr_ilda_read_frames(lzr_ilda_file* f, size_t pd, lzr_frame* buffer);
+
+//write frame(s) for the given projector to the ILDA file (file must be opened with lzr_ilda_write() )
 int lzr_ilda_write_frames(lzr_ilda_file* f, size_t pd, lzr_frame* frames, size_t n_frames);
-
-
-
-//ILDA read OR write functions -----------------------------
-
-//closes the ILDA file, and releases the parsing context 
-void lzr_ilda_close(lzr_ilda_file* f);
 
 //returns the number of projectors that the ILDA specifies graphics for
 size_t lzr_ilda_projector_count(lzr_ilda_file* f);
 
 //returns the number of frames for a given projector
 size_t lzr_ilda_frame_count(lzr_ilda_file* f, size_t pd);
+
+//closes the ILDA file, and releases the parsing context
+void lzr_ilda_close(lzr_ilda_file* f);
 
 
 
@@ -271,13 +262,6 @@ int lzr_send_frame(void* tx, lzr_frame* frame);
 
 //recieve a single frame (blocking)
 int lzr_recv_frame(void* rx, lzr_frame* frame);
-
-
-//wrappers for handling ZMQ contexts
-#define lzr_create_zmq_ctx()     zmq_ctx_new()
-#define lzr_destroy_zmq_ctx(ctx) zmq_ctx_term(ctx)
-#define lzr_destroy_frame_rx(rx) zmq_close(rx)
-#define lzr_destroy_frame_tx(tx) zmq_close(tx)
 
 //the default LZR endpoint
 #ifndef LZR_ZMQ_ENDPOINT

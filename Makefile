@@ -24,6 +24,13 @@ install:
 	# $(MAKE) -C lzrd/ install
 
 
+.PHONY: test
+test:
+	$(MAKE) -C liblzr/ test
+	$(MAKE) -C lzrd/ test
+	$(MAKE) -C lzrv/ test
+
+
 .PHONY: clean
 clean:
 	$(MAKE) -C liblzr/ clean
