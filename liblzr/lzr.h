@@ -13,7 +13,7 @@
 /*      frame interpolator                                                    */
 /*      frame optimizer                                                       */
 /*      ILDA file reader/writer                                               */
-/*      ZeroMQ transport                                                      */
+/*      ZeroMQ frame transport                                                */
 /*                                                                            */
 /******************************************************************************/
 
@@ -38,9 +38,10 @@ extern "C" {
 
 #define LZR_SUCCESS                 0
 #define LZR_FAILURE                -1
-#define LZR_ERROR_TOO_MANY_POINTS  -2
-#define LZR_ERROR_TOO_MANY_FRAMES  -3
-#define LZR_ERROR_INVALID_PROPERTY -4
+#define LZR_WARNING                -2
+#define LZR_ERROR_TOO_MANY_POINTS  -3
+#define LZR_ERROR_TOO_MANY_FRAMES  -4
+#define LZR_ERROR_INVALID_PROPERTY -5
 
 
 

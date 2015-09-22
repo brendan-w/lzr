@@ -9,6 +9,16 @@
 #include <lzr.h>
 
 
+/******************************************************************************/
+/*  Internal Return Codes                                                     */
+/******************************************************************************/
+
+#define ILDA_CONTINUE  1 //all is well
+#define ILDA_HALT      0 //a peaceful end of parsing
+#define ILDA_WARN     -1 //non-fatal problem
+#define ILDA_ERROR    -2 //fatal problem, halt parsing
+
+#define STATUS_IS_HALTING(s) (( s == ILDA_HALT ) || (s == ILDA_ERROR))
 
 /******************************************************************************/
 /*  ILDA Structure Definitions                                                */

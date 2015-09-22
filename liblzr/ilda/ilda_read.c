@@ -41,7 +41,7 @@
 
 
 //reads a single record, and error checks the size
-static bool read_record(ilda_parser* ilda, void* buffer, size_t buffer_size)
+static int read_record(ilda_parser* ilda, void* buffer, size_t buffer_size)
 {
     size_t r = fread(buffer, 1, buffer_size, ilda->f);
 
@@ -49,10 +49,10 @@ static bool read_record(ilda_parser* ilda, void* buffer, size_t buffer_size)
     if(r != buffer_size)
     {
         perror("Encountered incomplete record");
-        return false;
+        return ILDA_ERROR;
     }
 
-    return true;
+    return ILDA_CONTINUE;
 }
 
 /*
@@ -60,20 +60,22 @@ static bool read_record(ilda_parser* ilda, void* buffer, size_t buffer_size)
     current header, into the current_frame of the user's buffer.
     It will also perform error checking for point overflows.
 */
-static size_t save_num_points(ilda_parser* ilda, lzr_frame* buffer)
+static int save_num_points(ilda_parser* ilda, lzr_frame* buffer, size_t* output_n_points)
 {
+    int status = ILDA_CONTINUE;
     size_t n = NUMBER_OF_RECORDS(ilda);
 
     if(n > LZR_FRAME_MAX_POINTS)
     {
         perror("Too many points for lzr_frame. Partial frame loaded.");
         n = LZR_FRAME_MAX_POINTS;
+        status = ILDA_WARN;
     }
 
     //save the frame length to the user's buffer
     buffer[ilda->current_frame].n_points = n;
 
-    return n;
+    return status;
 }
 
 /*
@@ -85,9 +87,13 @@ static size_t save_num_points(ilda_parser* ilda, lzr_frame* buffer)
  */
 
 // -------------------- Format 0 --------------------
-static bool read_3d_indexed(ilda_parser* ilda, lzr_frame* buffer)
+static int read_3d_indexed(ilda_parser* ilda, lzr_frame* buffer)
 {
-    size_t n_points = save_num_points(ilda, buffer);
+    size_t n_points;
+    int status = save_num_points(ilda, buffer, &n_points);
+
+    //if there's alreadya a problem, return early
+    if(STATUS_IS_HALTING(status)) return status;
 
     //iterate over the records
     for(size_t i = 0; i < n_points; i++)
@@ -95,8 +101,8 @@ static bool read_3d_indexed(ilda_parser* ilda, lzr_frame* buffer)
         lzr_point lzr_p;
         ilda_point_3d_indexed p;
 
-        if(!read_record(ilda, (void*) &p, sizeof(ilda_point_3d_indexed)))
-            return false;
+        int r = read_record(ilda, (void*) &p, sizeof(ilda_point_3d_indexed));
+        if(STATUS_IS_HALTING(r)) return r;
 
         //convert the ILDA point to a lzr_point
         betoh_3d(&p);
@@ -110,11 +116,11 @@ static bool read_3d_indexed(ilda_parser* ilda, lzr_frame* buffer)
             break;
     }
 
-    return true;
+    return status;
 }
 
 // -------------------- Format 2 --------------------
-static bool read_colors(ilda_parser* ilda)
+static int read_colors(ilda_parser* ilda)
 {
     current_palette_init(ilda, NUMBER_OF_RECORDS(ilda));
 
@@ -123,21 +129,21 @@ static bool read_colors(ilda_parser* ilda)
         ilda_color c;
 
         //read one color record
-        if(!read_record(ilda, (void*) &c, sizeof(ilda_color)))
-            return false;
+        int r = read_record(ilda, (void*) &c, sizeof(ilda_color));
+        if(STATUS_IS_HALTING(r)) return r;
 
         //store the new color
         current_palette_set(ilda, i, c);
     }
 
-    return true;
+    return ILDA_CONTINUE;
 }
 
 
 /*
  * Header Reader
  */
-static bool read_header(ilda_parser* ilda)
+static int read_header(ilda_parser* ilda)
 {
     //read one ILDA header
     size_t r = fread((void*) &(ilda->h),
@@ -151,51 +157,51 @@ static bool read_header(ilda_parser* ilda)
         if(r > 0)
             perror("Encountered incomplete ILDA section header");
 
-        return false;
+        return ILDA_ERROR;
     }
 
     //is it prefixed with "ILDA"?
     if(strcmp("ILDA", ilda->h.ilda) != 0)
     {
         perror("Section header did not contain \"ILDA\"");
-        return false;
+        return ILDA_ERROR;
     }
 
     //correct for the big-endianness of the file
     betoh_header(&(ilda->h));
 
-    return true;
+    return ILDA_CONTINUE;
 }
 
 
 
 //reads a single section (frame) of the ILDA file
 //returns boolean for whether to continue parsing
-static bool read_section_for_projector(ilda_parser* ilda, uint8_t pd, lzr_frame* buffer)
+static int read_section_for_projector(ilda_parser* ilda, uint8_t pd, lzr_frame* buffer)
 {
+    int status;
+
     //pull out the next header
-    if(!read_header(ilda))
-        return false;
+    status = read_header(ilda);
+    if(STATUS_IS_HALTING(status)) return status;
 
     //this section contains no records, halt parsing
     if(NUMBER_OF_RECORDS(ilda) == 0)
-        return false;
+        return ILDA_HALT;
 
     //if this section isn't marked for projector we're looking for, skip it 
     if(PROJECTOR(ilda) != pd)
-        return true;
+        return ILDA_CONTINUE;
 
     //invoke the corresponding parser for this section type
     switch(FORMAT(ilda))
     {
         case 0:
-            if(!read_3d_indexed(ilda, buffer)) return false;
-            break;
+            status = read_3d_indexed(ilda, buffer); break;
         case 1:
             break;
         case 2:
-            if(!read_colors(ilda)) return false;
-            break;
+            status = read_colors(ilda);             break;
         case 4:
             break;
         case 5:
@@ -205,10 +211,10 @@ static bool read_section_for_projector(ilda_parser* ilda, uint8_t pd, lzr_frame*
                 In this case, we can't skip past an unknown
                 section type, since we don't know the record size.
             */
-            return false;
+            status = ILDA_ERROR;
     }
 
-    return true;
+    return status;
 }
 
 
@@ -287,18 +293,30 @@ int lzr_ilda_read_frames(void* f, size_t pd, lzr_frame* buffer)
 {
     ilda_parser* ilda = (ilda_parser*) f;
 
-    //seek to the beginning of the file
-    fseek(ilda->f, 0, SEEK_SET);
+    if(ilda == NULL)
+    {
+        return LZR_FAILURE;
+    }
 
-    //zero out the frame counter
-    ilda->current_frame = 0;
+    //seek to the beginning of the file
+    fseek(ilda->f, 0, SEEK_SET); //seek to the beginning of the file
+    ilda->current_frame = 0; //zero out the frame counter
+    int status;
 
     //read all sections until the end is reached
     while(true)
     {
-        if(!read_section_for_projector(ilda, (uint8_t) pd, buffer))
+        status = read_section_for_projector(ilda, (uint8_t) pd, buffer);
+
+        if(STATUS_IS_HALTING(status))
             break;
     }
 
-    return LZR_SUCCESS;
+    switch(status)
+    {
+        case ILDA_WARN:  return LZR_WARNING;
+        case ILDA_ERROR: return LZR_FAILURE;
+        case ILDA_HALT:  return LZR_SUCCESS;
+        default:         return LZR_SUCCESS;
+    }
 }
