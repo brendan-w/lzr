@@ -60,7 +60,7 @@ void calc_frame(lzr_frame* frame, float phase)
 int main()
 {
     void* zmq_ctx = zmq_ctx_new();
-    void* tx = lzr_create_frame_tx(zmq_ctx, LZR_ZMQ_ENDPOINT);
+    void* zmq_pub = lzr_frame_pub(zmq_ctx, LZR_ZMQ_ENDPOINT);
 
     usleep(1200000);
 
@@ -73,14 +73,14 @@ int main()
     {
         calc_frame(frame, (float) i / 50);
 
-        lzr_send_frame(tx, frame);
+        lzr_send_frame(zmq_pub, frame);
         printf("sent\n");
         usleep(1000000 / 300);
         i++;
     }
 
     free(frame);
-    zmq_close(tx);
+    zmq_close(zmq_pub);
     zmq_ctx_term(zmq_ctx);
 
     return 0;

@@ -22,7 +22,7 @@ typedef struct etherdream_point etherdream_point;
 
 
 static void*             zmq_ctx;
-static void*             rx;
+static void*             zmq_sub;
 static lzr_frame*        frame;
 static etherdream*       dac;
 static etherdream_point* ether_points;
@@ -58,7 +58,7 @@ int main()
 {
     int rc       = 0;
     zmq_ctx      = zmq_ctx_new();
-    rx           = lzr_create_frame_rx(zmq_ctx, LZR_ZMQ_ENDPOINT);
+    zmq_sub           = lzr_frame_sub(zmq_ctx, LZR_ZMQ_ENDPOINT);
     frame        = (lzr_frame*) malloc(sizeof(lzr_frame));
     ether_points = (etherdream_point*) calloc(sizeof(etherdream_point), LZR_FRAME_MAX_POINTS);
 
@@ -86,7 +86,7 @@ int main()
     //-------------------
     while(1)
     {
-        lzr_recv_frame(rx, frame);
+        lzr_recv_frame(zmq_sub, frame);
         send_frame();
     }
     //-------------------
@@ -96,7 +96,7 @@ int main()
 
     free(ether_points);
     free(frame);
-    zmq_close(rx);
+    zmq_close(zmq_sub);
     zmq_ctx_term(zmq_ctx);
 
     return rc;

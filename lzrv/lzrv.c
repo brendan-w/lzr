@@ -49,12 +49,12 @@ static void trigger_new_frame()
 //ZMQ recv thread
 static void* zmq_loop(void* data)
 {
-    void* rx = lzr_create_frame_rx(zmq_ctx, LZR_ZMQ_ENDPOINT);
+    void* zmq_sub = lzr_frame_sub(zmq_ctx, LZR_ZMQ_ENDPOINT);
     lzr_frame* temp_frame = (lzr_frame*) malloc(sizeof(lzr_frame));
 
     while(1)
     {
-        int r = lzr_recv_frame(rx, temp_frame);
+        int r = lzr_recv_frame(zmq_sub, temp_frame);
         printf("recv frame\n");
 
         if(r > 0)
@@ -72,7 +72,7 @@ static void* zmq_loop(void* data)
         }
     }
 
-    zmq_close(rx);
+    zmq_close(zmq_sub);
     free(temp_frame);
 
     return NULL;

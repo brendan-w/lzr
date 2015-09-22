@@ -252,16 +252,16 @@ void lzr_ilda_close(lzr_ilda_file* f);
 /******************************************************************************/
 
 //create a ZMQ transmitter (publisher)
-void* lzr_create_frame_tx(void* zmq_ctx, char* address);
+void* lzr_frame_pub(void* zmq_ctx, char* address);
 
 //create a ZMQ reciever (subscriber)
-void* lzr_create_frame_rx(void* zmq_ctx, char* address);
+void* lzr_frame_sub(void* zmq_ctx, char* address);
 
 //send a single frame
-int lzr_send_frame(void* tx, lzr_frame* frame);
+int lzr_send_frame(void* pub, lzr_frame* frame);
 
 //recieve a single frame (blocking)
-int lzr_recv_frame(void* rx, lzr_frame* frame);
+int lzr_recv_frame(void* sub, lzr_frame* frame);
 
 //the default LZR endpoint
 #ifndef LZR_ZMQ_ENDPOINT
