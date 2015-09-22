@@ -141,6 +141,12 @@ int lzr_frame_move_to(lzr_frame* frame, lzr_point new_center, int method);
 //appends frame B onto frame A with an optional blanking jump.
 int lzr_frame_combine(lzr_frame* a, lzr_frame* b, bool blank);
 
+//mirror the frame across the given Y-axis coordinate 
+int lzr_frame_h_mirror(lzr_frame* frame, double y, bool blank);
+
+//mirror the frame across the given Y-axis coordinate 
+int lzr_frame_v_mirror(lzr_frame* frame, double x, bool blank);
+
 //linearly duplicate the current frame
 int lzr_frame_dup_linear(lzr_frame* frame, lzr_point offset, size_t n_dups, bool blank);
 

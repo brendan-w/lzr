@@ -155,8 +155,47 @@ int lzr_frame_combine(lzr_frame* a, lzr_frame* b, bool blank)
     return LZR_SUCCESS;
 }
 
-int lzr_frame_mirror(lzr_frame* frame)
+int lzr_frame_h_mirror(lzr_frame* frame, double y, bool blank)
 {
+    //check for an overflow
+    size_t total = (frame->n_points * 2) + (blank ? 1 : 0);
+    if(total > LZR_FRAME_MAX_POINTS)
+        return LZR_ERROR_TOO_MANY_POINTS;
+
+    //save a copy of the original frame
+    lzr_frame orig = *frame;
+
+    //perform the invert
+    for(size_t i = 0; i < frame->n_points; i++)
+    {
+        frame->points[i].y = ((frame->points[i].y - y) * -1.0) + y;
+    }
+
+    //append it to the original frame
+    lzr_frame_combine(frame, &orig, blank);
+
+    return LZR_SUCCESS;
+}
+
+int lzr_frame_v_mirror(lzr_frame* frame, double x, bool blank)
+{
+    //check for an overflow
+    size_t total = (frame->n_points * 2) + (blank ? 1 : 0);
+    if(total > LZR_FRAME_MAX_POINTS)
+        return LZR_ERROR_TOO_MANY_POINTS;
+
+    //save a copy of the original frame
+    lzr_frame orig = *frame;
+
+    //perform the invert
+    for(size_t i = 0; i < frame->n_points; i++)
+    {
+        frame->points[i].x = ((frame->points[i].x - x) * -1.0) + x;
+    }
+
+    //append it to the original frame
+    lzr_frame_combine(frame, &orig, blank);
+
     return LZR_SUCCESS;
 }
 

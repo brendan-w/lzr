@@ -53,7 +53,7 @@ int compile_paths(opt_t* opt, lzr_frame* frame)
             //create a blanking jump
             size_t r = blank_between(opt, (frame->points + n), &a, &b);
             n += r;
-            printf("blank points: %d\n", r);
+            printf("blank points: %zu\n", r);
         }
         else
         {
