@@ -238,13 +238,16 @@ typedef void lzr_ilda_file;
 
 
 
-// open ILDA file for reading or writing ----------------------------------
+//open ILDA file for reading or writing ----------------------------------------
+//these functions will return NULL on failure
 
 //opens the given ILDA file, and returns a parsing context
 lzr_ilda_file* lzr_ilda_read(char* filename);
 
 //opens or creates an ILDA file for writing, and returns a parsing context
 lzr_ilda_file* lzr_ilda_write(char* filename);
+
+//reading and writing functions ------------------------------------------------
 
 //Reads all frames for the the given projector, and saves them
 //in the given frame buffer. The frame buffer must be the size

@@ -55,6 +55,26 @@ static bool read_record(ilda_parser* ilda, void* buffer, size_t buffer_size)
     return true;
 }
 
+/*
+    This function will save the number_of_records (points) value from the
+    current header, into the current_frame of the user's buffer.
+    It will also perform error checking for point overflows.
+*/
+static size_t save_num_points(ilda_parser* ilda, lzr_frame* buffer)
+{
+    size_t n = NUMBER_OF_RECORDS(ilda);
+
+    if(n > LZR_FRAME_MAX_POINTS)
+    {
+        perror("Too many points for lzr_frame. Partial frame loaded.");
+        n = LZR_FRAME_MAX_POINTS;
+    }
+
+    //save the frame length to the user's buffer
+    buffer[ilda->current_frame].n_points = n;
+
+    return n;
+}
 
 /*
  * Section body readers
@@ -67,15 +87,7 @@ static bool read_record(ilda_parser* ilda, void* buffer, size_t buffer_size)
 // -------------------- Format 0 --------------------
 static bool read_3d_indexed(ilda_parser* ilda, lzr_frame* buffer)
 {
-    size_t n_points = NUMBER_OF_RECORDS(ilda);
-    if(n_points > LZR_FRAME_MAX_POINTS)
-    {
-        perror("Too many points for lzr_frame. Partial frame loaded.");
-        n_points = LZR_FRAME_MAX_POINTS;
-    }
-
-    //save the frame length to the user's buffer
-    buffer[ilda->current_frame].n_points = n_points;
+    size_t n_points = save_num_points(ilda, buffer);
 
     //iterate over the records
     for(size_t i = 0; i < n_points; i++)
@@ -200,9 +212,14 @@ static bool read_section_for_projector(ilda_parser* ilda, uint8_t pd, lzr_frame*
 }
 
 
-//this function looks at each section header in the ILDA file,
-//and caches the number of frames per projector.
-static void scan_file(ilda_parser* ilda)
+/*
+    This function inits the parser context, and performs a
+    quick scan of the ILDA file. It looks at each section header,
+    and caches the number of frames per projector.
+
+    This should only ever be called once per context lifetime.
+*/
+static void init_and_scan(ilda_parser* ilda)
 {
     //wipe the projector data (color and frame arrays)
     for(size_t pd = 0; pd < MAX_PROJECTORS; pd++)
@@ -260,7 +277,7 @@ void* lzr_ilda_read(char* filename)
     }
 
     //scan the file, populate the frame counts
-    scan_file(ilda);
+    init_and_scan(ilda);
 
     return (void*) ilda;
 }
