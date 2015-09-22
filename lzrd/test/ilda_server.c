@@ -15,7 +15,7 @@ int main()
     usleep(1200000);
 
     //open the ILDA file
-    lzr_ilda_file* f = lzr_ilda_read("../../Downloads/ildatest.ild");
+    lzr_ilda_file* f = lzr_ilda_read("../../../Downloads/ildatest.ild");
 
     size_t frame_count = lzr_ilda_frame_count(f, 0);
 

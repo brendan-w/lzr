@@ -58,7 +58,7 @@ int main()
 {
     int rc       = 0;
     zmq_ctx      = zmq_ctx_new();
-    zmq_sub           = lzr_frame_sub(zmq_ctx, LZR_ZMQ_ENDPOINT);
+    zmq_sub      = lzr_frame_sub(zmq_ctx, LZR_ZMQ_ENDPOINT);
     frame        = (lzr_frame*) malloc(sizeof(lzr_frame));
     ether_points = (etherdream_point*) calloc(sizeof(etherdream_point), LZR_FRAME_MAX_POINTS);
 

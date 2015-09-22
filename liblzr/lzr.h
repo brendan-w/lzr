@@ -123,6 +123,9 @@ lzr_point lzr_point_lerp(lzr_point* a, lzr_point* b, double t);
 /*  Frame Transforms                                                          */
 /******************************************************************************/
 
+#define LZR_BOUNDING_BOX 0
+#define LZR_AVERAGE      1
+
 //rotates a frame around position specified by axis
 int lzr_frame_rotate(lzr_frame* frame, lzr_point axis, double theta);
 
@@ -134,6 +137,9 @@ int lzr_frame_scale(lzr_frame* frame, double x, double y);
 
 //linearly duplicate the current frame
 int lzr_frame_dup_linear(lzr_frame* frame, lzr_point offset, size_t n_dups, bool blank);
+
+//centers the shape over the given point
+int lzr_frame_move_to(lzr_frame* frame, lzr_point position, int method);
 
 
 

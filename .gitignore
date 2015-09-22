@@ -10,6 +10,7 @@ lzrd/lzrd
 lzrd/spiro_server
 lzrd/interp_server
 lzrd/ilda_server
+lzrd/transform_server
 
 # lzrv binaries
 lzrv/lzrv

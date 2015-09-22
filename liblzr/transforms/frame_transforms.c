@@ -3,6 +3,9 @@
 #include <math.h>
 #include <lzr.h>
 
+/*
+ * Simple Modifiers
+ */
 
 int lzr_frame_rotate(lzr_frame* frame, lzr_point axis, double theta)
 {
@@ -46,6 +49,77 @@ int lzr_frame_scale(lzr_frame* frame, double x, double y)
 
     return LZR_SUCCESS;
 }
+
+static lzr_point get_bounding_box_center(lzr_frame* frame)
+{
+    //edges
+    double left = 1.0; //start these at opposite extremes
+    double right = -1.0;
+    double bottom = 1.0;
+    double top = -1.0;
+
+    for(size_t i = 0; i < frame->n_points; i++)
+    {
+        lzr_point p = frame->points[i];
+        if(p.x < left)   left = p.x;
+        if(p.x > right)  right = p.x;
+        if(p.y < bottom) bottom = p.y;
+        if(p.y > top)    top = p.y;
+    }
+
+    lzr_point center;
+    center.x = (left + right) / 2.0;
+    center.y = (bottom + top) / 2.0;
+
+    return center;
+}
+
+static lzr_point get_average_center(lzr_frame* frame)
+{
+    lzr_point center;
+    center.x = 0.0;
+    center.y = 0.0;
+
+    for(size_t i = 0; i < frame->n_points; i++)
+    {
+        lzr_point p = frame->points[i];
+        center.x += p.x;
+        center.y += p.y;
+    }
+
+    center.x /= (double) frame->n_points;
+    center.y /= (double) frame->n_points;
+
+    return center;
+}
+
+int lzr_frame_move_to(lzr_frame* frame, lzr_point position, int method)
+{
+    lzr_point center;
+
+    switch(method)
+    {
+        case LZR_BOUNDING_BOX:
+            center = get_bounding_box_center(frame);
+            break;
+        case LZR_AVERAGE:
+            center = get_average_center(frame);
+            break;
+    }
+
+    lzr_point offset;
+    offset.x = position.x - center.x;
+    offset.y = position.y - center.y;
+
+    lzr_frame_translate(frame, offset);
+
+    return LZR_SUCCESS;
+}
+
+
+/*
+ * Duplicate Creators
+ */
 
 int lzr_frame_dup_linear(lzr_frame* frame, lzr_point offset, size_t n_dups, bool blank)
 {
