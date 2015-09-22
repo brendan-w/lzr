@@ -69,10 +69,10 @@ int main()
 
     lzr_frame_move_to(&frame, dest, LZR_BOUNDING_BOX);
 
-    dest.x = 1.0;
-    dest.y = -1.0;
+    dest.x = 0.0;
+    dest.y = 0.0;
 
-    lzr_frame_dup_linear(&frame, dest, 4, true);
+    lzr_frame_dup_radial(&frame, dest, 40, 3.14, true);
 
     int r = lzr_interpolator_run(interp, &frame);
     if(r != LZR_SUCCESS)

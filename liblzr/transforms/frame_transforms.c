@@ -190,3 +190,33 @@ int lzr_frame_dup_linear(lzr_frame* frame, lzr_point offset, size_t n_dups, bool
 
     return LZR_SUCCESS;
 }
+
+int lzr_frame_dup_radial(lzr_frame* frame, lzr_point axis, size_t n_dups, double angle, bool blank)
+{
+    //TODO: decide
+    //n_dups--; //give a visually correct readout of the number
+
+    //bail, if there's nothing to do
+    if((frame->n_points == 0) || (n_dups == 0))
+        return LZR_SUCCESS;
+
+    //check for an overflow
+    size_t total = (frame->n_points * (n_dups + 1)) + (blank ? n_dups : 0);
+    if(total > LZR_FRAME_MAX_POINTS)
+        return LZR_ERROR_TOO_MANY_POINTS;
+
+    lzr_frame orig = *frame;
+
+    //compute the angular offset for one duplication
+    angle /= n_dups;
+
+    for(size_t i = 0; i < n_dups; i++)
+    {
+        lzr_frame_rotate(&orig, axis, angle);
+        int r = lzr_frame_combine(frame, &orig, blank);
+        if(r != LZR_SUCCESS)
+            return r;
+    }
+
+    return LZR_SUCCESS;
+}
