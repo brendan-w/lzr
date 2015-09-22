@@ -172,9 +172,7 @@ int lzr_frame_h_mirror(lzr_frame* frame, double y, bool blank)
     }
 
     //append it to the original frame
-    lzr_frame_combine(frame, &orig, blank);
-
-    return LZR_SUCCESS;
+    return lzr_frame_combine(frame, &orig, blank);
 }
 
 int lzr_frame_v_mirror(lzr_frame* frame, double x, bool blank)
@@ -194,9 +192,7 @@ int lzr_frame_v_mirror(lzr_frame* frame, double x, bool blank)
     }
 
     //append it to the original frame
-    lzr_frame_combine(frame, &orig, blank);
-
-    return LZR_SUCCESS;
+    return lzr_frame_combine(frame, &orig, blank);
 }
 
 int lzr_frame_dup_linear(lzr_frame* frame, lzr_point offset, size_t n_dups, bool blank)
