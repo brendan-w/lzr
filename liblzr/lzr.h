@@ -177,18 +177,7 @@ void lzr_interpolator_set(lzr_interpolator* interp, interp_property prop, unsign
 #define lzr_interpolator_set(interp, prop, value) \
         lzr_interpolator_set(interp, prop, (unsigned long) (value))
 
-/*
-    Main interpolator function.
-
-    params:
-        interp : the interpolator context
-        frame  : the frame of points to be interpolated
-
-    returns:
-        0  : success
-        -1 : error, not enough room for additional points
-        -2 : error, LZR_INTERP_MAX_DISTANCE was set to zero
-*/
+//main interpolator function
 int lzr_interpolator_run(lzr_interpolator* interp, lzr_frame* frame);
 
 
@@ -215,17 +204,7 @@ void lzr_optimizer_set(lzr_optimizer* opt, opt_property prop, unsigned long valu
 #define lzr_optimizer_set(opt, prop, value) \
         lzr_optimizer_set(opt, prop, (unsigned long) (value))
 
-/*
-    Main optimizer function.
-
-    params:
-           opt : the optimizer context
-         frame : the frame of points to be optimized
-
-    returns:
-        0  : success
-        -1 : error, not enough room for additional points
-*/
+//main optimizer function.
 int lzr_optimizer_run(lzr_optimizer* opt, lzr_frame* frame);
 
 
@@ -235,8 +214,6 @@ int lzr_optimizer_run(lzr_optimizer* opt, lzr_frame* frame);
 /******************************************************************************/
 
 typedef void lzr_ilda_file;
-
-
 
 //open ILDA file for reading or writing ----------------------------------------
 //these functions will return NULL on failure
