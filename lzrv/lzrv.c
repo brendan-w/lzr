@@ -135,10 +135,10 @@ static void render()
         lzr_point p2  = frame->points[i+1];
         SDL_Point sp1 = lzr_point_to_screen(p1);
         SDL_Point sp2 = lzr_point_to_screen(p2);
-        SDL_Color c   = lzr_color_to_screen(p1);
-
         //TODO: double check that color is actually
-        //      a property of the first point
+        //      a property of the second point
+        SDL_Color c   = lzr_color_to_screen(p2);
+
         SDL_SetRenderDrawColor(renderer, c.r, c.g, c.b, c.a);
         SDL_RenderDrawLine(renderer, sp1.x, sp1.y, sp2.x, sp2.y);
     }

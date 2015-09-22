@@ -4,8 +4,9 @@
 #include <lzr.h>
 
 /*
- * Simple Modifiers
+ * in-place functions that don't alter the number of points
  */
+
 
 int lzr_frame_rotate(lzr_frame* frame, lzr_point axis, double theta)
 {
@@ -93,7 +94,7 @@ static lzr_point get_average_center(lzr_frame* frame)
     return center;
 }
 
-int lzr_frame_move_to(lzr_frame* frame, lzr_point position, int method)
+int lzr_frame_move_to(lzr_frame* frame, lzr_point new_center, int method)
 {
     lzr_point center;
 
@@ -108,8 +109,8 @@ int lzr_frame_move_to(lzr_frame* frame, lzr_point position, int method)
     }
 
     lzr_point offset;
-    offset.x = position.x - center.x;
-    offset.y = position.y - center.y;
+    offset.x = new_center.x - center.x;
+    offset.y = new_center.y - center.y;
 
     lzr_frame_translate(frame, offset);
 
@@ -118,37 +119,73 @@ int lzr_frame_move_to(lzr_frame* frame, lzr_point position, int method)
 
 
 /*
- * Duplicate Creators
+ * functions increase the number of points in a frame
  */
+
+int lzr_frame_combine(lzr_frame* a, lzr_frame* b, bool blank)
+{
+    //bail, if there's nothing to do (avoids adding a useless blanking jump)
+    if(b->n_points == 0)
+        return LZR_SUCCESS;
+
+    //check for an overflow
+    size_t total = a->n_points + b->n_points + (blank ? 1 : 0);
+    if(total > LZR_FRAME_MAX_POINTS)
+        return LZR_ERROR_TOO_MANY_POINTS;
+
+    //avoids a bunch of derefs, plus, it's prettier
+    size_t n = a->n_points;
+
+    if(blank)
+    {
+        //create the blanking jump to the start of the B frame
+        a->points[n] = b->points[0];
+        LZR_POINT_BLANK(a->points[n]);
+        n++;
+    }
+
+    for(size_t i = 0; i < b->n_points; i++)
+    {
+        a->points[n] = b->points[i];
+        n++;
+    }
+
+    a->n_points = n;
+
+    return LZR_SUCCESS;
+}
+
+int lzr_frame_mirror(lzr_frame* frame)
+{
+    return LZR_SUCCESS;
+}
 
 int lzr_frame_dup_linear(lzr_frame* frame, lzr_point offset, size_t n_dups, bool blank)
 {
-    //TODO: handle blanking jumps
-    //check the point limits before any modifications are made
-    if(frame->n_points * n_dups > LZR_FRAME_MAX_POINTS)
+    //TODO: decide
+    //n_dups--; //give a visually correct readout of the number
+
+    //bail, if there's nothing to do
+    if((frame->n_points == 0) || (n_dups == 0))
+        return LZR_SUCCESS;
+
+    //check for an overflow
+    size_t total = (frame->n_points * (n_dups + 1)) + (blank ? n_dups : 0);
+    if(total > LZR_FRAME_MAX_POINTS)
         return LZR_ERROR_TOO_MANY_POINTS;
 
-    //mark the section of original points
-    size_t orig = frame->n_points;
+    lzr_frame orig = *frame;
 
-    for(size_t i = 1; i < n_dups; i++)
+    //compute the offset for one duplication
+    offset.x /= (double) n_dups;
+    offset.y /= (double) n_dups;
+
+    for(size_t i = 0; i < n_dups; i++)
     {
-        //TODO: generate blanking jump
-
-        //duplicate the frame
-        for(size_t p = 0; p < orig; p++)
-        {
-            lzr_point start = frame->points[p];
-            lzr_point end = start;
-            end.x += offset.x;
-            end.y += offset.y;
-
-            double t = (double) i / (n_dups - 1);
-
-            //set the new point
-            frame->points[frame->n_points] = lzr_point_lerp(&start, &end, t);
-            frame->n_points++;
-        }
+        lzr_frame_translate(&orig, offset);
+        int r = lzr_frame_combine(frame, &orig, blank);
+        if(r != LZR_SUCCESS)
+            return r;
     }
 
     return LZR_SUCCESS;

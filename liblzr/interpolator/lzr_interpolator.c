@@ -6,7 +6,7 @@
 #include <lzr.h>
 
 
-#define MAX_DISTANCE_DEFAULT (LZR_POINT_POSITION_MAX / 100.0);
+#define MAX_DISTANCE_DEFAULT (LZR_POINT_POSITION_MAX / 50.0);
 
 
 typedef struct {
@@ -51,7 +51,7 @@ static int add_point(interp_t* interp, lzr_point p)
 
     interp->frame.points[interp->frame.n_points] = p;
     interp->frame.n_points++;
-    return 0;
+    return LZR_SUCCESS;
 }
 
 
@@ -85,15 +85,16 @@ static int lerp_lzr(interp_t* interp, lzr_point start, lzr_point end)
             if(!LZR_POINTS_SAME_POS(prev, p) &&
                !LZR_POINTS_SAME_POS(end, p))
             {
-                if(add_point(interp, p))
-                    return -1;
+                int r = add_point(interp, p);
+                if(r != LZR_SUCCESS)
+                    return r;
 
                 prev = p;
             }
         }
     }
 
-    return 0;
+    return LZR_SUCCESS;
 }
 
 
@@ -124,14 +125,15 @@ int lzr_interpolator_run(lzr_interpolator* _interp, lzr_frame* frame)
         }
         else
         {
-            int error = lerp_lzr(interp, prev, p);
-            if(error)
-                return error;
+            int r = lerp_lzr(interp, prev, p);
+            if(r != LZR_SUCCESS)
+                return r;
         }
 
         prev = p;
-        if(add_point(interp, p))
-            return LZR_ERROR_TOO_MANY_POINTS;
+        int r = add_point(interp, p);
+        if(r != LZR_SUCCESS)
+            return r;
     }
 
     //write the finished frame to the output buffer

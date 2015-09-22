@@ -69,7 +69,10 @@ int main()
 
     lzr_frame_move_to(&frame, dest, LZR_BOUNDING_BOX);
 
+    dest.x = 1.0;
+    dest.y = -1.0;
 
+    lzr_frame_dup_linear(&frame, dest, 4, true);
 
     int r = lzr_interpolator_run(interp, &frame);
     if(r != LZR_SUCCESS)
@@ -79,19 +82,9 @@ int main()
     }
 
     printf("sending %zu points\n", frame.n_points);
-
-    lzr_point pos;
     
     while(1)
     {
-        pos.x = -0.5;
-        pos.y = 0.5;
-        lzr_frame_rotate(&frame, pos, 0.03);
-
-        pos.x = 0.5;
-        pos.y = 0.5;
-        lzr_frame_rotate(&frame, pos, 0.02);
-
         lzr_send_frame(zmq_pub, &frame);
         usleep(1000000 / 300);
     }
