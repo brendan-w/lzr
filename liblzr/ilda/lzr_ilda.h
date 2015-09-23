@@ -115,6 +115,9 @@ typedef struct {
     //considered invalid. They're only here for convenience.
     ilda_header    h;             // the current section header
     size_t         current_frame; // the current frame number being read
+
+    //error string
+    char* error;
 } ilda_parser;
 
 

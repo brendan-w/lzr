@@ -48,7 +48,7 @@ static int read_record(ilda_parser* ilda, void* buffer, size_t buffer_size)
     //make sure we got everything...
     if(r != buffer_size)
     {
-        perror("Encountered incomplete record");
+        ilda->error = "Encountered incomplete record";
         return ILDA_ERROR;
     }
 
@@ -67,7 +67,7 @@ static int save_num_points(ilda_parser* ilda, lzr_frame* buffer, size_t* output_
 
     if(n > LZR_FRAME_MAX_POINTS)
     {
-        perror("Too many points for lzr_frame. Partial frame loaded.");
+        ilda->error = "Too many points for lzr_frame. Partial frame loaded.";
         n = LZR_FRAME_MAX_POINTS;
         status = ILDA_WARN;
     }
@@ -155,7 +155,7 @@ static int read_header(ilda_parser* ilda)
     if(r != sizeof(ilda_header))
     {
         if(r > 0)
-            perror("Encountered incomplete ILDA section header");
+            ilda->error = "Encountered incomplete ILDA section header";
 
         return ILDA_ERROR;
     }
@@ -163,7 +163,7 @@ static int read_header(ilda_parser* ilda)
     //is it prefixed with "ILDA"?
     if(strcmp("ILDA", ilda->h.ilda) != 0)
     {
-        perror("Section header did not contain \"ILDA\"");
+        ilda->error = "Section header did not contain \"ILDA\"";
         return ILDA_ERROR;
     }
 
@@ -232,7 +232,8 @@ static void scan_file(ilda_parser* ilda)
     while(true)
     {
         //pull out the next header
-        if(!read_header(ilda))
+        int status = read_header(ilda);
+        if(STATUS_IS_HALTING(status))
             break;
 
         //this section contains no records, halt parsing
