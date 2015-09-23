@@ -29,10 +29,10 @@ static int write_frame(ilda_parser* ilda, lzr_frame* f, size_t pd)
     memset(&h, 0, sizeof(ilda_header));
 
     //set header details
-    h.total_records     = (uint16_t) f->n_points;
+    h.number_of_records = (uint16_t) f->n_points;
     h.projector_id      = (uint8_t)  pd;
-    h.number_of_records = (uint16_t) GET_PROJECTOR_DATA(ilda, pd)->n_frames;
-    h.record_number     = (uint16_t) ilda->current_frame;
+    h.total_frames      = (uint16_t) GET_PROJECTOR_DATA(ilda, pd)->n_frames;
+    h.frame_number      = (uint16_t) ilda->current_frame;
 
     //convert to big-endian
     htobe_header(&h);

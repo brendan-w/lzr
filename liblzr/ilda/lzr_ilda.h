@@ -30,9 +30,9 @@ typedef struct {
     uint8_t  format_code;
     char     name[8];
     char     company_name[8];
-    uint16_t number_of_records;
-    uint16_t record_number;
-    uint16_t total_records;
+    uint16_t number_of_records; //number of points of color entries
+    uint16_t frame_number; //also denotes color pallete number
+    uint16_t total_frames;
     uint8_t  projector_id;
     uint8_t  reserved_b;
 } ilda_header;
@@ -196,8 +196,8 @@ ilda_parser* malloc_parser();
 //arguments: (ilda_header*)
 #define betoh_header(header) {                                             \
     (header)->number_of_records = be16toh((header)->number_of_records);    \
-    (header)->record_number     = be16toh((header)->record_number);        \
-    (header)->total_records     = be16toh((header)->total_records);        \
+    (header)->frame_number      = be16toh((header)->frame_number);         \
+    (header)->total_frames      = be16toh((header)->total_frames);         \
 }
 
 //arguments: (ilda_point_2d_true* | ilda_point_2d_indexed*)
@@ -220,8 +220,8 @@ ilda_parser* malloc_parser();
 
 #define htobe_header(header) {                                             \
     (header)->number_of_records = htobe16((header)->number_of_records);    \
-    (header)->record_number     = htobe16((header)->record_number);        \
-    (header)->total_records     = htobe16((header)->total_records);        \
+    (header)->frame_number      = htobe16((header)->frame_number);         \
+    (header)->total_frames      = htobe16((header)->total_frames);         \
 }
 
 #define htobe_2d(point) {                                     \
