@@ -4,20 +4,6 @@
 #include "lzr_ilda.h"
 
 
-
-//arguments: (ilda_parser*, ilda_point_2d_true | ilda_point_3d_true, lzr_point)
-#define ilda_true_to_lzr(ilda, ilda_p, lzr_p) {     \
-    (lzr_p).x = (double) (ilda_p).x / INT16_MAX;    \
-    (lzr_p).y = (double) (ilda_p).y / INT16_MAX;    \
-    (lzr_p).r = (ilda_p).r;                         \
-    (lzr_p).g = (ilda_p).g;                         \
-    (lzr_p).b = (ilda_p).b;                         \
-    (lzr_p).i = UINT8_MAX;                          \
-    if((ilda_p).status.blanked)                     \
-        LZR_POINT_BLANK((lzr_p));                   \
-}
-
-
 static int write_point(ilda_parser* ilda, lzr_point lzr_p)
 {
     ilda_point_2d_true p;
@@ -43,10 +29,15 @@ static int write_frame(ilda_parser* ilda, lzr_frame* f, size_t pd)
     memset(&h, 0, sizeof(ilda_header));
 
     //set header details
-    h.total_records = (uint16_t) f->n_points;
+    h.total_records     = (uint16_t) f->n_points;
+    h.projector_id      = (uint8_t)  pd;
+    h.number_of_records = (uint16_t) GET_PROJECTOR_DATA(ilda, pd)->n_frames;
+    h.record_number     = (uint16_t) ilda->current_frame;
 
     //convert to big-endian
     htobe_header(&h);
+
+    //write the header
     fwrite((void*) &h, 1, sizeof(ilda_header), ilda->f);
 
     //write each point to the file
@@ -83,8 +74,12 @@ int lzr_ilda_write_frames(lzr_ilda_file* f, size_t pd, lzr_frame* frames, size_t
 {
     ilda_parser* ilda = (ilda_parser*) f;
 
+    ilda_projector* proj = GET_PROJECTOR_DATA(ilda, pd);
+    proj->n_frames = n_frames;
+
     for(size_t i = 0; i < n_frames; i++)
     {
+        ilda->current_frame = i;
         int r = write_frame(ilda, (frames + i), pd);
         if(r != LZR_SUCCESS)
             return r;

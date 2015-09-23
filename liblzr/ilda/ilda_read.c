@@ -92,7 +92,7 @@ static int read_3d_indexed(ilda_parser* ilda, lzr_frame* buffer)
     size_t n_points;
     int status = save_num_points(ilda, buffer, &n_points);
 
-    //if there's alreadya a problem, return early
+    //if there's already a problem, return early
     if(STATUS_IS_HALTING(status)) return status;
 
     //iterate over the records

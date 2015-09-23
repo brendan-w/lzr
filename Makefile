@@ -28,7 +28,6 @@ install:
 test:
 	$(MAKE) -C liblzr/ test
 	$(MAKE) -C lzrd/ test
-	$(MAKE) -C lzrv/ test
 
 
 .PHONY: clean
