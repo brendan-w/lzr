@@ -155,6 +155,10 @@ ilda_color current_palette_get(ilda_parser* ilda, size_t i);
 //to the start of the next header
 bool skip_to_next_section(ilda_parser* ilda);
 
+//initialize a new parser context
+//the opposite function would be `lzr_ilda_close()`
+ilda_parser* malloc_parser();
+
 
 /******************************************************************************/
 /*  ILDA Utils                                                                */

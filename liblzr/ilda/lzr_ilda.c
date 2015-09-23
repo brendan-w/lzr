@@ -167,7 +167,23 @@ bool skip_to_next_section(ilda_parser* ilda)
     return (fseek(ilda->f, skip_bytes, SEEK_CUR) == 0);
 }
 
+ilda_parser* malloc_parser()
+{
+    ilda_parser* ilda = (ilda_parser*) malloc(sizeof(ilda_parser));
 
+    ilda->f = NULL;
+
+    //wipe the projector data (color and frame arrays)
+    for(size_t pd = 0; pd < MAX_PROJECTORS; pd++)
+    {
+        ilda_projector* proj = GET_PROJECTOR_DATA(ilda, pd);
+        proj->colors = NULL;
+        proj->n_colors = 0;
+        proj->n_frames = 0;
+    }
+
+    return ilda;
+}
 
 /******************************************************************************/
 /*  Public Functions                                                          */

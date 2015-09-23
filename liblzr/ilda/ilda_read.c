@@ -225,16 +225,8 @@ static int read_section_for_projector(ilda_parser* ilda, uint8_t pd, lzr_frame* 
 
     This should only ever be called once per context lifetime.
 */
-static void init_and_scan(ilda_parser* ilda)
+static void scan_file(ilda_parser* ilda)
 {
-    //wipe the projector data (color and frame arrays)
-    for(size_t pd = 0; pd < MAX_PROJECTORS; pd++)
-    {
-        ilda_projector* proj = GET_PROJECTOR_DATA(ilda, pd);
-        proj->colors = NULL;
-        proj->n_colors = 0;
-        proj->n_frames = 0;
-    }
 
     //read all of the headers, and take notes
     while(true)
@@ -273,17 +265,18 @@ static void init_and_scan(ilda_parser* ilda)
 void* lzr_ilda_read(char* filename)
 {
     //init a parser
-    ilda_parser* ilda = (ilda_parser*) malloc(sizeof(ilda_parser));
+    ilda_parser* ilda = malloc_parser();
     ilda->f = fopen(filename, "rb");
 
     if(ilda->f == NULL)
     {
         perror("Failed to open file for reading");
+        free(ilda);
         return NULL;
     }
 
     //scan the file, populate the frame counts
-    init_and_scan(ilda);
+    scan_file(ilda);
 
     return (void*) ilda;
 }
