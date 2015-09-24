@@ -3,7 +3,8 @@
 liblzr/test_optimizer
 liblzr/test_interpolator
 liblzr/test_transformations
-liblzr/test_ilda
+liblzr/test_ilda_read
+liblzr/test_ilda_write
 
 # lzrd test binaries
 lzrd/lzrd

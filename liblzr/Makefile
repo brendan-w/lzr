@@ -70,14 +70,14 @@ clean:
 	rm -f optimizer/*.o
 	rm -f ilda/*.o
 	rm -f zmq/*.o
-	rm -f test_optimizer test_interpolator test_ilda test_transformations
+	rm -f test_optimizer test_interpolator test_ilda_read test_ilda_write test_transformations
 
 
 # ============================= test targets =============================
 
 
 .PHONY: test
-test: test_interpolator test_optimizer test_ilda test_transformations
+test: test_interpolator test_optimizer test_ilda_read test_ilda_write test_transformations
 
 
 test_optimizer: all tests/test_optimizer.c
@@ -88,8 +88,12 @@ test_interpolator: all tests/test_interpolator.c
 	$(CC) $(CFLAGS) $(LIBS) tests/test_interpolator.c ./liblzr.a -o test_interpolator
 
 
-test_ilda: all tests/test_ilda.c
-	$(CC) $(CFLAGS) $(LIBS) tests/test_ilda.c ./liblzr.a -o test_ilda
+test_ilda_read: all tests/test_ilda_read.c
+	$(CC) $(CFLAGS) $(LIBS) tests/test_ilda_read.c ./liblzr.a -o test_ilda_read
+
+
+test_ilda_write: all tests/test_ilda_write.c
+	$(CC) $(CFLAGS) $(LIBS) tests/test_ilda_write.c ./liblzr.a -o test_ilda_write
 
 
 test_transformations: all tests/test_transformations.c
