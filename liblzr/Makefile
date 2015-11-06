@@ -36,6 +36,12 @@ HEADERS += lzr.h \
            ilda/lzr_ilda.h \
            optimizer/lzr_optimizer.h
 
+TESTS = test_optimizer \
+        test_interpolator \
+        test_ilda_read \
+        test_ilda_write \
+        test_transformations
+
 # ============================= main targets =============================
 
 
@@ -70,31 +76,11 @@ clean:
 	rm -f optimizer/*.o
 	rm -f ilda/*.o
 	rm -f zmq/*.o
-	rm -f test_optimizer test_interpolator test_ilda_read test_ilda_write test_transformations
-
-
-# ============================= test targets =============================
+	rm -f $(TESTS)
 
 
 .PHONY: test
-test: test_interpolator test_optimizer test_ilda_read test_ilda_write test_transformations
-
-
-test_optimizer: all tests/test_optimizer.c
-	$(CC) $(CFLAGS) $(LIBS) tests/test_optimizer.c ./liblzr.a -o test_optimizer
-
-
-test_interpolator: all tests/test_interpolator.c
-	$(CC) $(CFLAGS) $(LIBS) tests/test_interpolator.c ./liblzr.a -o test_interpolator
-
-
-test_ilda_read: all tests/test_ilda_read.c
-	$(CC) $(CFLAGS) $(LIBS) tests/test_ilda_read.c ./liblzr.a -o test_ilda_read
-
-
-test_ilda_write: all tests/test_ilda_write.c
-	$(CC) $(CFLAGS) $(LIBS) tests/test_ilda_write.c ./liblzr.a -o test_ilda_write
-
-
-test_transformations: all tests/test_transformations.c
-	$(CC) $(CFLAGS) $(LIBS) tests/test_transformations.c ./liblzr.a -o test_transformations
+test: all tests/*.c
+	for test in $(TESTS); do \
+		$(CC) $(CFLAGS) $(LIBS) tests/$$test.c ./liblzr.a -o $$test ; \
+	done
