@@ -4,7 +4,13 @@
 
 VPATH = src
 # PREFIX ?= /usr/local
-OBJS  = lzrd.o
+OBJS = lzrd.o
+
+TESTS = spiro_server \
+        interp_server \
+        ilda_server \
+        transform_server
+
 
 
 # compile settings
@@ -39,11 +45,10 @@ etherdream:
 
 
 .PHONY: test
-test: all test/spiro_server.c test/interp_server.c test/ilda_server.c test/transform_server.c
-	$(CC) $(CFLAGS) $(LIBS) -lm test/spiro_server.c     ../liblzr/liblzr.a -o spiro_server
-	$(CC) $(CFLAGS) $(LIBS) -lm test/interp_server.c    ../liblzr/liblzr.a -o interp_server
-	$(CC) $(CFLAGS) $(LIBS) -lm test/ilda_server.c      ../liblzr/liblzr.a -o ilda_server
-	$(CC) $(CFLAGS) $(LIBS) -lm test/transform_server.c ../liblzr/liblzr.a -o transform_server
+test: all test/*.c
+	for test in $(TESTS); do \
+		$(CC) $(CFLAGS) $(LIBS) -lm test/$$test.c ../liblzr/liblzr.a -o $$test ; \
+	done
 
 
 .PHONY: install
@@ -54,4 +59,4 @@ install:
 .PHONY: clean
 clean:
 	$(MAKE) -C libetherdream/ clean
-	rm -f *.o lzrd spiro_server interp_server ilda_server transform_server
+	rm -f *.o lzrd $(TESTS)
