@@ -7,7 +7,6 @@
 /*  Provides:                                                                 */
 /*      point structures                                                      */
 /*      frame structures                                                      */
-/*      time definitions                                                      */
 /*      point transformations                                                 */
 /*      frame transformations                                                 */
 /*      frame interpolator                                                    */
@@ -98,16 +97,6 @@ typedef struct {
     lzr_point points[LZR_FRAME_MAX_POINTS];
     uint16_t n_points;
 } lzr_frame;
-
-
-
-/******************************************************************************/
-/*  LZR Time                                                                  */
-/******************************************************************************/
-
-//sometimes this represents seconds, others, it represents normallized time
-//Normalized time is ussually notated `nt` while time in seconds is simply `t`
-typedef double lzr_time;
 
 
 
