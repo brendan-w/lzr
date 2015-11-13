@@ -5,13 +5,16 @@
 
 
 //run-of-the-mill linear interpolation
-//(double, double, double)
-#define lerp(v0, v1, t) ( (1-(t))*(v0) + (t)*(v1) )
+static inline double lerp(double v0, double v1, double t)
+{
+	return (1-(t))*(v0) + (t)*(v1);
+}
 
 //wrapper for lerping a uint8_t
-//(uint8_t, uint8_t, double)
-#define lerp_uint8(v0, v1, t) ( (uint8_t) round(lerp((double) v0, (double) v1, t)) )
-
+static inline uint8_t lerp_uint8(uint8_t v0, uint8_t v1, double t)
+{
+	return (uint8_t) round(lerp((double) v0, (double) v1, t));
+}
 
 
 lzr_point lzr_point_lerp(lzr_point* a, lzr_point* b, double t)
