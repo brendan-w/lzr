@@ -60,7 +60,7 @@ static int read_record(ilda_parser* ilda, void* buffer, size_t buffer_size)
     current header, into the current_frame of the user's buffer.
     It will also perform error checking for point overflows.
 */
-static int save_num_points(ilda_parser* ilda, lzr_frame* buffer, size_t* output_n_points)
+static int save_num_points(ilda_parser* ilda, lzr_frame* buffer)
 {
     int status = ILDA_CONTINUE;
     size_t n = NUMBER_OF_RECORDS(ilda);
@@ -89,14 +89,13 @@ static int save_num_points(ilda_parser* ilda, lzr_frame* buffer, size_t* output_
 // -------------------- Format 0 --------------------
 static int read_3d_indexed(ilda_parser* ilda, lzr_frame* buffer)
 {
-    size_t n_points;
-    int status = save_num_points(ilda, buffer, &n_points);
+    int status = save_num_points(ilda, buffer);
 
     //if there's already a problem, return early
     if(STATUS_IS_HALTING(status)) return status;
 
     //iterate over the records
-    for(size_t i = 0; i < n_points; i++)
+    for(size_t i = 0; i < NUMBER_OF_RECORDS(ilda); i++)
     {
         lzr_point lzr_p;
         ilda_point_3d_indexed p;

@@ -27,8 +27,8 @@ static size_t blank_between(opt_t* opt, lzr_point* points, opt_point_t* a, opt_p
 
 int compile_paths(opt_t* opt, lzr_frame* frame)
 {
-    printf("==========\n");
-    printf("before: %d\n", frame->n_points);
+    // printf("==========\n");
+    // printf("before: %d\n", frame->n_points);
 
     //the number of points currently in the output buffer
     //NOTE: must not exceed opt->max_points
@@ -37,7 +37,7 @@ int compile_paths(opt_t* opt, lzr_frame* frame)
     for(size_t i = 0; i < opt->n_paths; i++)
     {
         opt_path_t* path = (opt->paths + i);
-        printf("%zu: [%zu, %zu] c=%d\n", i, path->a, path->b, path->cycle);
+        // printf("%zu: [%zu, %zu] c=%d\n", i, path->a, path->b, path->cycle);
 
         //number of points to skip at the start of the path
         size_t skip = 0;
@@ -53,7 +53,7 @@ int compile_paths(opt_t* opt, lzr_frame* frame)
             //create a blanking jump
             size_t r = blank_between(opt, (frame->points + n), &a, &b);
             n += r;
-            printf("blank points: %zu\n", r);
+            // printf("blank points: %zu\n", r);
         }
         else
         {
@@ -65,7 +65,7 @@ int compile_paths(opt_t* opt, lzr_frame* frame)
 
         //load the drawn points into the output buffer
         size_t l = PATH_LENGTH(path);
-        printf("len: %d\n", l);
+        // printf("len: %d\n", l);
 
 
         //test if the path is inverted
@@ -93,6 +93,6 @@ int compile_paths(opt_t* opt, lzr_frame* frame)
     }
 
     frame->n_points = n;
-    printf("after: %d\n", frame->n_points);
+    // printf("after: %d\n", frame->n_points);
     return 0;
 }

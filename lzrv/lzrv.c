@@ -49,6 +49,8 @@ static void trigger_new_frame()
 //ZMQ recv thread
 static void* zmq_loop(void* data)
 {
+    (void)data; //param is required, but not used
+
     void* zmq_sub = lzr_frame_sub(zmq_ctx, LZR_ZMQ_ENDPOINT);
     lzr_frame* temp_frame = (lzr_frame*) malloc(sizeof(lzr_frame));
 
