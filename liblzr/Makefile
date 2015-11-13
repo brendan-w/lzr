@@ -24,8 +24,9 @@ OBJS += optimizer/lzr_optimizer.o \
 
 OBJS += zmq/lzr_zmq.o
 
-OBJS += transforms/frame_transforms.o \
-        transforms/point_transforms.o
+OBJS += transforms/point_transforms.o \
+        transforms/frame_transforms.o \
+        transforms/frame_mask.o
 
 OBJS += ilda/lzr_ilda.o \
         ilda/ilda_read.o \
