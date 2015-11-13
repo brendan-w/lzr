@@ -3,9 +3,7 @@
 #include <math.h>
 #include <lzr.h>
 
-/*
- * in-place functions that don't alter the number of points
- */
+
 
 
 int lzr_frame_rotate(lzr_frame* frame, lzr_point axis, double theta)
@@ -29,6 +27,7 @@ int lzr_frame_rotate(lzr_frame* frame, lzr_point axis, double theta)
     return LZR_SUCCESS;
 }
 
+
 int lzr_frame_translate(lzr_frame* frame, lzr_point offset)
 {
     for(size_t i = 0; i < frame->n_points; i++)
@@ -40,6 +39,7 @@ int lzr_frame_translate(lzr_frame* frame, lzr_point offset)
     return LZR_SUCCESS;
 }
 
+
 int lzr_frame_scale(lzr_frame* frame, double x, double y)
 {
     for(size_t i = 0; i < frame->n_points; i++)
@@ -50,6 +50,9 @@ int lzr_frame_scale(lzr_frame* frame, double x, double y)
 
     return LZR_SUCCESS;
 }
+
+
+/* ------------- Frame Move-To ------------- */
 
 static lzr_point get_bounding_box_center(lzr_frame* frame)
 {
@@ -75,6 +78,7 @@ static lzr_point get_bounding_box_center(lzr_frame* frame)
     return center;
 }
 
+
 static lzr_point get_average_center(lzr_frame* frame)
 {
     lzr_point center;
@@ -93,6 +97,7 @@ static lzr_point get_average_center(lzr_frame* frame)
 
     return center;
 }
+
 
 int lzr_frame_move_to(lzr_frame* frame, lzr_point new_center, int method)
 {
@@ -117,10 +122,6 @@ int lzr_frame_move_to(lzr_frame* frame, lzr_point new_center, int method)
     return LZR_SUCCESS;
 }
 
-
-/*
- * functions increase the number of points in a frame
- */
 
 int lzr_frame_combine(lzr_frame* a, lzr_frame* b, bool blank)
 {
@@ -155,6 +156,7 @@ int lzr_frame_combine(lzr_frame* a, lzr_frame* b, bool blank)
     return LZR_SUCCESS;
 }
 
+
 int lzr_frame_h_mirror(lzr_frame* frame, double y, bool blank)
 {
     //check for an overflow
@@ -175,6 +177,7 @@ int lzr_frame_h_mirror(lzr_frame* frame, double y, bool blank)
     return lzr_frame_combine(frame, &orig, blank);
 }
 
+
 int lzr_frame_v_mirror(lzr_frame* frame, double x, bool blank)
 {
     //check for an overflow
@@ -194,6 +197,7 @@ int lzr_frame_v_mirror(lzr_frame* frame, double x, bool blank)
     //append it to the original frame
     return lzr_frame_combine(frame, &orig, blank);
 }
+
 
 int lzr_frame_dup_linear(lzr_frame* frame, lzr_point offset, size_t n_dups, bool blank)
 {
@@ -226,6 +230,7 @@ int lzr_frame_dup_linear(lzr_frame* frame, lzr_point offset, size_t n_dups, bool
     return LZR_SUCCESS;
 }
 
+
 int lzr_frame_dup_radial(lzr_frame* frame, lzr_point axis, size_t n_dups, double angle, bool blank)
 {
     //TODO: decide
@@ -254,4 +259,43 @@ int lzr_frame_dup_radial(lzr_frame* frame, lzr_point axis, size_t n_dups, double
     }
 
     return LZR_SUCCESS;
+}
+
+
+/* ------------- Frame Masking ------------- */
+
+//off-the-shelf ray casting test
+static bool point_in_polygon(lzr_point p, lzr_frame* polygon)
+{
+    bool in = false;
+    int i = 0;
+    int j = 0;
+
+    for(i = 0, j = polygon->n_points - 1; i < polygon->n_points; j = i++)
+    {
+        lzr_point a = polygon->points[i];
+        lzr_point b = polygon->points[j];
+
+        if( ((a.y > p.y) != (b.y > p.y)) &&
+            (p.x < (b.x - a.x) * (p.y - a.y) / (b.y - a.y) + a.x) )
+            in = !in;
+    }
+
+    return in;
+}
+
+
+int lzr_frame_mask(lzr_frame* frame, lzr_frame* mask)
+{
+    lzr_frame output;
+    output.n_points = 0;
+
+    //used to tell when a transition across the mask's boundry has occurred,
+    //which will tell us when we need to add an intersticial point at the boundry
+    bool inside;
+
+    for(size_t i = 0; i < frame->n_points; i++)
+    {
+
+    }
 }

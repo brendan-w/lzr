@@ -65,6 +65,14 @@ typedef struct {
 } lzr_point;
 
 
+
+/******************************************************************************/
+/*  Point Transforms                                                          */
+/******************************************************************************/
+
+//will interpolate position, color, and intensity
+lzr_point lzr_point_lerp(lzr_point* a, lzr_point* b, double t);
+
 //square of the distance between two points
 #define LZR_POINT_SQ_DISTANCE(a, b) ( (a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y) )
 
@@ -100,15 +108,6 @@ typedef struct {
     lzr_point points[LZR_FRAME_MAX_POINTS];
     uint16_t n_points;
 } lzr_frame;
-
-
-
-/******************************************************************************/
-/*  Point Transforms                                                          */
-/******************************************************************************/
-
-//will interpolate position, color, and intensity
-lzr_point lzr_point_lerp(lzr_point* a, lzr_point* b, double t);
 
 
 
