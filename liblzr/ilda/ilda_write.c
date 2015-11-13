@@ -1,7 +1,7 @@
 
 #include <string.h> //memset() zeroing out struct
 #include <lzr.h>
-#include "lzr_ilda.h"
+#include "ilda_utils.h"
 
 
 static int write_point(ilda_parser* ilda, lzr_point lzr_p)

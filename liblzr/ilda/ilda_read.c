@@ -1,7 +1,7 @@
 
 #include <string.h> //strcmp() for "ILDA" header
 #include <lzr.h>
-#include "lzr_ilda.h"
+#include "ilda_utils.h"
 
 
 
