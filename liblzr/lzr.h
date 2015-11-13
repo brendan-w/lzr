@@ -91,6 +91,9 @@ typedef struct {
 
 //frame limits
 #define LZR_FRAME_MAX_POINTS 2000  // = 60,000 pps / 30 fps
+//TODO: Yes, I know. In most cases this is wasteful, and in others, it
+//      won't be enough. I have decided to optimize later, and go for
+//      simplicity the first time through.
 
 
 typedef struct {
@@ -115,6 +118,7 @@ lzr_point lzr_point_lerp(lzr_point* a, lzr_point* b, double t);
 
 #define LZR_BOUNDING_BOX 0
 #define LZR_AVERAGE      1
+
 
 //rotates a frame around position specified by axis
 int lzr_frame_rotate(lzr_frame* frame, lzr_point axis, double theta);
@@ -143,6 +147,10 @@ int lzr_frame_dup_linear(lzr_frame* frame, lzr_point offset, size_t n_dups, bool
 //radially duplicate the current frame
 int lzr_frame_dup_radial(lzr_frame* frame, lzr_point axis, size_t n_dups, double angle, bool blank);
 
+//clips a frame using the given mask. Points in the mask should define a closed
+//polygon. All points outside the mask are discarded. Line segments that cross
+//the mask boundry will have additional points inserted at that boundry.
+int lzr_frame_mask(lzr_frame* frame, lzr_frame* mask);
 
 
 /******************************************************************************/
