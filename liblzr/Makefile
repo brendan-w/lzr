@@ -28,13 +28,13 @@ OBJS += transforms/point_transforms.o \
         transforms/frame_transforms.o \
         transforms/frame_mask.o
 
-OBJS += ilda/lzr_ilda.o \
+OBJS += ilda/ilda_utils.o \
         ilda/ilda_read.o \
         ilda/ilda_write.o
 
 
 HEADERS += lzr.h \
-           ilda/lzr_ilda.h \
+           ilda/ilda_utils.h \
            optimizer/lzr_optimizer.h
 
 TESTS = test_optimizer \
