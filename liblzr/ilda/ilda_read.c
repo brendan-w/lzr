@@ -91,13 +91,54 @@ static int save_num_points(ilda_parser* ilda, lzr_frame* buffer, size_t* output)
     return status;
 }
 
+
+
+
 /*
- * Section body readers
- * These functions iterate over their section's records
+ * Record readers/decoders
+ * These functions translate ILDA structs into LZR structs
  *
- * Points are saved off to the given buffer.
+ * lzr_point's are returned in the `output` param
  * Colors are placed in that projector's color palette array
  */
+
+
+// -------------------- Format 0 --------------------
+static int read_3d_indexed(ilda_parser* ilda, lzr_point* output)
+{
+    lzr_point lzr_p;
+    ilda_point_3d_indexed p;
+
+    int r = read_record(ilda, (void*) &p, sizeof(ilda_point_3d_indexed));
+    if(STATUS_IS_HALTING(r)) return r;
+
+    //convert the ILDA point to a lzr_point
+    betoh_3d(&p);
+    ilda_indexed_to_lzr(ilda, p, lzr_p);
+
+    *output = lzr_p;
+
+    return ILDA_CONTINUE;
+}
+
+
+// -------------------- Format 1 --------------------
+static int read_2d_indexed(ilda_parser* ilda, lzr_point* output)
+{
+    lzr_point lzr_p;
+    ilda_point_2d_indexed p;
+
+    int r = read_record(ilda, (void*) &p, sizeof(ilda_point_2d_indexed));
+    if(STATUS_IS_HALTING(r)) return r;
+
+    //convert the ILDA point to a lzr_point
+    betoh_2d(&p);
+    ilda_indexed_to_lzr(ilda, p, lzr_p);
+
+    *output = lzr_p;
+
+    return ILDA_CONTINUE;
+}
 
 
 // -------------------- Format 2 --------------------
@@ -121,20 +162,36 @@ static int read_colors(ilda_parser* ilda)
 }
 
 
-
-
-// -------------------- Format 0 --------------------
-static int read_3d_indexed(ilda_parser* ilda, lzr_point* output)
+// -------------------- Format 3 --------------------
+static int read_3d_true(ilda_parser* ilda, lzr_point* output)
 {
     lzr_point lzr_p;
-    ilda_point_3d_indexed p;
+    ilda_point_3d_true p;
 
-    int r = read_record(ilda, (void*) &p, sizeof(ilda_point_3d_indexed));
+    int r = read_record(ilda, (void*) &p, sizeof(ilda_point_3d_true));
     if(STATUS_IS_HALTING(r)) return r;
 
     //convert the ILDA point to a lzr_point
     betoh_3d(&p);
-    ilda_indexed_to_lzr(ilda, p, lzr_p);
+    ilda_true_to_lzr(ilda, p, lzr_p);
+
+    *output = lzr_p;
+
+    return ILDA_CONTINUE;
+}
+
+// -------------------- Format 4 --------------------
+static int read_2d_true(ilda_parser* ilda, lzr_point* output)
+{
+    lzr_point lzr_p;
+    ilda_point_2d_true p;
+
+    int r = read_record(ilda, (void*) &p, sizeof(ilda_point_2d_true));
+    if(STATUS_IS_HALTING(r)) return r;
+
+    //convert the ILDA point to a lzr_point
+    betoh_2d(&p);
+    ilda_true_to_lzr(ilda, p, lzr_p);
 
     *output = lzr_p;
 
@@ -143,7 +200,19 @@ static int read_3d_indexed(ilda_parser* ilda, lzr_point* output)
 
 
 
-// -------------------- Generic Point Reader --------------------
+
+
+
+
+
+/*
+
+    Generic frame reading function
+
+    saves decoded ILDA points off to the user's buffer.
+    pass function pointer to the neccessary decoder.
+
+*/
 static int read_frame(ilda_parser* ilda, lzr_frame* buffer, point_reader read_point)
 {
     size_t n_points;
@@ -237,16 +306,13 @@ static int read_section_for_projector(ilda_parser* ilda, uint8_t pd, lzr_frame* 
         case 0:
             status = read_frame(ilda, buffer, read_3d_indexed); break;
         case 1:
-            // status = read_2d_indexed(ilda, buffer); break;
-            break;
+            status = read_frame(ilda, buffer, read_2d_indexed); break;
         case 2:
             status = read_colors(ilda); break;
         case 4:
-            // status = read_3d_true(ilda, buffer); break;
-            break;
+            status = read_frame(ilda, buffer, read_3d_true); break;
         case 5:
-            // status = read_2d_true(ilda, buffer); break;
-            break;
+            status = read_frame(ilda, buffer, read_2d_true); break;
         default:
             /*
                 In this case, we can't skip past an unknown
