@@ -46,7 +46,7 @@ static void send_frame()
             ether_points[i].i = (uint16_t) (frame->points[i].i * 255);
         }
 
-        etherdream_write(dac, ether_points, frame->n_points, 30000, -1);
+        etherdream_write(dac, ether_points, frame->n_points, 15000, -1);
     }
     //else, dump the frame, an old one is still being drawn
     //TODO: ^ is this really a good idea? Could create a stutterring animation

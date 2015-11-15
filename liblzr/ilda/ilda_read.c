@@ -4,6 +4,11 @@
 #include "ilda_utils.h"
 
 
+/*
+ *
+ */
+typedef int (*point_reader)(ilda_parser* ilda, lzr_point* p);
+
 
 /*
  * Point conversion
@@ -59,8 +64,10 @@ static int read_record(ilda_parser* ilda, void* buffer, size_t buffer_size)
     This function will save the number_of_records (points) value from the
     current header, into the current_frame of the user's buffer.
     It will also perform error checking for point overflows.
+    Returns an ILDA status code.
+    Use `output` pointer to retrieve an overflow-protected point count.
 */
-static int save_num_points(ilda_parser* ilda, lzr_frame* buffer)
+static int save_num_points(ilda_parser* ilda, lzr_frame* buffer, size_t* output)
 {
     int status = ILDA_CONTINUE;
     size_t n = NUMBER_OF_RECORDS(ilda);
@@ -71,9 +78,15 @@ static int save_num_points(ilda_parser* ilda, lzr_frame* buffer)
         n = LZR_FRAME_MAX_POINTS;
         status = ILDA_WARN;
     }
+    else if(n == 0)
+    {
+        ilda->error = "Found frame with no points.";
+        status = ILDA_WARN;
+    }
 
     //save the frame length to the user's buffer
     buffer[ilda->current_frame].n_points = n;
+    *output = n;
 
     return status;
 }
@@ -86,37 +99,6 @@ static int save_num_points(ilda_parser* ilda, lzr_frame* buffer)
  * Colors are placed in that projector's color palette array
  */
 
-// -------------------- Format 0 --------------------
-static int read_3d_indexed(ilda_parser* ilda, lzr_frame* buffer)
-{
-    int status = save_num_points(ilda, buffer);
-
-    //if there's already a problem, return early
-    if(STATUS_IS_HALTING(status)) return status;
-
-    //iterate over the records
-    for(size_t i = 0; i < NUMBER_OF_RECORDS(ilda); i++)
-    {
-        lzr_point lzr_p;
-        ilda_point_3d_indexed p;
-
-        int r = read_record(ilda, (void*) &p, sizeof(ilda_point_3d_indexed));
-        if(STATUS_IS_HALTING(r)) return r;
-
-        //convert the ILDA point to a lzr_point
-        betoh_3d(&p);
-        ilda_indexed_to_lzr(ilda, p, lzr_p);
-
-        //save the new point to the user's buffer
-        buffer[ilda->current_frame].points[i] = lzr_p;
-
-        //if this was the last point, stop
-        if(p.status.last_point)
-            break;
-    }
-
-    return status;
-}
 
 // -------------------- Format 2 --------------------
 static int read_colors(ilda_parser* ilda)
@@ -137,6 +119,63 @@ static int read_colors(ilda_parser* ilda)
 
     return ILDA_CONTINUE;
 }
+
+
+
+
+// -------------------- Format 0 --------------------
+static int read_3d_indexed(ilda_parser* ilda, lzr_point* output)
+{
+    lzr_point lzr_p;
+    ilda_point_3d_indexed p;
+
+    int r = read_record(ilda, (void*) &p, sizeof(ilda_point_3d_indexed));
+    if(STATUS_IS_HALTING(r)) return r;
+
+    //convert the ILDA point to a lzr_point
+    betoh_3d(&p);
+    ilda_indexed_to_lzr(ilda, p, lzr_p);
+
+    *output = lzr_p;
+
+    return ILDA_CONTINUE;
+}
+
+
+
+// -------------------- Generic Point Reader --------------------
+static int read_frame(ilda_parser* ilda, lzr_frame* buffer, point_reader read_point)
+{
+    size_t n_points;
+    int status = save_num_points(ilda, buffer, &n_points);
+
+    //if there's already a problem, return early
+    if(STATUS_IS_HALTING(status)) return status;
+
+    //iterate over the records
+    for(size_t i = 0; i < n_points; i++)
+    {
+        lzr_point lzr_p;
+        int r = read_point(ilda, &lzr_p);
+        if(STATUS_IS_HALTING(r)) return r;
+
+        //save the new point to the user's buffer
+        buffer[ilda->current_frame].points[i] = lzr_p;
+
+        //TODO: listen to the status byte for end-of-frame
+        //if this was the last point, stop
+        // if(p.status.last_point)
+            // break;
+    }
+
+    return status;
+}
+
+
+
+
+
+
 
 
 /*
@@ -196,14 +235,17 @@ static int read_section_for_projector(ilda_parser* ilda, uint8_t pd, lzr_frame* 
     switch(FORMAT(ilda))
     {
         case 0:
-            status = read_3d_indexed(ilda, buffer); break;
+            status = read_frame(ilda, buffer, read_3d_indexed); break;
         case 1:
+            // status = read_2d_indexed(ilda, buffer); break;
             break;
         case 2:
-            status = read_colors(ilda);             break;
+            status = read_colors(ilda); break;
         case 4:
+            // status = read_3d_true(ilda, buffer); break;
             break;
         case 5:
+            // status = read_2d_true(ilda, buffer); break;
             break;
         default:
             /*

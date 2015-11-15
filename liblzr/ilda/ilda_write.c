@@ -6,6 +6,7 @@
 
 static int write_point(ilda_parser* ilda, lzr_point lzr_p)
 {
+    //right now, this parser will only output 2D True-Color points
     ilda_point_2d_true p;
 
     p.x = (int16_t) INT16_MAX * lzr_p.x;

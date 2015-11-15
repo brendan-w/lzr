@@ -4,7 +4,7 @@
 #include <assert.h>
 
 #include <lzr.h>
-#include "../ilda/lzr_ilda.h"
+#include "../ilda/ilda_utils.h"
 
 int main()
 {

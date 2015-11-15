@@ -10,12 +10,12 @@
 int main()
 {
     void* zmq_ctx = zmq_ctx_new();
-    void* zmq_pub      = lzr_frame_pub(zmq_ctx, LZR_ZMQ_ENDPOINT);
+    void* zmq_pub = lzr_frame_pub(zmq_ctx, LZR_ZMQ_ENDPOINT);
 
     usleep(1200000);
 
     //open the ILDA file
-    lzr_ilda_file* f = lzr_ilda_read("../../../Downloads/ildatest.ild");
+    lzr_ilda_file* f = lzr_ilda_read("../../green_cyan_fan.ild");
 
     size_t frame_count = lzr_ilda_frame_count(f, 0);
 
