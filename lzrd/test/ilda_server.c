@@ -15,7 +15,7 @@ int main()
     usleep(1200000);
 
     //open the ILDA file
-    lzr_ilda_file* f = lzr_ilda_read("../../green_cyan_fan.ild");
+    lzr_ilda_file* f = lzr_ilda_read("../../fedora_repaired_more_blue.ild");
 
     size_t frame_count = lzr_ilda_frame_count(f, 0);
 
@@ -33,7 +33,15 @@ int main()
     for(size_t i = 0; i < frame.n_points; i++)
     {
         lzr_point p = frame.points[i];
-        printf("(%f, %f) r=%d, g=%d, b=%d, i=%d\n", p.x, p.y, p.r, p.g, p.b, p.i);
+        if(!LZR_POINT_IS_BLANKED(p))
+        {
+            p.r = 0;
+            p.g = 255;
+            p.b = 0;
+            frame.points[i] = p;
+        }
+        
+        //printf("(%f, %f) r=%d, g=%d, b=%d, i=%d\n", p.x, p.y, p.r, p.g, p.b, p.i);
     }
 
     int i = 0;
