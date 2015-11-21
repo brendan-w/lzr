@@ -25,6 +25,70 @@ lzr_frame f;
 
 
 
+void add_point(lzr_point p)
+{
+  f.points[f.n_points] = p;
+  f.n_points++;  
+}
+
+void add_finger_to_frame(lzr_point p)
+{
+
+  f.points[f.n_points] = p;
+  f.n_points++;
+
+}
+
+
+void draw_init_frame()
+{
+    //x axis
+    f.points[0].x = -1.0;
+    f.points[0].y = 0.0;
+    f.points[0].r = 0;
+    f.points[0].g = 255;
+    f.points[0].b = 0;
+    f.points[0].i = 255;
+    //
+    f.points[1].x = 1.0;
+    f.points[1].y = 0.0;
+    f.points[1].r = 0;
+    f.points[1].g = 255;
+    f.points[1].b = 0;
+    f.points[1].i = 255;
+    //blank
+    f.points[2].x = 1.0;
+    f.points[2].y = 0.0;
+    f.points[2].r = 0;
+    f.points[2].g = 0;
+    f.points[2].b = 0;
+    f.points[2].i = 0;
+
+    f.points[3].x = 0.0;
+    f.points[3].y = -1.0;
+    f.points[3].r = 0;
+    f.points[3].g = 0;
+    f.points[3].b = 0;
+    f.points[3].i = 0;
+
+    //y-axis
+    f.points[4].x = 0.0;
+    f.points[4].y = -1.0;
+    f.points[4].r = 0;
+    f.points[4].g = 255;
+    f.points[4].b = 0;
+    f.points[4].i = 255;
+
+    f.points[5].x = 0.0;
+    f.points[5].y = 1.0;
+    f.points[5].r = 0;
+    f.points[5].g = 255;
+    f.points[5].b = 0;
+    f.points[5].i = 255;
+
+    f.n_points = 6;
+}
+
 
 
 class SampleListener : public Listener {
@@ -73,7 +137,8 @@ void SampleListener::onFrame(const Controller& controller) {
   // Get the most recent frame and report some basic information
   const Frame frame = controller.frame();
 
-  f.n_points = 0; //clear the current frame
+  draw_init_frame();
+  // f.n_points = 0; //clear the current frame
 
   // std::cout << "Frame id: " << frame.id()
   //           << ", timestamp: " << frame.timestamp()
@@ -98,8 +163,7 @@ void SampleListener::onFrame(const Controller& controller) {
     p.x = position.x / LZR_SCALE_FACTOR;
     p.y = (position.y - 250.0) / LZR_SCALE_FACTOR;
 
-    f.points[f.n_points] = p;
-    f.n_points++;
+    add_finger_to_frame(p);
   }
 
   // Get tools
@@ -111,6 +175,8 @@ void SampleListener::onFrame(const Controller& controller) {
   //             << ", direction: " << tool.direction() << std::endl;
   // }
 
+  //interpolate it!
+  lzr_interpolator_run(interp, &f);
   //lase it!
   lzr_send_frame(zmq_pub, &f);
 }
