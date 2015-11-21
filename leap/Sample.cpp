@@ -16,7 +16,9 @@
 using namespace Leap;
 
 #define LZR_SCALE_FACTOR 150.0
-
+#define LZR_NUM_BLANKS 7
+#define LZR_NUM_FINGER_BLANKS 7
+#define LZR_NUM_BEAMS 10
 
 void* zmq_ctx;
 void* zmq_pub;
@@ -36,79 +38,81 @@ void add_finger_to_frame(lzr_point p)
   lzr_point blanked_p = p;
   LZR_POINT_BLANK(blanked_p);
 
-  for(int i = 0; i < 10; i++)
+  for(int i = 0; i < LZR_NUM_FINGER_BLANKS; i++)
     add_point(blanked_p);
 
-  for(int i = 0; i < 20; i++)
+  for(int i = 0; i < LZR_NUM_BEAMS; i++)
     add_point(p);
 
-  for(int i = 0; i < 10; i++)
+  for(int i = 0; i < LZR_NUM_FINGER_BLANKS; i++)
     add_point(blanked_p);
 }
 
 
 void draw_init_frame()
 {
-    f.points[0].x = -1.0;
-    f.points[0].y = 0.0;
-    f.points[0].r = 0;
-    f.points[0].g = 0;
-    f.points[0].b = 0;
-    f.points[0].i = 0;
+    f.n_points = 0;
 
-    //x axis
-    f.points[1].x = -1.0;
-    f.points[1].y = 0.0;
-    f.points[1].r = 0;
-    f.points[1].g = 255;
-    f.points[1].b = 0;
-    f.points[1].i = 255;
+    lzr_point a;
+    lzr_point b;
+    lzr_point c;
+    lzr_point d;
+
+    a.x = -1.0;
+    a.y = 0.0;
+    a.r = 0;
+    a.g = 255;
+    a.b = 0;
+    a.i = 255;
     //
-    f.points[2].x = 1.0;
-    f.points[2].y = 0.0;
-    f.points[2].r = 0;
-    f.points[2].g = 255;
-    f.points[2].b = 0;
-    f.points[2].i = 255;
-    //blank
-    f.points[3].x = 1.0;
-    f.points[3].y = 0.0;
-    f.points[3].r = 0;
-    f.points[3].g = 0;
-    f.points[3].b = 0;
-    f.points[3].i = 0;
+    b.x = 1.0;
+    b.y = 0.0;
+    b.r = 0;
+    b.g = 255;
+    b.b = 0;
+    b.i = 255;
 
-    f.points[4].x = 0.0;
-    f.points[4].y = -1.0;
-    f.points[4].r = 0;
-    f.points[4].g = 0;
-    f.points[4].b = 0;
-    f.points[4].i = 0;
+    c.x = 0.0;
+    c.y = -1.0;
+    c.r = 0;
+    c.g = 255;
+    c.b = 0;
+    c.i = 255;
 
-    //y-axis
-    f.points[5].x = 0.0;
-    f.points[5].y = -1.0;
-    f.points[5].r = 0;
-    f.points[5].g = 255;
-    f.points[5].b = 0;
-    f.points[5].i = 255;
+    d.x = 0.0;
+    d.y = 1.0;
+    d.r = 0;
+    d.g = 255;
+    d.b = 0;
+    d.i = 255;
 
-    f.points[6].x = 0.0;
-    f.points[6].y = 1.0;
-    f.points[6].r = 0;
-    f.points[6].g = 255;
-    f.points[6].b = 0;
-    f.points[6].i = 255;
+    lzr_point ba = a;
+    lzr_point bb = b;
+    lzr_point bc = c;
+    lzr_point bd = d;
 
-    //blank
-    f.points[7].x = 0.0;
-    f.points[7].y = 1.0;
-    f.points[7].r = 0;
-    f.points[7].g = 0;
-    f.points[7].b = 0;
-    f.points[7].i = 0;    
+    LZR_POINT_BLANK(ba);
+    LZR_POINT_BLANK(bb);
+    LZR_POINT_BLANK(bc);
+    LZR_POINT_BLANK(bd);
 
-    f.n_points = 8;
+    for(int i = 0; i < LZR_NUM_BLANKS; i++)
+      add_point(ba);
+
+    add_point(a);
+    add_point(b);
+
+    for(int i = 0; i < LZR_NUM_BLANKS; i++)
+      add_point(bb);
+
+    for(int i = 0; i < LZR_NUM_BLANKS; i++)
+      add_point(bc);
+
+    add_point(c);
+    add_point(d);
+
+    for(int i = 0; i < LZR_NUM_BLANKS; i++)
+      add_point(bd);
 }
 
 
