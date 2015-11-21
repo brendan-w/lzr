@@ -8,9 +8,24 @@
 
 #include <iostream>
 #include <cstring>
+#include <unistd.h>
 #include "Leap.h"
+#include "../liblzr/lzr.h"
+
 
 using namespace Leap;
+
+#define LZR_SCALE_FACTOR 100.0
+
+
+void* zmq_ctx;
+void* zmq_pub;
+lzr_interpolator* interp;
+lzr_frame f;
+
+
+
+
 
 class SampleListener : public Listener {
   public:
@@ -38,10 +53,10 @@ void SampleListener::onInit(const Controller& controller) {
 
 void SampleListener::onConnect(const Controller& controller) {
   std::cout << "Connected" << std::endl;
-  controller.enableGesture(Gesture::TYPE_CIRCLE);
-  controller.enableGesture(Gesture::TYPE_KEY_TAP);
-  controller.enableGesture(Gesture::TYPE_SCREEN_TAP);
-  controller.enableGesture(Gesture::TYPE_SWIPE);
+  // controller.enableGesture(Gesture::TYPE_CIRCLE);
+  // controller.enableGesture(Gesture::TYPE_KEY_TAP);
+  // controller.enableGesture(Gesture::TYPE_SCREEN_TAP);
+  // controller.enableGesture(Gesture::TYPE_SWIPE);
 }
 
 void SampleListener::onDisconnect(const Controller& controller) {
@@ -54,139 +69,50 @@ void SampleListener::onExit(const Controller& controller) {
 }
 
 void SampleListener::onFrame(const Controller& controller) {
+
   // Get the most recent frame and report some basic information
   const Frame frame = controller.frame();
-  std::cout << "Frame id: " << frame.id()
-            << ", timestamp: " << frame.timestamp()
-            << ", hands: " << frame.hands().count()
-            << ", extended fingers: " << frame.fingers().extended().count()
-            << ", tools: " << frame.tools().count()
-            << ", gestures: " << frame.gestures().count() << std::endl;
 
-  HandList hands = frame.hands();
-  for (HandList::const_iterator hl = hands.begin(); hl != hands.end(); ++hl) {
-    // Get the first hand
-    const Hand hand = *hl;
-    std::string handType = hand.isLeft() ? "Left hand" : "Right hand";
-    std::cout << std::string(2, ' ') << handType << ", id: " << hand.id()
-              << ", palm position: " << hand.palmPosition() << std::endl;
-    // Get the hand's normal vector and direction
-    const Vector normal = hand.palmNormal();
-    const Vector direction = hand.direction();
+  f.n_points = 0; //clear the current frame
 
-    // Calculate the hand's pitch, roll, and yaw angles
-    std::cout << std::string(2, ' ') <<  "pitch: " << direction.pitch() * RAD_TO_DEG << " degrees, "
-              << "roll: " << normal.roll() * RAD_TO_DEG << " degrees, "
-              << "yaw: " << direction.yaw() * RAD_TO_DEG << " degrees" << std::endl;
+  // std::cout << "Frame id: " << frame.id()
+  //           << ", timestamp: " << frame.timestamp()
+  //           << ", hands: " << frame.hands().count()
+  //           << ", extended fingers: " << frame.fingers().extended().count()
+  //           << ", tools: " << frame.tools().count()
+  //           << ", gestures: " << frame.gestures().count() << std::endl;
 
-    // Get the Arm bone
-    Arm arm = hand.arm();
-    std::cout << std::string(2, ' ') <<  "Arm direction: " << arm.direction()
-              << " wrist position: " << arm.wristPosition()
-              << " elbow position: " << arm.elbowPosition() << std::endl;
 
-    // Get fingers
-    const FingerList fingers = hand.fingers();
-    for (FingerList::const_iterator fl = fingers.begin(); fl != fingers.end(); ++fl) {
-      const Finger finger = *fl;
-      std::cout << std::string(4, ' ') <<  fingerNames[finger.type()]
-                << " finger, id: " << finger.id()
-                << ", length: " << finger.length()
-                << "mm, width: " << finger.width() << std::endl;
+  const FingerList fingers = frame.fingers();
+  for(FingerList::const_iterator fl = fingers.begin(); fl != fingers.end(); ++fl)
+  {
+    Finger finger = *fl;
+    Vector position = finger.tipPosition();
+    std::cout << "(" << position.x << ", " << position.y << ", " << position.z << ")" << std::endl;
 
-      // Get finger bones
-      for (int b = 0; b < 4; ++b) {
-        Bone::Type boneType = static_cast<Bone::Type>(b);
-        Bone bone = finger.bone(boneType);
-        std::cout << std::string(6, ' ') <<  boneNames[boneType]
-                  << " bone, start: " << bone.prevJoint()
-                  << ", end: " << bone.nextJoint()
-                  << ", direction: " << bone.direction() << std::endl;
-      }
-    }
+    lzr_point p;
+    p.r = 0;
+    p.g = 255;
+    p.b = 0;
+    p.i = 255;
+    p.x = position.x / LZR_SCALE_FACTOR;
+    p.y = (position.y - 250.0) / LZR_SCALE_FACTOR;
+
+    f.points[f.n_points] = p;
+    f.n_points++;
   }
 
   // Get tools
-  const ToolList tools = frame.tools();
-  for (ToolList::const_iterator tl = tools.begin(); tl != tools.end(); ++tl) {
-    const Tool tool = *tl;
-    std::cout << std::string(2, ' ') <<  "Tool, id: " << tool.id()
-              << ", position: " << tool.tipPosition()
-              << ", direction: " << tool.direction() << std::endl;
-  }
+  // const ToolList tools = frame.tools();
+  // for (ToolList::const_iterator tl = tools.begin(); tl != tools.end(); ++tl) {
+  //   const Tool tool = *tl;
+  //   std::cout << std::string(2, ' ') <<  "Tool, id: " << tool.id()
+  //             << ", position: " << tool.tipPosition()
+  //             << ", direction: " << tool.direction() << std::endl;
+  // }
 
-  // Get gestures
-  const GestureList gestures = frame.gestures();
-  for (int g = 0; g < gestures.count(); ++g) {
-    Gesture gesture = gestures[g];
-
-    switch (gesture.type()) {
-      case Gesture::TYPE_CIRCLE:
-      {
-        CircleGesture circle = gesture;
-        std::string clockwiseness;
-
-        if (circle.pointable().direction().angleTo(circle.normal()) <= PI/2) {
-          clockwiseness = "clockwise";
-        } else {
-          clockwiseness = "counterclockwise";
-        }
-
-        // Calculate angle swept since last frame
-        float sweptAngle = 0;
-        if (circle.state() != Gesture::STATE_START) {
-          CircleGesture previousUpdate = CircleGesture(controller.frame(1).gesture(circle.id()));
-          sweptAngle = (circle.progress() - previousUpdate.progress()) * 2 * PI;
-        }
-        std::cout << std::string(2, ' ')
-                  << "Circle id: " << gesture.id()
-                  << ", state: " << stateNames[gesture.state()]
-                  << ", progress: " << circle.progress()
-                  << ", radius: " << circle.radius()
-                  << ", angle " << sweptAngle * RAD_TO_DEG
-                  <<  ", " << clockwiseness << std::endl;
-        break;
-      }
-      case Gesture::TYPE_SWIPE:
-      {
-        SwipeGesture swipe = gesture;
-        std::cout << std::string(2, ' ')
-          << "Swipe id: " << gesture.id()
-          << ", state: " << stateNames[gesture.state()]
-          << ", direction: " << swipe.direction()
-          << ", speed: " << swipe.speed() << std::endl;
-        break;
-      }
-      case Gesture::TYPE_KEY_TAP:
-      {
-        KeyTapGesture tap = gesture;
-        std::cout << std::string(2, ' ')
-          << "Key Tap id: " << gesture.id()
-          << ", state: " << stateNames[gesture.state()]
-          << ", position: " << tap.position()
-          << ", direction: " << tap.direction()<< std::endl;
-        break;
-      }
-      case Gesture::TYPE_SCREEN_TAP:
-      {
-        ScreenTapGesture screentap = gesture;
-        std::cout << std::string(2, ' ')
-          << "Screen Tap id: " << gesture.id()
-          << ", state: " << stateNames[gesture.state()]
-          << ", position: " << screentap.position()
-          << ", direction: " << screentap.direction()<< std::endl;
-        break;
-      }
-      default:
-        std::cout << std::string(2, ' ')  << "Unknown gesture type." << std::endl;
-        break;
-    }
-  }
-
-  if (!frame.hands().isEmpty() || !gestures.isEmpty()) {
-    std::cout << std::endl;
-  }
-
+  //lase it!
+  lzr_send_frame(zmq_pub, &f);
 }
 
 void SampleListener::onFocusGained(const Controller& controller) {
@@ -216,6 +142,15 @@ void SampleListener::onServiceDisconnect(const Controller& controller) {
 }
 
 int main(int argc, char** argv) {
+
+  //connect to LZR
+  zmq_ctx = zmq_ctx_new();
+  zmq_pub = lzr_frame_pub(zmq_ctx, LZR_ZMQ_ENDPOINT);
+  interp = lzr_interpolator_create();
+
+  //give the socket time to connect
+  sleep(1);
+
   // Create a sample listener and controller
   SampleListener listener;
   Controller controller;
@@ -226,12 +161,17 @@ int main(int argc, char** argv) {
   if (argc > 1 && strcmp(argv[1], "--bg") == 0)
     controller.setPolicy(Leap::Controller::POLICY_BACKGROUND_FRAMES);
 
+
   // Keep this process running until Enter is pressed
   std::cout << "Press Enter to quit..." << std::endl;
   std::cin.get();
 
   // Remove the sample listener when done
   controller.removeListener(listener);
+
+  zmq_close(zmq_pub);
+  zmq_ctx_term(zmq_ctx);
+  lzr_interpolator_destroy(interp);
 
   return 0;
 }
