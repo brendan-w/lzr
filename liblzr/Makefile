@@ -16,7 +16,11 @@ ARFLAGS   = rs
 INSTALL_PREFIX ?= /usr/local
 
 OBJS := src/point.o \
-        src/frame.o
+        src/frame.o \
+        src/zmq.o
+        # src/ilda_read.o \
+        # src/ilda_write.o \
+        # src/ilda_utils.o \
 
 
 HEADERS += lzr.h
@@ -65,8 +69,12 @@ clean:
 	rm -f $(TESTS)
 
 
-.PHONY: test
-test: all tests/*.c
-	for test in $(TESTS); do \
-		$(CXX) $(CXXFLAGS) $(LIBS) tests/$$test.c ./liblzr.a -o $$test ; \
-	done
+simple_server: tests/simple_server.cpp
+	$(CXX) $(CXXFLAGS) $(LIBS) $^ ./liblzr.a -o $@
+
+
+# .PHONY: test
+# test: all tests/*.c
+# 	for test in $(TESTS); do \
+# 		$(CXX) $(CXXFLAGS) $(LIBS) tests/$$test.c ./liblzr.a -o $$test ; \
+# 	done

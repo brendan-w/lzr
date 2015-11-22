@@ -16,11 +16,11 @@ void* zmq_ctx;
 pthread_t zmq_thread;
 
 pthread_mutex_t frame_lock = PTHREAD_MUTEX_INITIALIZER;
-lzr_frame* frame;
-lzr_optimizer* opt;
+Frame frame;
 
 //settings
 bool show_blanks = false;
+
 
 static void trigger_new_frame()
 {
@@ -51,18 +51,18 @@ static void* zmq_loop(void* data)
 {
     (void)data; //param is required, but not used
 
-    void* zmq_sub = lzr_frame_sub(zmq_ctx, LZR_ZMQ_ENDPOINT);
-    lzr_frame* temp_frame = (lzr_frame*) malloc(sizeof(lzr_frame));
+    void* zmq_sub = frame_sub_new(zmq_ctx, LZR_ZMQ_ENDPOINT);
+    Frame temp_frame;
 
     while(1)
     {
-        int r = lzr_recv_frame(zmq_sub, temp_frame);
+        int r = recv_frame(zmq_sub, &temp_frame);
         printf("recv frame\n");
 
         if(r > 0)
         {
             pthread_mutex_lock(&frame_lock);
-            *frame = *temp_frame;
+            frame.swap(temp_frame);
             pthread_mutex_unlock(&frame_lock);
             trigger_new_frame();
         }
@@ -75,7 +75,6 @@ static void* zmq_loop(void* data)
     }
 
     zmq_close(zmq_sub);
-    free(temp_frame);
 
     return NULL;
 }
@@ -87,7 +86,7 @@ static inline int lzr_coord_to_screen(double v, bool invert)
     return (int) (((v + 1.0) / 2.0) * DEFAULT_WINDOW_SIZE);
 }
 
-static inline SDL_Point lzr_point_to_screen(lzr_point p)
+static inline SDL_Point lzr_point_to_screen(Point p)
 {
     SDL_Point sp;
     sp.x = lzr_coord_to_screen(p.x, false);
@@ -95,15 +94,15 @@ static inline SDL_Point lzr_point_to_screen(lzr_point p)
     return sp;
 }
 
-static inline SDL_Color lzr_color_to_screen(lzr_point p)
+static inline SDL_Color lzr_color_to_screen(Point p)
 {
     SDL_Color c;
     c.r = p.r;
     c.g = p.g;
     c.b = p.b;
-    c.a = LZR_POINT_IS_BLANKED(p) ? 0 : 255;
+    c.a = p.is_blanked() ? 0 : 255;
 
-    if(show_blanks && LZR_POINT_IS_BLANKED(p))
+    if(show_blanks && p.is_blanked())
     {
         c.r = 255;
         c.g = 255;
@@ -131,10 +130,10 @@ static void render()
     // lzr_optimizer_run(opt, frame);
 
     //NOTE: cast to int to avoid rollover problems with -1
-    for(int i = 0; i < (frame->n_points - 1); i++)
+    for(int i = 0; i < (frame.size() - 1); i++)
     {
-        lzr_point p1  = frame->points[i];
-        lzr_point p2  = frame->points[i+1];
+        Point p1  = frame[i];
+        Point p2  = frame[i+1];
         SDL_Point sp1 = lzr_point_to_screen(p1);
         SDL_Point sp2 = lzr_point_to_screen(p2);
         //TODO: double check that color is actually
@@ -204,8 +203,6 @@ static void loop()
 int main()
 {
     zmq_ctx = zmq_ctx_new();
-    frame = (lzr_frame*) malloc(sizeof(lzr_frame));
-    opt = lzr_optimizer_create();
 
 
     //start SDL
@@ -248,7 +245,6 @@ int main()
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
     // clear the screen to black
-    frame->n_points = 0;
     render();
 
 
@@ -278,8 +274,6 @@ err_render:
 err_window:
     SDL_Quit();
 
-    lzr_optimizer_destroy(opt);
-    free(frame);
 
     return 0;
 }

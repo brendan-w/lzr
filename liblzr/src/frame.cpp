@@ -5,6 +5,14 @@
 
 
 /*
+ * constructors
+ */
+
+Frame::Frame() : std::vector<Point>() { }
+Frame::Frame(size_t n) : std::vector<Point>(n) { }
+
+
+/*
  * functions
  */
 

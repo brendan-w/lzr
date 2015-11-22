@@ -5,6 +5,7 @@ liblzr/test_interpolator
 liblzr/test_transformations
 liblzr/test_ilda_read
 liblzr/test_ilda_write
+liblzr/simple_server
 
 # lzrd test binaries
 lzrd/lzrd

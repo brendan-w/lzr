@@ -10,7 +10,7 @@
 int main()
 {
     void* zmq_ctx = zmq_ctx_new();
-    void* zmq_pub = lzr_frame_pub(zmq_ctx, LZR_ZMQ_ENDPOINT);
+    void* zmq_pub = frame_pub_new(zmq_ctx, LZR_ZMQ_ENDPOINT);
 
     usleep(1200000);
 

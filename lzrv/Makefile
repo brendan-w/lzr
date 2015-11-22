@@ -3,10 +3,10 @@
 # ============================= compile settings =============================
 
 
-CC      = gcc
-CFLAGS += -std=gnu99 -Wall -Wextra -pedantic -ggdb
-CFLAGS += -I../liblzr -I/usr/include/SDL2
-LIBS    = -lzmq -lm -lpthread -lSDL2
+CXX       = g++
+CXXFLAGS += -std=c++11 -Wall -Wextra -pedantic -ggdb
+CXXFLAGS += -I../liblzr -I/usr/include/SDL2
+LIBS     = -lzmq -lm -lpthread -lSDL2
 
 
 # ============================= files and paths =============================
@@ -16,7 +16,7 @@ INSTALL_PREFIX ?= /usr/local
 
 OBJS += lzrv.o
 
-HEADERS += ../liblzr/lzr.h lzrv.h
+HEADERS += ../liblzr/lzr.h
 
 # ============================= main targets =============================
 
@@ -26,11 +26,11 @@ all: lzrv
 
 
 lzrv: $(OBJS) ../liblzr/liblzr.a
-	$(CC) $^ ../liblzr/liblzr.a $(LIBS) -o $@
+	$(CXX) $^ ../liblzr/liblzr.a $(LIBS) -o $@
 
 
 %.o: %.c $(HEADERS)
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 
 .PHONY: install
