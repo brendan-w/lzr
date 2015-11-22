@@ -55,14 +55,19 @@ extern "C" {
 #define LZR_POINT_COLOR_MAX    255
 
 
-typedef struct {
+class Point {
+public:
+    Point();
+    Point(double x, double y);
+    Point(double x, double y, uint8_t r, uint8_t g, uint8_t b, uint8_t i);
+
     double x;  //Position X   [-1.0, 1.0]
     double y;  //Position Y   [-1.0, 1.0]
     uint8_t r; //Red          [0, 255]
     uint8_t g; //Green        [0, 255]
     uint8_t b; //Blue         [0, 255]
     uint8_t i; //Blanking     [0, 255]
-} lzr_point;
+};
 
 
 
@@ -71,7 +76,7 @@ typedef struct {
 /******************************************************************************/
 
 //will interpolate position, color, and intensity
-lzr_point lzr_point_lerp(lzr_point* a, lzr_point* b, double t);
+// lzr_point lzr_point_lerp(lzr_point* a, lzr_point* b, double t);
 
 //square of the distance between two points
 #define LZR_POINT_SQ_DISTANCE(a, b) ( (a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y) )
@@ -97,6 +102,18 @@ lzr_point lzr_point_lerp(lzr_point* a, lzr_point* b, double t);
 /*  LZR Frames                                                                */
 /******************************************************************************/
 
+
+
+class Frame
+{
+public:
+    Frame();
+    ~Frame();
+private:
+
+};
+
+/*
 //frame limits
 #define LZR_FRAME_MAX_POINTS 2000  // = 60,000 pps / 30 fps
 //TODO: Yes, I know. In most cases this is wasteful, and in others, it
@@ -108,7 +125,7 @@ typedef struct {
     lzr_point points[LZR_FRAME_MAX_POINTS];
     uint16_t n_points;
 } lzr_frame;
-
+*/
 
 
 /******************************************************************************/
@@ -118,7 +135,7 @@ typedef struct {
 #define LZR_BOUNDING_BOX 0
 #define LZR_AVERAGE      1
 
-
+/*
 //rotates a frame around position specified by axis
 int lzr_frame_rotate(lzr_frame* frame, lzr_point axis, double theta);
 
@@ -150,12 +167,13 @@ int lzr_frame_dup_radial(lzr_frame* frame, lzr_point axis, size_t n_dups, double
 //polygon. All points outside the mask are discarded. Line segments that cross
 //the mask boundry will have additional points inserted at that boundry.
 int lzr_frame_mask(lzr_frame* frame, lzr_frame* mask);
-
+*/
 
 /******************************************************************************/
 /*  LZR Interpolator                                                          */
 /******************************************************************************/
 
+/*
 typedef void lzr_interpolator;
 
 typedef enum {
@@ -176,13 +194,14 @@ void lzr_interpolator_set(lzr_interpolator* interp, interp_property prop, unsign
 
 //main interpolator function
 int lzr_interpolator_run(lzr_interpolator* interp, lzr_frame* frame);
-
+*/
 
 
 /******************************************************************************/
 /*  LZR Optimizer                                                             */
 /******************************************************************************/
 
+/*
 typedef void lzr_optimizer;
 
 typedef enum {
@@ -203,13 +222,14 @@ void lzr_optimizer_set(lzr_optimizer* opt, opt_property prop, unsigned long valu
 
 //main optimizer function.
 int lzr_optimizer_run(lzr_optimizer* opt, lzr_frame* frame);
-
+*/
 
 
 /******************************************************************************/
 /*  ILDA File Handlers                                                        */
 /******************************************************************************/
 
+/*
 typedef void lzr_ilda_file;
 
 //open ILDA file for reading or writing ----------------------------------------
@@ -239,13 +259,14 @@ size_t lzr_ilda_frame_count(lzr_ilda_file* f, size_t pd);
 
 //closes the ILDA file, and releases the parsing context
 void lzr_ilda_close(lzr_ilda_file* f);
-
+*/
 
 
 /******************************************************************************/
 /*  LZR ZeroMQ Facilities                                                     */
 /******************************************************************************/
 
+/*
 //create a ZMQ transmitter (publisher)
 void* lzr_frame_pub(void* zmq_ctx, const char* address);
 
@@ -262,7 +283,7 @@ int lzr_recv_frame(void* sub, lzr_frame* frame);
 #ifndef LZR_ZMQ_ENDPOINT
 # define LZR_ZMQ_ENDPOINT "tcp://127.0.0.1:5555"
 #endif
-
+*/
 
 
 

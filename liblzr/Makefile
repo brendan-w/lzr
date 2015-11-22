@@ -3,11 +3,11 @@
 # ============================= compile settings =============================
 
 
-CC      = gcc
-CFLAGS += -std=gnu99 -Wall -Wextra -pedantic -fPIC -ggdb
-CFLAGS += -I.
-LIBS    = -lzmq -lm
-ARFLAGS = rs
+CXX       = g++
+CXXFLAGS += -std=c++11 -Wall -Wextra -pedantic -fPIC -ggdb
+CXXFLAGS += -I.
+LIBS      = -lzmq -lm
+ARFLAGS   = rs
 
 
 # ============================= files and paths =============================
@@ -15,27 +15,11 @@ ARFLAGS = rs
 
 INSTALL_PREFIX ?= /usr/local
 
-OBJS += interpolator/lzr_interpolator.o
-
-OBJS += optimizer/lzr_optimizer.o \
-        optimizer/find_paths.o \
-        optimizer/rearrange_paths.o \
-        optimizer/compile_paths.o
-
-OBJS += zmq/lzr_zmq.o
-
-OBJS += transforms/point_transforms.o \
-        transforms/frame_transforms.o \
-        transforms/frame_mask.o
-
-OBJS += ilda/ilda_utils.o \
-        ilda/ilda_read.o \
-        ilda/ilda_write.o
+OBJS := basics/point.o \
+        basics/frame.o
 
 
-HEADERS += lzr.h \
-           ilda/ilda_utils.h \
-           optimizer/lzr_optimizer.h
+HEADERS += lzr.h
 
 TESTS = test_optimizer \
         test_interpolator \
@@ -51,15 +35,16 @@ all: liblzr.so liblzr.a
 
 
 liblzr.so: $(OBJS)
-	$(CC) -shared $^ $(LIBS) -o $@
+	echo $(OBJS)
+	$(CXX) -shared $^ $(LIBS) -o $@
 
 
 liblzr.a: $(OBJS)
 	$(AR) $(ARFLAGS) $@ $^
 
 
-%.o: %.c $(HEADERS)
-	$(CC) $(CFLAGS) -c $< -o $@
+%.o: %.cpp $(HEADERS)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 
 .PHONY: install
@@ -83,5 +68,5 @@ clean:
 .PHONY: test
 test: all tests/*.c
 	for test in $(TESTS); do \
-		$(CC) $(CFLAGS) $(LIBS) tests/$$test.c ./liblzr.a -o $$test ; \
+		$(CXX) $(CXXFLAGS) $(LIBS) tests/$$test.c ./liblzr.a -o $$test ; \
 	done
