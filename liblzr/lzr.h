@@ -89,7 +89,7 @@ public:
     Frame();
     Frame(size_t n);
 
-    Frame& operator+=(const Point& p); //same as add()
+    Frame& operator+=(const Point& p);
     Frame& operator+=(const Frame& other);
     bool operator==(const Frame& other);
 };
@@ -241,10 +241,10 @@ void* frame_pub_new(void* zmq_ctx, const char* address);
 void* frame_sub_new(void* zmq_ctx, const char* address);
 
 //send a single frame
-int send_frame(void* pub, Frame* frame);
+int send_frame(void* pub, const Frame& frame);
 
 //recieve a single frame (blocking)
-int recv_frame(void* sub, Frame* frame);
+int recv_frame(void* sub, Frame& frame);
 
 //the default LZR endpoint
 #ifndef LZR_ZMQ_ENDPOINT

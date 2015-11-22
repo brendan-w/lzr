@@ -34,13 +34,13 @@ void* frame_sub_new(void* zmq_ctx, const char* address)
  */
 
 //send a single frame
-int send_frame(void* pub, Frame* frame)
+int send_frame(void* pub, const Frame& frame)
 {
-    size_t len = sizeof(Point) * frame->size();
+    size_t len = sizeof(Point) * frame.size();
 
     zmq_msg_t msg;
     zmq_msg_init_size(&msg, len);
-    memcpy(zmq_msg_data(&msg), (void*) frame->data(), len);
+    memcpy(zmq_msg_data(&msg), (void*) frame.data(), len);
 
     //run the ZMQ send
     return zmq_sendmsg(pub, &msg, 0);
@@ -48,7 +48,7 @@ int send_frame(void* pub, Frame* frame)
 
 
 //recieve a single frame (blocking)
-int recv_frame(void* sub, Frame* frame)
+int recv_frame(void* sub, Frame& frame)
 {
     int r;
 
@@ -56,11 +56,14 @@ int recv_frame(void* sub, Frame* frame)
     zmq_msg_t msg;
     r = zmq_msg_init (&msg);
     assert(r == 0);
+
     r = zmq_recvmsg(sub, &msg, 0);
-    assert(r == 0);
 
-    frame->resize(zmq_msg_size(&msg) / sizeof(Point));
-    memcpy((void*) frame->data(), zmq_msg_data(&msg), zmq_msg_size(&msg));
+    if(r > 0)
+    {
+        frame.resize(zmq_msg_size(&msg) / sizeof(Point));
+        memcpy((void*) frame.data(), zmq_msg_data(&msg), zmq_msg_size(&msg));
+    }
 
-    return r;
+    return r; //pass negative (error) return codes
 }

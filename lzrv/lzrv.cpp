@@ -2,6 +2,7 @@
 #include <pthread.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <iostream>
 #include <SDL.h>
 #include <lzr.h>
 
@@ -56,8 +57,8 @@ static void* zmq_loop(void* data)
 
     while(1)
     {
-        int r = recv_frame(zmq_sub, &temp_frame);
-        printf("recv frame\n");
+        int r = recv_frame(zmq_sub, temp_frame);
+        std::cout << "recv frame: " << temp_frame.size() << std::endl;
 
         if(r > 0)
         {
@@ -115,6 +116,7 @@ static inline SDL_Color lzr_color_to_screen(Point p)
 
 static void render()
 {
+
     // clear the screen to black
     SDL_SetRenderDrawColor(renderer,
                            0,
@@ -127,13 +129,11 @@ static void render()
     //begin processing the current frame
     pthread_mutex_lock(&frame_lock);
 
-    // lzr_optimizer_run(opt, frame);
-
     //NOTE: cast to int to avoid rollover problems with -1
-    for(int i = 0; i < (frame.size() - 1); i++)
+    for(int i = 0; i < ((int)frame.size() - 1); i++)
     {
-        Point p1  = frame[i];
-        Point p2  = frame[i+1];
+        Point p1 = frame[i];
+        Point p2 = frame[i+1];
         SDL_Point sp1 = lzr_point_to_screen(p1);
         SDL_Point sp2 = lzr_point_to_screen(p2);
         //TODO: double check that color is actually
