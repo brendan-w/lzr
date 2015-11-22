@@ -21,14 +21,10 @@
 #ifndef LZR_TYPES_H
 #define LZR_TYPES_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include <zmq.h>
 #include <stdint.h>
 #include <stdbool.h>
-
+#include <vector>
 
 
 /******************************************************************************/
@@ -80,15 +76,6 @@ public:
 };
 
 
-
-/******************************************************************************/
-/*  Point Transforms                                                          */
-/******************************************************************************/
-
-//will interpolate position, color, and intensity
-// lzr_point lzr_point_lerp(lzr_point* a, lzr_point* b, double t);
-
-
 /******************************************************************************/
 /*  LZR Frames                                                                */
 /******************************************************************************/
@@ -100,23 +87,23 @@ class Frame
 public:
     Frame();
     ~Frame();
-private:
 
+    //getters
+    Point& operator[](size_t i);
+    size_t size();
+    const std::vector<Point*>::iterator begin();
+    const std::vector<Point*>::iterator end();
+
+    //modifiers
+    void add();
+    void add(const Point& p);
+    void remove(size_t i);
+    void insert(const Point& p, size_t i);
+    void clear();
+private:
+    std::vector<Point*> points;
 };
 
-/*
-//frame limits
-#define LZR_FRAME_MAX_POINTS 2000  // = 60,000 pps / 30 fps
-//TODO: Yes, I know. In most cases this is wasteful, and in others, it
-//      won't be enough. I have decided to optimize later, and go for
-//      simplicity the first time through.
-
-
-typedef struct {
-    lzr_point points[LZR_FRAME_MAX_POINTS];
-    uint16_t n_points;
-} lzr_frame;
-*/
 
 
 /******************************************************************************/
@@ -277,10 +264,5 @@ int lzr_recv_frame(void* sub, lzr_frame* frame);
 */
 
 
-
-
-#ifdef __cplusplus
-} // extern "c"
-#endif
 
 #endif /* LZR_TYPES_H */
