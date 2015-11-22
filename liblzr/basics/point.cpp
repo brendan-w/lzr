@@ -1,4 +1,5 @@
 
+#include <math.h>
 #include <lzr.h>
 
 
@@ -82,4 +83,27 @@ bool Point::operator==(const Point& other)
 double Point::sq_distance_to(const Point& other)
 {
     return (x - other.x)*(x - other.x) + (y - other.y)*(y - other.y);
+}
+
+//run-of-the-mill linear interpolation
+static inline double lerp(double v0, double v1, double t)
+{
+    return (1-(t))*(v0) + (t)*(v1);
+}
+
+//wrapper for lerping a uint8_t
+static inline uint8_t lerp_uint8(uint8_t v0, uint8_t v1, double t)
+{
+    return (uint8_t) round(lerp((double) v0, (double) v1, t));
+}
+
+Point Point::lerp_to(const Point& other, double t)
+{
+    Point p(lerp(x, other.x, t),
+            lerp(y, other.y, t),
+            lerp_uint8(r, other.r, t),
+            lerp_uint8(g, other.g, t),
+            lerp_uint8(b, other.b, t),
+            lerp_uint8(i, other.i, t));
+    return p;
 }

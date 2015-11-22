@@ -76,6 +76,7 @@ public:
     bool equal(const Point& other);
     bool operator==(const Point& other);
     double sq_distance_to(const Point& other);
+    Point lerp_to(const Point& other, double t);
 };
 
 
