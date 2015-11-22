@@ -57,16 +57,24 @@ extern "C" {
 
 class Point {
 public:
-    Point();
-    Point(double x, double y);
-    Point(double x, double y, uint8_t r, uint8_t g, uint8_t b, uint8_t i);
-
     double x;  //Position X   [-1.0, 1.0]
     double y;  //Position Y   [-1.0, 1.0]
     uint8_t r; //Red          [0, 255]
     uint8_t g; //Green        [0, 255]
     uint8_t b; //Blue         [0, 255]
     uint8_t i; //Blanking     [0, 255]
+
+    Point();
+    Point(double x, double y);
+    Point(double x, double y, uint8_t r, uint8_t g, uint8_t b, uint8_t i);
+
+    void blank();
+    void unblank();
+    bool is_blanked();
+    bool equal_position(Point* other);
+    bool equal_color(Point* other);
+    bool equal(Point* other);
+    double sq_distance_to(Point* other);
 };
 
 
@@ -77,25 +85,6 @@ public:
 
 //will interpolate position, color, and intensity
 // lzr_point lzr_point_lerp(lzr_point* a, lzr_point* b, double t);
-
-//square of the distance between two points
-#define LZR_POINT_SQ_DISTANCE(a, b) ( (a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y) )
-
-//blanks the given point
-#define LZR_POINT_BLANK(p)          { p.r = p.g = p.b = p.i = 0; }
-
-//returns boolean for whether the given point is blanked
-#define LZR_POINT_IS_BLANKED(p)     ( (p.i == 0) || (p.r + p.g + p.b == 0) )
-
-//are two points at the same position
-#define LZR_POINTS_SAME_POS(a, b)   ( (a.x == b.x) && (a.y == b.y) )
-
-//are two points the same color
-#define LZR_POINTS_SAME_COLOR(a, b) ( (a.r == b.r) && (a.g == b.g) && (a.b == b.b) && (a.i == b.i) )
-
-//check if two points are the same color, and at the same position
-#define LZR_POINTS_EQUAL(a, b)      ( POINTS_SAME_POS(a, b) && POINTS_SAME_COLOR(a, b) )
-
 
 
 /******************************************************************************/
