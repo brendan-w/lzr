@@ -5,17 +5,23 @@
 
 
 /*
- * Helper functions
+ * functions
  */
 
-void Frame::add()
-{
-    push_back(Point());
-}
-
-void Frame::add(const Point& p)
+Frame& Frame::operator+=(const Point& p)
 {
     push_back(Point(p));
+    return *this;
+}
+
+Frame& Frame::operator+=(const Frame& other)
+{
+    for(Point p : other)
+    {
+        push_back(Point(p));
+    }
+
+    return *this;
 }
 
 bool Frame::operator==(const Frame& other)

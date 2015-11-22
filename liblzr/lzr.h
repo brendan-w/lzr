@@ -51,7 +51,8 @@
 #define LZR_POINT_COLOR_MAX    255
 
 
-class Point {
+class Point
+{
 public:
     double x;  //Position X   [-1.0, 1.0]
     double y;  //Position Y   [-1.0, 1.0]
@@ -85,9 +86,8 @@ public:
 class Frame : public std::vector<Point>
 {
 public:
-    void add();
-    void add(const Point& p);
     Frame& operator+=(const Point& p); //same as add()
+    Frame& operator+=(const Frame& other);
     bool operator==(const Frame& other);
 };
 
