@@ -67,12 +67,12 @@ public:
     void blank();
     void unblank();
     bool is_blanked();
+    Point lerp_to(const Point& other, double t);
+    double sq_distance_to(const Point& other);
     bool equal_position(const Point& other);
     bool equal_color(const Point& other);
-    bool equal(const Point& other);
     bool operator==(const Point& other);
-    double sq_distance_to(const Point& other);
-    Point lerp_to(const Point& other, double t);
+    bool operator!=(const Point& other);
 };
 
 
@@ -82,26 +82,13 @@ public:
 
 
 
-class Frame
+class Frame : public std::vector<Point>
 {
 public:
-    Frame();
-    ~Frame();
-
-    //getters
-    Point& operator[](size_t i);
-    size_t size();
-    const std::vector<Point*>::iterator begin();
-    const std::vector<Point*>::iterator end();
-
-    //modifiers
     void add();
     void add(const Point& p);
-    void remove(size_t i);
-    void insert(const Point& p, size_t i);
-    void clear();
-private:
-    std::vector<Point*> points;
+    Frame& operator+=(const Point& p); //same as add()
+    bool operator==(const Frame& other);
 };
 
 

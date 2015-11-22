@@ -15,8 +15,8 @@ ARFLAGS   = rs
 
 INSTALL_PREFIX ?= /usr/local
 
-OBJS := basics/point.o \
-        basics/frame.o
+OBJS := src/point.o \
+        src/frame.o
 
 
 HEADERS += lzr.h
@@ -35,7 +35,6 @@ all: liblzr.so liblzr.a
 
 
 liblzr.so: $(OBJS)
-	echo $(OBJS)
 	$(CXX) -shared $^ $(LIBS) -o $@
 
 
@@ -57,6 +56,7 @@ install:
 .PHONY: clean
 clean:
 	rm -f *.a *.o *.so
+	rm -f src/*.o
 	rm -f interpolator/*.o
 	rm -f transforms/*.o
 	rm -f optimizer/*.o
