@@ -53,27 +53,33 @@ bool Point::is_blanked()
     return (i == 255);
 }
 
-bool Point::equal_position(Point* other)
+bool Point::equal_position(const Point& other)
 {
-    return ((x == other->x) &&
-            (y == other->y));
+    //TODO: use tolerance for comparing floating points
+    return ((x == other.x) &&
+            (y == other.y));
 }
 
-bool Point::equal_color(Point* other)
+bool Point::equal_color(const Point& other)
 {
-    return ((r == other->r) &&
-            (g == other->g) &&
-            (b == other->b) &&
-            (i == other->i));
+    return ((r == other.r) &&
+            (g == other.g) &&
+            (b == other.b) &&
+            (i == other.i));
 }
 
-bool Point::equal(Point* other)
+bool Point::equal(const Point& other)
 {
-    return ((x == other->x) &&
-            (y == other->y));
+    return (equal_color(other) &&
+            equal_position(other));
 }
 
-double Point::sq_distance_to(Point* other)
+bool Point::operator==(const Point& other)
 {
-    return (x - other->x)*(x - other->x) + (y - other->y)*(y - other->y);
+    return equal(other);
+}
+
+double Point::sq_distance_to(const Point& other)
+{
+    return (x - other.x)*(x - other.x) + (y - other.y)*(y - other.y);
 }

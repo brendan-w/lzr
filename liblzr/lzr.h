@@ -71,10 +71,11 @@ public:
     void blank();
     void unblank();
     bool is_blanked();
-    bool equal_position(Point* other);
-    bool equal_color(Point* other);
-    bool equal(Point* other);
-    double sq_distance_to(Point* other);
+    bool equal_position(const Point& other);
+    bool equal_color(const Point& other);
+    bool equal(const Point& other);
+    bool operator==(const Point& other);
+    double sq_distance_to(const Point& other);
 };
 
 
