@@ -142,7 +142,14 @@ static void render()
         SDL_Color c   = lzr_color_to_screen(p2);
 
         SDL_SetRenderDrawColor(renderer, c.r, c.g, c.b, c.a);
-        SDL_RenderDrawLine(renderer, sp1.x, sp1.y, sp2.x, sp2.y);
+
+        if(LZR_POINTS_SAME_POS(p1, p2))
+        {
+            SDL_Rect r = { .x = sp2.x, .y = sp2.y, .w = 3, .h = 3 };
+            SDL_RenderDrawRect(renderer, &r);
+        }
+        else
+            SDL_RenderDrawLine(renderer, sp1.x, sp1.y, sp2.x, sp2.y);
     }
 
     pthread_mutex_unlock(&frame_lock);

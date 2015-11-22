@@ -10,7 +10,7 @@
 */
 
 //create a ZMQ transmitter (publisher)
-void* lzr_frame_pub(void* zmq_ctx, char* address)
+void* lzr_frame_pub(void* zmq_ctx, const char* address)
 {
     void* publisher = zmq_socket(zmq_ctx, ZMQ_PUB);
     int rc = zmq_bind(publisher, address);

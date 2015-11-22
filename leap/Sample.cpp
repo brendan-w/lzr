@@ -158,6 +158,13 @@ void SampleListener::onExit(const Controller& controller) {
   std::cout << "Exited" << std::endl;
 }
 
+#define LEAP_DISTANCE 200.0
+
+bool within_frame(const lzr_point& p)
+{
+    return ((-1 < p.x) && (p.x < 1) && (-1 < p.y) && (p.y < 1));
+}
+
 void SampleListener::onFrame(const Controller& controller) {
 
   // Get the most recent frame and report some basic information
@@ -179,17 +186,32 @@ void SampleListener::onFrame(const Controller& controller) {
   {
     Finger finger = *fl;
     Vector position = finger.tipPosition();
-    // std::cout << "(" << position.x << ", " << position.y << ", " << position.z << ")" << std::endl;
 
     lzr_point p;
     p.r = 0;
     p.g = 255;
-    p.b = 0;
+    p.b = 255;
     p.i = 255;
     p.x = position.x / -LZR_SCALE_FACTOR;
-    p.y = (position.y - 250.0) / LZR_SCALE_FACTOR;
+    p.y = (position.y - LEAP_DISTANCE) / LZR_SCALE_FACTOR;
 
-    add_finger_to_frame(p);
+    if(within_frame(p)) {
+        add_finger_to_frame(p);
+    }
+
+    int posval = position.z;
+    p.r = (posval < -16)*255;
+    p.g = (-32 < posval && posval < 32)*255;
+    p.b = (16 < posval)*255;
+    p.i = 255;
+    p.x = position.x / -LZR_SCALE_FACTOR;
+    p.y = (position.y - LEAP_DISTANCE) / LZR_SCALE_FACTOR + 0.5;
+
+    if(within_frame(p)) {
+        add_finger_to_frame(p);
+    }
+    // printf("(% 5f, % 5f, % 5f)\n", position.x, position.y, position.z);
+
   }
 
   // Get tools
@@ -204,7 +226,7 @@ void SampleListener::onFrame(const Controller& controller) {
   //interpolate it!
   lzr_interpolator_run(interp, &f);
 
-  std::cout << f.n_points << std::endl;
+  //std::cout << f.n_points << std::endl;
   //lase it!
   lzr_send_frame(zmq_pub, &f);
 }

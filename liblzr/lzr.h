@@ -247,7 +247,7 @@ void lzr_ilda_close(lzr_ilda_file* f);
 /******************************************************************************/
 
 //create a ZMQ transmitter (publisher)
-void* lzr_frame_pub(void* zmq_ctx, char* address);
+void* lzr_frame_pub(void* zmq_ctx, const char* address);
 
 //create a ZMQ reciever (subscriber)
 void* lzr_frame_sub(void* zmq_ctx, char* address);
