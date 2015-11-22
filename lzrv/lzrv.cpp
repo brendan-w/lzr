@@ -63,7 +63,7 @@ static void* zmq_loop(void* data)
         if(r > 0)
         {
             pthread_mutex_lock(&frame_lock);
-            frame.swap(temp_frame);
+            frame = temp_frame;
             pthread_mutex_unlock(&frame_lock);
             trigger_new_frame();
         }
