@@ -88,6 +88,18 @@ size_t ilda_projector_count(ILDA* ilda)
 /******************************************************************************/
 
 
+ILDA::ILDA()
+{
+    f = NULL;
+
+    //wipe the projector data (color and frame arrays)
+    for(size_t pd = 0; pd < MAX_PROJECTORS; pd++)
+    {
+        projectors[pd].n_frames = 0;
+    }
+}
+
+
 ILDA_Projector* ILDA::current_projector()
 {
     return (projectors + h.projector_id);

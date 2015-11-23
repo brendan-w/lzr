@@ -129,6 +129,8 @@ class ILDA_Projector
 class ILDA
 {
     public:
+        ILDA();
+
         FILE* f;     // the current file
         bool read;   // if false, we're in write mode
         const char* error; // error string
@@ -150,14 +152,6 @@ class ILDA
 
 //inits a parser context for reading
 void scan_file(ILDA* ilda);
-
-//skips from the end of the current header,
-//to the start of the next header
-bool skip_to_next_section(ILDA* ilda);
-
-//initialize a new parser context
-//the opposite function would be `lzr_ilda_close()`
-ILDA* malloc_parser();
 
 
 /******************************************************************************/

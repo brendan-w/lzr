@@ -162,9 +162,6 @@ static int read_2d_true(ILDA* ilda, Point* p)
 
 
 
-
-
-
 /*
 
     Generic frame reading function
@@ -207,12 +204,6 @@ static int read_frame(ILDA* ilda, Frame* buffer, point_reader read_point)
 
     return status;
 }
-
-
-
-
-
-
 
 
 /*
@@ -289,6 +280,36 @@ static int read_section_for_projector(ILDA* ilda, uint8_t pd, Frame* buffer)
     }
 
     return status;
+}
+
+
+
+/*
+    Call this AFTER reading in a header. If you decide you aren't interested
+    in the data within that frame, call this to skip to the next header.
+*/
+static bool skip_to_next_section(ILDA* ilda)
+{
+    int skip_bytes = 0;
+
+    switch(ilda->h.format)
+    {
+        case 0: skip_bytes = sizeof(ilda_point_3d_indexed); break;
+        case 1: skip_bytes = sizeof(ilda_point_2d_indexed); break;
+        case 2: skip_bytes = sizeof(ilda_color);            break;
+        case 4: skip_bytes = sizeof(ilda_point_3d_true);    break;
+        case 5: skip_bytes = sizeof(ilda_point_2d_true);    break;
+        default:
+            /*
+                In this case, we can't skip past an unknown
+                section type, since we don't know the record size.
+            */
+            return false;
+    }
+
+    skip_bytes *= ilda->h.number_of_records;
+
+    return (fseek(ilda->f, skip_bytes, SEEK_CUR) == 0);
 }
 
 
