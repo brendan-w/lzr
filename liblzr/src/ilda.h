@@ -92,6 +92,11 @@ typedef struct {
 } ilda_point_3d_true;
 
 
+
+/******************************************************************************/
+/*  ILDA Color Definitions                                                    */
+/******************************************************************************/
+
 extern const ilda_color ilda_palette[];
 extern const size_t ilda_palette_size;
 
@@ -153,6 +158,9 @@ class ILDA
 
 //inits a parser context for reading
 void scan_file(ILDA* ilda);
+
+//writes the closing section header (where number_of_records is zero)
+void write_closer(ILDA* ilda);
 
 
 /*

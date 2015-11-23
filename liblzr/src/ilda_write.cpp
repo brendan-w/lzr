@@ -4,7 +4,7 @@
 #include "ilda.h"
 
 
-static int write_point(ILDA* ilda, Point& point)
+static int write_point(ILDA* ilda, Point& point, bool is_last)
 {
     //right now, this parser will only output 2D True-Color points
     ilda_point_2d_true p;
@@ -15,6 +15,7 @@ static int write_point(ILDA* ilda, Point& point)
     p.g = point.g;
     p.b = point.b;
     p.status.blanked = point.is_blanked();
+    p.status.last_point = is_last;
 
     //convert to big-endian
     htobe_2d(&p);
@@ -44,10 +45,24 @@ static int write_frame(ILDA* ilda, Frame& frame, size_t i, size_t pd)
     //write each point to the file
     for(Point& point : frame)
     {
-        write_point(ilda, point);
+        bool is_last = (point == frame.back());
+        write_point(ilda, point, is_last);
     }
 
     return LZR_SUCCESS;
+}
+
+
+void write_closer(ILDA* ilda)
+{
+    //write a header where number_of_records is zero
+
+    //zero out a new header
+    ilda_header h;
+    memset(&h, 0, sizeof(ilda_header));
+
+    //write the header
+    fwrite((void*) &h, 1, sizeof(ilda_header), ilda->f);
 }
 
 

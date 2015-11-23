@@ -52,9 +52,11 @@ ILDA* ilda_open(const char* filename, const char* mode)
 
 void ilda_close(ILDA* ilda)
 {
-    if(ilda->f != NULL)
-        fclose(ilda->f);
+    //if we were writing a file, we need to tack on a closing header
+    if(!ilda->read)
+        write_closer(ilda);
 
+    fclose(ilda->f);
     delete ilda;
 }
 
