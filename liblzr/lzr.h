@@ -97,6 +97,9 @@ public:
     int rotate(double x_axis, double y_axis, double theta);
     int translate(double x, double y);
     int scale(double x, double y);
+
+    Point bounding_box_center();
+    Point average_center();
 };
 
 
