@@ -4,17 +4,17 @@
 #include "ilda.h"
 
 
-static int write_point(ILDA* ilda, lzr_point lzr_p)
+static int write_point(ILDA* ilda, Point& point)
 {
     //right now, this parser will only output 2D True-Color points
     ilda_point_2d_true p;
 
-    p.x = (int16_t) INT16_MAX * lzr_p.x;
-    p.y = (int16_t) INT16_MAX * lzr_p.y;
-    p.r = lzr_p.r;
-    p.g = lzr_p.g;
-    p.b = lzr_p.b;
-    p.status.blanked = LZR_POINT_IS_BLANKED(lzr_p);
+    p.x = (int16_t) INT16_MAX * point.x;
+    p.y = (int16_t) INT16_MAX * point.y;
+    p.r = point.r;
+    p.g = point.g;
+    p.b = point.b;
+    p.status.blanked = point.is_blanked();
 
     //convert to big-endian
     htobe_2d(&p);
@@ -23,17 +23,17 @@ static int write_point(ILDA* ilda, lzr_point lzr_p)
     return LZR_SUCCESS;
 }
 
-static int write_frame(ILDA* ilda, lzr_frame* f, size_t pd)
+static int write_frame(ILDA* ilda, Frame& frame, size_t i, size_t pd)
 {
     //zero out a new header
     ilda_header h;
     memset(&h, 0, sizeof(ilda_header));
 
     //set header details
-    h.number_of_records = (uint16_t) f->n_points;
+    h.number_of_records = (uint16_t) frame.size();
     h.projector_id      = (uint8_t)  pd;
-    h.total_frames      = (uint16_t) GET_PROJECTOR_DATA(ilda, pd)->n_frames;
-    h.frame_number      = (uint16_t) ilda->current_frame;
+    h.total_frames      = (uint16_t) ilda->projectors[pd].n_frames;
+    h.frame_number      = (uint16_t) i;
 
     //convert to big-endian
     htobe_header(&h);
@@ -42,46 +42,26 @@ static int write_frame(ILDA* ilda, lzr_frame* f, size_t pd)
     fwrite((void*) &h, 1, sizeof(ilda_header), ilda->f);
 
     //write each point to the file
-    for(size_t i = 0; i < f->n_points; i++)
+    for(Point& point : frame)
     {
-        write_point(ilda, f->points[i]);
+        write_point(ilda, point);
     }
 
     return LZR_SUCCESS;
 }
 
 
-/******************************************************************************/
-/*  Public Functions                                                          */
-/******************************************************************************/
-
-lzr_ilda_file* lzr_ilda_write(char* filename)
+/*
+    Main API function for writing frames
+    The ilda_close() call will generate the null ending frame
+*/
+int ilda_write_frames(ILDA* ilda, size_t pd, FrameList& frame_list)
 {
-    //init a parser
-    ILDA* ilda = (ILDA*) malloc(sizeof(ILDA));
-    ilda->f = fopen(filename, "wb");
+    ilda->projectors[pd].n_frames = frame_list.size();
 
-    if(ilda->f == NULL)
+    for(size_t i = 0; i < frame_list.size(); i++)
     {
-        perror("Failed to open file for writing");
-        return NULL;
-    }
-
-    return (void*) ilda;
-
-}
-
-int lzr_ilda_write_frames(lzr_ilda_file* f, size_t pd, lzr_frame* frames, size_t n_frames)
-{
-    ILDA* ilda = (ILDA*) f;
-
-    ilda_projector* proj = GET_PROJECTOR_DATA(ilda, pd);
-    proj->n_frames = n_frames;
-
-    for(size_t i = 0; i < n_frames; i++)
-    {
-        ilda->current_frame = i;
-        int r = write_frame(ilda, (frames + i), pd);
+        int r = write_frame(ilda, frame_list[i], i, pd);
         if(r != LZR_SUCCESS)
             return r;
     }
