@@ -16,13 +16,13 @@ Frame::Frame(size_t n) : std::vector<Point>(n) { }
  * operators
  */
 
-Frame& Frame::operator+=(const Point& p)
+Frame& Frame::add(const Point& p)
 {
     push_back(Point(p));
     return *this;
 }
 
-Frame& Frame::operator+=(const Frame& other)
+Frame& Frame::add(const Frame& other)
 {
     for(Point p : other)
     {

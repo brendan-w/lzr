@@ -90,8 +90,8 @@ public:
     Frame();
     Frame(size_t n);
 
-    Frame& operator+=(const Point& p);
-    Frame& operator+=(const Frame& other);
+    Frame& add(const Point& p);
+    Frame& add(const Frame& other);
 
     //transforms
     int rotate(double x_axis, double y_axis, double theta);
@@ -113,15 +113,7 @@ public:
 /*  LZR Animations                                                            */
 /******************************************************************************/
 
-class Animation : public std::vector<Frame>
-{
-public:
-    Animation();
-    Animation(size_t n);
-
-    Animation& operator+=(const Frame& f);
-    Animation& operator+=(const Animation& other);
-};
+typedef std::vector<Frame> FrameList;
 
 
 
@@ -196,16 +188,17 @@ ILDA* ilda_open(const char* filename, const char* mode);
 void ilda_close(ILDA* f);
 
 //Reads all frames for the the given projector, and returns them
-int ilda_read(ILDA* f, size_t pd, Animation* animation);
+int ilda_read(ILDA* f, size_t pd, FrameList* frame_list);
 
 //write frame(s) for the given projector to the ILDA file (file must be opened with lzr_ilda_write() )
-int ilda_write(ILDA* f, size_t pd, Animation& animation);
+int ilda_write(ILDA* f, size_t pd, FrameList& frame_list);
 
 //returns the number of projectors that the ILDA specifies graphics for
 size_t ilda_projector_count(ILDA* f);
 
 //returns the number of frames for the given projector descriptor
 size_t ilda_frame_count(void* f, size_t pd);
+
 
 
 /******************************************************************************/
