@@ -187,11 +187,9 @@ int lzr_optimizer_run(lzr_optimizer* opt, lzr_frame* frame);
 
 class ILDA;
 
-//these functions will return NULL on failure
-
-
 // "r" = read
 // "w" = write
+//Will return NULL on failure
 ILDA* ilda_open(const char* filename, const char* mode);
 
 //closes the ILDA file, and releases the parsing context

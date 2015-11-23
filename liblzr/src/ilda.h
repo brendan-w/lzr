@@ -146,26 +146,13 @@ class ILDA
 };
 
 
-/******************************************************************************/
-/*  Forward declares for the parsing modules                                  */
-/******************************************************************************/
-
-//inits a parser context for reading
-void scan_file(ILDA* ilda);
-
 
 /******************************************************************************/
 /*  ILDA Utils                                                                */
 /******************************************************************************/
 
-//returns a pointer to the ilda_projector element
-//arguments (ILDA*, uint8_t)
-#define GET_PROJECTOR_DATA(ilda, i) ( (ilda)->projectors + (i) )
-
-//same as GET_PROJECTOR_DATA, but returns the projector corresponding to
-//`projector_id` in the header
-//arguments (ILDA*)
-#define GET_CURRENT_PROJECTOR_DATA(ilda) ( GET_PROJECTOR_DATA((ilda), (ilda)->h.projector_id ) )
+//inits a parser context for reading
+void scan_file(ILDA* ilda);
 
 
 /*
