@@ -32,20 +32,6 @@ Frame& Frame::operator+=(const Frame& other)
     return *this;
 }
 
-bool Frame::operator==(const Frame& other)
-{
-    if(size() != other.size())
-        return false;
-
-    for(size_t i = 0; i < size(); i++)
-    {
-        if(at(i) != other[i])
-            return false;
-    }
-
-    return true;
-}
-
 
 /*
  * functions

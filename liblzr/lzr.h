@@ -91,59 +91,22 @@ public:
 
     Frame& operator+=(const Point& p);
     Frame& operator+=(const Frame& other);
-    bool operator==(const Frame& other);
 
     //transforms
     int rotate(double x_axis, double y_axis, double theta);
     int translate(double x, double y);
     int scale(double x, double y);
 
+    //clips a frame using the given mask. Points in the mask should define a closed
+    //polygon. All points outside the mask are discarded. Line segments that cross
+    //the mask boundry will have additional points inserted at that boundry.
+    int mask(const Frame& mask);
+
     Point bounding_box_center();
     Point average_center();
 };
 
 
-
-/******************************************************************************/
-/*  Frame Transforms                                                          */
-/******************************************************************************/
-
-#define LZR_BOUNDING_BOX 0
-#define LZR_AVERAGE      1
-
-/*
-//rotates a frame around position specified by axis
-int lzr_frame_rotate(lzr_frame* frame, lzr_point axis, double theta);
-
-//translate all points within a frame
-int lzr_frame_translate(lzr_frame* frame, lzr_point offset);
-
-//scales all points within a frame
-int lzr_frame_scale(lzr_frame* frame, double x, double y);
-
-//centers the shape over the given point
-int lzr_frame_move_to(lzr_frame* frame, lzr_point new_center, int method);
-
-//appends frame B onto frame A with an optional blanking jump.
-int lzr_frame_combine(lzr_frame* a, lzr_frame* b, bool blank);
-
-//mirror the frame across the given Y-axis coordinate 
-int lzr_frame_h_mirror(lzr_frame* frame, double y, bool blank);
-
-//mirror the frame across the given Y-axis coordinate 
-int lzr_frame_v_mirror(lzr_frame* frame, double x, bool blank);
-
-//linearly duplicate the current frame
-int lzr_frame_dup_linear(lzr_frame* frame, lzr_point offset, size_t n_dups, bool blank);
-
-//radially duplicate the current frame
-int lzr_frame_dup_radial(lzr_frame* frame, lzr_point axis, size_t n_dups, double angle, bool blank);
-
-//clips a frame using the given mask. Points in the mask should define a closed
-//polygon. All points outside the mask are discarded. Line segments that cross
-//the mask boundry will have additional points inserted at that boundry.
-int lzr_frame_mask(lzr_frame* frame, lzr_frame* mask);
-*/
 
 /******************************************************************************/
 /*  LZR Interpolator                                                          */
