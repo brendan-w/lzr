@@ -92,6 +92,11 @@ public:
     Frame& operator+=(const Point& p);
     Frame& operator+=(const Frame& other);
     bool operator==(const Frame& other);
+
+    //transforms
+    int rotate(double x_axis, double y_axis, double theta);
+    int translate(double x, double y);
+    int scale(double x, double y);
 };
 
 
