@@ -17,7 +17,8 @@ INSTALL_PREFIX ?= /usr/local
 
 OBJS := src/point.o \
         src/frame.o \
-        src/zmq.o
+        src/zmq.o \
+        src/ilda.o
         # src/ilda_read.o \
         # src/ilda_write.o \
         # src/ilda_utils.o \

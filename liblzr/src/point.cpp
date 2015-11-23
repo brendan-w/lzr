@@ -105,5 +105,5 @@ bool Point::operator==(const Point& other)
 
 bool Point::operator!=(const Point& other)
 {
-    return !((*this) == other);
+    return !operator==(other);
 }

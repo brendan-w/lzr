@@ -20,6 +20,8 @@
 
 #define STATUS_IS_HALTING(s) (( s == ILDA_HALT ) || (s == ILDA_ERROR))
 
+
+
 /******************************************************************************/
 /*  ILDA Structure Definitions                                                */
 /******************************************************************************/
@@ -90,48 +92,9 @@ typedef struct {
 } ilda_point_3d_true;
 
 
-
-/******************************************************************************/
-/*  Parser Context                                                            */
-/******************************************************************************/
-
-#define MAX_PROJECTORS 256
-
-typedef struct {
-    // NOTE: We don't actually store the frames here,
-    // they are copied directly to the user's array.
-    // This struct is mostly for book-keeping
-    size_t      n_frames; // the size of the frame array
-    ilda_color* colors;   // the current color table
-    size_t      n_colors; // number of colors in the palette
-} ilda_projector;
-
-typedef struct {
-    FILE*          f;                          // the current file
-    ilda_projector projectors[MAX_PROJECTORS]; // the per-projector data (colors and frames)
-
-    //the following fields are only relevant during ONE
-    //API call. Once the call is complete, these should be
-    //considered invalid. They're only here for convenience.
-    ilda_header    h;             // the current section header
-    size_t         current_frame; // the current frame number being read
-
-    //error string
-    char* error;
-} ilda_parser;
-
-
-
-/******************************************************************************/
-/*  ILDA Color Utils                                                          */
-/******************************************************************************/
-
-
-// the ILDA default color table (defined in ilda_utils.c)
 extern const ilda_color ilda_palette[];
-extern const size_t ilda_color_count;
+extern const size_t ilda_palette_size;
 
-// solid color indices
 #define ILDA_RED     0
 #define ILDA_YELLOW  16
 #define ILDA_GREEN   24
@@ -141,26 +104,58 @@ extern const size_t ilda_color_count;
 #define ILDA_WHITE   56
 
 
-//malloc's a new color palette, freeing any previous one
-void current_palette_init(ilda_parser* ilda, size_t n_colors);
 
-//helper function to safely free the color palette for the given projector
-void free_projector_palette(ilda_projector* p);
+/******************************************************************************/
+/*  Parser Context                                                            */
+/******************************************************************************/
 
-//safe color set for the current projector's palette
-void current_palette_set(ilda_parser* ilda, size_t i, ilda_color c);
+#define MAX_PROJECTORS 256
 
-//safe color lookup for the current projector
-//if a palette hasn't been defined, then the default ILDA palette is used
-ilda_color current_palette_get(ilda_parser* ilda, size_t i);
+class ILDA_Projector
+{
+    public:
+        ilda_color lookup_color(size_t i);
+        // NOTE: We don't actually store the frames here,
+        // they are copied directly to the user's array.
+        // This is mostly for book-keeping
+        size_t n_frames; // the size of the frame array
+        std::vector<ilda_color> palette;
+};
+
+// parsing context
+class ILDA
+{
+    public:
+        FILE* f;     // the current file
+        bool read;   // if false, we're in write mode
+        char* error; // error string
+
+        //the following fields are only relevant during ONE
+        //API call. Once the call is complete, these should be
+        //considered invalid. They're only here for convenience.
+        ilda_header h;        // the current section header
+        size_t current_frame; // the current frame number being read
+
+        ILDA_Projector* current_projector();
+
+    private:
+        ILDA_Projector projectors[MAX_PROJECTORS]; // the per-projector data (colors and frames)
+};
+
+
+/******************************************************************************/
+/*  Forward declares for the parsing modules                                  */
+/******************************************************************************/
+
+void scan_file(ILDA* ilda);
 
 //skips from the end of the current header,
 //to the start of the next header
-bool skip_to_next_section(ilda_parser* ilda);
+bool skip_to_next_section(ILDA* ilda);
 
 //initialize a new parser context
 //the opposite function would be `lzr_ilda_close()`
-ilda_parser* malloc_parser();
+ILDA* malloc_parser();
 
 
 /******************************************************************************/
@@ -173,12 +168,12 @@ ilda_parser* malloc_parser();
 #define PROJECTOR(ilda)         (ilda->h.projector_id)
 
 //returns a pointer to the ilda_projector element
-//arguments (ilda_parser*, uint8_t)
+//arguments (ILDA*, uint8_t)
 #define GET_PROJECTOR_DATA(ilda, i) ( (ilda)->projectors + (i) )
 
 //same as GET_PROJECTOR_DATA, but returns the projector corresponding to
 //`projector_id` in the header
-//arguments (ilda_parser*)
+//arguments (ILDA*)
 #define GET_CURRENT_PROJECTOR_DATA(ilda) ( GET_PROJECTOR_DATA((ilda), (ilda)->h.projector_id ) )
 
 

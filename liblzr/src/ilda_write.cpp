@@ -1,10 +1,10 @@
 
 #include <string.h> //memset() zeroing out struct
 #include <lzr.h>
-#include "ilda_utils.h"
+#include "ilda.h"
 
 
-static int write_point(ilda_parser* ilda, lzr_point lzr_p)
+static int write_point(ILDA* ilda, lzr_point lzr_p)
 {
     //right now, this parser will only output 2D True-Color points
     ilda_point_2d_true p;
@@ -23,7 +23,7 @@ static int write_point(ilda_parser* ilda, lzr_point lzr_p)
     return LZR_SUCCESS;
 }
 
-static int write_frame(ilda_parser* ilda, lzr_frame* f, size_t pd)
+static int write_frame(ILDA* ilda, lzr_frame* f, size_t pd)
 {
     //zero out a new header
     ilda_header h;
@@ -58,7 +58,7 @@ static int write_frame(ilda_parser* ilda, lzr_frame* f, size_t pd)
 lzr_ilda_file* lzr_ilda_write(char* filename)
 {
     //init a parser
-    ilda_parser* ilda = (ilda_parser*) malloc(sizeof(ilda_parser));
+    ILDA* ilda = (ILDA*) malloc(sizeof(ILDA));
     ilda->f = fopen(filename, "wb");
 
     if(ilda->f == NULL)
@@ -73,7 +73,7 @@ lzr_ilda_file* lzr_ilda_write(char* filename)
 
 int lzr_ilda_write_frames(lzr_ilda_file* f, size_t pd, lzr_frame* frames, size_t n_frames)
 {
-    ilda_parser* ilda = (ilda_parser*) f;
+    ILDA* ilda = (ILDA*) f;
 
     ilda_projector* proj = GET_PROJECTOR_DATA(ilda, pd);
     proj->n_frames = n_frames;

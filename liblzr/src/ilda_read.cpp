@@ -1,16 +1,16 @@
 
 #include <string.h> //strcmp() for "ILDA" header
 #include <lzr.h>
-#include "ilda_utils.h"
+#include "ilda.h"
 
 
 // function signiture for point readers
-typedef int (*point_reader)(ilda_parser* ilda, lzr_point* p);
+typedef int (*point_reader)(ILDA* ilda, lzr_point* p);
 
 
 
 //reads a single record, and error checks the size
-static int read_record(ilda_parser* ilda, void* buffer, size_t buffer_size)
+static int read_record(ILDA* ilda, void* buffer, size_t buffer_size)
 {
     size_t r = fread(buffer, 1, buffer_size, ilda->f);
 
@@ -32,7 +32,7 @@ static int read_record(ilda_parser* ilda, void* buffer, size_t buffer_size)
  *  Returns an ILDA status code.
  *  Use `output` pointer to retrieve an overflow-protected point count.
  */
-static int save_num_points(ilda_parser* ilda, lzr_frame* buffer, size_t* output)
+static int save_num_points(ILDA* ilda, lzr_frame* buffer, size_t* output)
 {
     int status = ILDA_CONTINUE;
     size_t n = NUMBER_OF_RECORDS(ilda);
@@ -67,7 +67,7 @@ static int save_num_points(ilda_parser* ilda, lzr_frame* buffer, size_t* output)
  */
 
 // ================================ Format 0 ================================
-static int read_3d_indexed(ilda_parser* ilda, lzr_point* p)
+static int read_3d_indexed(ILDA* ilda, lzr_point* p)
 {
     ilda_point_3d_indexed ilda_p;
 
@@ -93,7 +93,7 @@ static int read_3d_indexed(ilda_parser* ilda, lzr_point* p)
 
 
 // ================================ Format 1 ================================
-static int read_2d_indexed(ilda_parser* ilda, lzr_point* p)
+static int read_2d_indexed(ILDA* ilda, lzr_point* p)
 {
     ilda_point_2d_indexed ilda_p;
 
@@ -118,7 +118,7 @@ static int read_2d_indexed(ilda_parser* ilda, lzr_point* p)
 
 
 // ================================ Format 2 ================================
-static int read_colors(ilda_parser* ilda)
+static int read_colors(ILDA* ilda)
 {
     current_palette_init(ilda, NUMBER_OF_RECORDS(ilda));
 
@@ -139,7 +139,7 @@ static int read_colors(ilda_parser* ilda)
 
 
 // ================================ Format 3 ================================
-static int read_3d_true(ilda_parser* ilda, lzr_point* p)
+static int read_3d_true(ILDA* ilda, lzr_point* p)
 {
     ilda_point_3d_true ilda_p;
 
@@ -165,7 +165,7 @@ static int read_3d_true(ilda_parser* ilda, lzr_point* p)
 }
 
 // ================================ Format 4 ================================
-static int read_2d_true(ilda_parser* ilda, lzr_point* p)
+static int read_2d_true(ILDA* ilda, lzr_point* p)
 {
     ilda_point_2d_true ilda_p;
 
@@ -204,7 +204,7 @@ static int read_2d_true(ilda_parser* ilda, lzr_point* p)
     pass function pointer to the neccessary decoder.
 
 */
-static int read_frame(ilda_parser* ilda, lzr_frame* buffer, point_reader read_point)
+static int read_frame(ILDA* ilda, lzr_frame* buffer, point_reader read_point)
 {
     size_t n_points;
     int status = save_num_points(ilda, buffer, &n_points);
@@ -241,7 +241,7 @@ static int read_frame(ilda_parser* ilda, lzr_frame* buffer, point_reader read_po
 /*
  * Header Reader
  */
-static int read_header(ilda_parser* ilda)
+static int read_header(ILDA* ilda)
 {
     //read one ILDA header
     size_t r = fread((void*) &(ilda->h),
@@ -275,7 +275,7 @@ static int read_header(ilda_parser* ilda)
 
 //reads a single section (frame) of the ILDA file
 //returns boolean for whether to continue parsing
-static int read_section_for_projector(ilda_parser* ilda, uint8_t pd, lzr_frame* buffer)
+static int read_section_for_projector(ILDA* ilda, uint8_t pd, lzr_frame* buffer)
 {
     int status;
 
@@ -323,7 +323,7 @@ static int read_section_for_projector(ilda_parser* ilda, uint8_t pd, lzr_frame* 
 
     This should only ever be called once per context lifetime.
 */
-static void scan_file(ilda_parser* ilda)
+static void scan_file(ILDA* ilda)
 {
 
     //read all of the headers, and take notes
@@ -364,7 +364,7 @@ static void scan_file(ilda_parser* ilda)
 void* lzr_ilda_read(char* filename)
 {
     //init a parser
-    ilda_parser* ilda = malloc_parser();
+    ILDA* ilda = malloc_parser();
     ilda->f = fopen(filename, "rb");
 
     if(ilda->f == NULL)
@@ -383,7 +383,7 @@ void* lzr_ilda_read(char* filename)
 
 int lzr_ilda_read_frames(void* f, size_t pd, lzr_frame* buffer)
 {
-    ilda_parser* ilda = (ilda_parser*) f;
+    ILDA* ilda = (ILDA*) f;
 
     if(ilda == NULL)
     {

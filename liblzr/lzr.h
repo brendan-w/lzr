@@ -21,6 +21,8 @@
 #ifndef LZR_TYPES_H
 #define LZR_TYPES_H
 
+#define LZR_VERSION "0.0.1"
+
 #include <zmq.h>
 #include <stdint.h>
 #include <stdbool.h>
@@ -45,10 +47,10 @@
 /******************************************************************************/
 
 //point limits
-#define LZR_POINT_POSITION_MIN -1.0
-#define LZR_POINT_POSITION_MAX 1.0
-#define LZR_POINT_COLOR_MIN    0
-#define LZR_POINT_COLOR_MAX    255
+#define LZR_POSITION_MIN -1.0
+#define LZR_POSITION_MAX 1.0
+#define LZR_COLOR_MIN    0
+#define LZR_COLOR_MAX    255
 
 
 class Point
@@ -77,11 +79,10 @@ public:
 };
 
 
+
 /******************************************************************************/
 /*  LZR Frames                                                                */
 /******************************************************************************/
-
-
 
 class Frame : public std::vector<Point>
 {
@@ -100,10 +101,26 @@ public:
     //clips a frame using the given mask. Points in the mask should define a closed
     //polygon. All points outside the mask are discarded. Line segments that cross
     //the mask boundry will have additional points inserted at that boundry.
-    int mask(const Frame& mask);
+    int mask(const Frame& mask, bool inverse=false);
 
     Point bounding_box_center();
     Point average_center();
+};
+
+
+
+/******************************************************************************/
+/*  LZR Animations                                                            */
+/******************************************************************************/
+
+class Animation : public std::vector<Frame>
+{
+public:
+    Animation();
+    Animation(size_t n);
+
+    Animation& operator+=(const Frame& f);
+    Animation& operator+=(const Animation& other);
 };
 
 
@@ -168,37 +185,30 @@ int lzr_optimizer_run(lzr_optimizer* opt, lzr_frame* frame);
 /*  ILDA File Handlers                                                        */
 /******************************************************************************/
 
-/*
-typedef void lzr_ilda_file;
+class ILDA;
 
-//open ILDA file for reading or writing ----------------------------------------
 //these functions will return NULL on failure
 
-//opens the given ILDA file, and returns a parsing context
-lzr_ilda_file* lzr_ilda_read(char* filename);
 
-//opens or creates an ILDA file for writing, and returns a parsing context
-lzr_ilda_file* lzr_ilda_write(char* filename);
-
-//reading and writing functions ------------------------------------------------
-
-//Reads all frames for the the given projector, and saves them
-//in the given frame buffer. The frame buffer must be the size
-//returned by `lzr_ilda_frame_count()`
-int lzr_ilda_read_frames(lzr_ilda_file* f, size_t pd, lzr_frame* buffer);
-
-//write frame(s) for the given projector to the ILDA file (file must be opened with lzr_ilda_write() )
-int lzr_ilda_write_frames(lzr_ilda_file* f, size_t pd, lzr_frame* frames, size_t n_frames);
-
-//returns the number of projectors that the ILDA specifies graphics for
-size_t lzr_ilda_projector_count(lzr_ilda_file* f);
-
-//returns the number of frames for a given projector
-size_t lzr_ilda_frame_count(lzr_ilda_file* f, size_t pd);
+// "r" = read
+// "w" = write
+ILDA* ilda_open(const char* filename, const char* mode);
 
 //closes the ILDA file, and releases the parsing context
-void lzr_ilda_close(lzr_ilda_file* f);
-*/
+void ilda_close(ILDA* f);
+
+//Reads all frames for the the given projector, and saves them
+//in the given animation object.
+int ilda_read(ILDA* f, size_t pd, Animation* animation);
+
+//write frame(s) for the given projector to the ILDA file (file must be opened with lzr_ilda_write() )
+int ilda_write(ILDA* f, size_t pd, Animation& animation);
+
+//returns the number of projectors that the ILDA specifies graphics for
+size_t ilda_projector_count(ILDA* f);
+
+//returns the number of frames for the given projector descriptor
+size_t ilda_frame_count(void* f, size_t pd);
 
 
 /******************************************************************************/
