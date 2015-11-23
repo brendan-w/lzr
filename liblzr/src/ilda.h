@@ -29,7 +29,7 @@
 typedef struct {
     char     ilda[4];
     char     reserved_a[3];
-    uint8_t  format_code;
+    uint8_t  format;
     char     name[8];
     char     company_name[8];
     uint16_t number_of_records; //number of points of color entries
@@ -115,10 +115,13 @@ class ILDA_Projector
 {
     public:
         ilda_color lookup_color(size_t i);
+        void add_color_to_palette(ilda_color c);
+        void clear_palette();
         // NOTE: We don't actually store the frames here,
         // they are copied directly to the user's array.
         // This is mostly for book-keeping
         size_t n_frames; // the size of the frame array
+    private:
         std::vector<ilda_color> palette;
 };
 
@@ -128,7 +131,7 @@ class ILDA
     public:
         FILE* f;     // the current file
         bool read;   // if false, we're in write mode
-        char* error; // error string
+        const char* error; // error string
 
         //the following fields are only relevant during ONE
         //API call. Once the call is complete, these should be
@@ -137,8 +140,6 @@ class ILDA
         size_t current_frame; // the current frame number being read
 
         ILDA_Projector* current_projector();
-
-    private:
         ILDA_Projector projectors[MAX_PROJECTORS]; // the per-projector data (colors and frames)
 };
 
@@ -147,6 +148,7 @@ class ILDA
 /*  Forward declares for the parsing modules                                  */
 /******************************************************************************/
 
+//inits a parser context for reading
 void scan_file(ILDA* ilda);
 
 //skips from the end of the current header,
@@ -161,11 +163,6 @@ ILDA* malloc_parser();
 /******************************************************************************/
 /*  ILDA Utils                                                                */
 /******************************************************************************/
-
-//macros for reading parser state
-#define FORMAT(ilda)            (ilda->h.format_code)
-#define NUMBER_OF_RECORDS(ilda) (ilda->h.number_of_records)
-#define PROJECTOR(ilda)         (ilda->h.projector_id)
 
 //returns a pointer to the ilda_projector element
 //arguments (ILDA*, uint8_t)

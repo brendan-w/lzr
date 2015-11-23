@@ -4,9 +4,9 @@
 #include <lzr.h>
 
 
-/*
- * Main API functions
- */
+/******************************************************************************/
+/*  API Functions                                                             */
+/******************************************************************************/
 
 ILDA* ilda_open(const char* filename, const char* mode)
 {
@@ -49,19 +49,49 @@ ILDA* ilda_open(const char* filename, const char* mode)
     return ilda;
 }
 
+
 void ilda_close(ILDA* ilda)
 {
+    if(ilda->f != NULL)
+        fclose(ilda->f);
+
     delete ilda;
 }
 
 
+size_t ilda_frame_count(ILDA* ilda, size_t pd)
+{
+    if(pd > MAX_PROJECTORS)
+        return 0;
+
+    return ilda->projectors[pd].n_frames;
+}
+
+
+size_t ilda_projector_count(ILDA* ilda)
+{
+    size_t n = 0;
+
+    for(size_t pd = 0; pd < MAX_PROJECTORS; pd++)
+    {
+        if(ilda_frame_count(ilda, pd) > 0)
+            n++;
+    }
+
+    return n;
+}
+
+
+
+/******************************************************************************/
+/*  Internal Utils                                                            */
+/******************************************************************************/
 
 
 ILDA_Projector* ILDA::current_projector()
 {
     return (projectors + h.projector_id);
 }
-
 
 
 ilda_color ILDA_Projector::lookup_color(size_t i)
@@ -82,4 +112,14 @@ ilda_color ILDA_Projector::lookup_color(size_t i)
         else
             return ilda_palette[ILDA_WHITE];
     }
+}
+
+void ILDA_Projector::add_color_to_palette(ilda_color c)
+{
+    palette.push_back(c);
+}
+
+void ILDA_Projector::clear_palette()
+{
+    palette.clear();
 }

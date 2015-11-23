@@ -197,8 +197,7 @@ ILDA* ilda_open(const char* filename, const char* mode);
 //closes the ILDA file, and releases the parsing context
 void ilda_close(ILDA* f);
 
-//Reads all frames for the the given projector, and saves them
-//in the given animation object.
+//Reads all frames for the the given projector, and returns them
 int ilda_read(ILDA* f, size_t pd, Animation* animation);
 
 //write frame(s) for the given projector to the ILDA file (file must be opened with lzr_ilda_write() )
