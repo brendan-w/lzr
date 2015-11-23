@@ -53,10 +53,9 @@ static int write_frame(ILDA* ilda, Frame& frame, size_t i, size_t pd)
 }
 
 
+//writes a header where number_of_records is zero
 void write_closer(ILDA* ilda)
 {
-    //write a header where number_of_records is zero
-
     //zero out a new header
     ilda_header h;
     memset(&h, 0, sizeof(ilda_header));
@@ -72,6 +71,13 @@ void write_closer(ILDA* ilda)
 */
 int ilda_write_frames(ILDA* ilda, size_t pd, FrameList& frame_list)
 {
+    if(ilda == NULL)
+        return LZR_FAILURE;
+
+    //check that this file is open for writing
+    if(ilda->read)
+        return LZR_FAILURE;
+
     ilda->projectors[pd].n_frames = frame_list.size();
 
     for(size_t i = 0; i < frame_list.size(); i++)

@@ -363,6 +363,10 @@ int ilda_read_frames(ILDA* ilda, size_t pd, FrameList* frame_list)
     if(ilda == NULL)
         return LZR_FAILURE;
 
+    //check that this file is open for reading
+    if(!ilda->read)
+        return LZR_FAILURE;
+
     int status;
 
     //seek to the beginning of the file
