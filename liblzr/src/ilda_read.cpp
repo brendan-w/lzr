@@ -26,27 +26,6 @@ static int read_record(ILDA* ilda, void* buffer, size_t buffer_size)
 
 
 /*
- *  This function will save the number_of_records (points) value from the
- *  current header, into the current_frame of the user's buffer.
- *  It will also perform error checking for point overflows.
- *  Returns an ILDA status code.
- *  Use `output` pointer to retrieve an overflow-protected point count.
- */
-static int save_num_points(ILDA* ilda, Frame* buffer, size_t* output)
-{
-    int status = ILDA_CONTINUE;
-    size_t n = ilda->h.number_of_records;
-
-    //save the frame length to the user's buffer
-    buffer[ilda->current_frame].n_points = n;
-    *output = n;
-
-    return status;
-}
-
-
-
-/*
  * Record readers/decoders
  * These functions translate ILDA structs into LZR structs
  *
@@ -68,7 +47,7 @@ static int read_3d_indexed(ILDA* ilda, Point* p)
     p->x = (double) ilda_p.x / INT16_MAX;
     p->y = (double) ilda_p.y / INT16_MAX;
     // ilda_p.z is completely discarded (orthographically projected)
-    ilda_color c = current_palette_get((ilda), ilda_p.color);
+    ilda_color c = ilda->current_projector()->lookup_color(ilda_p.color);
     p->r = c.r;
     p->g = c.g;
     p->b = c.b;
@@ -199,7 +178,7 @@ static int read_frame(ILDA* ilda, Frame* buffer, point_reader read_point)
     int status = ILDA_CONTINUE;
 
     //lookup the number of frames
-    size_t n = ilda->h.ilda->h.number_of_records;
+    size_t n = ilda->h.number_of_records;
 
     if(n == 0)
     {
@@ -320,7 +299,7 @@ static int read_section_for_projector(ILDA* ilda, uint8_t pd, Frame* buffer)
 
     This should only ever be called once per context lifetime.
 */
-static void scan_file(ILDA* ilda)
+void scan_file(ILDA* ilda)
 {
 
     //read all of the headers, and take notes
@@ -332,18 +311,18 @@ static void scan_file(ILDA* ilda)
             break;
 
         //this section contains no records, halt parsing
-        if(NUMBER_OF_RECORDS(ilda) == 0)
+        if(ilda->h.number_of_records == 0)
             break;
 
         //if the section carries point data, count it as a frame
-        switch(FORMAT(ilda))
+        switch(ilda->h.format)
         {
             case 0:
             case 1:
             case 4:
             case 5:
                 //increment the number of frames for this projector
-                ilda->projectors[PROJECTOR(ilda)].n_frames++;
+                ilda->current_projector()->n_frames++;
 
             //ignore all other section types
         }
