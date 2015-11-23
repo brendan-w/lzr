@@ -110,7 +110,7 @@ extern const size_t ilda_palette_size;
 /******************************************************************************/
 
 #define MAX_PROJECTORS 256
-
+ 
 class ILDA_Projector
 {
     public:
@@ -125,6 +125,7 @@ class ILDA_Projector
         std::vector<ilda_color> palette;
 };
 
+
 // parsing context
 class ILDA
 {
@@ -135,14 +136,13 @@ class ILDA
         bool read;   // if false, we're in write mode
         const char* error; // error string
 
+        ILDA_Projector* current_projector();
+        ILDA_Projector projectors[MAX_PROJECTORS]; // the per-projector data (colors and frames)
+
         //the following fields are only relevant during ONE
         //API call. Once the call is complete, these should be
         //considered invalid. They're only here for convenience.
-        ilda_header h;        // the current section header
-        size_t current_frame; // the current frame number being read
-
-        ILDA_Projector* current_projector();
-        ILDA_Projector projectors[MAX_PROJECTORS]; // the per-projector data (colors and frames)
+        ilda_header h; // the current section header
 };
 
 

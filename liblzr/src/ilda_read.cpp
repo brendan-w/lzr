@@ -170,7 +170,7 @@ static int read_2d_true(ILDA* ilda, Point* p)
     pass function pointer to the neccessary decoder.
 
 */
-static int read_frame(ILDA* ilda, Frame* buffer, point_reader read_point)
+static int read_frame(ILDA* ilda, Animation* anim, point_reader read_point)
 {
     int status = ILDA_CONTINUE;
 
@@ -186,6 +186,8 @@ static int read_frame(ILDA* ilda, Frame* buffer, point_reader read_point)
     //if there's already a problem, return early
     if(STATUS_IS_HALTING(status)) return status;
 
+    Frame frame(n);
+
     //iterate over the records
     for(size_t i = 0; i < n; i++)
     {
@@ -194,13 +196,16 @@ static int read_frame(ILDA* ilda, Frame* buffer, point_reader read_point)
         if(STATUS_IS_HALTING(r)) return r;
 
         //save the new point to the user's buffer
-        buffer[ilda->current_frame].points[i] = lzr_p;
+        frame += lzr_p;
 
         //TODO: listen to the status byte for end-of-frame
         //if this was the last point, stop
         // if(p.status.last_point)
             // break;
     }
+
+    //add the frame to the user's animation
+    (*anim) += frame;
 
     return status;
 }
@@ -242,7 +247,7 @@ static int read_header(ILDA* ilda)
 
 //reads a single section (frame) of the ILDA file
 //returns boolean for whether to continue parsing
-static int read_section_for_projector(ILDA* ilda, uint8_t pd, Frame* buffer)
+static int read_section_for_projector(ILDA* ilda, uint8_t pd, Animation* anim)
 {
     int status;
 
@@ -262,15 +267,15 @@ static int read_section_for_projector(ILDA* ilda, uint8_t pd, Frame* buffer)
     switch(ilda->h.format)
     {
         case 0:
-            status = read_frame(ilda, buffer, read_3d_indexed); break;
+            status = read_frame(ilda, anim, read_3d_indexed); break;
         case 1:
-            status = read_frame(ilda, buffer, read_2d_indexed); break;
+            status = read_frame(ilda, anim, read_2d_indexed); break;
         case 2:
             status = read_colors(ilda); break;
         case 4:
-            status = read_frame(ilda, buffer, read_3d_true); break;
+            status = read_frame(ilda, anim, read_3d_true); break;
         case 5:
-            status = read_frame(ilda, buffer, read_2d_true); break;
+            status = read_frame(ilda, anim, read_2d_true); break;
         default:
             /*
                 In this case, we can't skip past an unknown
@@ -353,25 +358,28 @@ void scan_file(ILDA* ilda)
 }
 
 
-int ilda_read_frames(ILDA* ilda, size_t pd, Frame* buffer)
+int ilda_read_frames(ILDA* ilda, size_t pd, Animation* anim)
 {
     if(ilda == NULL)
         return LZR_FAILURE;
 
+    int status;
+
     //seek to the beginning of the file
     fseek(ilda->f, 0, SEEK_SET); //seek to the beginning of the file
-    ilda->current_frame = 0; //zero out the frame counter
-    int status;
+
+    anim->clear();
 
     //read all sections until the end is reached
     while(true)
     {
-        status = read_section_for_projector(ilda, (uint8_t) pd, buffer);
+        status = read_section_for_projector(ilda, (uint8_t) pd, anim);
 
         if(STATUS_IS_HALTING(status))
             break;
     }
 
+    //convert internal ILDA status to LZR
     switch(status)
     {
         case ILDA_WARN:  return LZR_WARNING;
