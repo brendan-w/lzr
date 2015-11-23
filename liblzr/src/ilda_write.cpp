@@ -26,6 +26,10 @@ static int write_point(ILDA* ilda, Point& point, bool is_last)
 
 static int write_frame(ILDA* ilda, Frame& frame, size_t i, size_t pd)
 {
+    //skip empty frames, since they signify the end of a file
+    if(frame.size() == 0)
+        return LZR_SUCCESS;
+
     //zero out a new header
     ilda_header h;
     memset(&h, 0, sizeof(ilda_header));
