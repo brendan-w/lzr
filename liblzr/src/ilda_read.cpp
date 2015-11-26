@@ -170,7 +170,7 @@ static int read_2d_true(ILDA* ilda, Point* p)
     pass function pointer to the neccessary decoder.
 
 */
-static int read_frame(ILDA* ilda, FrameList* frame_list, point_reader read_point)
+static int read_frame(ILDA* ilda, FrameList& frame_list, point_reader read_point)
 {
     int status = ILDA_CONTINUE;
 
@@ -205,7 +205,7 @@ static int read_frame(ILDA* ilda, FrameList* frame_list, point_reader read_point
     }
 
     //add the frame to the user's animation
-    frame_list->push_back(frame);
+    frame_list.push_back(frame);
 
     return status;
 }
@@ -247,7 +247,7 @@ static int read_header(ILDA* ilda)
 
 //reads a single section (frame) of the ILDA file
 //returns boolean for whether to continue parsing
-static int read_section_for_projector(ILDA* ilda, uint8_t pd, FrameList* frame_list)
+static int read_section_for_projector(ILDA* ilda, uint8_t pd, FrameList& frame_list)
 {
     int status;
 
@@ -358,7 +358,7 @@ void scan_file(ILDA* ilda)
 }
 
 
-int ilda_read_frames(ILDA* ilda, size_t pd, FrameList* frame_list)
+int ilda_read_frames(ILDA* ilda, size_t pd, FrameList& frame_list)
 {
     if(ilda == NULL)
         return LZR_FAILURE;
@@ -372,7 +372,7 @@ int ilda_read_frames(ILDA* ilda, size_t pd, FrameList* frame_list)
     //seek to the beginning of the file
     fseek(ilda->f, 0, SEEK_SET); //seek to the beginning of the file
 
-    frame_list->clear();
+    frame_list.clear();
 
     //read all sections until the end is reached
     while(true)

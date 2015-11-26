@@ -144,6 +144,7 @@ typedef double (*interpolation_func)(double t);
 
 //interpolation functions
 double linear(double t); /*----*----*----*----*----*----*----*----*/
+double quad(double t);   /*---*---*-----*-----*-----*-----*---*---*/
 double quart(double t);  /*-*---*-----*-------*-------*-----*---*-*/
 
 
@@ -199,7 +200,7 @@ ILDA* ilda_open(const char* filename, const char* mode);
 void ilda_close(ILDA* f);
 
 //Reads all frames for the the given projector, and returns them
-int ilda_read(ILDA* f, size_t pd, FrameList* frame_list);
+int ilda_read(ILDA* f, size_t pd, FrameList& frame_list);
 
 //write frame(s) for the given projector to the ILDA file (file must be opened with lzr_ilda_write() )
 int ilda_write(ILDA* f, size_t pd, FrameList& frame_list);
