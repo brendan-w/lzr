@@ -52,3 +52,65 @@ int scale(Frame& frame, Point center, double x, double y)
 
     return LZR_SUCCESS;
 }
+
+
+int mirror(Frame& frame, Point center, bool x, bool y)
+{
+    return scale(frame, center, (x ? -1.0 : 1.0), (y ? -1.0 : 1.0));
+}
+
+
+int dup_mirror(Frame& frame, Point center, bool x, bool y, bool blank)
+{
+    if(x)
+    {
+        Frame copy = frame;
+        scale(copy, center, -1.0, 1.0);
+        if(blank)
+            frame.add_with_blank_jump(copy);
+        else
+            frame.add(copy);
+    }
+
+    if(y)
+    {
+        Frame copy = frame;
+        scale(copy, center, 1.0, -1.0);
+        if(blank)
+            frame.add_with_blank_jump(copy);
+        else
+            frame.add(copy);
+    }
+
+    return LZR_SUCCESS;
+}
+
+
+int dup_linear(Frame& frame, Point offset, size_t n_dups, bool blank)
+{
+    //TODO: decide
+    //n_dups--; //give a visually correct readout of the number
+
+    //bail, if there's nothing to do
+    if((frame.size() == 0) || (n_dups == 0))
+        return LZR_SUCCESS;
+
+    Frame copy = frame;
+
+    //compute the offset for one duplication
+    offset.x /= (double) n_dups;
+    offset.y /= (double) n_dups;
+
+    for(size_t i = 0; i < n_dups; i++)
+    {
+        translate(copy, offset.x, offset.y);
+
+        if(blank)
+            frame.add_with_blank_jump(copy);
+        else
+            frame.add(copy);
+    }
+
+    return LZR_SUCCESS;
+}
+
