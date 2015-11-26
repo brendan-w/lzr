@@ -94,6 +94,8 @@ public:
 
     Frame& add(const Point& p);
     Frame& add(const Frame& other);
+    Frame& add_blank_jump_to(const Point& p);
+    Frame& add_blank_jump_to(const Frame& other);
 
     Point bounding_box_center();
     Point average_center();

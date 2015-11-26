@@ -31,6 +31,25 @@ Frame& Frame::add(const Frame& other)
     return *this;
 }
 
+Frame& Frame::add_blank_jump_to(const Point& p)
+{
+    Point begin = back();
+    Point end = p;
+
+    begin.blank();
+    end.blank();
+
+    add(begin);
+    add(end);
+
+    return *this;
+}
+
+Frame& Frame::add_blank_jump_to(const Frame& other)
+{
+    return *this;
+}
+
 
 /*
  * functions
