@@ -38,7 +38,7 @@
 #define LZR_WARNING                -2
 #define LZR_ERROR_TOO_MANY_POINTS  -3
 #define LZR_ERROR_TOO_MANY_FRAMES  -4
-#define LZR_ERROR_INVALID_PROPERTY -5
+#define LZR_ERROR_INVALID_ARG      -5
 
 
 
@@ -139,7 +139,7 @@ typedef std::vector<Frame> FrameList;
 /*  LZR Interpolator                                                          */
 /******************************************************************************/
 
-//the signature for interpolation functions
+//type for interpolation functions
 typedef double (*interpolation_func)(double t);
 
 //interpolation functions
@@ -148,6 +148,7 @@ double quad(double t);   /*---*---*-----*-----*-----*-----*---*---*/
 double quart(double t);  /*-*---*-----*-------*-------*-----*---*-*/
 
 
+//100 points from one side of the frame to the other
 #define MAX_DISTANCE_DEFAULT ((LZR_POSITION_MAX - LZR_POSITION_MIN) / 100.0)
 
 //main interpolator function

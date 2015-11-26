@@ -1,94 +1,83 @@
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <math.h>
+#include <cmath>
 #include <lzr.h>
 
 
-#define MAX_DISTANCE_DEFAULT (LZR_POINT_POSITION_MAX / 50.0);
 
+/*
+ * Interpolation functions
+ * Domain: [-1.0, 1.0]
+ * Range:  [-1.0, 1.0]
+ */
 
-typedef struct {
-    lzr_frame frame;
-    double max_distance;
-} interp_t;
-
-
-
-
-lzr_interpolator* lzr_interpolator_create()
+double linear(double t)
 {
-    interp_t* interp = malloc(sizeof(interp_t));
-    interp->max_distance = MAX_DISTANCE_DEFAULT;
-    return (lzr_interpolator*) interp;
+    return t;
+}
+
+double quad(double t)
+{
+    const double b = 0.0; //start value
+    const double c = 0; //change in value
+    const double d = 1.0; //duration
+
+    t /= d/2;
+    if(t < 1) return c/2*t*t + b;
+    t--;
+    return -c/2 * (t*(t-2) - 1) + b;
+}
+
+double quart(double t)
+{
+    const double b = 0.0; //start value
+    const double c = 0; //change in value
+    const double d = 1.0; //duration
+
+    t /= d/2;
+    if(t < 1) return c/2*t*t*t*t + b;
+    t -= 2;
+    return -c/2 * (t*t*t*t - 2) + b;
 }
 
 
-void lzr_interpolator_destroy(lzr_interpolator* _interp)
+
+
+//generates extra points on a line
+//only adds the interior points, not the endpoints
+static int interp_line(Frame& working, double max_distance, interpolation_func func, Point start, Point end)
 {
-    interp_t* interp = (interp_t*) _interp;
-    free(interp);
-}
-
-
-#undef lzr_interpolator_set //remove the value casting macro
-void lzr_interpolator_set(lzr_interpolator* _interp, interp_property prop, unsigned long value)
-{
-    interp_t* interp = (interp_t*) _interp;
-    switch(prop)
-    {
-        case LZR_INTERP_MAX_DISTANCE: interp->max_distance = (double) value; break;
-    }
-}
-
-
-//returns success of failure due to frame size constraint
-static int add_point(interp_t* interp, lzr_point p)
-{
-    if(interp->frame.n_points >= LZR_FRAME_MAX_POINTS)
-        return LZR_ERROR_TOO_MANY_POINTS;
-
-    interp->frame.points[interp->frame.n_points] = p;
-    interp->frame.n_points++;
-    return LZR_SUCCESS;
-}
-
-
-static int lerp_lzr(interp_t* interp, lzr_point start, lzr_point end)
-{
-    double sq_dist     = LZR_POINT_SQ_DISTANCE(start, end);
-    double sq_max_dist = interp->max_distance * interp->max_distance;
+    //find out if the endpoints of the line are far enough apart to require interpolation
+    double sq_dist     = start.sq_distance_to(end);
+    double sq_max_dist = max_distance * max_distance;
 
     if(sq_dist > sq_max_dist)
     {
-        //root everything back to actual values
-        double dist     = sqrt(sq_dist);
-        double max_dist = interp->max_distance;
+        //time to interpolate
 
-        //interpolate
         //number of intersticial points to generate
-        size_t n = (size_t) (dist / max_dist); //integer division provides flooring
+        //(square-root things back to actual values)
+        size_t n = (size_t) (std::sqrt(sq_dist) / max_distance); //integer division provides flooring
 
-        n += 2; //include the two endpoints, which already exist
+        n += 2; //include the two endpoints, which already exist (clarity, nothing more)
 
-        lzr_point prev = start;
-
+        Point prev = start;
 
         //loop through the intersticial points
         for(size_t i = 1; i < (n-1); i++)
         {
+            //get the normalized position of the new point
             double t = (double) i / n;
-            lzr_point p = lzr_point_lerp(&start, &end, t);
+
+            //apply the user's interpolation function
+            t = func(t);
+
+            //generate the new point
+            Point p = start.lerp_to(end, t);
 
             //prevent multiple points at the same location
-            if(!LZR_POINTS_SAME_POS(prev, p) &&
-               !LZR_POINTS_SAME_POS(end, p))
+            if((p != start) && (p != end))
             {
-                int r = add_point(interp, p);
-                if(r != LZR_SUCCESS)
-                    return r;
-
+                working.add(p);
                 prev = p;
             }
         }
@@ -98,24 +87,23 @@ static int lerp_lzr(interp_t* interp, lzr_point start, lzr_point end)
 }
 
 
-int lzr_interpolator_run(lzr_interpolator* _interp, lzr_frame* frame)
+int interpolate(Frame& frame, double max_distance, interpolation_func func)
 {
-    interp_t* interp = (interp_t*) _interp;
+    //prevent stupidity
+    if(max_distance == 0.0)
+        return LZR_ERROR_INVALID_ARG;
 
-    if(interp->max_distance == 0)
-        return LZR_ERROR_INVALID_PROPERTY;
-
-    //wipe the working buffer
-    interp->frame.n_points = 0;
+    //a working buffer for us to build in
+    Frame working;
 
     bool in_path = false; //whether or not the previous point was a lit point
-    lzr_point prev;
+    Point prev;
 
-    for(size_t i = 0; i < frame->n_points; i++)
+    for(size_t i = 0; i < frame.size(); i++)
     {
-        lzr_point p = frame->points[i];
+        Point p = frame[i];
 
-        if(LZR_POINT_IS_BLANKED(p))
+        if(p.is_blanked())
         {
             in_path = false;
         }
@@ -125,18 +113,15 @@ int lzr_interpolator_run(lzr_interpolator* _interp, lzr_frame* frame)
         }
         else
         {
-            int r = lerp_lzr(interp, prev, p);
-            if(r != LZR_SUCCESS)
-                return r;
+            interp_line(working, max_distance, func, prev, p);
         }
 
         prev = p;
-        int r = add_point(interp, p);
-        if(r != LZR_SUCCESS)
-            return r;
+        working.add(p);
     }
 
-    //write the finished frame to the output buffer
-    *frame = interp->frame;
+    //write the finished points back to the user's frame
+    frame = working;
+
     return LZR_SUCCESS;
 }

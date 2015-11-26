@@ -64,7 +64,7 @@ void Point::unblank()
 
 bool Point::is_blanked()
 {
-    return (i == 0);
+    return (i == 0) || (r + g + b == 0);
 }
 
 //run-of-the-mill linear interpolation

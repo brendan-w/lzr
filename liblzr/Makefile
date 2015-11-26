@@ -21,7 +21,8 @@ OBJS := src/point.o \
         src/ilda.o \
         src/ilda_read.o \
         src/ilda_write.o \
-        src/transforms.o
+        src/transforms.o \
+        src/interpolator.o
 
 
 HEADERS += lzr.h
