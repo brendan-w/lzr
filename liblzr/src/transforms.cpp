@@ -114,3 +114,30 @@ int dup_linear(Frame& frame, Point offset, size_t n_dups, bool blank)
     return LZR_SUCCESS;
 }
 
+
+int dup_radial(Frame& frame, Point center, size_t n_dups, double angle, bool blank)
+{
+    //TODO: decide
+    //n_dups--; //give a visually correct readout of the number
+
+    //bail, if there's nothing to do
+    if((frame.size() == 0) || (n_dups == 0))
+        return LZR_SUCCESS;
+
+    Frame copy = frame;
+
+    //compute the angular offset for one duplication
+    angle /= n_dups;
+
+    for(size_t i = 0; i < n_dups; i++)
+    {
+        rotate(copy, center, angle);
+
+        if(blank)
+            frame.add_with_blank_jump(copy);
+        else
+            frame.add(copy);
+    }
+
+    return LZR_SUCCESS;
+}

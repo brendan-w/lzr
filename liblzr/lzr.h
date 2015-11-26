@@ -106,6 +106,7 @@ private:
 };
 
 
+
 /******************************************************************************/
 /*  LZR Frame Transforms                                                      */
 /******************************************************************************/
@@ -113,11 +114,17 @@ private:
 int translate(Frame& frame, double x, double y);
 int rotate(Frame& frame, Point center, double theta);
 int scale(Frame& frame, Point center, double x, double y);
+int mirror(Frame& frame, Point center, bool x, bool y);
+int dup_mirror(Frame& frame, Point center, bool x, bool y, bool blank=true);
+int dup_linear(Frame& frame, Point offset, size_t n_dups, bool blank=true);
+int dup_radial(Frame& frame, Point center, size_t n_dups, double angle, bool blank=true);
+
 
 //clips a frame using the given mask. Points in the mask should define a closed
 //polygon. All points outside the mask are discarded. Line segments that cross
 //the mask boundry will have additional points inserted at that boundry.
 int mask(Frame& frame, const Frame& mask, bool inverse=false);
+
 
 
 /******************************************************************************/
