@@ -1,6 +1,19 @@
 
-#include <math.h>
+#include <cmath>
 #include <lzr.h>
+
+
+/*
+    The LZR coordinate system is [-1.0, 1.0] (2.0 units wide),
+    and Llser DACs are ussually 16 bit, so:
+
+    2.0 / 65536 = 0.0000305 units per DAC step
+
+    call the points equal if we're inside a half step:
+
+    (2.0 / 65536) / 2.0 = 0.0000152
+*/
+#define FLOAT_EQUAL_TOLERANCE 0.0000152
 
 
 /*
@@ -84,9 +97,8 @@ double Point::sq_distance_to(const Point& other)
 
 bool Point::equal_position(const Point& other)
 {
-    //TODO: use tolerance for comparing floating points
-    return ((x == other.x) &&
-            (y == other.y));
+    return ((std::abs(x - other.x) <= FLOAT_EQUAL_TOLERANCE) &&
+            (std::abs(y - other.y) <= FLOAT_EQUAL_TOLERANCE));
 }
 
 bool Point::equal_color(const Point& other)

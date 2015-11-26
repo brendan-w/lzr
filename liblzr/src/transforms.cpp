@@ -1,7 +1,12 @@
 
-#include <math.h>
+#include <cmath>
 #include <lzr.h>
 
+/*
+    Rule of thumb:
+    use `Point` classes for specifying actual 2D locations,
+    and seperate XY vars for scalars.
+*/
 
 int translate(Frame& frame, double x, double y)
 {
@@ -22,8 +27,8 @@ int rotate(Frame& frame, Point center, double theta)
     // where (ox, oy) is the axis/origin to rotate around
 
     //cache the sin and cos values
-    double s = sin(theta);
-    double c = cos(theta);
+    double s = std::sin(theta);
+    double c = std::cos(theta);
 
     for(Point& p : frame)
     {
