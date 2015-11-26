@@ -15,6 +15,8 @@ Frame::Frame(size_t n) : std::vector<Point>(n) { }
  * operators
  */
 
+
+
 Frame& Frame::add(const Point& p)
 {
     push_back(Point(p));
@@ -45,10 +47,32 @@ Frame& Frame::add_blank_jump_to(const Point& p)
     return *this;
 }
 
+
 Frame& Frame::add_blank_jump_to(const Frame& other)
 {
+    if(other.size() > 0)
+        add_blank_jump_to(other.front());
+
     return *this;
 }
+
+
+Frame& Frame::add_with_blank_jump(const Point& p)
+{
+    add_blank_jump_to(p);
+    add(p);
+    return *this;
+}
+
+
+Frame& Frame::add_with_blank_jump(const Frame& other)
+{
+    add_blank_jump_to(other);
+    add(other);
+    return *this;
+}
+
+
 
 
 /*
