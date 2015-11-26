@@ -139,28 +139,21 @@ typedef std::vector<Frame> FrameList;
 /*  LZR Interpolator                                                          */
 /******************************************************************************/
 
-/*
-typedef void lzr_interpolator;
+//the signature for interpolation functions
+typedef double (*interpolation_func)(double t);
 
-typedef enum {
-    LZR_INTERP_MAX_DISTANCE
-} interp_property;
+//interpolation functions
+double linear(double t); /*----*----*----*----*----*----*----*----*/
+double quart(double t);  /*-*---*-----*-------*-------*-----*---*-*/
 
 
-//Allocates and returns a point to a new interpolator context.
-lzr_interpolator* lzr_interpolator_create();
-
-//Deallocator for the interpolator context
-void lzr_interpolator_destroy(lzr_interpolator* interp);
-
-//settings modifier
-void lzr_interpolator_set(lzr_interpolator* interp, interp_property prop, unsigned long value);
-#define lzr_interpolator_set(interp, prop, value) \
-        lzr_interpolator_set(interp, prop, (unsigned long) (value))
+#define MAX_DISTANCE_DEFAULT ((LZR_POSITION_MAX - LZR_POSITION_MIN) / 100.0)
 
 //main interpolator function
-int lzr_interpolator_run(lzr_interpolator* interp, lzr_frame* frame);
-*/
+int interpolate(Frame& frame,
+                double max_distance=MAX_DISTANCE_DEFAULT,
+                interpolation_func func=linear);
+
 
 
 /******************************************************************************/
