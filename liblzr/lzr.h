@@ -84,6 +84,8 @@ public:
 /*  LZR Frames                                                                */
 /******************************************************************************/
 
+//OK as long as the Frame class doesn't save any state, which, it shouldn't...
+//this is only a convenient way to attach functions to the type
 class Frame : public std::vector<Point>
 {
 public:
@@ -93,20 +95,23 @@ public:
     Frame& add(const Point& p);
     Frame& add(const Frame& other);
 
-    //transforms
-    int rotate(double x_axis, double y_axis, double theta);
-    int translate(double x, double y);
-    int scale(double x, double y);
-
-    //clips a frame using the given mask. Points in the mask should define a closed
-    //polygon. All points outside the mask are discarded. Line segments that cross
-    //the mask boundry will have additional points inserted at that boundry.
-    int mask(const Frame& mask, bool inverse=false);
-
     Point bounding_box_center();
     Point average_center();
 };
 
+
+/******************************************************************************/
+/*  LZR Frame Transforms                                                      */
+/******************************************************************************/
+
+int translate(Frame& frame, double x, double y);
+int rotate(Frame& frame, Point center, double theta);
+int scale(Frame& frame, Point center, double x, double y);
+
+//clips a frame using the given mask. Points in the mask should define a closed
+//polygon. All points outside the mask are discarded. Line segments that cross
+//the mask boundry will have additional points inserted at that boundry.
+int mask(Frame& frame, const Frame& mask, bool inverse=false);
 
 
 /******************************************************************************/

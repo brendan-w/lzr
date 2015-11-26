@@ -20,7 +20,8 @@ OBJS := src/point.o \
         src/zmq.o \
         src/ilda.o \
         src/ilda_read.o \
-        src/ilda_write.o
+        src/ilda_write.o \
+        src/transforms.o
 
 
 HEADERS += lzr.h
