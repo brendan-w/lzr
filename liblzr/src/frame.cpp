@@ -13,10 +13,10 @@ Frame::Frame() : std::vector<Point>() { }
 Frame::Frame(size_t n) : std::vector<Point>(n) { }
 
 
-/*
- * operators
- */
 
+/*
+ * functions
+ */
 
 
 Frame& Frame::add(const Point& p)
@@ -24,6 +24,7 @@ Frame& Frame::add(const Point& p)
     push_back(Point(p));
     return *this;
 }
+
 
 Frame& Frame::add(const Frame& other)
 {
@@ -34,6 +35,7 @@ Frame& Frame::add(const Frame& other)
 
     return *this;
 }
+
 
 Frame& Frame::add_blank_jump_to(const Point& p)
 {
@@ -73,13 +75,6 @@ Frame& Frame::add_with_blank_jump(const Frame& other)
     add(other);
     return *this;
 }
-
-
-
-
-/*
- * functions
- */
 
 
 Point Frame::bounding_box_center()

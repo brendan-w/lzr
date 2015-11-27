@@ -22,10 +22,13 @@ OBJS := src/point.o \
         src/ilda_read.o \
         src/ilda_write.o \
         src/transforms.o \
-        src/interpolator.o
+        src/interpolator.o \
+        src/optimizer.o \
+        src/optimizer_find_paths.o
 
-
-HEADERS += lzr.h
+HEADERS := lzr.h \
+           src/ilda.h \
+           src/optimizer.h
 
 TESTS := test_interpolator
          # test_optimizer \

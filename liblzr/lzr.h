@@ -74,8 +74,8 @@ public:
     bool is_blanked();
     Point lerp_to(const Point& other, double t);
     double sq_distance_to(const Point& other);
-    bool equal_position(const Point& other) const;
-    bool equal_color(const Point& other) const;
+    bool same_position_as(const Point& other) const;
+    bool same_color_as(const Point& other) const;
     bool operator==(const Point& other) const;
     bool operator!=(const Point& other) const;
 };
@@ -164,28 +164,27 @@ int interpolate(Frame& frame,
 /*  LZR Optimizer                                                             */
 /******************************************************************************/
 
-/*
-typedef void lzr_optimizer;
-
-typedef enum {
-    LZR_OPT_ANCHOR_POINTS
-} opt_property;
+//stub declaration for optimizer internals
+class Optimizer_Context;
 
 
-//Allocates and returns a point to a new optimizer context.
-lzr_optimizer* lzr_optimizer_create();
+class Optimizer
+{
+public:
+    Optimizer();
+    ~Optimizer();
+    int run(Frame& frame);
 
-//Deallocator for the optimizer context
-void lzr_optimizer_destroy(lzr_optimizer* opt);
+    //settings
+    double path_split_angle      = 3.14159265358979323846 / 8;
+    bool   reorder_paths         = true; //allow the optimizer to the change the order in which points are scanned 
+    size_t anchor_points_lit     = 1;    //number of lit points to place at the start & end of a line segment
+    size_t anchor_points_blanked = 2;    //number of blanked points to place at the start & end of a line segment
 
-//settings modifier
-void lzr_optimizer_set(lzr_optimizer* opt, opt_property prop, unsigned long value);
-#define lzr_optimizer_set(opt, prop, value) \
-        lzr_optimizer_set(opt, prop, (unsigned long) (value))
+private:
+    Optimizer_Context* ctx;
+};
 
-//main optimizer function.
-int lzr_optimizer_run(lzr_optimizer* opt, lzr_frame* frame);
-*/
 
 
 /******************************************************************************/

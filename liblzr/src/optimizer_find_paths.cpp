@@ -1,7 +1,11 @@
 
 
 #include <stdio.h>
-#include "lzr_optimizer.h"
+#include "optimizer.h"
+
+namespace lzr {
+
+
 
 /*
     The angle formed between three points. Because of the way point
@@ -18,7 +22,7 @@
 
 
 //computes the angles from one point to the next
-static void fill_angle(opt_t* opt)
+void Optimizer_Context::fill_angle()
 {
     /*
 
@@ -48,7 +52,7 @@ static void fill_angle(opt_t* opt)
 }
 
 
-static void path_split(opt_t* opt)
+void Optimizer_Context::path_split(double split_angle)
 {
     size_t n = 0;         //number of completed paths (index of the path currently being built)
     bool in_path = false; //whether the loop is inside an unterminated path
@@ -82,7 +86,7 @@ static void path_split(opt_t* opt)
                     opt_point_t next = opt->points[i + 1];
 
                     //if it creates too much of an angle
-                    if(ANGLE_FORMED(p, next) > PATH_SPLIT_ANGLE)
+                    if(ANGLE_FORMED(p, next) > split_angle)
                     {
                         //close the current path
                         opt->paths[n].b = i;
@@ -114,31 +118,36 @@ static void path_split(opt_t* opt)
 }
 
 
-static void fill_cycle(opt_t* opt)
+void Optimizer_Context::fill_cycle(double split_angle)
 {
-    for(size_t i = 0; i < opt->n_paths; i++)
+    for(Optimizer_Path& path : paths)
     {
-        opt_path_t* path = (opt->paths + i);
-        opt_point_t a = opt->points[path->a];
-        opt_point_t b = opt->points[path->b];
+        Optimizer_Point a = points[path.a];
+        Optimizer_Point b = points[path.b];
 
         //if they're in the same position, and there are at least 3 points
-        if(LZR_POINTS_SAME_POS(a.base_point, b.base_point) && (path->b - path->a > 1))
+        if(a.point.same_position_as(b.point) && path.size() >= 3)
         {
             //fetch the point one forward of the joint
-            opt_point_t next = opt->points[path->a + 1];
+            Optimizer_Point next = points[path.a + 1];
 
             //if it DOESN'T creates too much of an angle, then it's a cycle
-            path->cycle = (ANGLE_FORMED(b, next) <= PATH_SPLIT_ANGLE);
+            path.cycle = (ANGLE_FORMED(b, next) <= split_angle);
         }
     }
 }
 
 
-//public function
-void find_paths(opt_t* opt)
+/*
+    Splits a point buffer into individual path segments.
+    Loads the result into the given path buffer.
+*/
+void Optimizer_Context::find_paths(double split_angle)
 {
-    fill_angle(opt);
-    path_split(opt);
-    fill_cycle(opt);
+    fill_angle();
+    path_split(split_angle);
+    fill_cycle(split_angle);
 }
+
+
+} // namespace lzr
