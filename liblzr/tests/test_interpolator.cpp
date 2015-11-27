@@ -15,21 +15,40 @@ static void print_frame(Frame& frame)
 
 static void test_xyrgb_line()
 {
+    Frame orig;
     Frame frame;
-    frame.add(Point(-1.0, -1.0, 100, 100, 100, 100));
-    frame.add(Point( 1.0, 1.0, 200, 200, 200, 200));
-
     Frame target;
+
+    //a diagonal line
+    orig.add(Point(-1.0, -1.0, 100, 100, 100, 100));
+    orig.add(Point( 1.0, 1.0, 200, 200, 200, 200));
+
+    //max_distance = 0.75 -----------------------------
+    target.clear();
+    target.add(Point(-1.0, -1.0, 100, 100, 100, 100));
+    target.add(Point(-0.6, -0.6, 120, 120, 120, 120));
+    target.add(Point(-0.2, -0.2, 140, 140, 140, 140));
+    target.add(Point( 0.2,  0.2, 160, 160, 160, 160));
+    target.add(Point( 0.6,  0.6, 180, 180, 180, 180));
+    target.add(Point( 1.0,  1.0, 200, 200, 200, 200));
+
+    frame = orig;
+    interpolate(frame, 0.75, linear);
+    // print_frame(frame);
+    assert(frame == target);
+
+
+    //max_distance = 1.0 -----------------------------
+    target.clear();
     target.add(Point(-1.0, -1.0, 100, 100, 100, 100));
     target.add(Point(-0.5, -0.5, 125, 125, 125, 125));
     target.add(Point( 0.0,  0.0, 150, 150, 150, 150));
     target.add(Point( 0.5,  0.5, 175, 175, 175, 175));
     target.add(Point( 1.0,  1.0, 200, 200, 200, 200));
 
+    frame = orig;
     interpolate(frame, 1.0, linear);
-
     // print_frame(frame);
-    assert(frame.size() == 5);
     assert(frame == target);
 }
 
