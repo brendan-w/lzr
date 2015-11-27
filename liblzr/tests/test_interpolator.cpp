@@ -102,10 +102,46 @@ static void test_interp_func()
     assert(frame == target);
 }
 
+static void test_skip_blank_jumps()
+{
+    Frame orig;
+    Frame frame;
+    Frame target;
+
+    //a diagonal line
+    orig.add(Point(-1.0, 0.0, 255, 255, 255, 255));
+    orig.add(Point(-0.5, 0.0, 255, 255, 255, 255));
+    orig.add(Point(-0.5, 0.0, 0  , 0  , 0  , 0  ));
+    orig.add(Point( 0.5, 0.0, 0  , 0  , 0  , 0  ));
+    orig.add(Point( 0.5, 0.0, 255, 255, 255, 255));
+    orig.add(Point( 1.0, 0.0, 255, 255, 255, 255));
+
+    // ----------------------------------------------------
+    target.clear();
+    target.add(Point(-1.0,   0.0, 255, 255, 255, 255));
+    target.add(Point(-0.875, 0.0, 255, 255, 255, 255));
+    target.add(Point(-0.75,  0.0, 255, 255, 255, 255));
+    target.add(Point(-0.625, 0.0, 255, 255, 255, 255));
+    target.add(Point(-0.5,   0.0, 255, 255, 255, 255));
+    target.add(Point(-0.5,   0.0, 0  , 0  , 0  , 0  ));
+    target.add(Point( 0.5,   0.0, 0  , 0  , 0  , 0  ));
+    target.add(Point( 0.5,   0.0, 255, 255, 255, 255));
+    target.add(Point( 0.625, 0.0, 255, 255, 255, 255));
+    target.add(Point( 0.75,  0.0, 255, 255, 255, 255));
+    target.add(Point( 0.875, 0.0, 255, 255, 255, 255));
+    target.add(Point( 1.0,   0.0, 255, 255, 255, 255));
+
+    frame = orig;
+    interpolate(frame, 0.2, linear);
+    // print_frame(frame);
+    assert(frame == target);
+}
+
 
 int main()
 {
     test_xyrgb_line();
     test_interp_func();
+    test_skip_blank_jumps();
     return 0;
 }
