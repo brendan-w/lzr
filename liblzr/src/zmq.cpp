@@ -4,6 +4,8 @@
 #include <zmq.h>
 #include <lzr.h>
 
+using namespace lzr;
+
 
 /*
  * socket creators

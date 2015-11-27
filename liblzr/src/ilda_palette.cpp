@@ -1,6 +1,9 @@
 
 #include "ilda.h"
 
+using namespace lzr;
+
+
 // the ILDA default color table
 const ilda_color ilda_palette[] = {
 //    R    G    B

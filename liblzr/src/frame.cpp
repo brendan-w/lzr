@@ -2,6 +2,8 @@
 #include <vector>
 #include <lzr.h>
 
+using namespace lzr;
+
 
 /*
  * constructors

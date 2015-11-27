@@ -1,7 +1,9 @@
 
 #include <string.h> //strcmp()
-#include "ilda.h"
 #include <lzr.h>
+#include "ilda.h"
+
+using namespace lzr;
 
 
 /******************************************************************************/

@@ -2,6 +2,8 @@
 #include <cmath>
 #include <lzr.h>
 
+using namespace lzr;
+
 
 
 /*

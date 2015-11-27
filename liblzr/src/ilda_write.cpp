@@ -3,6 +3,8 @@
 #include <lzr.h>
 #include "ilda.h"
 
+using namespace lzr;
+
 
 static int write_point(ILDA* ilda, Point& point, bool is_last)
 {
@@ -23,6 +25,7 @@ static int write_point(ILDA* ilda, Point& point, bool is_last)
 
     return LZR_SUCCESS;
 }
+
 
 static int write_frame(ILDA* ilda, Frame& frame, size_t i, size_t pd)
 {

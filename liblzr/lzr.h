@@ -18,8 +18,7 @@
 
 
 
-#ifndef LZR_TYPES_H
-#define LZR_TYPES_H
+#pragma once
 
 #define LZR_VERSION "0.0.1"
 
@@ -27,6 +26,9 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <vector>
+
+namespace lzr {
+
 
 
 /******************************************************************************/
@@ -218,6 +220,8 @@ size_t ilda_frame_count(void* f, size_t pd);
 /*  LZR ZeroMQ Facilities                                                     */
 /******************************************************************************/
 
+#define LZRD_GRAPHICS_ENDPOINT "tcp://127.0.0.1:5555"
+
 //create a ZMQ transmitter (publisher)
 void* frame_pub_new(void* zmq_ctx, const char* address);
 
@@ -230,11 +234,5 @@ int send_frame(void* pub, const Frame& frame);
 //recieve a single frame (blocking)
 int recv_frame(void* sub, Frame& frame);
 
-//the default LZR endpoint
-#ifndef LZR_ZMQ_ENDPOINT
-# define LZR_ZMQ_ENDPOINT "tcp://127.0.0.1:5555"
-#endif
 
-
-
-#endif /* LZR_TYPES_H */
+} /* LZR namespace */

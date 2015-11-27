@@ -1,12 +1,13 @@
 
 
-#ifndef LZR_ILDA_H
-#define LZR_ILDA_H
+#pragma once
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <endian.h>
 #include <lzr.h>
+
+namespace lzr {
 
 
 /******************************************************************************/
@@ -216,4 +217,5 @@ void write_closer(ILDA* ilda);
     (point)->z = (int16_t) htobe16((uint16_t) (point)->z);    \
 }
 
-#endif /* LZR_ILDA_H */
+
+} /* LZR namespace */

@@ -3,6 +3,8 @@
 #include <lzr.h>
 #include "ilda.h"
 
+using namespace lzr;
+
 
 // function signiture for point readers
 typedef int (*point_reader)(ILDA* ilda, Point* p);

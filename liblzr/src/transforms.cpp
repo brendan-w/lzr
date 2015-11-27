@@ -2,13 +2,16 @@
 #include <cmath>
 #include <lzr.h>
 
+using namespace lzr;
+
+
 /*
     Rule of thumb:
     use `Point` classes for specifying actual 2D locations,
     and seperate XY vars for scalars.
 */
 
-int translate(Frame& frame, double x, double y)
+int lzr::translate(Frame& frame, double x, double y)
 {
     for(Point& p : frame)
     {
@@ -20,7 +23,7 @@ int translate(Frame& frame, double x, double y)
 }
 
 
-int rotate(Frame& frame, Point center, double theta)
+int lzr::rotate(Frame& frame, Point center, double theta)
 {
     // x' = cos(theta) * (x-ox) - sin(theta) * (y-oy) + ox
     // y' = sin(theta) * (x-ox) + cos(theta) * (y-oy) + oy
@@ -42,7 +45,7 @@ int rotate(Frame& frame, Point center, double theta)
 }
 
 
-int scale(Frame& frame, Point center, double x, double y)
+int lzr::scale(Frame& frame, Point center, double x, double y)
 {
     for(Point& p : frame)
     {
@@ -54,13 +57,13 @@ int scale(Frame& frame, Point center, double x, double y)
 }
 
 
-int mirror(Frame& frame, Point center, bool x, bool y)
+int lzr::mirror(Frame& frame, Point center, bool x, bool y)
 {
     return scale(frame, center, (x ? -1.0 : 1.0), (y ? -1.0 : 1.0));
 }
 
 
-int dup_mirror(Frame& frame, Point center, bool x, bool y, bool blank)
+int lzr::dup_mirror(Frame& frame, Point center, bool x, bool y, bool blank)
 {
     if(x)
     {
@@ -86,7 +89,7 @@ int dup_mirror(Frame& frame, Point center, bool x, bool y, bool blank)
 }
 
 
-int dup_linear(Frame& frame, Point offset, size_t n_dups, bool blank)
+int lzr::dup_linear(Frame& frame, Point offset, size_t n_dups, bool blank)
 {
     //TODO: decide
     //n_dups--; //give a visually correct readout of the number
@@ -115,7 +118,7 @@ int dup_linear(Frame& frame, Point offset, size_t n_dups, bool blank)
 }
 
 
-int dup_radial(Frame& frame, Point center, size_t n_dups, double angle, bool blank)
+int lzr::dup_radial(Frame& frame, Point center, size_t n_dups, double angle, bool blank)
 {
     //TODO: decide
     //n_dups--; //give a visually correct readout of the number

@@ -2,6 +2,8 @@
 #include <cmath>
 #include <lzr.h>
 
+using namespace lzr;
+
 
 /*
     The LZR coordinate system is [-1.0, 1.0] (2.0 units wide),
