@@ -27,11 +27,11 @@ OBJS := src/point.o \
 
 HEADERS += lzr.h
 
-TESTS = test_optimizer \
-        test_interpolator \
-        test_ilda_read \
-        test_ilda_write \
-        test_transformations
+TESTS := test_interpolator
+         # test_optimizer \
+         # test_ilda_read \
+         # test_ilda_write \
+         # test_transformations
 
 # ============================= main targets =============================
 
@@ -75,8 +75,8 @@ simple_server: tests/simple_server.cpp
 	$(CXX) $(CXXFLAGS) $(LIBS) $^ ./liblzr.a -o $@
 
 
-# .PHONY: test
-# test: all tests/*.c
-# 	for test in $(TESTS); do \
-# 		$(CXX) $(CXXFLAGS) $(LIBS) tests/$$test.c ./liblzr.a -o $$test ; \
-# 	done
+.PHONY: test
+test: all tests/*.cpp
+	for test in $(TESTS); do \
+		$(CXX) $(CXXFLAGS) $(LIBS) tests/$$test.cpp ./liblzr.a -o $$test ; \
+	done

@@ -95,13 +95,13 @@ double Point::sq_distance_to(const Point& other)
     return (x - other.x)*(x - other.x) + (y - other.y)*(y - other.y);
 }
 
-bool Point::equal_position(const Point& other)
+bool Point::equal_position(const Point& other) const
 {
     return ((std::abs(x - other.x) <= FLOAT_EQUAL_TOLERANCE) &&
             (std::abs(y - other.y) <= FLOAT_EQUAL_TOLERANCE));
 }
 
-bool Point::equal_color(const Point& other)
+bool Point::equal_color(const Point& other) const
 {
     return ((r == other.r) &&
             (g == other.g) &&
@@ -109,13 +109,13 @@ bool Point::equal_color(const Point& other)
             (i == other.i));
 }
 
-bool Point::operator==(const Point& other)
+bool Point::operator==(const Point& other) const
 {
     return (equal_color(other) &&
             equal_position(other));
 }
 
-bool Point::operator!=(const Point& other)
+bool Point::operator!=(const Point& other) const
 {
     return !operator==(other);
 }

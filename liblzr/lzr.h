@@ -72,10 +72,10 @@ public:
     bool is_blanked();
     Point lerp_to(const Point& other, double t);
     double sq_distance_to(const Point& other);
-    bool equal_position(const Point& other);
-    bool equal_color(const Point& other);
-    bool operator==(const Point& other);
-    bool operator!=(const Point& other);
+    bool equal_position(const Point& other) const;
+    bool equal_color(const Point& other) const;
+    bool operator==(const Point& other) const;
+    bool operator!=(const Point& other) const;
 };
 
 

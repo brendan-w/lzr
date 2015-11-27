@@ -63,7 +63,7 @@ static int interp_line(Frame& working, double max_distance, interpolation_func f
         Point prev = start;
 
         //loop through the intersticial points
-        for(size_t i = 1; i < (n-1); i++)
+        for(size_t i = 1; i < n; i++)
         {
             //get the normalized position of the new point
             double t = (double) i / n;
