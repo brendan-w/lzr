@@ -18,7 +18,7 @@ double linear(double t)
 double quad(double t)
 {
     const double b = 0.0; //start value
-    const double c = 0; //change in value
+    const double c = 1.0; //change in value
     const double d = 1.0; //duration
 
     t /= d/2;
@@ -30,7 +30,7 @@ double quad(double t)
 double quart(double t)
 {
     const double b = 0.0; //start value
-    const double c = 0; //change in value
+    const double c = 1.0; //change in value
     const double d = 1.0; //duration
 
     t /= d/2;
