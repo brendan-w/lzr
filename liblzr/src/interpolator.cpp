@@ -2,8 +2,7 @@
 #include <cmath>
 #include <lzr.h>
 
-using namespace lzr;
-
+namespace lzr {
 
 
 /*
@@ -123,3 +122,6 @@ int interpolate(Frame& frame, double max_distance, interpolation_func func)
 
     return LZR_SUCCESS;
 }
+
+
+} // namespace lzr

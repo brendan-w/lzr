@@ -235,4 +235,4 @@ int send_frame(void* pub, const Frame& frame);
 int recv_frame(void* sub, Frame& frame);
 
 
-} /* LZR namespace */
+} // namespace lzr

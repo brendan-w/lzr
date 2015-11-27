@@ -2,7 +2,7 @@
 #include <vector>
 #include <lzr.h>
 
-using namespace lzr;
+namespace lzr {
 
 
 /*
@@ -123,3 +123,6 @@ Point Frame::average_center()
 
     return center;
 }
+
+
+} // namespace lzr

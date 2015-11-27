@@ -1,7 +1,7 @@
 
 #include "ilda.h"
 
-using namespace lzr;
+namespace lzr {
 
 
 // the ILDA default color table
@@ -77,3 +77,6 @@ const ilda_color ilda_palette[] = {
 };
 
 const size_t ilda_palette_size = sizeof(ilda_palette) / sizeof(ilda_color);
+
+
+} // namespace lzr

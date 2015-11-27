@@ -2,7 +2,7 @@
 #include <cmath>
 #include <lzr.h>
 
-using namespace lzr;
+namespace lzr {
 
 
 /*
@@ -121,3 +121,6 @@ bool Point::operator!=(const Point& other) const
 {
     return !operator==(other);
 }
+
+
+} // namespace lzr

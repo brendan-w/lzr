@@ -4,7 +4,7 @@
 #include <zmq.h>
 #include <lzr.h>
 
-using namespace lzr;
+namespace lzr {
 
 
 /*
@@ -69,3 +69,6 @@ int recv_frame(void* sub, Frame& frame)
 
     return r; //pass negative (error) return codes
 }
+
+
+} // namespace lzr

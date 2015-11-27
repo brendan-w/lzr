@@ -3,7 +3,7 @@
 #include <lzr.h>
 #include "ilda.h"
 
-using namespace lzr;
+namespace lzr {
 
 
 // function signiture for point readers
@@ -394,3 +394,6 @@ int ilda_read_frames(ILDA* ilda, size_t pd, FrameList& frame_list)
         default:         return LZR_SUCCESS;
     }
 }
+
+
+} // namespace lzr

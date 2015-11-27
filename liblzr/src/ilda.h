@@ -218,4 +218,4 @@ void write_closer(ILDA* ilda);
 }
 
 
-} /* LZR namespace */
+} // namespace lzr

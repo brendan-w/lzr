@@ -2,7 +2,7 @@
 #include <cmath>
 #include <lzr.h>
 
-using namespace lzr;
+namespace lzr {
 
 
 /*
@@ -11,7 +11,7 @@ using namespace lzr;
     and seperate XY vars for scalars.
 */
 
-int lzr::translate(Frame& frame, double x, double y)
+int translate(Frame& frame, double x, double y)
 {
     for(Point& p : frame)
     {
@@ -23,7 +23,7 @@ int lzr::translate(Frame& frame, double x, double y)
 }
 
 
-int lzr::rotate(Frame& frame, Point center, double theta)
+int rotate(Frame& frame, Point center, double theta)
 {
     // x' = cos(theta) * (x-ox) - sin(theta) * (y-oy) + ox
     // y' = sin(theta) * (x-ox) + cos(theta) * (y-oy) + oy
@@ -45,7 +45,7 @@ int lzr::rotate(Frame& frame, Point center, double theta)
 }
 
 
-int lzr::scale(Frame& frame, Point center, double x, double y)
+int scale(Frame& frame, Point center, double x, double y)
 {
     for(Point& p : frame)
     {
@@ -57,13 +57,13 @@ int lzr::scale(Frame& frame, Point center, double x, double y)
 }
 
 
-int lzr::mirror(Frame& frame, Point center, bool x, bool y)
+int mirror(Frame& frame, Point center, bool x, bool y)
 {
     return scale(frame, center, (x ? -1.0 : 1.0), (y ? -1.0 : 1.0));
 }
 
 
-int lzr::dup_mirror(Frame& frame, Point center, bool x, bool y, bool blank)
+int dup_mirror(Frame& frame, Point center, bool x, bool y, bool blank)
 {
     if(x)
     {
@@ -89,7 +89,7 @@ int lzr::dup_mirror(Frame& frame, Point center, bool x, bool y, bool blank)
 }
 
 
-int lzr::dup_linear(Frame& frame, Point offset, size_t n_dups, bool blank)
+int dup_linear(Frame& frame, Point offset, size_t n_dups, bool blank)
 {
     //TODO: decide
     //n_dups--; //give a visually correct readout of the number
@@ -118,7 +118,7 @@ int lzr::dup_linear(Frame& frame, Point offset, size_t n_dups, bool blank)
 }
 
 
-int lzr::dup_radial(Frame& frame, Point center, size_t n_dups, double angle, bool blank)
+int dup_radial(Frame& frame, Point center, size_t n_dups, double angle, bool blank)
 {
     //TODO: decide
     //n_dups--; //give a visually correct readout of the number
@@ -144,3 +144,6 @@ int lzr::dup_radial(Frame& frame, Point center, size_t n_dups, double angle, boo
 
     return LZR_SUCCESS;
 }
+
+
+} // namespace lzr

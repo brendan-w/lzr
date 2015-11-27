@@ -3,7 +3,7 @@
 #include <lzr.h>
 #include "ilda.h"
 
-using namespace lzr;
+namespace lzr {
 
 
 /******************************************************************************/
@@ -139,3 +139,6 @@ void ILDA_Projector::clear_palette()
 {
     palette.clear();
 }
+
+
+} // namespace lzr
