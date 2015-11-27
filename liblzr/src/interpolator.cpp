@@ -7,8 +7,8 @@ namespace lzr {
 
 /*
  * Interpolation functions
- * Domain: [-1.0, 1.0]
- * Range:  [-1.0, 1.0]
+ * Domain: [0.0, 1.0]
+ * Range:  [0.0, 1.0]
  */
 
 static const double b = 0.0; //start value
