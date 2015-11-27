@@ -1,6 +1,5 @@
 
 
-#include <stdio.h>
 #include "optimizer.h"
 
 namespace lzr {
@@ -18,7 +17,8 @@ namespace lzr {
     A      B /
     ._______.
 */
-#define ANGLE_FORMED(b, c) (abs(b.angle - c.angle))
+#define ANGLE_FORMED(b, c) (std::abs(b.angle - c.angle))
+
 
 
 //computes the angles from one point to the next
@@ -41,35 +41,37 @@ void Optimizer_Context::fill_angle()
 
     */
 
-    opt->points[0].angle = ANGLE(opt->last_known_point.base_point,
-                                 opt->points[0].base_point);
+    points[0].angle = ANGLE(last_known_point.point,
+                                 points[0].point);
 
-    for(size_t i = 1; i < opt->n_points; i++)
+    for(size_t i = 1; i < points.size(); i++)
     {
-        opt->points[i].angle = ANGLE(opt->points[i - 1].base_point,
-                                     opt->points[i].base_point);
+        points[i].angle = ANGLE(points[i - 1].point,
+                                points[i].point);
     }
 }
 
 
+
 void Optimizer_Context::path_split(double split_angle)
 {
-    size_t n = 0;         //number of completed paths (index of the path currently being built)
+    paths.clear(); //dump whatever we had before
+
     bool in_path = false; //whether the loop is inside an unterminated path
-    opt_point_t p;        //the current point being checked
+    Optimizer_Path path;  //path currently being built
 
-    for(size_t i = 0; i < opt->n_points; i++)
+    for(size_t i = 0; i < points.size(); i++)
     {
-        p = opt->points[i];
+        Optimizer_Point p = points[i];
 
-        if(LZR_POINT_IS_BLANKED(p.base_point))
+        if(p.point.is_blanked())
         {
             if(in_path)
             {
                 //encountered first blanked point when IN a path
                 //close the open path
-                opt->paths[n].b = i - 1;
-                n++;
+                path.b = i - 1;
+                paths.push_back(path);
                 in_path = false;
             }
             // else, do nothing, discard blanked points
@@ -79,20 +81,18 @@ void Optimizer_Context::path_split(double split_angle)
             if(in_path)
             {
                 //test the angle this point makes with previous/next points
-                //TODO: clean this up
-
-                if((i+1 < opt->n_points) && !LZR_POINT_IS_BLANKED(opt->points[i + 1].base_point)) //is the next point valid to check against
+                if( (i+1 < paths.size()) && !points[i+1].point.is_blanked() ) //is the next point valid to check against
                 {
-                    opt_point_t next = opt->points[i + 1];
+                    Optimizer_Point next = points[i + 1];
 
                     //if it creates too much of an angle
                     if(ANGLE_FORMED(p, next) > split_angle)
                     {
                         //close the current path
-                        opt->paths[n].b = i;
-                        n++;
+                        path.b = i;
+                        paths.push_back(path);
                         //open a new one
-                        opt->paths[n].a = i;
+                        path.a = i;
                     }
                 }
             }
@@ -100,22 +100,21 @@ void Optimizer_Context::path_split(double split_angle)
             {
                 //encountered first lit point when not in a path
                 //open a new path
-                opt->paths[n].a = i; //store the index of the first point in the path
+                path.a = i; //store the index of the first point in the path
                 in_path = true;
             }
         }
     }
 
-    //if a path is still open, close it
+    //if a path is still open, close it (frame ends in a lit point)
     if(in_path)
     {
-        opt->paths[n].b = opt->n_points - 1;
-        n++;
+        path.b = points.size() - 1;
+        paths.push_back(path);
         in_path = false;
     }
-
-    opt->n_paths = n;
 }
+
 
 
 void Optimizer_Context::fill_cycle(double split_angle)

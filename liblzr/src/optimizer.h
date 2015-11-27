@@ -1,7 +1,6 @@
 
 #pragma once
 
-
 #include <vector>
 #include <cmath>
 #include <lzr.h>
@@ -31,7 +30,7 @@ public:
 };
 
 
-//struct defining a "continguous" segment of the lasers path
+//struct defining a "continguous" segment of the lasers points
 class Optimizer_Path {
 public:
     size_t a;   //index of the front point

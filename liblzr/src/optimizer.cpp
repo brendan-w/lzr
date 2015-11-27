@@ -4,6 +4,11 @@
 namespace lzr {
 
 
+static inline double deg_to_rad(double deg)
+{
+    return deg * PI / 180.0;
+}
+
 /*
  * user-facing optimizer
  */
@@ -23,7 +28,7 @@ Optimizer::~Optimizer()
 int Optimizer::run(Frame& frame)
 {
     ctx->load_points(frame);
-    ctx->find_paths(path_split_angle);
+    ctx->find_paths(deg_to_rad(path_split_angle));
     // rearrange_paths(opt);       //sorts the path buffer
     // compile_paths(opt, frame); //updates the point buffer and generates blanking jumps
     return 0;
