@@ -6,6 +6,9 @@
 #include <SDL.h>
 #include <lzr.h>
 
+using namespace lzr;
+
+
 #define DEFAULT_WINDOW_SIZE 500
 
 
@@ -52,7 +55,7 @@ static void* zmq_loop(void* data)
 {
     (void)data; //param is required, but not used
 
-    void* zmq_sub = frame_sub_new(zmq_ctx, LZR_ZMQ_ENDPOINT);
+    void* zmq_sub = frame_sub_new(zmq_ctx, LZRD_GRAPHICS_ENDPOINT);
     Frame temp_frame;
 
     while(1)

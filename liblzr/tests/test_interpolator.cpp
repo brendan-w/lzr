@@ -3,6 +3,8 @@
 #include <assert.h>
 #include <lzr.h>
 
+using namespace lzr;
+
 
 static void print_frame(Frame& frame)
 {
