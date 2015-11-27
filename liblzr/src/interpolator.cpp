@@ -10,6 +10,10 @@
  * Range:  [-1.0, 1.0]
  */
 
+static const double b = 0.0; //start value
+static const double c = 1.0; //change in value
+static const double d = 1.0; //duration
+
 double linear(double t)
 {
     return t;
@@ -17,10 +21,6 @@ double linear(double t)
 
 double quad(double t)
 {
-    const double b = 0.0; //start value
-    const double c = 1.0; //change in value
-    const double d = 1.0; //duration
-
     t /= d/2;
     if(t < 1) return c/2*t*t + b;
     t--;
@@ -29,10 +29,6 @@ double quad(double t)
 
 double quart(double t)
 {
-    const double b = 0.0; //start value
-    const double c = 1.0; //change in value
-    const double d = 1.0; //duration
-
     t /= d/2;
     if(t < 1) return c/2*t*t*t*t + b;
     t -= 2;
