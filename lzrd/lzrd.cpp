@@ -10,9 +10,12 @@
 #include <assert.h>
 #include <math.h>
 
+#include <vector>
 #include <lzr.h>
 #include <zmq.h>
 #include "libetherdream/etherdream.h"
+
+using namespace lzr;
 
 
 #define CLAMP(d) ( fmin(fmax(d, -1.0), 1.0) )
@@ -21,11 +24,11 @@ typedef struct etherdream etherdream;
 typedef struct etherdream_point etherdream_point;
 
 
-static void*             zmq_ctx;
-static void*             zmq_sub;
-static lzr_frame*        frame;
-static etherdream*       dac;
-static etherdream_point* ether_points;
+static void* zmq_ctx;
+static void* zmq_sub;
+static Frame frame;
+static etherdream* dac;
+static std::vector<etherdream_point> ether_points;
 
 
 static void send_frame()
@@ -33,20 +36,26 @@ static void send_frame()
     //if the laser is ready for another frame
     if(etherdream_is_ready(dac) == 1)
     {
-        printf("RECV frame (%d points)\n", frame->n_points);
+        printf("RECV frame (%d points)\n", frame.size());
 
-        for(size_t i = 0; i < frame->n_points; i++)
+        ether_points.clear();
+
+        for(Point p : frame)
         {
             //convert LZR point into etherdream point
-            ether_points[i].x = (int16_t) (CLAMP(frame->points[i].x) * 32767);
-            ether_points[i].y = (int16_t) (CLAMP(frame->points[i].y) * 32767);
-            ether_points[i].r = (uint16_t) (frame->points[i].r * 255);
-            ether_points[i].g = (uint16_t) (frame->points[i].g * 255);
-            ether_points[i].b = (uint16_t) (frame->points[i].b * 255);
-            ether_points[i].i = (uint16_t) (frame->points[i].i * 255);
+            etherdream_point ep;
+
+            ep.x = (int16_t) (CLAMP(p.x) * 32767);
+            ep.y = (int16_t) (CLAMP(p.y) * 32767);
+            ep.r = (uint16_t) (p.r * 255);
+            ep.g = (uint16_t) (p.g * 255);
+            ep.b = (uint16_t) (p.b * 255);
+            ep.i = (uint16_t) (p.i * 255);
+
+            ether_points.push_back(ep);
         }
 
-        etherdream_write(dac, ether_points, frame->n_points, 15000, -1);
+        etherdream_write(dac, ether_points.data(), ether_points.size(), 15000, -1);
     }
     //else, dump the frame, an old one is still being drawn
     //TODO: ^ is this really a good idea? Could create a stutterring animation
@@ -58,9 +67,9 @@ int main()
 {
     int rc       = 0;
     zmq_ctx      = zmq_ctx_new();
-    zmq_sub      = lzr_frame_sub(zmq_ctx, LZR_ZMQ_ENDPOINT);
-    frame        = (lzr_frame*) malloc(sizeof(lzr_frame));
-    ether_points = (etherdream_point*) calloc(sizeof(etherdream_point), LZR_FRAME_MAX_POINTS);
+    zmq_sub      = frame_sub_new(zmq_ctx, LZRD_GRAPHICS_ENDPOINT);
+    ether_points.clear();
+
 
     etherdream_lib_start();
 
@@ -86,7 +95,7 @@ int main()
     //-------------------
     while(1)
     {
-        lzr_recv_frame(zmq_sub, frame);
+        recv_frame(zmq_sub, frame);
         send_frame();
     }
     //-------------------
@@ -94,8 +103,6 @@ int main()
     etherdream_stop(dac);
     etherdream_disconnect(dac);
 
-    free(ether_points);
-    free(frame);
     zmq_close(zmq_sub);
     zmq_ctx_term(zmq_ctx);
 

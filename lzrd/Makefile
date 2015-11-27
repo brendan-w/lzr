@@ -1,59 +1,58 @@
 
 
-# files and paths
-
-VPATH = src
-# PREFIX ?= /usr/local
-OBJS = lzrd.o
-
-TESTS = spiro_server \
-        interp_server \
-        ilda_server \
-        transform_server
+# ============================= compile settings =============================
 
 
-
-# compile settings
-
-CC      = gcc
-CFLAGS += -std=c99 -Wall -Wextra -pedantic -ggdb
-CFLAGS += -I../liblzr
-LIBS    = -lzmq -lm -lpthread
+CXX       = g++
+CXXFLAGS += -std=c++11 -Wall -Wextra -pedantic -fPIC -ggdb
+CXXFLAGS += -I../liblzr
+LIBS      = -lzmq -lm -lpthread
 
 
-# targets
+# ============================= files and paths =============================
+
+
+INSTALL_PREFIX ?= /usr/local
+
+OBJS := lzrd.o
+
+
+HEADERS += lzr.h
+
+TESTS := spiro_server \
+         interp_server \
+         ilda_server \
+         transform_server
+
+
+# ============================= main targets =============================
+
 
 .PHONY: all
 all: lzrd
 
 
-lzrd: ../liblzr/liblzr.a etherdream $(OBJS)
-	$(CC) $(OBJS) ./libetherdream/etherdream.a ../liblzr/liblzr.a $(LIBS) -o $@
+lzrd: $(OBJS) ../liblzr/liblzr.a libetherdream/etherdream.a
+	$(CXX) $^ $(LIBS) -o $@
 
 
 %.o: %.c
-	$(CC) -c -o $@ $< $(CFLAGS)
+	$(CXX) -c -o $@ $< $(CXXFLAGS)
 
 
 ../liblzr/liblzr.a:
 	$(MAKE) -C ../liblzr/
 
 
-.PHONY: etherdream
-etherdream:
+libetherdream/etherdream.a:
 	$(MAKE) -C libetherdream/
 
 
 .PHONY: test
 test: all test/*.c
 	for test in $(TESTS); do \
-		$(CC) $(CFLAGS) $(LIBS) -lm test/$$test.c ../liblzr/liblzr.a -o $$test ; \
+		$(CXX) $(CXXFLAGS) $(LIBS) -lm test/$$test.c ../liblzr/liblzr.a -o $$test ; \
 	done
-
-
-.PHONY: install
-install:
-	# $(MAKE) -C liblzr_optimize/ install
 
 
 .PHONY: clean
