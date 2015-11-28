@@ -86,7 +86,7 @@ void Optimizer_Context::path_split(double split_angle)
                     Optimizer_Point next = points[i + 1];
 
                     //if it creates too much of an angle
-                    if(ANGLE_FORMED(p, next) > split_angle)
+                    if(ANGLE_FORMED(p, next) >= split_angle)
                     {
                         //close the current path
                         path.b = i;
@@ -131,7 +131,7 @@ void Optimizer_Context::fill_cycle(double split_angle)
             Optimizer_Point next = points[path.a + 1];
 
             //if it DOESN'T creates too much of an angle, then it's a cycle
-            path.cycle = (ANGLE_FORMED(b, next) <= split_angle);
+            path.cycle = (ANGLE_FORMED(b, next) < split_angle);
         }
     }
 }
