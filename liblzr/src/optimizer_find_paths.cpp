@@ -16,6 +16,16 @@ namespace lzr {
               /
     A      B /
     ._______.
+
+    This macros reports the angle at which the figure DEVIATES from a
+    straight line:
+
+                .
+               /
+              /
+             /  ) theta
+    ._______.  .  .  .  .
+
 */
 #define ANGLE_FORMED(b, c) (std::abs(b.angle - c.angle))
 
@@ -42,7 +52,7 @@ void Optimizer_Context::fill_angle()
     */
 
     points[0].angle = ANGLE(last_known_point.point,
-                                 points[0].point);
+                                   points[0].point);
 
     for(size_t i = 1; i < points.size(); i++)
     {
