@@ -88,7 +88,7 @@ private:
 
     //path compilation functions
     void add_path_to_frame(Frame& frame, Optimizer_Path path, bool skip_first_point);
-    void blank_between(Frame& frame, Optimizer_Point a, Optimizer_Point b, size_t anchors);
+    void blank_between(Frame& frame, Point a, Point b, size_t anchors);
 };
 
 

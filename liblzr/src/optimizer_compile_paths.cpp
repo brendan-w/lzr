@@ -32,22 +32,20 @@ void Optimizer_Context::add_path_to_frame(Frame& frame, Optimizer_Path path, boo
 
 
 
-//generates a blanking jump between two Optimizer_Point's
-void Optimizer_Context::blank_between(Frame& frame, Optimizer_Point a, Optimizer_Point b, size_t anchors)
+//generates a blanking jump between two Point's
+void Optimizer_Context::blank_between(Frame& frame, Point a, Point b, size_t anchors)
 {
-    for(size_t i = 0; i < anchors; i++)
-    {
-        Point p = a.point;
-        frame.add(p);
-        frame.back().blank();
-    }
+    Point a_blanked = a;
+    Point b_blanked = b;
+    a_blanked.blank();
+    b_blanked.blank();
+
 
     for(size_t i = 0; i < anchors; i++)
-    {
-        Point p = b.point;
-        frame.add(p);
-        frame.back().blank();
-    }
+        frame.add(a_blanked);
+
+    for(size_t i = 0; i < anchors; i++)
+        frame.add(b_blanked);
 }
 
 
@@ -60,13 +58,10 @@ void Optimizer_Context::compile_paths(Frame& frame, size_t lit, size_t blanked)
         //number of points to skip at the start of the path
         bool skip_first_point = false;
 
-        Optimizer_Point a = last_known_point; //last_known_point is gauranteed to be lit
-        Optimizer_Point b = points[ path.a ]; //first point on the current path
+        Point a = last_known_point.point; //last_known_point is gauranteed to be lit
+        Point b = points[ path.a ].point; //first point on the current path
 
-        //if the last_known_point is different than this frames
-        //starting point, then an introductory blanking jump
-        //is neccessary.
-        if( a.point.same_position_as(b.point) )
+        if( a.same_position_as(b) )
         {
             //if the start of this path is the same as the last_known_point,
             //then skip the beginning point
@@ -74,10 +69,11 @@ void Optimizer_Context::compile_paths(Frame& frame, size_t lit, size_t blanked)
         }
         else
         {
-            //create a blanking jump
+            //if the last_known_point is different than this frames
+            //starting point, then an introductory blanking jump
+            //is neccessary.
             blank_between(frame, a, b, blanked);
         }
-
 
         //load the drawn points into the output buffer
         add_path_to_frame(frame, path, skip_first_point);
