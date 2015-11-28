@@ -9,9 +9,6 @@ namespace lzr {
 
 
 
-//tunable settings
-#define PATH_SPLIT_ANGLE (PI / 8) //max angle deviation for points to be considered contiguous
-
 //constants
 #define PI 3.14159265358979323846
 
@@ -43,9 +40,9 @@ public:
 
 
 typedef struct {
-    Optimizer_Path* path; //pointer to the path in the path buffer
+    size_t path; //pointer to the path in the path buffer
     bool invert;      //whether or not the path should be entered at it's B point
-} path_descriptor;
+} path_choice;
 
 
 
@@ -94,7 +91,7 @@ private:
     //path reorderring functions
     double cost(Optimizer_Point a, Optimizer_Point b);
     void swap_paths(Optimizer_Path* path_a, Optimizer_Path* path_b);
-    path_descriptor find_next(size_t start, Optimizer_Point laser);
+    path_choice find_next(size_t start, Optimizer_Point laser);
 };
 
 
