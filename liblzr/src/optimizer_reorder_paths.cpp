@@ -77,8 +77,7 @@ void Optimizer_Context::reorder_paths()
 
     for(size_t i = 0; i < paths.size(); i++)
     {
-        Optimizer_Path* path = &paths[i];
-
+        //find and process the best path at this index
         find_next_and_swap(i, laser);
 
         //update the laser's current location
