@@ -24,7 +24,8 @@ OBJS := src/point.o \
         src/transforms.o \
         src/interpolator.o \
         src/optimizer.o \
-        src/optimizer_find_paths.o
+        src/optimizer_find_paths.o \
+        src/optimizer_reorder_paths.o
 
 HEADERS := lzr.h \
            src/ilda.h \

@@ -4,13 +4,17 @@
 namespace lzr {
 
 
+
 static inline double deg_to_rad(double deg)
 {
     return deg * PI / 180.0;
 }
 
+
+
 /*
- * user-facing optimizer
+ * Wrapper for the user-facing optimizer,
+ * also stores settings between runs
  */
 
 Optimizer::Optimizer()
@@ -25,13 +29,13 @@ Optimizer::~Optimizer()
 }
 
 
+//main optimization function
 int Optimizer::run(Frame& frame)
 {
-    ctx->load_points(frame);
-    ctx->find_paths(deg_to_rad(path_split_angle));
-    // rearrange_paths(opt);       //sorts the path buffer
-    // compile_paths(opt, frame); //updates the point buffer and generates blanking jumps
-    return 0;
+    return ctx->run(frame, deg_to_rad(path_split_angle),
+                           reorder_paths,
+                           anchor_points_lit,
+                           anchor_points_blanked);
 }
 
 
@@ -39,21 +43,29 @@ int Optimizer::run(Frame& frame)
 
 /*
  * Internal optimizer context
+ * Main optimization function
  */
 
 
-void Optimizer_Context::load_points(Frame& frame)
+int Optimizer_Context::run(Frame& frame, double split_angle, bool reorder, size_t lit_anchors, size_t blanked_anchors)
 {
-    //load the new points into the working buffer (overwrite any old data)
+    //save the frame to our working buffer
     points.resize(frame.size());
-
     for(size_t i = 0; i < frame.size(); i++)
     {
         points[i].point = frame[i];
     }
+
+    find_paths(split_angle);
+
+    if(reorder)
+        reorder_paths(); //sorts the path buffer
+
+    // compile_paths(frame, lit_anchors, blanked_anchors);
+
+    return 0;
 }
 
-//other context functions are defined in their respective files
 
 
 /*
@@ -68,6 +80,12 @@ size_t Optimizer_Path::size()
         return a - b + 1;
 }
 
+void Optimizer_Path::invert()
+{
+    size_t temp = a;
+    a = b;
+    b = temp;
+}
 
 
 } // namespace lzr
