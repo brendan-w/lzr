@@ -85,6 +85,10 @@ private:
     double cost(Optimizer_Point a, Optimizer_Point b);
     void swap_paths(size_t a, size_t b);
     void find_next_and_swap(size_t start, Optimizer_Point laser);
+
+    //path compilation functions
+    void add_path_to_frame(Frame& frame, Optimizer_Path path, bool skip_first_point);
+    void blank_between(Frame& frame, Optimizer_Point a, Optimizer_Point b, size_t anchors);
 };
 
 

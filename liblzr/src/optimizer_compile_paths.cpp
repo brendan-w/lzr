@@ -1,98 +1,92 @@
 
 
-#include "lzr_optimizer.h"
+#include "optimizer.h"
 
-#define PATH_LENGTH(p) (abs(p->b - p->a) + 1)
+namespace lzr {
 
 
-//generates a blanking jump between two opt_point_t's
-static size_t blank_between(opt_t* opt, lzr_point* points, opt_point_t* a, opt_point_t* b)
+
+
+void Optimizer_Context::add_path_to_frame(Frame& frame, Optimizer_Path path, bool skip_first_point)
 {
-    size_t i = 0;
-    for(; i < opt->anchor_points; i++)
-    {
-        points[i] = a->base_point;
-        LZR_POINT_BLANK(points[i]);
-    }
+    size_t skip = (skip_first_point ? 1 : 0);
 
-    for(; i < (opt->anchor_points * 2); i++)
+    //test if the path is inverted
+    if(path.a < path.b)
     {
-        points[i] = b->base_point;
-        LZR_POINT_BLANK(points[i]);
+        //ascending from the path's A point
+        for(size_t i = skip; i < path.size(); i++)
+        {
+            frame.add(points[path.a + i].point);
+        }
     }
-
-    return i;
+    else
+    {
+        //descending from the path's B point
+        for(size_t i = skip; i < path.size(); i++)
+        {
+            frame.add(points[path.a - i].point);
+        }
+    }
 }
 
 
-int compile_paths(opt_t* opt, lzr_frame* frame)
+
+//generates a blanking jump between two Optimizer_Point's
+void Optimizer_Context::blank_between(Frame& frame, Optimizer_Point a, Optimizer_Point b, size_t anchors)
 {
-    // printf("==========\n");
-    // printf("before: %d\n", frame->n_points);
-
-    //the number of points currently in the output buffer
-    //NOTE: must not exceed opt->max_points
-    size_t n = 0;
-
-    for(size_t i = 0; i < opt->n_paths; i++)
+    for(size_t i = 0; i < anchors; i++)
     {
-        opt_path_t* path = (opt->paths + i);
-        // printf("%zu: [%zu, %zu] c=%d\n", i, path->a, path->b, path->cycle);
+        Point p = a.point;
+        frame.add(p);
+        frame.back().blank();
+    }
 
+    for(size_t i = 0; i < anchors; i++)
+    {
+        Point p = b.point;
+        frame.add(p);
+        frame.back().blank();
+    }
+}
+
+
+void Optimizer_Context::compile_paths(Frame& frame, size_t lit, size_t blanked)
+{
+    frame.clear();
+
+    for(Optimizer_Path path : paths)
+    {
         //number of points to skip at the start of the path
-        size_t skip = 0;
+        bool skip_first_point = false;
 
-        opt_point_t a = opt->last_known_point;
-        opt_point_t b = opt->points[ path->a ]; //first point on the current path
+        Optimizer_Point a = last_known_point; //last_known_point is gauranteed to be lit
+        Optimizer_Point b = points[ path.a ]; //first point on the current path
 
         //if the last_known_point is different than this frames
         //starting point, then an introductory blanking jump
         //is neccessary.
-        if( !LZR_POINTS_SAME_POS(a.base_point, b.base_point) )
-        {
-            //create a blanking jump
-            size_t r = blank_between(opt, (frame->points + n), &a, &b);
-            n += r;
-            // printf("blank points: %zu\n", r);
-        }
-        else
+        if( a.point.same_position_as(b.point) )
         {
             //if the start of this path is the same as the last_known_point,
             //then skip the beginning point
-            skip = 1;
+            skip_first_point = true;
+        }
+        else
+        {
+            //create a blanking jump
+            blank_between(frame, a, b, blanked);
         }
 
 
         //load the drawn points into the output buffer
-        size_t l = PATH_LENGTH(path);
-        // printf("len: %d\n", l);
-
-
-        //test if the path is inverted
-        if(path->b > path->a)
-        {
-            //ascending from the path's A point
-            for(size_t i = skip; i < l; i++)
-            {
-                frame->points[n] = opt->points[path->a + i].base_point;
-                n++;
-            }
-        }
-        else
-        {
-            //descending from the path's B point
-            for(size_t i = skip; i < l; i++)
-            {
-                frame->points[n] = opt->points[path->a - i].base_point;
-                n++;
-            }
-        }
+        add_path_to_frame(frame, path, skip_first_point);
 
         //walk the laser
-        opt->last_known_point = opt->points[path->b];
+        last_known_point = points[path.b];
     }
-
-    frame->n_points = n;
-    // printf("after: %d\n", frame->n_points);
-    return 0;
 }
+
+
+
+} // namespace lzr
