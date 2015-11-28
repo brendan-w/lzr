@@ -69,6 +69,11 @@ bool Point::is_blanked()
     return (i == 0) || (r + g + b == 0);
 }
 
+bool Point::is_lit()
+{
+    return (i > 0) && (r + g + b > 0);
+}
+
 //run-of-the-mill linear interpolation
 static inline double lerp(double v0, double v1, double t)
 {

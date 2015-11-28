@@ -72,6 +72,7 @@ public:
     void blank();
     void unblank();
     bool is_blanked();
+    bool is_lit();
     Point lerp_to(const Point& other, double t);
     double sq_distance_to(const Point& other);
     bool same_position_as(const Point& other) const;

@@ -91,7 +91,7 @@ void Optimizer_Context::path_split(double split_angle)
             if(in_path)
             {
                 //test the angle this point makes with previous/next points
-                if( (i+1 < paths.size()) && !points[i+1].point.is_blanked() ) //is the next point valid to check against
+                if( (i+1 < paths.size()) && points[i+1].point.is_lit() ) //is the next point valid to check against
                 {
                     Optimizer_Point next = points[i + 1];
 
