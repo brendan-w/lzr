@@ -39,13 +39,6 @@ public:
 };
 
 
-typedef struct {
-    size_t path; //pointer to the path in the path buffer
-    bool invert;      //whether or not the path should be entered at it's B point
-} path_choice;
-
-
-
 //optimizer context
 class Optimizer_Context {
 public:
@@ -90,8 +83,8 @@ private:
 
     //path reorderring functions
     double cost(Optimizer_Point a, Optimizer_Point b);
-    void swap_paths(Optimizer_Path* path_a, Optimizer_Path* path_b);
-    path_choice find_next(size_t start, Optimizer_Point laser);
+    void swap_paths(size_t a, size_t b);
+    void find_next_and_swap(size_t start, Optimizer_Point laser);
 };
 
 

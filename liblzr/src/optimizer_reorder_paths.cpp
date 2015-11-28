@@ -12,32 +12,36 @@ double Optimizer_Context::cost(Optimizer_Point a, Optimizer_Point b)
     return a.point.sq_distance_to(b.point);
 }
 
-void Optimizer_Context::swap_paths(Optimizer_Path* path_a, Optimizer_Path* path_b)
+
+void Optimizer_Context::swap_paths(size_t a, size_t b)
 {
-    if(path_a != path_b)
+    if(a != b)
     {
-        Optimizer_Path temp = *path_a;
-        *path_a = *path_b;
-        *path_b = temp;
+        Optimizer_Path temp = paths[a];
+        paths[a] = paths[b];
+        paths[b] = temp;
     }
 }
 
+
 //scan for the best path to enter next
-path_choice Optimizer_Context::find_next(size_t start, Optimizer_Point laser)
+void Optimizer_Context::find_next_and_swap(size_t current_path, Optimizer_Point laser)
 {
     //running vars
-    path_choice pc;        //the best path
+    size_t best_path;      //index of the path with the best (lowest) cost
+    bool invert;           //whether or not the best_path should be inverted
     double c;              //temp var for computing cost
     double min_cost = 0.0; //optimize for least cost
 
 
     //initial check
     //lookup the point at the head of the first path to be checked
-    min_cost = c = cost(laser, points[paths[start].a]);
-    pc.path = start;
-    pc.invert = false;
-    
-    for(size_t i = start + 1; i < paths.size(); i++)
+    min_cost = c = cost(laser, points[paths[current_path].a]);
+    best_path = current_path;
+    invert = false;
+
+
+    for(size_t i = current_path + 1; i < paths.size(); i++)
     {
         Optimizer_Path path = paths[i];
 
@@ -46,8 +50,8 @@ path_choice Optimizer_Context::find_next(size_t start, Optimizer_Point laser)
         if(c < min_cost)
         {
             min_cost = c;
-            pc.path = i;
-            pc.invert = false;
+            best_path = i;
+            invert = false;
         }
 
         //test the back point (B)
@@ -55,12 +59,16 @@ path_choice Optimizer_Context::find_next(size_t start, Optimizer_Point laser)
         if(c < min_cost)
         {
             min_cost = c;
-            pc.path = i;
-            pc.invert = true;
+            best_path = i;
+            invert = true;
         }
     }
 
-    return pc;
+    //we're all done, apply the change
+    swap_paths(current_path, best_path);
+
+    if(invert)
+        paths[current_path].invert();
 }
 
 void Optimizer_Context::reorder_paths()
@@ -71,15 +79,10 @@ void Optimizer_Context::reorder_paths()
     {
         Optimizer_Path* path = &paths[i];
 
-        path_choice next = find_next(i, laser);
-
-        swap_paths(path, &paths[next.path]);
-
-        if(next.invert)
-            path->invert();
+        find_next_and_swap(i, laser);
 
         //update the laser's current location
-        laser = points[path->b];
+        laser = points[paths[i].b];
     }
 }
 
