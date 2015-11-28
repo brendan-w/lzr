@@ -41,7 +41,7 @@ void Optimizer_Context::find_next_and_swap(size_t current_path, Optimizer_Point 
     invert = false;
 
 
-    for(size_t i = current_path + 1; i < paths.size(); i++)
+    for(size_t i = current_path; i < paths.size(); i++)
     {
         Optimizer_Path path = paths[i];
 
@@ -71,6 +71,7 @@ void Optimizer_Context::find_next_and_swap(size_t current_path, Optimizer_Point 
         paths[current_path].invert();
 }
 
+
 void Optimizer_Context::reorder_paths()
 {
     Optimizer_Point laser = last_known_point;
@@ -81,7 +82,7 @@ void Optimizer_Context::reorder_paths()
         find_next_and_swap(i, laser);
 
         //update the laser's current location
-        laser = points[paths[i].b];
+        laser = points[ paths[i].b ];
     }
 }
 
