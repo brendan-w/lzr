@@ -24,6 +24,7 @@ Frame frame;
 
 //settings
 bool show_blanks = false;
+bool show_points = false;
 
 
 static void trigger_new_frame()
@@ -119,7 +120,6 @@ static inline SDL_Color lzr_color_to_screen(Point p)
 
 static void render()
 {
-
     // clear the screen to black
     SDL_SetRenderDrawColor(renderer,
                            0,
@@ -145,6 +145,19 @@ static void render()
 
         SDL_SetRenderDrawColor(renderer, c.r, c.g, c.b, c.a);
         SDL_RenderDrawLine(renderer, sp1.x, sp1.y, sp2.x, sp2.y);
+    }
+
+    //draw points overtop of the lines
+    if(show_points)
+    {
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+
+        for(Point p : frame)
+        {
+            SDL_Point sp = lzr_point_to_screen(p);
+            SDL_Rect r = { sp.x, sp.y, 2, 2 };
+            SDL_RenderDrawRect(renderer, &r);
+        }
     }
 
     pthread_mutex_unlock(&frame_lock);
@@ -178,6 +191,10 @@ static void loop()
                     {
                         case SDLK_b:
                             show_blanks = !show_blanks;
+                            do_render = true;
+                            break;
+                        case SDLK_p:
+                            show_points = !show_points;
                             do_render = true;
                             break;
                     }
