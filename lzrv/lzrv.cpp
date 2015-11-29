@@ -10,6 +10,7 @@ using namespace lzr;
 
 
 #define DEFAULT_WINDOW_SIZE 500
+#define POINT_SIZE 3
 
 
 SDL_Window* window = NULL;
@@ -91,12 +92,24 @@ static inline int lzr_coord_to_screen(double v, bool invert)
     return (int) (((v + 1.0) / 2.0) * DEFAULT_WINDOW_SIZE);
 }
 
-static inline SDL_Point lzr_point_to_screen(Point p)
+static inline SDL_Point lzr_point_to_sdl_point(Point p)
 {
     SDL_Point sp;
     sp.x = lzr_coord_to_screen(p.x, false);
     sp.y = lzr_coord_to_screen(p.y, true); //invert
     return sp;
+}
+
+static inline SDL_Rect lzr_point_to_sdl_rect(Point p)
+{
+    SDL_Point sp = lzr_point_to_sdl_point(p);
+    SDL_Rect r = {
+        sp.x - ((POINT_SIZE - 1) / 2),
+        sp.y - ((POINT_SIZE - 1) / 2),
+        POINT_SIZE,
+        POINT_SIZE
+    };
+    return r;
 }
 
 static inline SDL_Color lzr_color_to_screen(Point p)
@@ -137,8 +150,8 @@ static void render()
     {
         Point p1 = frame[i];
         Point p2 = frame[i+1];
-        SDL_Point sp1 = lzr_point_to_screen(p1);
-        SDL_Point sp2 = lzr_point_to_screen(p2);
+        SDL_Point sp1 = lzr_point_to_sdl_point(p1);
+        SDL_Point sp2 = lzr_point_to_sdl_point(p2);
         //TODO: double check that color is actually
         //      a property of the second point
         SDL_Color c   = lzr_color_to_screen(p2);
@@ -154,8 +167,7 @@ static void render()
 
         for(Point p : frame)
         {
-            SDL_Point sp = lzr_point_to_screen(p);
-            SDL_Rect r = { sp.x - 1, sp.y - 1, 3, 3 };
+            SDL_Rect r = lzr_point_to_sdl_rect(p);
             SDL_RenderFillRect(renderer, &r);
         }
     }
