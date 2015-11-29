@@ -152,11 +152,11 @@ double quart(double t);  /*-*---*-----*-------*-------*-----*---*-*/
 
 
 //100 points from one side of the frame to the other
-#define MAX_DISTANCE_DEFAULT ((LZR_POSITION_MAX - LZR_POSITION_MIN) / 100.0)
+#define INTERP_DEFAULT ((LZR_POSITION_MAX - LZR_POSITION_MIN) / 100.0)
 
 //main interpolator function
 int interpolate(Frame& frame,
-                double max_distance=MAX_DISTANCE_DEFAULT,
+                double max_distance=INTERP_DEFAULT,
                 interpolation_func func=linear);
 
 
@@ -164,6 +164,8 @@ int interpolate(Frame& frame,
 /******************************************************************************/
 /*  LZR Optimizer                                                             */
 /******************************************************************************/
+
+#define BLANK_INTERP_DEFAULT ((LZR_POSITION_MAX - LZR_POSITION_MIN) / 20.0)
 
 //forward declaration for optimizer internals
 class Optimizer_Context;
@@ -176,10 +178,12 @@ public:
     int run(Frame& frame);
 
     //settings
-    double path_split_angle      = 45;   //minimum angle (degrees) at which to consider lines to be seperate paths
-    bool   reorder_paths         = true; //allow the optimizer to the change the order in which points are scanned 
-    size_t anchor_points_lit     = 1;    //number of lit points to place at the start & end of a line segment
-    size_t anchor_points_blanked = 2;    //number of blanked points to place at the start & end of a line segment
+    double path_split_angle       = 45;   //minimum angle (degrees) at which to consider lines to be seperate paths
+    bool   reorder_paths          = true; //allow the optimizer to the change the order in which points are scanned 
+    size_t anchor_points_lit      = 1;    //minimum number of lit points to place at the start & end of a line segment
+    size_t anchor_points_blanked  = 2;    //minimum number of blanked points to place at the start & end of a line segment
+    double blank_max_distance     = BLANK_INTERP_DEFAULT; //max distance for interpolation of blanking jumps
+    interpolation_func blank_func = linear; //interpolation function to use for interpolated blanking jumps
 
 private:
     Optimizer_Context* ctx;
