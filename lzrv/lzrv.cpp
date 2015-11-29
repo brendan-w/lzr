@@ -155,8 +155,8 @@ static void render()
         for(Point p : frame)
         {
             SDL_Point sp = lzr_point_to_screen(p);
-            SDL_Rect r = { sp.x, sp.y, 2, 2 };
-            SDL_RenderDrawRect(renderer, &r);
+            SDL_Rect r = { sp.x - 1, sp.y - 1, 3, 3 };
+            SDL_RenderFillRect(renderer, &r);
         }
     }
 
