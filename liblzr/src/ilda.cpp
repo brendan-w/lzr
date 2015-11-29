@@ -29,7 +29,7 @@ ILDA* ilda_open(const char* filename, const char* mode)
         //scan the file, populate the frame counts
         scan_file(ilda);
     }
-    if(strcmp(mode, "w") == 0)
+    else if(strcmp(mode, "w") == 0)
     {
         ilda->read = false;
         ilda->f = fopen(filename, "wb");
@@ -43,6 +43,7 @@ ILDA* ilda_open(const char* filename, const char* mode)
     }
     else
     {
+        perror("Invalid ILDA file mode");
         //invalid mode
         delete ilda;
         return NULL;

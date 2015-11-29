@@ -76,7 +76,7 @@ void write_closer(ILDA* ilda)
     Main API function for writing frames
     The ilda_close() call will generate the null ending frame
 */
-int ilda_write_frames(ILDA* ilda, size_t pd, FrameList& frame_list)
+int ilda_write(ILDA* ilda, size_t pd, FrameList& frame_list)
 {
     if(ilda == NULL)
         return LZR_FAILURE;

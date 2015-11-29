@@ -360,7 +360,7 @@ void scan_file(ILDA* ilda)
 }
 
 
-int ilda_read_frames(ILDA* ilda, size_t pd, FrameList& frame_list)
+int ilda_read(ILDA* ilda, size_t pd, FrameList& frame_list)
 {
     if(ilda == NULL)
         return LZR_FAILURE;

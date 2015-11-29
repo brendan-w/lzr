@@ -211,7 +211,7 @@ int ilda_write(ILDA* f, size_t pd, FrameList& frame_list);
 size_t ilda_projector_count(ILDA* f);
 
 //returns the number of frames for the given projector descriptor
-size_t ilda_frame_count(void* f, size_t pd);
+size_t ilda_frame_count(ILDA* f, size_t pd);
 
 
 

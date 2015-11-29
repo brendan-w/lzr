@@ -19,10 +19,10 @@ OBJS := lzrd.o
 
 HEADERS += lzr.h
 
-TESTS := spiro_server \
-         interp_server \
-         ilda_server \
-         transform_server
+TESTS := ilda_server
+         # interp_server \
+         # spiro_server \
+         # transform_server
 
 
 # ============================= main targets =============================
@@ -51,7 +51,7 @@ libetherdream/etherdream.a:
 .PHONY: test
 test: all test/*.c
 	for test in $(TESTS); do \
-		$(CXX) $(CXXFLAGS) $(LIBS) -lm test/$$test.c ../liblzr/liblzr.a -o $$test ; \
+		$(CXX) $(CXXFLAGS) $(LIBS) -lm test/$$test.cpp ../liblzr/liblzr.a -o $$test ; \
 	done
 
 
