@@ -145,7 +145,7 @@ static void render()
     //begin processing the current frame
     pthread_mutex_lock(&frame_lock);
 
-    //NOTE: cast to int to avoid rollover problems with -1
+    //NOTE: using int's to avoid rollover problems with -1 (empty frames)
     for(int i = 0; i < ((int)frame.size() - 1); i++)
     {
         Point p1 = frame[i];
