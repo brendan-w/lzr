@@ -188,6 +188,7 @@ static int read_frame(ILDA* ilda, FrameList& frame_list, point_reader read_point
     //if there's already a problem, return early
     if(STATUS_IS_HALTING(status)) return status;
 
+    //allocate them all at once
     Frame frame(n);
 
     //iterate over the records
@@ -198,12 +199,15 @@ static int read_frame(ILDA* ilda, FrameList& frame_list, point_reader read_point
         if(STATUS_IS_HALTING(r)) return r;
 
         //save the new point to the user's buffer
-        frame.add(point);
+        frame[i] = point;
 
         //TODO: listen to the status byte for end-of-frame
         //if this was the last point, stop
         // if(p.status.last_point)
-            // break;
+        // {
+        //     frame.resize(i + 1);
+        //     break;
+        // }
     }
 
     //add the frame to the user's animation
