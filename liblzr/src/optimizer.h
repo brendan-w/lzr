@@ -87,6 +87,8 @@ private:
     void find_next_and_swap(size_t start, Optimizer_Point laser);
 
     //path compilation functions
+    size_t num_beginning_anchors(Optimizer_Path path); //lookups for the number of existing anchor points
+    size_t num_ending_anchors(Optimizer_Path path);
     void add_path_to_frame(Frame& frame, Optimizer_Path path, bool skip_first_point);
     void blank_between(Frame& frame, Point a, Point b, size_t anchors);
 };

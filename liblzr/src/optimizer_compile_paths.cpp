@@ -35,17 +35,14 @@ void Optimizer_Context::add_path_to_frame(Frame& frame, Optimizer_Path path, boo
 //generates a blanking jump between two Point's
 void Optimizer_Context::blank_between(Frame& frame, Point a, Point b, size_t anchors)
 {
-    Point a_blanked = a;
-    Point b_blanked = b;
-    a_blanked.blank();
-    b_blanked.blank();
-
+    a.blank();
+    b.blank();
 
     for(size_t i = 0; i < anchors; i++)
-        frame.add(a_blanked);
+        frame.add(a);
 
     for(size_t i = 0; i < anchors; i++)
-        frame.add(b_blanked);
+        frame.add(b);
 }
 
 
