@@ -165,6 +165,7 @@ int interpolate(Frame& frame,
 /*  LZR Optimizer                                                             */
 /******************************************************************************/
 
+//20 points from one side of the frame to the other
 #define BLANK_INTERP_DEFAULT ((LZR_POSITION_MAX - LZR_POSITION_MIN) / 20.0)
 
 //forward declaration for optimizer internals
@@ -179,11 +180,11 @@ public:
 
     //settings
     double path_split_angle       = 45;   //minimum angle (degrees) at which to consider lines to be seperate paths
-    bool   reorder_paths          = true; //allow the optimizer to the change the order in which points are scanned 
+    bool   reorder_paths          = true; //allow the optimizer to the change the order in which points are scanned
     size_t anchor_points_lit      = 1;    //minimum number of lit points to place at the start & end of a line segment
     size_t anchor_points_blanked  = 2;    //minimum number of blanked points to place at the start & end of a line segment
     double blank_max_distance     = BLANK_INTERP_DEFAULT; //max distance for interpolation of blanking jumps
-    interpolation_func blank_func = linear; //interpolation function to use for interpolated blanking jumps
+    interpolation_func blank_func = linear; //interpolation function to use for blanking jumps
 
 private:
     Optimizer_Context* ctx;
