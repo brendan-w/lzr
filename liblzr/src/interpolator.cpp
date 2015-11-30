@@ -41,7 +41,7 @@ double quart(double t)
 
 //generates extra points on a line
 //only adds the interior points, not the endpoints
-static int interp_line(Frame& working, double max_distance, interpolation_func func, Point start, Point end)
+int interp_line(Frame& working, double max_distance, interpolation_func func, Point start, Point end)
 {
     //find out if the endpoints of the line are far enough apart to require interpolation
     double sq_dist     = start.sq_distance_to(end);

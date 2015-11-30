@@ -28,6 +28,9 @@ void Optimizer_Context::add_path_to_frame(Frame& frame, Optimizer_Path path, boo
             frame.add(points[path.a - i].point);
         }
     }
+
+    //make sure that the requested number of lit anchor points are present at the end of the path
+
 }
 
 
@@ -40,6 +43,10 @@ void Optimizer_Context::blank_between(Frame& frame, Point a, Point b, size_t anc
 
     for(size_t i = 0; i < anchors; i++)
         frame.add(a);
+
+    //interpolate from A to B
+    // interp_line(frame, max_distance, func, a, b);
+
 
     for(size_t i = 0; i < anchors; i++)
         frame.add(b);
