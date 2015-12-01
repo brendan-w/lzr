@@ -58,7 +58,7 @@ int Optimizer_Internals::run(Optimizer* settings, Frame& frame)
     if(settings->reorder_paths)
         reorder_paths(settings); //sorts the path buffer
 
-    // compile_paths(frame, lit_anchors, blanked_anchors);
+    compile_paths(settings, frame);
 
     return 0;
 }

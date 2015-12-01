@@ -166,7 +166,7 @@ int interpolate(Frame& frame,
 /******************************************************************************/
 
 //20 points from one side of the frame to the other
-#define BLANK_INTERP_DEFAULT ((LZR_POSITION_MAX - LZR_POSITION_MIN) / 20.0)
+#define BLANK_INTERP_DEFAULT ((LZR_POSITION_MAX - LZR_POSITION_MIN) / 5.0)
 
 //forward declaration for optimizer internals
 class Optimizer_Internals;

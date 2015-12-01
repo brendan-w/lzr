@@ -133,7 +133,10 @@ ilda_color ILDA_Projector::lookup_color(size_t i)
 
 void ILDA_Projector::add_color_to_palette(ilda_color c)
 {
-    palette.push_back(c);
+    if(palette.size() < 256)
+        palette.push_back(c);
+    // else
+        //TODO: handle this error
 }
 
 void ILDA_Projector::clear_palette()

@@ -33,7 +33,8 @@ HEADERS := lzr.h \
            src/ilda.h \
            src/optimizer.h
 
-TESTS := test_interpolator
+TESTS := test_interpolator \
+         test_optimizer
          # test_optimizer \
          # test_ilda_read \
          # test_ilda_write \
