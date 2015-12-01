@@ -7,13 +7,13 @@ namespace lzr {
 
 
 //the cost function for a blank jump between points A and B
-double Optimizer_Context::cost(Optimizer_Point a, Optimizer_Point b)
+double Optimizer_Internals::cost(Optimizer_Point a, Optimizer_Point b)
 {
     return a.point.sq_distance_to(b.point);
 }
 
 
-void Optimizer_Context::swap_paths(size_t a, size_t b)
+void Optimizer_Internals::swap_paths(size_t a, size_t b)
 {
     if(a != b)
     {
@@ -25,7 +25,7 @@ void Optimizer_Context::swap_paths(size_t a, size_t b)
 
 
 //scan for the best path to enter next
-void Optimizer_Context::find_next_and_swap(size_t current_path, Optimizer_Point laser)
+void Optimizer_Internals::find_next_and_swap(size_t current_path, Optimizer_Point laser)
 {
     //running vars
     size_t best_path;      //index of the path with the best (lowest) cost
@@ -72,7 +72,7 @@ void Optimizer_Context::find_next_and_swap(size_t current_path, Optimizer_Point 
 }
 
 
-void Optimizer_Context::reorder_paths()
+void Optimizer_Internals::reorder_paths(Optimizer* settings)
 {
     Optimizer_Point laser = last_known_point;
 

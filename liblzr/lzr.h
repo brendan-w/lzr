@@ -169,7 +169,7 @@ int interpolate(Frame& frame,
 #define BLANK_INTERP_DEFAULT ((LZR_POSITION_MAX - LZR_POSITION_MIN) / 20.0)
 
 //forward declaration for optimizer internals
-class Optimizer_Context;
+class Optimizer_Internals;
 
 class Optimizer
 {
@@ -187,7 +187,7 @@ public:
     interpolation_func blank_func = linear; //interpolation function to use for blanking jumps
 
 private:
-    Optimizer_Context* ctx;
+    Optimizer_Internals* internal;
 };
 
 

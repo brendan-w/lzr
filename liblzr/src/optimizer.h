@@ -40,15 +40,12 @@ public:
 
 
 //optimizer context
-class Optimizer_Context {
+class Optimizer_Internals {
 public:
-    int run(Frame& frame, double split_angle,      //radians for path splitting tolerance
-                          bool reorder,            //whether to reorder the paths
-                          size_t lit_anchors,      //minimum number of lit anchors
-                          size_t blanked_anchors); //minimum number of blanked anchors
+    int run(Optimizer* settings, Frame& frame);
 
 private:
-    //working data
+    //state
     Optimizer_Point last_known_point;    //the last point from the previously optimized frame
     std::vector<Optimizer_Point> points; //point buffer
     std::vector<Optimizer_Path> paths;   //path buffer
@@ -59,20 +56,20 @@ private:
         Splits a point buffer into individual path segments.
         Loads the result into the given path buffer.
     */
-    void find_paths(double split_angle);
+    void find_paths(Optimizer* settings);
 
     /*
         Arranges the paths in the path buffer to minimize blank time,
         and route the laser in a sensical path.
     */
-    void reorder_paths();
+    void reorder_paths(Optimizer* settings);
 
     /*
         Fills the given output buffer according to the modified path buffer.
         Inserts/generates new blanking jumps. Returns the new size of the
         output buffer.
     */
-    void compile_paths(Frame& frame, size_t lit, size_t blanked);
+    void compile_paths(Optimizer* settings, Frame& frame);
 
 
 
@@ -89,10 +86,15 @@ private:
     //path compilation functions
     size_t num_beginning_anchors(Optimizer_Path path); //lookups for the number of existing anchor points
     size_t num_ending_anchors(Optimizer_Path path);
-    void add_path_to_frame(Frame& frame, Optimizer_Path path, bool skip_first_point);
-    void blank_between(Frame& frame, Point a, Point b, size_t anchors);
+    void add_path_to_frame(Optimizer* settings,
+                           Frame& frame,
+                           Optimizer_Path path,
+                           bool skip_first_point);
+    void blank_between(Optimizer* settings,
+                       Frame& frame,
+                       Point a,
+                       Point b);
 };
-
 
 
 } // namespace lzr

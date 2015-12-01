@@ -1,13 +1,17 @@
 
 
 #include "optimizer.h"
+#include "interpolator.h"
 
 namespace lzr {
 
 
 
 
-void Optimizer_Context::add_path_to_frame(Frame& frame, Optimizer_Path path, bool skip_first_point)
+void Optimizer_Internals::add_path_to_frame(Optimizer* settings,
+                                            Frame& frame,
+                                            Optimizer_Path path,
+                                            bool skip_first_point)
 {
     size_t skip = (skip_first_point ? 1 : 0);
 
@@ -36,24 +40,26 @@ void Optimizer_Context::add_path_to_frame(Frame& frame, Optimizer_Path path, boo
 
 
 //generates a blanking jump between two Point's
-void Optimizer_Context::blank_between(Frame& frame, Point a, Point b, size_t anchors)
+void Optimizer_Internals::blank_between(Optimizer* settings,
+                                        Frame& frame,
+                                        Point a,
+                                        Point b)
 {
     a.blank();
     b.blank();
 
-    for(size_t i = 0; i < anchors; i++)
+    for(size_t i = 0; i < settings->anchor_points_blanked; i++)
         frame.add(a);
 
     //interpolate from A to B
-    // interp_line(frame, max_distance, func, a, b);
+    interp_line(frame, settings->blank_max_distance, settings->blank_func, a, b);
 
-
-    for(size_t i = 0; i < anchors; i++)
+    for(size_t i = 0; i < settings->anchor_points_blanked; i++)
         frame.add(b);
 }
 
 
-void Optimizer_Context::compile_paths(Frame& frame, size_t lit, size_t blanked)
+void Optimizer_Internals::compile_paths(Optimizer* settings, Frame& frame)
 {
     frame.clear();
 
@@ -76,11 +82,11 @@ void Optimizer_Context::compile_paths(Frame& frame, size_t lit, size_t blanked)
             //if the last_known_point is different than this frames
             //starting point, then an introductory blanking jump
             //is neccessary.
-            blank_between(frame, a, b, blanked);
+            blank_between(settings, frame, a, b);
         }
 
         //load the drawn points into the output buffer
-        add_path_to_frame(frame, path, skip_first_point);
+        add_path_to_frame(settings, frame, path, skip_first_point);
 
         //walk the laser
         last_known_point = points[path.b];

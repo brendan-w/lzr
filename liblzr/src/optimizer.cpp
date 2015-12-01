@@ -19,23 +19,20 @@ static inline double deg_to_rad(double deg)
 
 Optimizer::Optimizer()
 {
-    ctx = new Optimizer_Context();
+    internal = new Optimizer_Internals();
 }
 
 
 Optimizer::~Optimizer()
 {
-    delete ctx;
+    delete internal;
 }
 
 
 //main optimization function
 int Optimizer::run(Frame& frame)
 {
-    return ctx->run(frame, deg_to_rad(path_split_angle),
-                           reorder_paths,
-                           anchor_points_lit,
-                           anchor_points_blanked);
+    return internal->run(this, frame);
 }
 
 
@@ -47,7 +44,7 @@ int Optimizer::run(Frame& frame)
  */
 
 
-int Optimizer_Context::run(Frame& frame, double split_angle, bool reorder, size_t lit_anchors, size_t blanked_anchors)
+int Optimizer_Internals::run(Optimizer* settings, Frame& frame)
 {
     //save the frame to our working buffer
     points.resize(frame.size());
@@ -56,10 +53,10 @@ int Optimizer_Context::run(Frame& frame, double split_angle, bool reorder, size_
         points[i].point = frame[i];
     }
 
-    find_paths(split_angle);
+    find_paths(settings);
 
-    if(reorder)
-        reorder_paths(); //sorts the path buffer
+    if(settings->reorder_paths)
+        reorder_paths(settings); //sorts the path buffer
 
     // compile_paths(frame, lit_anchors, blanked_anchors);
 
