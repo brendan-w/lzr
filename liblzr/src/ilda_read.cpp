@@ -31,8 +31,8 @@ static int read_record(ILDA* ilda, void* buffer, size_t buffer_size)
  * Record readers/decoders
  * These functions translate ILDA structs into LZR structs
  *
- * Point's are returned in the `output` param
- * Colors are placed in that projector's color palette array
+ * Data from point records will be loaded into the given lzr::Point* p
+ * Colors are placed in the corresponding projector's color palette array
  */
 
 // ================================ Format 0 ================================
@@ -87,6 +87,7 @@ static int read_2d_indexed(ILDA* ilda, Point* p)
 
 
 // ================================ Format 2 ================================
+//NOTE: unlike the point readers, this function reads ALL of its records in one call
 static int read_colors(ILDA* ilda)
 {
     size_t n = ilda->h.number_of_records;
