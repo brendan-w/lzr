@@ -36,6 +36,7 @@ public:
 
     size_t size();
     void invert();
+    size_t operator[](size_t n);
 };
 
 
@@ -84,7 +85,6 @@ private:
     void find_next_and_swap(size_t start, Optimizer_Point laser);
 
     //path compilation functions
-    size_t num_beginning_anchors(Optimizer_Path path); //lookups for the number of existing anchor points
     size_t num_ending_anchors(Optimizer_Path path);
     void add_path_to_frame(Optimizer* settings,
                            Frame& frame,

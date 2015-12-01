@@ -74,6 +74,8 @@ void Optimizer_Internals::find_next_and_swap(size_t current_path, Optimizer_Poin
 
 void Optimizer_Internals::reorder_paths(Optimizer* settings)
 {
+    (void) settings;
+
     Optimizer_Point laser = last_known_point;
 
     for(size_t i = 0; i < paths.size(); i++)

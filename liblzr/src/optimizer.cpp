@@ -84,5 +84,18 @@ void Optimizer_Path::invert()
     b = temp;
 }
 
+//in-order point index lookup function
+//transparently handles inverted paths
+size_t Optimizer_Path::operator[](size_t n)
+{
+    //test if the path is inverted
+    if(a < b)
+        return a + n;
+    else
+        return a - n;
+}
+
+
+
 
 } // namespace lzr

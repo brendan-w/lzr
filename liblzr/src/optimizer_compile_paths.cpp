@@ -8,6 +8,25 @@ namespace lzr {
 
 
 
+//lookups for the number of existing anchor points
+size_t Optimizer_Internals::num_ending_anchors(Optimizer_Path path)
+{
+    size_t n = 1;
+
+    Point last_point = points[path.b].point;
+
+    for(int i = ((int)path.size()) - 1; i >= 0; i--)
+    {
+        if(last_point == points[path[i]].point)
+            n++;
+        else
+            break;
+    }
+
+    return n;
+}
+
+
 void Optimizer_Internals::add_path_to_frame(Optimizer* settings,
                                             Frame& frame,
                                             Optimizer_Path path,
@@ -15,26 +34,19 @@ void Optimizer_Internals::add_path_to_frame(Optimizer* settings,
 {
     size_t skip = (skip_first_point ? 1 : 0);
 
-    //test if the path is inverted
-    if(path.a < path.b)
+    for(size_t i = skip; i < path.size(); i++)
     {
-        //ascending from the path's A point
-        for(size_t i = skip; i < path.size(); i++)
-        {
-            frame.add(points[path.a + i].point);
-        }
-    }
-    else
-    {
-        //descending from the path's B point
-        for(size_t i = skip; i < path.size(); i++)
-        {
-            frame.add(points[path.a - i].point);
-        }
+        frame.add(points[path[i]].point);
     }
 
     //make sure that the requested number of lit anchor points are present at the end of the path
+    int anchors = settings->anchor_points_lit - num_ending_anchors(path);
 
+    //add any extra needed anchors
+    for(int i = 0; i < anchors; i++)
+    {
+        frame.add(points[path.b].point);
+    }
 }
 
 
