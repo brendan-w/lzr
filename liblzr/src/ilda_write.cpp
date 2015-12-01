@@ -66,6 +66,7 @@ void write_closer(ILDA* ilda)
     //zero out a new header
     ilda_header h;
     memset(&h, 0, sizeof(ilda_header));
+    memcpy(h.ilda, "ILDA", 4);
 
     //write the header
     fwrite((void*) &h, 1, sizeof(ilda_header), ilda->f);
