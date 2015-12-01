@@ -67,6 +67,8 @@ int recv_frame(void* sub, Frame& frame)
         memcpy((void*) frame.data(), zmq_msg_data(&msg), zmq_msg_size(&msg));
     }
 
+    zmq_msg_close(&msg);
+
     return r; //pass negative (error) return codes
 }
 
