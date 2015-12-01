@@ -55,7 +55,7 @@ static int read_3d_indexed(ILDA* ilda, Point* p)
     p->b = c.b;
     p->i = UINT8_MAX;
     if(ilda_p.status.blanked)
-        p->r = p->g = p->b = p->i = 0;
+        p->blank();
 
     return ILDA_CONTINUE;
 }
@@ -80,7 +80,7 @@ static int read_2d_indexed(ILDA* ilda, Point* p)
     p->b = c.b;
     p->i = UINT8_MAX;
     if(ilda_p.status.blanked)
-        p->r = p->g = p->b = p->i = 0;
+        p->blank();
 
     return ILDA_CONTINUE;
 }
@@ -130,7 +130,7 @@ static int read_3d_true(ILDA* ilda, Point* p)
     p->i = UINT8_MAX;
 
     if(ilda_p.status.blanked)
-        p->r = p->g = p->b = p->i = 0;
+        p->blank();
 
     return ILDA_CONTINUE;
 }
@@ -155,7 +155,7 @@ static int read_2d_true(ILDA* ilda, Point* p)
     p->i = UINT8_MAX;
 
     if(ilda_p.status.blanked)
-        p->r = p->g = p->b = p->i = 0;
+        p->blank();
 
     return ILDA_CONTINUE;
 }
