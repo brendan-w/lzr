@@ -19,7 +19,8 @@ OBJS := lzrd.o
 
 HEADERS += lzr.h
 
-TESTS := ilda_server
+TESTS := ilda_server \
+         fan_server
          # interp_server \
          # spiro_server \
          # transform_server
