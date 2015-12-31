@@ -60,10 +60,19 @@ void Optimizer_Internals::add_path_to_frame(Optimizer* settings,
     int anchors = settings->anchor_points_lit;
     anchors -= num_beginning_anchors(path); //the number of leading anchors that are already present
 
-    if(frame.back().is_lit())
+    if(frame.empty())
     {
-        //if the previous point was lit (aka, we're continuing a solid line)
-        anchors -= num_ending_anchors(frame); //the number of anchors already at the end of the frame
+        //if there's nothing in the frame (not even an introductory blanking jump),
+        //then use the old value for the number of ending anchor points in the previous frame
+        anchors -= num_last_known_anchors;
+    }
+    else
+    {
+        if(frame.back().is_lit())
+        {
+            //if the previous point was lit (aka, we're continuing a solid line)
+            anchors -= num_ending_anchors(frame); //the number of anchors already at the end of the frame
+        }
     }
 
     //write any additional lit anchor points
@@ -124,6 +133,11 @@ void Optimizer_Internals::compile_paths(Optimizer* settings, Frame& frame)
         //walk the laser
         last_known_point = points[path.b];
     }
+
+    //now that we're all done, and we've reached the last_known_point,
+    //save the number of ending anchor points that this frame has.
+    //this is used when processing subsequent frames
+    num_last_known_anchors = num_ending_anchors(frame);
 }
 
 
