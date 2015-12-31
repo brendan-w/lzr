@@ -15,7 +15,7 @@ size_t Optimizer_Internals::num_beginning_anchors(Optimizer_Path path)
     Point first_point = points[path.a].point;
 
     //loop forwards
-    for(int i = 0; i < ((int)path.size()); i++)
+    for(int i = 1; i < ((int)path.size()); i++)
     {
         if(first_point == points[path[i]].point)
             n++;
@@ -35,7 +35,7 @@ size_t Optimizer_Internals::num_ending_anchors(Frame& frame)
     Point last_point = frame.back();
 
     //loop backwards
-    for(int i = ((int)frame.size()) - 1; i >= 0; i--)
+    for(int i = ((int)frame.size()) - 2; i >= 0; i--)
     {
         if(last_point == frame[i])
             n++;
@@ -75,6 +75,7 @@ void Optimizer_Internals::add_path_to_frame(Optimizer* settings,
         }
     }
 
+
     //write any additional lit anchor points
     for(int i = 0; i < anchors; i++)
     {
@@ -89,13 +90,32 @@ void Optimizer_Internals::add_path_to_frame(Optimizer* settings,
 }
 
 
-
-//generates a blanking jump between two Point's
+/*
+ * Generates a blanking jump between two Points.
+ * Also checks for appropriate number of lit anchor points at the end of the frame.
+ */
 void Optimizer_Internals::blank_between(Optimizer* settings,
                                         Frame& frame,
                                         Point a,
                                         Point b)
 {
+
+    //add any needed closing LIT anchor points
+
+    if( !frame.empty() && frame.back().is_lit())
+    {
+        int anchors = settings->anchor_points_lit - num_ending_anchors(frame);
+        printf("anchors: %d\n", anchors);
+        Point anchor = frame.back();
+
+        for(int i = 0; i < anchors; i++)
+            frame.add(anchor);
+    }
+
+
+
+    //add the interpolated blanking jump
+
     a.blank();
     b.blank();
 
