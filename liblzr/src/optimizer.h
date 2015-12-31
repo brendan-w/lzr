@@ -85,11 +85,12 @@ private:
     void find_next_and_swap(size_t start, Optimizer_Point laser);
 
     //path compilation functions
-    size_t num_ending_anchors(Optimizer_Path path);
+    size_t num_beginning_anchors(Optimizer_Path path);
+    // size_t num_ending_anchors(Optimizer_Path path);
+    size_t num_ending_anchors(Frame& frame);
     void add_path_to_frame(Optimizer* settings,
                            Frame& frame,
-                           Optimizer_Path path,
-                           bool skip_first_point);
+                           Optimizer_Path path);
     void blank_between(Optimizer* settings,
                        Frame& frame,
                        Point a,
