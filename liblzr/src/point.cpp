@@ -86,7 +86,7 @@ static inline uint8_t lerp_uint8(uint8_t v0, uint8_t v1, double t)
     return (uint8_t) round(lerp((double) v0, (double) v1, t));
 }
 
-Point Point::lerp_to(const Point& other, double t)
+Point Point::lerp_to(const Point& other, double t) const
 {
     Point p(lerp(x, other.x, t),
             lerp(y, other.y, t),
@@ -97,7 +97,7 @@ Point Point::lerp_to(const Point& other, double t)
     return p;
 }
 
-double Point::sq_distance_to(const Point& other)
+double Point::sq_distance_to(const Point& other) const
 {
     return (x - other.x)*(x - other.x) + (y - other.y)*(y - other.y);
 }
