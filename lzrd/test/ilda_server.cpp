@@ -17,8 +17,8 @@ int main()
     usleep(1200000);
 
     //open the ILDA file
-    ILDA* f = ilda_open("../../fedora_repaired_blue.ild", "r");
-    // ILDA* f = ilda_open("../../../Downloads/ildatest.ild", "r");
+    // ILDA* f = ilda_open("../../fedora_repaired_blue.ild", "r");
+    ILDA* f = ilda_open("../../../Downloads/ildatest.ild", "r");
     assert(f != NULL);
 
     //make sure projector 0 has frames

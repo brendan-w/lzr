@@ -26,25 +26,6 @@ size_t Optimizer_Internals::num_beginning_anchors(Optimizer_Path path)
     return n;
 }
 
-/*
-size_t Optimizer_Internals::num_ending_anchors(Optimizer_Path path)
-{
-    size_t n = 1;
-
-    Point last_point = points[path.b].point;
-
-    //loop backwards
-    for(int i = ((int)path.size()) - 1; i >= 0; i--)
-    {
-        if(last_point == points[path[i]].point)
-            n++;
-        else
-            break;
-    }
-
-    return n;
-}
-*/
 
 //counts the number of anchor points at the end of the frame
 size_t Optimizer_Internals::num_ending_anchors(Frame& frame)

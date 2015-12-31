@@ -20,7 +20,8 @@ namespace lzr {
 
 
 //specialized point class for handling the endpoints of a path
-class Optimizer_Point {
+class Optimizer_Point
+{
 public:
     Point point;  //copy of actual point data
     double angle; //the angle for entering the path at this point (radians)
@@ -28,7 +29,8 @@ public:
 
 
 //struct defining a "continguous" segment of the lasers points
-class Optimizer_Path {
+class Optimizer_Path
+{
 public:
     size_t a;   //index of the front point
     size_t b;   //index of the back point
@@ -40,16 +42,25 @@ public:
 };
 
 
+
 //optimizer context
-class Optimizer_Internals {
+class Optimizer_Internals
+{
 public:
+    //main optimization function. Accepts pointer for
+    //the wrapper/settings holder object.
     int run(Optimizer* settings, Frame& frame);
 
 private:
-    //state
-    Optimizer_Point last_known_point;    //the last point from the previously optimized frame
+    //main frame buffers
     std::vector<Optimizer_Point> points; //point buffer
     std::vector<Optimizer_Path> paths;   //path buffer
+
+    //state, preserved between frames
+    Optimizer_Point last_known_point; //the last point from the previously optimized frame
+    size_t num_last_known_anchors;    //number of ending anchor points on the previous frame
+
+
 
     //Top level functions (these are order specific)
 
@@ -59,11 +70,21 @@ private:
     */
     void find_paths(Optimizer* settings);
 
+    void fill_angle();
+    void path_split(double split_angle);
+    void fill_cycle(double split_angle);
+
+
     /*
         Arranges the paths in the path buffer to minimize blank time,
         and route the laser in a sensical path.
     */
     void reorder_paths(Optimizer* settings);
+
+    double cost(Optimizer_Point a, Optimizer_Point b);
+    void swap_paths(size_t a, size_t b);
+    void find_next_and_swap(size_t start, Optimizer_Point laser);
+
 
     /*
         Fills the given output buffer according to the modified path buffer.
@@ -72,21 +93,7 @@ private:
     */
     void compile_paths(Optimizer* settings, Frame& frame);
 
-
-
-    //internal path-finding functions
-    void fill_angle();
-    void path_split(double split_angle);
-    void fill_cycle(double split_angle);
-
-    //path reorderring functions
-    double cost(Optimizer_Point a, Optimizer_Point b);
-    void swap_paths(size_t a, size_t b);
-    void find_next_and_swap(size_t start, Optimizer_Point laser);
-
-    //path compilation functions
     size_t num_beginning_anchors(Optimizer_Path path);
-    // size_t num_ending_anchors(Optimizer_Path path);
     size_t num_ending_anchors(Frame& frame);
     void add_path_to_frame(Optimizer* settings,
                            Frame& frame,
