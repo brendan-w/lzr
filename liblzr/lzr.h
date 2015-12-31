@@ -155,6 +155,7 @@ double quart(double t);  /*-*---*-----*-------*-------*-----*---*-*/
 #define INTERP_DEFAULT ((LZR_POSITION_MAX - LZR_POSITION_MIN) / 100.0)
 
 //main interpolator function
+//Only interpolates lit points. Use the Optimizer to interpolate blanking jumps
 int interpolate(Frame& frame,
                 double max_distance=INTERP_DEFAULT,
                 interpolation_func func=linear);
