@@ -104,7 +104,6 @@ private:
     void compile_paths(Optimizer* settings, Frame& frame);
 
     size_t num_beginning_anchors(Optimizer_Path path);
-    size_t num_ending_anchors(Frame& frame);
     void add_path_to_frame(Optimizer* settings,
                            Frame& frame,
                            Optimizer_Path path);

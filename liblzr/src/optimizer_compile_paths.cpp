@@ -28,7 +28,7 @@ size_t Optimizer_Internals::num_beginning_anchors(Optimizer_Path path)
 
 
 //counts the number of anchor points at the end of the frame
-size_t Optimizer_Internals::num_ending_anchors(Frame& frame)
+static size_t num_ending_anchors(Frame& frame)
 {
     size_t n = 1;
 
