@@ -16,10 +16,13 @@ namespace lzr {
 #define ANGLE(a, b)       ( std::atan2(b.y - a.y, b.x - a.y) * -1 ) //the angle from point A to point B on range (-PI, PI] in screen coords
 #define ANGLE_NORM(a)     ( std::fmod(a, PI) ) //constrains angles to (-PI, PI]
 #define ANGLE_OPPOSITE(a) ( ANGLE_NORM(a + PI) )
+#define ANGLE_ANY         4.0 //an invalid point angle denoting no angle preference
 
 
 
-//specialized point class for handling the endpoints of a path
+/*
+ * specialized point class for handling the endpoints of a path
+ */
 class Optimizer_Point
 {
 public:
@@ -28,7 +31,10 @@ public:
 };
 
 
-//struct defining a "continguous" segment of the lasers points
+
+/*
+ * struct defining a "continguous" segment of the lasers points
+ */
 class Optimizer_Path
 {
 public:
@@ -38,12 +44,16 @@ public:
 
     size_t size();
     void invert();
+    double entrance_angle(const std::vector<Optimizer_Point> & points);
+    double exit_angle(const std::vector<Optimizer_Point> & points);
     size_t operator[](size_t n);
 };
 
 
 
-//optimizer context
+/*
+ * private optimizer context
+ */
 class Optimizer_Internals
 {
 public:

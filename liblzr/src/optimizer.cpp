@@ -65,9 +65,9 @@ int Optimizer_Internals::run(Optimizer* settings, Frame& frame)
 size_t Optimizer_Path::size()
 {
     if(a < b)
-        return b - a + 1;
+        return b - a + 1; //non-inverted
     else
-        return a - b + 1;
+        return a - b + 1; //inverted
 }
 
 void Optimizer_Path::invert()
@@ -77,15 +77,49 @@ void Optimizer_Path::invert()
     b = temp;
 }
 
+double Optimizer_Path::entrance_angle(const std::vector<Optimizer_Point> & points)
+{
+    //if there aren't enough points, then the angle is irrelevant
+    if(size() < 2)
+    {
+        return ANGLE_ANY;
+    }
+    else
+    {
+        if(a < b) //non-inverted
+            return points[a + 1].angle;
+        else
+            return ANGLE_OPPOSITE(points[b].angle);
+    }
+}
+
+double Optimizer_Path::exit_angle(const std::vector<Optimizer_Point> & points)
+{
+    //if there aren't enough points, then the angle is irrelevant
+    if(size() < 2)
+    {
+        return ANGLE_ANY;
+    }
+    else
+    {
+        if(a < b)
+            return points[b].angle;
+        else
+            return ANGLE_OPPOSITE(points[a + 1].angle);
+    }
+}
+
+
+
 //in-order point index lookup function
 //transparently handles inverted paths
 size_t Optimizer_Path::operator[](size_t n)
 {
     //test if the path is inverted
     if(a < b)
-        return a + n;
+        return a + n; //non-inverted
     else
-        return a - n;
+        return a - n; //inverted
 }
 
 
