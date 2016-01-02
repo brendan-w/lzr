@@ -105,7 +105,6 @@ void Optimizer_Internals::blank_between(Optimizer* settings,
     if( !frame.empty() && frame.back().is_lit())
     {
         int anchors = settings->anchor_points_lit - num_ending_anchors(frame);
-        printf("anchors: %d\n", anchors);
         Point anchor = frame.back();
 
         for(int i = 0; i < anchors; i++)
