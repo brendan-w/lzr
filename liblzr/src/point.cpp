@@ -7,7 +7,7 @@ namespace lzr {
 
 /*
     The LZR coordinate system is [-1.0, 1.0] (2.0 units wide),
-    and Llser DACs are ussually 16 bit, so:
+    and Laser DACs are usually 16 bit, so:
 
     2.0 / 65536 = 0.0000305 units per DAC step
 

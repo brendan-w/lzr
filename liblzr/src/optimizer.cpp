@@ -5,13 +5,6 @@ namespace lzr {
 
 
 
-static inline double deg_to_rad(double deg)
-{
-    return deg * PI / 180.0;
-}
-
-
-
 /*
  * Wrapper for the user-facing optimizer,
  * also stores settings between runs

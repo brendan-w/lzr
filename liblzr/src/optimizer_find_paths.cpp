@@ -31,6 +31,13 @@ namespace lzr {
 
 
 
+static inline double deg_to_rad(double deg)
+{
+    return deg * PI / 180.0;
+}
+
+
+
 //computes the angles from one point to the next
 void Optimizer_Internals::fill_angle()
 {
@@ -153,9 +160,11 @@ void Optimizer_Internals::fill_cycle(double split_angle)
 */
 void Optimizer_Internals::find_paths(Optimizer* settings)
 {
+    double split_angle = deg_to_rad(settings->path_split_angle);
+
     fill_angle();
-    path_split(settings->path_split_angle);
-    fill_cycle(settings->path_split_angle);
+    path_split(split_angle);
+    fill_cycle(split_angle);
 }
 
 
