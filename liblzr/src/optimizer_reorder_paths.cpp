@@ -1,5 +1,5 @@
 
-
+#include <algorithm> //swap()
 #include "optimizer.h"
 
 namespace lzr {
@@ -10,17 +10,6 @@ namespace lzr {
 double Optimizer_Internals::cost(Optimizer_Point a, Optimizer_Point b)
 {
     return a.point.sq_distance_to(b.point);
-}
-
-
-void Optimizer_Internals::swap_paths(size_t a, size_t b)
-{
-    if(a != b)
-    {
-        Optimizer_Path temp = paths[a];
-        paths[a] = paths[b];
-        paths[b] = temp;
-    }
 }
 
 
@@ -65,7 +54,7 @@ void Optimizer_Internals::find_next_and_swap(size_t current_path, Optimizer_Poin
     }
 
     //we're all done, apply the change
-    swap_paths(current_path, best_path);
+    std::swap(paths[current_path], paths[best_path]);
 
     if(invert)
         paths[current_path].invert();
