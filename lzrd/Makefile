@@ -49,7 +49,7 @@ libetherdream/etherdream.a:
 
 
 .PHONY: test
-test: all test/*.c
+test: all tests/*.c
 	for test in $(TESTS); do \
 		$(CXX) $(CXXFLAGS) $(LIBS) -lm test/$$test.cpp ../liblzr/liblzr.a -o $$test ; \
 	done
