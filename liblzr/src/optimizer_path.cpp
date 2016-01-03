@@ -68,12 +68,12 @@ size_t Optimizer_Path::front_anchors(const std::vector<Optimizer_Point> & points
 {
     size_t n = 1;
 
-    Point first_point = front(points).point;
+    Optimizer_Point first_point = front(points);
 
     //loop forwards until we find a point that differs
     for(size_t i = 1; i < size(); i++)
     {
-        if(first_point == at(i, points).point)
+        if(first_point == at(i, points))
             n++;
         else
             break;
@@ -88,12 +88,12 @@ size_t Optimizer_Path::back_anchors(const std::vector<Optimizer_Point> & points)
 {
     size_t n = 1;
 
-    Point last_point = back(points).point;
+    Optimizer_Point last_point = back(points);
 
     //loop backwards, cast to int to avoid underflow errors
     for(int i = ((int)size()) - 2; i >= 0; i--)
     {
-        if(last_point == at(i, points).point)
+        if(last_point == at(i, points))
             n++;
         else
             break;

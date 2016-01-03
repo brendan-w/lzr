@@ -42,14 +42,14 @@ void Optimizer_Internals::fill_angle()
 
     */
 
-    points[0].angle = POINT_ANGLE(last_known_point.point,
-                                  points[0].point);
+    points[0].angle = POINT_ANGLE(last_known_point,
+                                  points[0]);
 
     for(size_t i = 1; i < points.size(); i++)
     {
-        if(points[i].point.is_lit())
-            points[i].angle = POINT_ANGLE(points[i - 1].point,
-                                          points[i].point);
+        if(points[i].is_lit())
+            points[i].angle = POINT_ANGLE(points[i - 1],
+                                          points[i]);
         //else, skip blanked points, they get recalculated anyway
     }
 }
@@ -68,7 +68,7 @@ void Optimizer_Internals::path_split(double split_angle)
     {
         Optimizer_Point p = points[i];
 
-        if(p.point.is_blanked())
+        if(p.is_blanked())
         {
             if(in_path)
             {
@@ -84,7 +84,7 @@ void Optimizer_Internals::path_split(double split_angle)
             if(in_path)
             {
                 //test the angle this point makes with previous/next points
-                if( (i+1 < paths.size()) && points[i+1].point.is_lit() ) //is the next point valid to check against
+                if( (i+1 < paths.size()) && points[i+1].is_lit() ) //is the next point valid to check against
                 {
                     Optimizer_Point next = points[i + 1];
 
@@ -126,7 +126,7 @@ void Optimizer_Internals::fill_cycle(double split_angle)
         Optimizer_Point b = path.back(points);
 
         //if they're in the same position, and there are at least 3 points
-        if(a.point.same_position_as(b.point) && path.size() >= 3)
+        if(a.same_position_as(b) && path.size() >= 3)
         {
             //fetch the point one forward of the joint
             Optimizer_Point next = path.at(1, points);

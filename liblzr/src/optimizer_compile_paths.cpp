@@ -66,13 +66,13 @@ void Optimizer_Internals::add_path_to_frame(Optimizer* settings,
     //write any additional lit anchor points
     for(int i = 0; i < anchors; i++)
     {
-        frame.add(path.front(points).point);
+        frame.add(path.front(points).to_point());
     }
 
     //write the path
     for(size_t i = 0; i < path.size(); i++)
     {
-        frame.add(path.at(i, points).point);
+        frame.add(path.at(i, points).to_point());
     }
 }
 
@@ -122,8 +122,8 @@ void Optimizer_Internals::compile_paths(Optimizer* settings, Frame& frame)
 
     for(Optimizer_Path path : paths)
     {
-        Point a = last_known_point.point; //last_known_point is gauranteed to be lit
-        Point b = path.front(points).point; //first point on the current path
+        Point a = last_known_point.to_point(); //last_known_point is gauranteed to be lit
+        Point b = path.front(points).to_point(); //first point on the current path
 
         if( ! a.same_position_as(b) )
         {

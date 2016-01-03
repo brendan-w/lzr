@@ -79,7 +79,7 @@ double Optimizer_Internals::angular_deflection(const Optimizer_Point & laser, co
 
 
     //if distance is basically zero
-    if(laser.point.same_position_as(path.front(points).point))
+    if(laser.same_position_as(path.front(points)))
     {
         //if either angle has no preference, then ignore 
         if((laser_angle != ANGLE_ANY) &&
@@ -91,7 +91,7 @@ double Optimizer_Internals::angular_deflection(const Optimizer_Point & laser, co
     else
     {
         //a blank jump is needed
-        double blank_angle = POINT_ANGLE(laser.point, path.front(points).point); //from the end of A to the start of B
+        double blank_angle = POINT_ANGLE(laser, path.front(points)); //from the end of A to the start of B
 
         //if any of these angles returned ANGLE_ANY, then they shouldn't contribute
         //any angular deflection. There's no need to worry about them.
@@ -110,8 +110,8 @@ double Optimizer_Internals::angular_deflection(const Optimizer_Point & laser, co
 double Optimizer_Internals::cost(const Optimizer_Point laser, const Optimizer_Path path)
 {
     //metrics
-    double sq_distance = laser.point.sq_distance_to(path.front(points).point); // [0, 2]
-    double deflection = angular_deflection(laser, path);                       // [0, 2Pi)
+    double sq_distance = laser.sq_distance_to(path.front(points)); // [0, 2]
+    double deflection = angular_deflection(laser, path);           // [0, 2Pi)
 
     //normalize the costs
     sq_distance /= MAX_SQ_DISTANCE;

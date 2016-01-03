@@ -46,13 +46,15 @@ namespace lzr {
 
 
 /*
- * specialized point class for handling the endpoints of a path
+ * specialized point class for with extra fields for our purposes
  */
-class Optimizer_Point
+class Optimizer_Point : public Point
 {
 public:
-    Point point;  //copy of actual point data
     double angle; //the angle for entering the path at this point (radians)
+
+    const Optimizer_Point& operator=(const Point& rhs); //for Optimizer_Point = Point
+    Point to_point();
 };
 
 
