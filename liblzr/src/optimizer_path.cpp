@@ -29,7 +29,7 @@ Optimizer_Path::Optimizer_Path(size_t _a, size_t _b, const std::vector<Optimizer
 }
 
 
-size_t Optimizer_Path::size()
+size_t Optimizer_Path::size() const
 {
     if(INVERTED)
         return a - b + 1;
@@ -52,19 +52,19 @@ void Optimizer_Path::invert()
 }
 
 
-double Optimizer_Path::entrance_angle()
+double Optimizer_Path::entrance_angle() const
 {
     return entrance;
 }
 
-double Optimizer_Path::exit_angle()
+double Optimizer_Path::exit_angle() const
 {
     return exit;
 }
 
 
 //lookups for the number of existing anchor points in the given path
-size_t Optimizer_Path::front_anchors(const std::vector<Optimizer_Point> & points)
+size_t Optimizer_Path::front_anchors(const std::vector<Optimizer_Point> & points) const
 {
     size_t n = 1;
 
@@ -84,7 +84,7 @@ size_t Optimizer_Path::front_anchors(const std::vector<Optimizer_Point> & points
 
 
 //currently not used, but implemented just in case
-size_t Optimizer_Path::back_anchors(const std::vector<Optimizer_Point> & points)
+size_t Optimizer_Path::back_anchors(const std::vector<Optimizer_Point> & points) const
 {
     size_t n = 1;
 
@@ -103,13 +103,13 @@ size_t Optimizer_Path::back_anchors(const std::vector<Optimizer_Point> & points)
 }
 
 
-Optimizer_Point Optimizer_Path::front(const std::vector<Optimizer_Point> & points)
+Optimizer_Point Optimizer_Path::front(const std::vector<Optimizer_Point> & points) const
 {
     return at(0, points); //TODO throw errors for path of size == 0
 }
 
 
-Optimizer_Point Optimizer_Path::back(const std::vector<Optimizer_Point> & points)
+Optimizer_Point Optimizer_Path::back(const std::vector<Optimizer_Point> & points) const
 {
     return at(size() - 1, points); //TODO throw errors for path of size == 0
 }
@@ -118,7 +118,7 @@ Optimizer_Point Optimizer_Path::back(const std::vector<Optimizer_Point> & points
 //in-order point lookup function
 //transparently handles inverted paths, and angle recalculation
 //TODO: handle invalid point indicies
-Optimizer_Point Optimizer_Path::at(size_t n, const std::vector<Optimizer_Point> & points)
+Optimizer_Point Optimizer_Path::at(size_t n, const std::vector<Optimizer_Point> & points) const
 {
     Optimizer_Point p;
 

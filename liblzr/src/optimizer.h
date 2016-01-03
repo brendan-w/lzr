@@ -11,12 +11,12 @@ namespace lzr {
 
 //constants
 #define PI 3.14159265358979323846
-#define ANGLE_ANY         4.0 //an invalid point angle denoting no angle preference
+#define ANGLE_ANY 8.0 //an invalid point angle denoting no angle preference ( > 2*PI )
 
 //functions
-#define ANGLE(a, b)       ( std::atan2(b.y - a.y, b.x - a.y) * -1 ) //the angle from point A to point B on range (-PI, PI] in screen coords
 #define ANGLE_NORM(a)     ( std::fmod(a, PI) ) //constrains angles to (-PI, PI]
 #define ANGLE_OPPOSITE(a) ( ANGLE_NORM(a + PI) )
+#define POINT_ANGLE(a, b) ( std::atan2(b.y - a.y, b.x - a.y) * -1 ) //the angle from point A to point B on range (-PI, PI] in screen coords
 
 /*
     The angle formed between three points. Because of the way point
@@ -39,7 +39,8 @@ namespace lzr {
     ._______.  .  .  .  .
 
 */
-#define ANGLE_FORMED(b, c) (std::abs(c.angle - b.angle))
+#define ANGLE_DEFLECTION(b, c) (std::abs(c - b)) //for individual angle values
+#define POINT_DEFLECTION(b, c) (ANGLE_DEFLECTION(b.angle, c.angle)) //for points themselves
 
 
 
@@ -66,15 +67,15 @@ public:
     //always pass the points array when actual point data is needed
     //otherwise, NEVER retain a reference, becuase some data will need to persist
     //(ie. the last_known_point)
-    size_t size();
+    size_t size() const;
     void invert();
-    double entrance_angle();
-    double exit_angle();
-    size_t front_anchors(const std::vector<Optimizer_Point> & points);
-    size_t back_anchors(const std::vector<Optimizer_Point> & points);
-    Optimizer_Point front(const std::vector<Optimizer_Point> & points);
-    Optimizer_Point back(const std::vector<Optimizer_Point> & points);
-    Optimizer_Point at(size_t n, const std::vector<Optimizer_Point> & points);
+    double entrance_angle() const;
+    double exit_angle() const;
+    size_t front_anchors(const std::vector<Optimizer_Point> & points) const;
+    size_t back_anchors(const std::vector<Optimizer_Point> & points) const;
+    Optimizer_Point front(const std::vector<Optimizer_Point> & points) const;
+    Optimizer_Point back(const std::vector<Optimizer_Point> & points) const;
+    Optimizer_Point at(size_t n, const std::vector<Optimizer_Point> & points) const;
 
     bool cycle; //whether or not this path is cyclic (EXPERIMENTAL)
 
@@ -129,8 +130,9 @@ private:
     */
     void reorder_paths(Optimizer* settings);
 
-    double cost(Optimizer_Point laser, Optimizer_Path path);
-    void find_next_and_swap(size_t start, Optimizer_Point laser);
+    double angular_deflection(const Optimizer_Point & laser, const Optimizer_Path & path);
+    double cost(const Optimizer_Point laser, const Optimizer_Path path);
+    void find_next_and_swap(const size_t current_path, const Optimizer_Point laser);
 
 
     /*

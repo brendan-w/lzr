@@ -51,13 +51,13 @@ void Optimizer_Internals::fill_angle()
 
     //TODO: skip blanked points, they get recalculated anyway
 
-    points[0].angle = ANGLE(last_known_point.point,
-                                   points[0].point);
+    points[0].angle = POINT_ANGLE(last_known_point.point,
+                                  points[0].point);
 
     for(size_t i = 1; i < points.size(); i++)
     {
-        points[i].angle = ANGLE(points[i - 1].point,
-                                points[i].point);
+        points[i].angle = POINT_ANGLE(points[i - 1].point,
+                                      points[i].point);
     }
 }
 
@@ -96,7 +96,7 @@ void Optimizer_Internals::path_split(double split_angle)
                     Optimizer_Point next = points[i + 1];
 
                     //if it creates too much of an angle
-                    if(ANGLE_FORMED(p, next) >= split_angle)
+                    if(POINT_DEFLECTION(p, next) >= split_angle)
                     {
                         //close the current path
                         paths.push_back(Optimizer_Path(a, i, points));
@@ -139,7 +139,7 @@ void Optimizer_Internals::fill_cycle(double split_angle)
             Optimizer_Point next = path.at(1, points);
 
             //if it DOESN'T creates too much of an angle, then it's a cycle
-            path.cycle = (ANGLE_FORMED(b, next) < split_angle);
+            path.cycle = (POINT_DEFLECTION(b, next) < split_angle);
         }
     }
 }

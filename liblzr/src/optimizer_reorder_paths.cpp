@@ -15,9 +15,19 @@
 namespace lzr {
 
 
+#define MAX_DEFLECTION (2 * PI)
+#define MAX_SQ_DISTANCE 2.0
+
+//special values for weighting each metric
+#define SQ_DISTANCE_COEFFICIENT 0.9
+#define DEFLECTION_COEFFICIENT 0.1
+
+
+
+
 /*
 
-    The cost function
+    The cost function(s)
 
     Looks at two things:
         - Distance to next path
@@ -25,7 +35,7 @@ namespace lzr {
 
     The angle deviation clause is designed to help make choices like this:
 
-    A       B               A       B
+    A       B               A       B'
 
     |      .|               |       |
     |     . |               |       |
@@ -39,30 +49,82 @@ namespace lzr {
     The total angular deflection (hassle) for a particular jump is given by:
 
     abs(blank_jump_angle - path_A_exit_angle) + abs(path_B_entrance_angle - blank_jump)
+
+    In cases where no blanking jump is required, choices like this become
+    are judged by only angular deflection.
+
+
+        |
+        |
+        v
+        |
+        |
+        *
+       /|\
+      / | \
+     /  |  \
+    A   B   C
 */
 
-double Optimizer_Internals::cost(Optimizer_Point laser, Optimizer_Path path)
+//the deflection gets calculated differently if there's a blanking jump,
+//or if any angle returns ANGLE_ANY
+double Optimizer_Internals::angular_deflection(const Optimizer_Point & laser, const Optimizer_Path & path)
 {
-    double blank_angle = ANGLE(laser.point, path.front(points).point); //from the end of A to the start of B
+    double deflection = 0.0;
+
+    //grab the current angle of travel for the laser, and the entrance angle
+    //for the potential path
     double laser_angle = laser.angle;
     double path_angle  = path.entrance_angle();
 
-    //if any of these angles returned ANGLE_ANY, then they shouldn't contribute
-    //any angular deflection. There's no need to worry about them.
-    laser_angle = (laser_angle == ANGLE_ANY) ? blank_angle : laser_angle;
-    path_angle  = (path_angle  == ANGLE_ANY) ? blank_angle : path_angle;
 
-    //how much of a hassle is this direction change going to be?
-    double total_angular_deflection = 0.0;
-    total_angular_deflection += std::abs(blank_angle - laser_angle); //going IN to the blanking jump
-    total_angular_deflection += std::abs(path_angle - blank_angle); //coming OUT of the blanking jump
+    //if distance is basically zero
+    if(laser.point.same_position_as(path.front(points).point))
+    {
+        //if either angle has no preference, then ignore 
+        if((laser_angle != ANGLE_ANY) &&
+           (path_angle != ANGLE_ANY))
+        {
+            deflection = ANGLE_DEFLECTION(laser_angle, path_angle);
+        }
+    }
+    else
+    {
+        //a blank jump is needed
+        double blank_angle = POINT_ANGLE(laser.point, path.front(points).point); //from the end of A to the start of B
 
-    return laser.point.sq_distance_to(path.front(points).point);
+        //if any of these angles returned ANGLE_ANY, then they shouldn't contribute
+        //any angular deflection. There's no need to worry about them.
+        laser_angle = (laser_angle == ANGLE_ANY) ? blank_angle : laser_angle;
+        path_angle  = (path_angle  == ANGLE_ANY) ? blank_angle : path_angle;
+
+        //how much of a hassle is this direction change going to be?
+        deflection += ANGLE_DEFLECTION(laser_angle, blank_angle); //going IN to the blanking jump
+        deflection += ANGLE_DEFLECTION(blank_angle, path_angle); //coming OUT of the blanking jump
+    }
+
+    return deflection;
+}
+
+
+double Optimizer_Internals::cost(const Optimizer_Point laser, const Optimizer_Path path)
+{
+    //metrics
+    double sq_distance = laser.point.sq_distance_to(path.front(points).point); // [0, 2]
+    double deflection = angular_deflection(laser, path);                       // [0, 2Pi)
+
+    //normalize the costs
+    sq_distance /= MAX_SQ_DISTANCE;
+    deflection /= MAX_DEFLECTION;
+
+    //use addition to prevent zeros from overwhelming the other metrics
+    return (sq_distance * SQ_DISTANCE_COEFFICIENT) +
+           (deflection * DEFLECTION_COEFFICIENT);
 }
 
 
 //scan for the best path to enter next
-void Optimizer_Internals::find_next_and_swap(size_t current_path, Optimizer_Point laser)
+void Optimizer_Internals::find_next_and_swap(const size_t current_path, const Optimizer_Point laser)
 {
     //running vars
     size_t best_path;      //index of the path with the best (lowest) cost
