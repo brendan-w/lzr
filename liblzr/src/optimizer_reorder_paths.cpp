@@ -50,8 +50,8 @@ namespace lzr {
 
     abs(blank_jump_angle - path_A_exit_angle) + abs(path_B_entrance_angle - blank_jump)
 
-    In cases where no blanking jump is required, choices like this become
-    are judged by only angular deflection.
+    In cases where no blanking jump is required, choices like this
+    are judged only by angular deflection.
 
 
         |

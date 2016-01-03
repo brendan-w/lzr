@@ -49,15 +49,15 @@ void Optimizer_Internals::fill_angle()
 
     */
 
-    //TODO: skip blanked points, they get recalculated anyway
-
     points[0].angle = POINT_ANGLE(last_known_point.point,
                                   points[0].point);
 
     for(size_t i = 1; i < points.size(); i++)
     {
-        points[i].angle = POINT_ANGLE(points[i - 1].point,
-                                      points[i].point);
+        if(points[i].point.is_lit())
+            points[i].angle = POINT_ANGLE(points[i - 1].point,
+                                          points[i].point);
+        //else, skip blanked points, they get recalculated anyway
     }
 }
 
