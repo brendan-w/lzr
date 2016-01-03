@@ -133,14 +133,14 @@ void Optimizer_Internals::fill_cycle(double split_angle)
 {
     for(Optimizer_Path& path : paths)
     {
-        Optimizer_Point a = points[path.a];
-        Optimizer_Point b = points[path.b];
+        Optimizer_Point a = path.front();
+        Optimizer_Point b = path.back();
 
         //if they're in the same position, and there are at least 3 points
         if(a.point.same_position_as(b.point) && path.size() >= 3)
         {
             //fetch the point one forward of the joint
-            Optimizer_Point next = points[path.a + 1];
+            Optimizer_Point next = path[1];
 
             //if it DOESN'T creates too much of an angle, then it's a cycle
             path.cycle = (ANGLE_FORMED(b, next) < split_angle);

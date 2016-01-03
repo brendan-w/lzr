@@ -83,21 +83,22 @@ Optimizer_Point Optimizer_Path::operator[](size_t n)
         //if there aren't enough points, then the angle is irrelevant
         p.angle = ANGLE_ANY;
     }
-    else
+    else if(n == 0)
     {
         //if we're at the beginning of a path, diregard existing incoming
         //angle information, since paths are considered to be isolated elements
-        if(n == 0)
-            p.angle = ANGLE_ANY;
-
+        p.angle = ANGLE_ANY;
+    }
+    else
+    {
         if(INVERTED)
         {
             //lookup the previous point (from the perspective of the INVERTED path)
             Optimizer_Point previous = points->at(a - (n - 1));
             p.angle = ANGLE(previous.point, p.point);
         }
-        //else, don't the angles are fine, they've already been computed in the
-        //forward direction
+        //else, the angles are fine, since they've already been computed
+        //in the forward direction
     }
 
     return p;
