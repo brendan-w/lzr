@@ -38,12 +38,16 @@ void Optimizer_Path::invert()
 
 double Optimizer_Path::entrance_angle()
 {
-    return 0.0; //TODO
+    if(size() < 2)
+        return ANGLE_ANY;
+    else
+        //since the front point has an unknown incoming angle, use the next point
+        return ANGLE_OPPOSITE(operator[](1).angle);
 }
 
 double Optimizer_Path::exit_angle()
 {
-    return back().angle;
+    return back().angle; // (size() < 2) is tested and handled by operator[]
 }
 
 
