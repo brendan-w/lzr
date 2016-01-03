@@ -44,9 +44,18 @@ namespace lzr {
 double Optimizer_Internals::cost(Optimizer_Point laser, Optimizer_Path path)
 {
     double blank_angle = ANGLE(laser.point, path.front(points).point); //from the end of A to the start of B
+    double laser_angle = laser.angle;
+    double path_angle  = path.entrance_angle();
+
+    //if any of these angles returned ANGLE_ANY, then they shouldn't contribute
+    //any angular deflection. There's no need to worry about them.
+    laser_angle = (laser_angle == ANGLE_ANY) ? blank_angle : laser_angle;
+    path_angle  = (path_angle  == ANGLE_ANY) ? blank_angle : path_angle;
+
+    //how much of a hassle is this direction change going to be?
     double total_angular_deflection = 0.0;
-    total_angular_deflection += std::abs(blank_angle - laser.angle); //going IN to the blanking jump
-    total_angular_deflection += std::abs(path.entrance_angle() - blank_angle); //coming OUT of the blanking jump
+    total_angular_deflection += std::abs(blank_angle - laser_angle); //going IN to the blanking jump
+    total_angular_deflection += std::abs(path_angle - blank_angle); //coming OUT of the blanking jump
 
     return laser.point.sq_distance_to(path.front(points).point);
 }
