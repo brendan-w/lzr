@@ -14,28 +14,8 @@ namespace lzr {
 
 
 
-//lookups for the number of existing anchor points in the given path
-size_t Optimizer_Internals::num_beginning_anchors(Optimizer_Path path)
-{
-    size_t n = 1;
-
-    Point first_point = path.front().point;
-
-    //loop forwards
-    for(size_t i = 1; i < path.size(); i++)
-    {
-        if(first_point == path[i].point)
-            n++;
-        else
-            break;
-    }
-
-    return n;
-}
-
-
 //counts the number of anchor points at the end of the frame
-static size_t num_ending_anchors(Frame& frame)
+static size_t back_anchors(Frame& frame)
 {
     size_t n = 1;
 
@@ -65,7 +45,7 @@ void Optimizer_Internals::add_path_to_frame(Optimizer* settings,
                                             Optimizer_Path path)
 {
     int anchors = settings->anchor_points_lit;
-    anchors -= num_beginning_anchors(path); //the number of leading anchors that are already present
+    anchors -= path.front_anchors(points); //the number of leading anchors that are already present
 
     if(frame.empty())
     {
@@ -78,7 +58,7 @@ void Optimizer_Internals::add_path_to_frame(Optimizer* settings,
         if(frame.back().is_lit())
         {
             //if the previous point was lit (aka, we're continuing a solid line)
-            anchors -= num_ending_anchors(frame); //the number of anchors already at the end of the frame
+            anchors -= back_anchors(frame); //the number of anchors already at the end of the frame
         }
     }
 
@@ -86,13 +66,13 @@ void Optimizer_Internals::add_path_to_frame(Optimizer* settings,
     //write any additional lit anchor points
     for(int i = 0; i < anchors; i++)
     {
-        frame.add(path.front().point);
+        frame.add(path.front(points).point);
     }
 
     //write the path
     for(size_t i = 0; i < path.size(); i++)
     {
-        frame.add(path[i].point);
+        frame.add(path.at(i, points).point);
     }
 }
 
@@ -111,7 +91,7 @@ void Optimizer_Internals::blank_between(Optimizer* settings,
 
     if( !frame.empty() && frame.back().is_lit())
     {
-        int anchors = settings->anchor_points_lit - num_ending_anchors(frame);
+        int anchors = settings->anchor_points_lit - back_anchors(frame);
         Point anchor = frame.back();
 
         for(int i = 0; i < anchors; i++)
@@ -143,7 +123,7 @@ void Optimizer_Internals::compile_paths(Optimizer* settings, Frame& frame)
     for(Optimizer_Path path : paths)
     {
         Point a = last_known_point.point; //last_known_point is gauranteed to be lit
-        Point b = path.front().point; //first point on the current path
+        Point b = path.front(points).point; //first point on the current path
 
         if( ! a.same_position_as(b) )
         {
@@ -157,13 +137,13 @@ void Optimizer_Internals::compile_paths(Optimizer* settings, Frame& frame)
         add_path_to_frame(settings, frame, path);
 
         //walk the laser
-        last_known_point = path.back();
+        last_known_point = path.back(points);
     }
 
     //now that we're all done, and we've reached the last_known_point,
     //save the number of ending anchor points that this frame has.
     //this is used when processing subsequent frames
-    num_last_known_anchors = num_ending_anchors(frame);
+    num_last_known_anchors = back_anchors(frame);
 }
 
 

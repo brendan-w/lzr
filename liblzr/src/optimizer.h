@@ -61,23 +61,28 @@ public:
 class Optimizer_Path
 {
 public:
-    Optimizer_Path(size_t _a, size_t _b, const std::vector<Optimizer_Point>* _points);
+    Optimizer_Path(size_t _a, size_t _b, const std::vector<Optimizer_Point> & points);
 
-    size_t a;   //index of the front point
-    size_t b;   //index of the back point
-    bool cycle; //whether or not this path is cyclic (EXPERIMENTAL)
-
+    //always pass the points array when actual point data is needed
+    //otherwise, NEVER retain a reference, becuase some data will need to persist
+    //(ie. the last_known_point)
     size_t size();
     void invert();
     double entrance_angle();
     double exit_angle();
-    Optimizer_Point front();
-    Optimizer_Point back();
-    Optimizer_Point operator[](size_t n);
+    size_t front_anchors(const std::vector<Optimizer_Point> & points);
+    size_t back_anchors(const std::vector<Optimizer_Point> & points);
+    Optimizer_Point front(const std::vector<Optimizer_Point> & points);
+    Optimizer_Point back(const std::vector<Optimizer_Point> & points);
+    Optimizer_Point at(size_t n, const std::vector<Optimizer_Point> & points);
+
+    bool cycle; //whether or not this path is cyclic (EXPERIMENTAL)
 
 private:
-    //save a pointer to the points that this path references
-    const std::vector<Optimizer_Point>* points;
+    size_t a; //index of the front point
+    size_t b; //index of the back point
+    double entrance; //angle
+    double exit; //angle
 };
 
 
@@ -122,6 +127,7 @@ private:
     */
     void reorder_paths(Optimizer* settings);
 
+    double cost(Optimizer_Point laser, Optimizer_Path path);
     void find_next_and_swap(size_t start, Optimizer_Point laser);
 
 
@@ -132,7 +138,6 @@ private:
     */
     void compile_paths(Optimizer* settings, Frame& frame);
 
-    size_t num_beginning_anchors(Optimizer_Path path);
     void add_path_to_frame(Optimizer* settings,
                            Frame& frame,
                            Optimizer_Path path);

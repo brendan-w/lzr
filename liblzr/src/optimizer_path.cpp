@@ -10,11 +10,22 @@ namespace lzr {
 
 
 
-Optimizer_Path::Optimizer_Path(size_t _a, size_t _b, const std::vector<Optimizer_Point>* _points)
+Optimizer_Path::Optimizer_Path(size_t _a, size_t _b, const std::vector<Optimizer_Point> & points)
 {
     a = _a;
     b = _b;
-    points = _points;
+
+    //note the entrance and exit angles
+    if(size() < 2)
+    {
+        entrance = ANGLE_ANY;
+        exit = ANGLE_ANY;
+    }
+    else
+    {
+        entrance = points[a+1].angle;
+        exit = points[b].angle;
+    }
 }
 
 
@@ -30,51 +41,93 @@ size_t Optimizer_Path::size()
 //swaps A and B
 void Optimizer_Path::invert()
 {
+    //swap the point indicies
     size_t temp = a;
     a = b;
     b = temp;
+
+    //swap and invert the angles
+    double temp = entrance;
+    entrance = ANGLE_OPPOSITE(exit);
+    exit     = ANGLE_OPPOSITE(temp);
 }
 
 
 double Optimizer_Path::entrance_angle()
 {
-    if(size() < 2)
-        return ANGLE_ANY;
-    else
-        //since the front point has an unknown incoming angle, use the next point
-        return ANGLE_OPPOSITE(operator[](1).angle);
+    return entrance;
 }
 
 double Optimizer_Path::exit_angle()
 {
-    return back().angle; // (size() < 2) is tested and handled by operator[]
+    return exit;
 }
 
 
-
-Optimizer_Point Optimizer_Path::front()
+//lookups for the number of existing anchor points in the given path
+size_t Optimizer_Path::front_anchors(const std::vector<Optimizer_Point> & points)
 {
-    return operator[](0);
+    size_t n = 1;
+
+    Point first_point = front(points).point;
+
+    //loop forwards until we find a point that differs
+    for(size_t i = 1; i < size(); i++)
+    {
+        if(first_point == at(i, points).point)
+            n++;
+        else
+            break;
+    }
+
+    return n;
 }
 
 
-Optimizer_Point Optimizer_Path::back()
+//currently not used, but implemented just in case
+size_t Optimizer_Path::back_anchors(const std::vector<Optimizer_Point> & points)
 {
-    return operator[](size() - 1);
+    size_t n = 1;
+
+    Point last_point = back(points).point;
+
+    //loop backwards, cast to int to avoid underflow errors
+    for(int i = ((int)size()) - 2; i >= 0; i--)
+    {
+        if(last_point == at(i, points).point)
+            n++;
+        else
+            break;
+    }
+
+    return n;
+}
+
+
+Optimizer_Point Optimizer_Path::front(const std::vector<Optimizer_Point> & points)
+{
+    return at(0, points); //TODO throw errors for path of size == 0
+}
+
+
+Optimizer_Point Optimizer_Path::back(const std::vector<Optimizer_Point> & points)
+{
+    return at(size() - 1, points); //TODO throw errors for path of size == 0
 }
 
 
 //in-order point lookup function
 //transparently handles inverted paths, and angle recalculation
-Optimizer_Point Optimizer_Path::operator[](size_t n)
+//TODO: handle invalid point indicies
+Optimizer_Point Optimizer_Path::at(size_t n, const std::vector<Optimizer_Point> & points)
 {
     Optimizer_Point p;
 
     //lookup the raw point
     if(INVERTED)
-        p = points->at(a - n);
+        p = points[a - n];
     else
-        p = points->at(a + n);
+        p = points[a + n];
 
 
     //correct the points' angle field
@@ -94,7 +147,7 @@ Optimizer_Point Optimizer_Path::operator[](size_t n)
         if(INVERTED)
         {
             //lookup the previous point (from the perspective of the INVERTED path)
-            Optimizer_Point previous = points->at(a - (n - 1));
+            Optimizer_Point previous = points[a - (n - 1)];
             p.angle = ANGLE(previous.point, p.point);
         }
         //else, the angles are fine, since they've already been computed

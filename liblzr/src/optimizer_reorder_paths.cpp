@@ -41,14 +41,14 @@ namespace lzr {
     abs(blank_jump_angle - path_A_exit_angle) + abs(path_B_entrance_angle - blank_jump)
 */
 
-static double cost(Optimizer_Point laser, Optimizer_Path path)
+double Optimizer_Internals::cost(Optimizer_Point laser, Optimizer_Path path)
 {
-    double blank_angle = ANGLE(laser.point, path.front().point); //from the end of A to the start of B
+    double blank_angle = ANGLE(laser.point, path.front(points).point); //from the end of A to the start of B
     double total_angular_deflection = 0.0;
     total_angular_deflection += std::abs(blank_angle - laser.angle); //going IN to the blanking jump
     total_angular_deflection += std::abs(path.entrance_angle() - blank_angle); //coming OUT of the blanking jump
 
-    return laser.point.sq_distance_to(path.front().point);
+    return laser.point.sq_distance_to(path.front(points).point);
 }
 
 
@@ -115,7 +115,7 @@ void Optimizer_Internals::reorder_paths(Optimizer* settings)
         find_next_and_swap(i, laser);
 
         //update the laser's current location
-        laser = paths[i].back();
+        laser = paths[i].back(points);
     }
 }
 

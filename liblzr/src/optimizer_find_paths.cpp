@@ -81,7 +81,7 @@ void Optimizer_Internals::path_split(double split_angle)
             {
                 //encountered first blanked point when IN a path
                 //close the open path
-                paths.push_back(Optimizer_Path(a, i - 1, &points));
+                paths.push_back(Optimizer_Path(a, i - 1, points));
                 in_path = false;
             }
             // else, do nothing, discard blanked points
@@ -99,7 +99,7 @@ void Optimizer_Internals::path_split(double split_angle)
                     if(ANGLE_FORMED(p, next) >= split_angle)
                     {
                         //close the current path
-                        paths.push_back(Optimizer_Path(a, i, &points));
+                        paths.push_back(Optimizer_Path(a, i, points));
                         //open a new one
                         a = i;
                     }
@@ -118,7 +118,7 @@ void Optimizer_Internals::path_split(double split_angle)
     //if a path is still open, close it (frame ends in a lit point)
     if(in_path)
     {
-        paths.push_back(Optimizer_Path(a, points.size() - 1, &points));
+        paths.push_back(Optimizer_Path(a, points.size() - 1, points));
         in_path = false;
     }
 }
@@ -129,14 +129,14 @@ void Optimizer_Internals::fill_cycle(double split_angle)
 {
     for(Optimizer_Path& path : paths)
     {
-        Optimizer_Point a = path.front();
-        Optimizer_Point b = path.back();
+        Optimizer_Point a = path.front(points);
+        Optimizer_Point b = path.back(points);
 
         //if they're in the same position, and there are at least 3 points
         if(a.point.same_position_as(b.point) && path.size() >= 3)
         {
             //fetch the point one forward of the joint
-            Optimizer_Point next = path[1];
+            Optimizer_Point next = path.at(1, points);
 
             //if it DOESN'T creates too much of an angle, then it's a cycle
             path.cycle = (ANGLE_FORMED(b, next) < split_angle);
