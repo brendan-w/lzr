@@ -1,4 +1,11 @@
 
+/*
+    This file reads the now-sorted paths, and re-assembles them into a frame.
+    Blanking jumps and anchor points are generated here.
+*/
+
+
+
 #include <stdio.h>
 #include "optimizer.h"
 #include "interpolator.h"
@@ -12,12 +19,12 @@ size_t Optimizer_Internals::num_beginning_anchors(Optimizer_Path path)
 {
     size_t n = 1;
 
-    Point first_point = points[path.a].point;
+    Point first_point = path.front().point;
 
     //loop forwards
-    for(int i = 1; i < ((int)path.size()); i++)
+    for(size_t i = 1; i < path.size(); i++)
     {
-        if(first_point == points[path[i]].point)
+        if(first_point == path[i].point)
             n++;
         else
             break;
@@ -34,7 +41,7 @@ static size_t num_ending_anchors(Frame& frame)
 
     Point last_point = frame.back();
 
-    //loop backwards
+    //loop backwards, cast to int to avoid underflow errors
     for(int i = ((int)frame.size()) - 2; i >= 0; i--)
     {
         if(last_point == frame[i])
@@ -79,13 +86,13 @@ void Optimizer_Internals::add_path_to_frame(Optimizer* settings,
     //write any additional lit anchor points
     for(int i = 0; i < anchors; i++)
     {
-        frame.add(points[path.a].point);
+        frame.add(path.front().point);
     }
 
     //write the path
     for(size_t i = 0; i < path.size(); i++)
     {
-        frame.add(points[path[i]].point);
+        frame.add(path[i].point);
     }
 }
 
@@ -136,7 +143,7 @@ void Optimizer_Internals::compile_paths(Optimizer* settings, Frame& frame)
     for(Optimizer_Path path : paths)
     {
         Point a = last_known_point.point; //last_known_point is gauranteed to be lit
-        Point b = points[ path.a ].point; //first point on the current path
+        Point b = path.front().point; //first point on the current path
 
         if( ! a.same_position_as(b) )
         {
@@ -150,7 +157,7 @@ void Optimizer_Internals::compile_paths(Optimizer* settings, Frame& frame)
         add_path_to_frame(settings, frame, path);
 
         //walk the laser
-        last_known_point = points[path.b];
+        last_known_point = path.back();
     }
 
     //now that we're all done, and we've reached the last_known_point,

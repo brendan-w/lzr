@@ -11,12 +11,35 @@ namespace lzr {
 
 //constants
 #define PI 3.14159265358979323846
+#define ANGLE_ANY         4.0 //an invalid point angle denoting no angle preference
 
 //functions
 #define ANGLE(a, b)       ( std::atan2(b.y - a.y, b.x - a.y) * -1 ) //the angle from point A to point B on range (-PI, PI] in screen coords
 #define ANGLE_NORM(a)     ( std::fmod(a, PI) ) //constrains angles to (-PI, PI]
 #define ANGLE_OPPOSITE(a) ( ANGLE_NORM(a + PI) )
-#define ANGLE_ANY         4.0 //an invalid point angle denoting no angle preference
+
+/*
+    The angle formed between three points. Because of the way point
+    angles are stored, only points B and C are neccessary.
+    (see fill_angle() for details)
+
+              C .
+               /
+              /
+    A      B /
+    ._______.
+
+    This macros reports the angle at which the figure DEVIATES from a
+    straight line:
+
+                .
+               /
+              /
+             /  ) theta
+    ._______.  .  .  .  .
+
+*/
+#define ANGLE_FORMED(b, c) (std::abs(c.angle - b.angle))
 
 
 
@@ -33,20 +56,28 @@ public:
 
 
 /*
- * struct defining a "continguous" segment of the lasers points
+ * struct defining a continguous segment of laser light
  */
 class Optimizer_Path
 {
 public:
+    Optimizer_Path(size_t _a, size_t _b, const std::vector<Optimizer_Point>* _points);
+
     size_t a;   //index of the front point
     size_t b;   //index of the back point
     bool cycle; //whether or not this path is cyclic (EXPERIMENTAL)
 
     size_t size();
     void invert();
-    double entrance_angle(const std::vector<Optimizer_Point> & points);
-    double exit_angle(const std::vector<Optimizer_Point> & points);
-    size_t operator[](size_t n);
+    double entrance_angle();
+    double exit_angle();
+    Optimizer_Point front();
+    Optimizer_Point back();
+    Optimizer_Point operator[](size_t n);
+
+private:
+    //save a pointer to the points that this path references
+    const std::vector<Optimizer_Point>* points;
 };
 
 
@@ -91,7 +122,7 @@ private:
     */
     void reorder_paths(Optimizer* settings);
 
-    double cost(Optimizer_Point a, Optimizer_Point b);
+    double cost(Optimizer_Path a, Optimizer_Path b);
     void swap_paths(size_t a, size_t b);
     void find_next_and_swap(size_t start, Optimizer_Point laser);
 

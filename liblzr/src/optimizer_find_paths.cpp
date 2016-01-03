@@ -1,33 +1,24 @@
 
+/*
+    This file is largely for setting things up, and computing extra data about
+    the points.
+
+    It first computes the angles from each point to the next. This gets stored
+    in each Optimizer_Point in the point buffer. This is the ONLY TIME that the
+    contents of the point buffer should be modified.
+
+    It then splits the points into "paths" based on blanking changes and hard
+    corners. A path is described simply by the index of its starting and ending
+    points. All paths live in the "paths" buffer on the optimizer context.
+*/
+
+
+
+
 
 #include "optimizer.h"
 
 namespace lzr {
-
-
-
-/*
-    The angle formed between three points. Because of the way point
-    angles are stored, only points B and C are neccessary.
-    (see fill_angle() for details)
-
-              C .
-               /
-              /
-    A      B /
-    ._______.
-
-    This macros reports the angle at which the figure DEVIATES from a
-    straight line:
-
-                .
-               /
-              /
-             /  ) theta
-    ._______.  .  .  .  .
-
-*/
-#define ANGLE_FORMED(b, c) (std::abs(b.angle - c.angle))
 
 
 
@@ -58,6 +49,8 @@ void Optimizer_Internals::fill_angle()
 
     */
 
+    //TODO: skip blanked points, they get recalculated anyway
+
     points[0].angle = ANGLE(last_known_point.point,
                                    points[0].point);
 
@@ -75,7 +68,9 @@ void Optimizer_Internals::path_split(double split_angle)
     paths.clear(); //dump whatever we had before
 
     bool in_path = false; //whether the loop is inside an unterminated path
-    Optimizer_Path path;  //path currently being built
+    size_t a; //index for the starting point of a path
+    size_t b; //index for the ending point of a path
+
 
     for(size_t i = 0; i < points.size(); i++)
     {
@@ -87,8 +82,8 @@ void Optimizer_Internals::path_split(double split_angle)
             {
                 //encountered first blanked point when IN a path
                 //close the open path
-                path.b = i - 1;
-                paths.push_back(path);
+                b = i - 1;
+                paths.push_back(Optimizer_Path(a, b, &points));
                 in_path = false;
             }
             // else, do nothing, discard blanked points
@@ -106,10 +101,10 @@ void Optimizer_Internals::path_split(double split_angle)
                     if(ANGLE_FORMED(p, next) >= split_angle)
                     {
                         //close the current path
-                        path.b = i;
-                        paths.push_back(path);
+                        b = i;
+                        paths.push_back(Optimizer_Path(a, b, &points));
                         //open a new one
-                        path.a = i;
+                        a = i;
                     }
                 }
             }
@@ -117,7 +112,7 @@ void Optimizer_Internals::path_split(double split_angle)
             {
                 //encountered first lit point when not in a path
                 //open a new path
-                path.a = i; //store the index of the first point in the path
+                a = i; //store the index of the first point in the path
                 in_path = true;
             }
         }
@@ -126,8 +121,8 @@ void Optimizer_Internals::path_split(double split_angle)
     //if a path is still open, close it (frame ends in a lit point)
     if(in_path)
     {
-        path.b = points.size() - 1;
-        paths.push_back(path);
+        b = points.size() - 1;
+        paths.push_back(Optimizer_Path(a, b, &points));
         in_path = false;
     }
 }
