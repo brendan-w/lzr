@@ -147,7 +147,7 @@ Optimizer_Point Optimizer_Path::at(size_t n, const std::vector<Optimizer_Point> 
         {
             //lookup the previous point (from the perspective of the INVERTED path)
             Optimizer_Point previous = points[a - (n - 1)];
-            p.angle = ANGLE(previous.point, p.point);
+            p.angle = ANGLE_OPPOSITE(previous.angle);
         }
         //else, the angles are fine, since they've already been computed
         //in the forward direction
