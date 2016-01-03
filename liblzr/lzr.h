@@ -176,7 +176,10 @@ class Optimizer
 {
 public:
     Optimizer();
+    Optimizer(Point current_laser_position);
     ~Optimizer();
+
+    //main optimizer function
     int run(Frame& frame);
 
     //settings

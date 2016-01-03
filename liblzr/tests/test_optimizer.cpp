@@ -48,8 +48,34 @@ static void test_blanking_interpolation()
 }
 
 
+static void test_raster_zigzag()
+{
+    Frame frame;
+    Frame target;
+
+    //construct a row of vertical lines
+
+    Frame line;
+    //the base line
+    line.add(Point(-1.0, 1.0, 255, 255, 255, 255));
+    line.add(Point(1.0,  1.0, 255, 255, 255, 255));
+
+    for(int i = 0; i < 5; i++)
+    {
+        frame.add_with_blank_jump(line);
+        translate(line, 0.0, -0.5);
+    }
+
+    Optimizer opt(Point(-1.0, 1.0, 255, 255, 255, 255));
+    opt.run(frame);
+
+    print_frame(frame);
+
+}
+
 int main()
 {
     test_blanking_interpolation();
+    test_raster_zigzag();
     return 0;
 }

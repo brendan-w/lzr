@@ -93,6 +93,8 @@ private:
 class Optimizer_Internals
 {
 public:
+    Optimizer_Internals(Point current_laser_position);
+
     //main optimization function. Accepts pointer for
     //the wrapper/settings holder object.
     int run(Optimizer* settings, Frame& frame);
