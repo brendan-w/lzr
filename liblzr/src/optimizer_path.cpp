@@ -46,10 +46,9 @@ void Optimizer_Path::invert()
     a = b;
     b = temp;
 
-    //swap and invert the angles
-    double temp = entrance;
-    entrance = ANGLE_OPPOSITE(exit);
-    exit     = ANGLE_OPPOSITE(temp);
+    //invert the angles
+    entrance = ANGLE_OPPOSITE(entrance);
+    exit     = ANGLE_OPPOSITE(exit);
 }
 
 
