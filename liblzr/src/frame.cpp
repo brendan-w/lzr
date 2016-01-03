@@ -39,14 +39,18 @@ Frame& Frame::add(const Frame& other)
 
 Frame& Frame::add_blank_jump_to(const Point& p)
 {
-    Point begin = back();
-    Point end = p;
+    //only works when we already have a point in the frame
+    if(!empty())
+    {
+        Point begin = back();
+        Point end = p;
 
-    begin.blank();
-    end.blank();
+        begin.blank();
+        end.blank();
 
-    add(begin);
-    add(end);
+        add(begin);
+        add(end);
+    }
 
     return *this;
 }
