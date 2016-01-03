@@ -25,6 +25,7 @@ namespace lzr {
 
     The angle deviation clause is designed to help make choices like this:
 
+    A       B               A       B
 
     |      .|               |       |
     |     . |               |       |
@@ -40,17 +41,14 @@ namespace lzr {
     abs(blank_jump_angle - path_A_exit_angle) + abs(path_B_entrance_angle - blank_jump)
 */
 
-double Optimizer_Internals::cost(Optimizer_Path a, Optimizer_Path b)
+static double cost(Optimizer_Point laser, Optimizer_Path path)
 {
-    double blank_angle      = ANGLE(a.back().point, b.front().point); //from the end of A to the start of B
-    double A_exit_angle     = a.exit_angle();
-    double B_entrance_angle = b.entrance_angle();
-
+    double blank_angle = ANGLE(laser.point, path.front().point); //from the end of A to the start of B
     double total_angular_deflection = 0.0;
-    total_angular_deflection += std::abs(blank_angle - A_exit_angle); //going IN to the blanking jump
-    total_angular_deflection += std::abs(B_entrance_angle - blank_angle); //coming OUT of the blanking jump
+    total_angular_deflection += std::abs(blank_angle - laser.angle); //going IN to the blanking jump
+    total_angular_deflection += std::abs(path.entrance_angle() - blank_angle); //coming OUT of the blanking jump
 
-    return a.back().point.sq_distance_to(b.front().point);
+    return laser.point.sq_distance_to(path.front().point);
 }
 
 
@@ -64,34 +62,34 @@ void Optimizer_Internals::find_next_and_swap(size_t current_path, Optimizer_Poin
     double min_cost = 0.0; //optimize for least cost
 
 
+    //helper macro for recording stats
+    #define STORE_BEST_PATH(inverted) \
+    {                                 \
+        min_cost = c;                 \
+        best_path = i;                \
+        invert = inverted;            \
+    }                                 \
+
+
     //initial check
     //lookup the point at the head of the first path to be checked
-    // min_cost = c = cost(laser, points[paths[current_path].a]);
+    min_cost = c = cost(laser, paths[current_path]);
     best_path = current_path;
     invert = false;
 
-
+    //look for the next best path
     for(size_t i = current_path; i < paths.size(); i++)
     {
         Optimizer_Path path = paths[i];
 
-        //test the front point (A)
-        // c = cost(laser, path.front());
-        if(c < min_cost)
-        {
-            min_cost = c;
-            best_path = i;
-            invert = false;
-        }
+        //test the path as-is
+        c = cost(laser, path);
+        if(c < min_cost) STORE_BEST_PATH(false);
 
-        //test the back point (B)
-        // c = cost(laser, path.back());
-        if(c < min_cost)
-        {
-            min_cost = c;
-            best_path = i;
-            invert = true;
-        }
+        //test the inverted version of the same path
+        path.invert();
+        c = cost(laser, path);
+        if(c < min_cost) STORE_BEST_PATH(true);
     }
 
     //we're all done, apply the change
@@ -99,6 +97,9 @@ void Optimizer_Internals::find_next_and_swap(size_t current_path, Optimizer_Poin
 
     if(invert)
         paths[current_path].invert();
+
+
+    #undef STORE_BEST_PATH
 }
 
 

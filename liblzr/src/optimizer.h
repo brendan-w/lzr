@@ -122,8 +122,6 @@ private:
     */
     void reorder_paths(Optimizer* settings);
 
-    double cost(Optimizer_Path a, Optimizer_Path b);
-    void swap_paths(size_t a, size_t b);
     void find_next_and_swap(size_t start, Optimizer_Point laser);
 
 

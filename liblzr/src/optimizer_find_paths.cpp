@@ -69,7 +69,6 @@ void Optimizer_Internals::path_split(double split_angle)
 
     bool in_path = false; //whether the loop is inside an unterminated path
     size_t a; //index for the starting point of a path
-    size_t b; //index for the ending point of a path
 
 
     for(size_t i = 0; i < points.size(); i++)
@@ -82,8 +81,7 @@ void Optimizer_Internals::path_split(double split_angle)
             {
                 //encountered first blanked point when IN a path
                 //close the open path
-                b = i - 1;
-                paths.push_back(Optimizer_Path(a, b, &points));
+                paths.push_back(Optimizer_Path(a, i - 1, &points));
                 in_path = false;
             }
             // else, do nothing, discard blanked points
@@ -101,8 +99,7 @@ void Optimizer_Internals::path_split(double split_angle)
                     if(ANGLE_FORMED(p, next) >= split_angle)
                     {
                         //close the current path
-                        b = i;
-                        paths.push_back(Optimizer_Path(a, b, &points));
+                        paths.push_back(Optimizer_Path(a, i, &points));
                         //open a new one
                         a = i;
                     }
@@ -121,8 +118,7 @@ void Optimizer_Internals::path_split(double split_angle)
     //if a path is still open, close it (frame ends in a lit point)
     if(in_path)
     {
-        b = points.size() - 1;
-        paths.push_back(Optimizer_Path(a, b, &points));
+        paths.push_back(Optimizer_Path(a, points.size() - 1, &points));
         in_path = false;
     }
 }
