@@ -126,7 +126,7 @@ int dup_radial(Frame& frame, Point center, size_t n_dups, double angle, bool bla
 //clips a frame using the given mask. Points in the mask should define a closed
 //polygon. All points outside the mask are discarded. Line segments that cross
 //the mask boundry will have additional points inserted at that boundry.
-int mask(Frame& frame, const Frame& mask, bool inverse=false);
+// int mask(Frame& frame, const Frame& mask, bool inverse=false);
 
 
 

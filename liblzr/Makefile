@@ -23,10 +23,11 @@ OBJS := src/point.o \
         src/ilda_write.o \
         src/ilda_palette.o \
         src/transforms.o \
+        src/mask.o \
         src/interpolator.o \
         src/optimizer.o \
-	src/optimizer_path.o \
-	src/optimizer_find_paths.o \
+        src/optimizer_path.o \
+        src/optimizer_find_paths.o \
         src/optimizer_reorder_paths.o \
         src/optimizer_compile_paths.o
 

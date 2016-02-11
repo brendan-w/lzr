@@ -68,7 +68,7 @@ public:
     Optimizer_Path(size_t _a, size_t _b, const std::vector<Optimizer_Point> & points);
 
     //always pass the points array when actual point data is needed
-    //otherwise, NEVER retain a reference, becuase some data will need to persist
+    //otherwise, NEVER retain a reference, because some data will need to persist
     //(ie. the last_known_point)
     size_t size() const;
     void invert();
