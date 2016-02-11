@@ -42,7 +42,7 @@ Building
 
 Dependencies:
 
-- C compiler (gcc)
+- C++11 compiler (g++)
 - Make
 - ZeroMQ 4.x
 - SDL 2.0
