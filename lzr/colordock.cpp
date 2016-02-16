@@ -7,6 +7,9 @@
 ColorDock::ColorDock(QWidget* parent) : QDockWidget(parent)
 {
     this->setWindowTitle("Color");
+    this->setFeatures(QDockWidget::DockWidgetMovable |
+                      QDockWidget::DockWidgetFloatable);
+
     content = new QWidget();
     this->setWidget(content);
     
