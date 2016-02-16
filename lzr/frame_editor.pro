@@ -16,6 +16,5 @@ TEMPLATE = app
 SOURCES += main.cpp\
         frameeditor.cpp\
         colordock.cpp\
-        colorswatch.cpp
 
-HEADERS  += frameeditor.h colordock.h colorswatch.h
+HEADERS  += frameeditor.h colordock.h

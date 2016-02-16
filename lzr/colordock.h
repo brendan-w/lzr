@@ -1,9 +1,33 @@
 
 #pragma once
 #include <QtWidgets>
-#include "colorswatch.h"
 
 
+/*
+    The swatch (image) of colors
+*/
+class ColorSwatch : public QObject, public QGraphicsPixmapItem
+{
+    Q_OBJECT
+
+public:
+    explicit ColorSwatch(const QPixmap& pixmap, QGraphicsItem* parent = 0);
+    virtual ~ColorSwatch();
+
+protected:
+    void mousePressEvent(QGraphicsSceneMouseEvent* event);
+
+signals:
+    void newColorSelected(QRgb color);
+
+private:
+    QImage swatch;
+};
+
+
+/*
+    The dock widget itself
+*/
 class ColorDock : public QDockWidget
 {
     Q_OBJECT
