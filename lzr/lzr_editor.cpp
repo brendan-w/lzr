@@ -1,8 +1,8 @@
 
-#include "frameeditor.h"
+#include "lzr_editor.h"
 
 
-FrameEditor::FrameEditor()
+LZREditor::LZREditor()
 {
     setupUi();
 
@@ -11,12 +11,12 @@ FrameEditor::FrameEditor()
     frame->addPoint();
 }
 
-FrameEditor::~FrameEditor()
+LZREditor::~LZREditor()
 {
 
 }
 
-void FrameEditor::setupUi()
+void LZREditor::setupUi()
 {
     if (this->objectName().isEmpty())
     this->resize(762, 544);

@@ -6,13 +6,13 @@
 #include "colordock.h"
 
 
-class FrameEditor : public QMainWindow
+class LZREditor : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    explicit FrameEditor();
-    ~FrameEditor();
+    explicit LZREditor();
+    ~LZREditor();
 
 private:
     void setupUi();
