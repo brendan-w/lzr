@@ -6,28 +6,6 @@
 
 ColorDock::ColorDock(QWidget* parent) : QDockWidget(parent)
 {
-    setupUi();
-    colors = new ColorSwatch(QPixmap("colors.png"));
-    scene->addItem(colors);
-    view->setFixedSize(colors->pixmap().size());
-
-    //listen to color changes
-    connect(colors, SIGNAL(newColorSelected(QRgb, QRect)),
-            this, SLOT(setColor(QRgb, QRect)));
-}
-
-ColorDock::~ColorDock()
-{
-
-}
-
-void ColorDock::setColor(QRgb color, QRect rect)
-{
-    qDebug() << "new color" << color << " rect " << rect;
-}
-
-void ColorDock::setupUi()
-{
     this->setWindowTitle("Color");
     content = new QWidget();
     this->setWidget(content);
@@ -44,6 +22,35 @@ void ColorDock::setupUi()
     view->setScene(scene);
 
     layout->addItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
+
+    colors = new ColorSwatch(QPixmap("colors.png"));
+    scene->addItem(colors);
+    view->setFixedSize(colors->pixmap().size());
+
+    indicator = new QGraphicsRectItem();
+    scene->addItem(indicator);
+
+    //listen to color changes
+    connect(colors, SIGNAL(newColorSelected(QRgb, QRect)),
+            this, SLOT(setColor(QRgb, QRect)));
+}
+
+ColorDock::~ColorDock()
+{
+
+}
+
+void ColorDock::setColor(QRgb rgb, QRect rect)
+{
+    color.setRgb(rgb);
+
+    //indicate with white, if it's a dark color
+    QPen pen(Qt::black, 0);
+    if(color.lightness() <= 127)
+        pen.setColor(Qt::white);
+
+    indicator->setPen(pen);
+    indicator->setRect(rect);
 }
 
 
@@ -107,7 +114,7 @@ void ColorSwatch::mousePressEvent(QGraphicsSceneMouseEvent* event)
     i = x;
     while(test == color)
     {
-        rect.setWidth(i - rect.x() + 1);
+        rect.setWidth(i - rect.x());
         if((++i) >= size.width()) break;
         test = swatch.pixel(i, y);
     }
@@ -117,7 +124,7 @@ void ColorSwatch::mousePressEvent(QGraphicsSceneMouseEvent* event)
     i = y;
     while(test == color)
     {
-        rect.setHeight(i - rect.y() + 1);
+        rect.setHeight(i - rect.y());
         if((++i) >= size.height()) break;
         test = swatch.pixel(x, i);
     }

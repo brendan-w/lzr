@@ -18,11 +18,12 @@ protected:
     void mousePressEvent(QGraphicsSceneMouseEvent* event);
 
 signals:
-    void newColorSelected(QRgb color, QRect rect);
+    void newColorSelected(QRgb rgb, QRect rect);
 
 private:
     QImage swatch;
 };
+
 
 
 /*
@@ -37,14 +38,16 @@ public:
     virtual ~ColorDock();
 
 public slots:
-    void setColor(QRgb color, QRect rect);
+    void setColor(QRgb rgb, QRect rect);
 
 private:
-    void setupUi();
+    QColor color; //the currently selected color
 
     QWidget* content;
     QVBoxLayout* layout;
     QGraphicsView* view;
     QGraphicsScene* scene;
     ColorSwatch* colors;
+    QGraphicsRectItem* indicator;
+
 };
