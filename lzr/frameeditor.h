@@ -2,6 +2,7 @@
 #define FRAMEEDITOR_H
 
 #include <QtWidgets>
+#include "frameview.h"
 #include "colordock.h"
 
 
@@ -18,7 +19,7 @@ private:
 
     QWidget *centralWidget;
     QVBoxLayout *verticalLayout;
-    QGraphicsView *graphicsView;
+    FrameView* frame;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
