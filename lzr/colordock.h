@@ -18,7 +18,7 @@ protected:
     void mousePressEvent(QGraphicsSceneMouseEvent* event);
 
 signals:
-    void newColorSelected(QRgb color);
+    void newColorSelected(QRgb color, QRect rect);
 
 private:
     QImage swatch;
@@ -37,7 +37,7 @@ public:
     virtual ~ColorDock();
 
 public slots:
-    void setColor(QRgb color);
+    void setColor(QRgb color, QRect rect);
 
 private:
     void setupUi();

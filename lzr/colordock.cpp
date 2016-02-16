@@ -12,8 +12,8 @@ ColorDock::ColorDock(QWidget* parent) : QDockWidget(parent)
     view->setFixedSize(colors->pixmap().size());
 
     //listen to color changes
-    connect(colors, SIGNAL(newColorSelected(QRgb)),
-            this, SLOT(setColor(QRgb)));
+    connect(colors, SIGNAL(newColorSelected(QRgb, QRect)),
+            this, SLOT(setColor(QRgb, QRect)));
 }
 
 ColorDock::~ColorDock()
@@ -21,9 +21,9 @@ ColorDock::~ColorDock()
 
 }
 
-void ColorDock::setColor(QRgb color)
+void ColorDock::setColor(QRgb color, QRect rect)
 {
-    qDebug() << "new color" << color;
+    qDebug() << "new color" << color << " rect " << rect;
 }
 
 void ColorDock::setupUi()
@@ -67,7 +67,60 @@ ColorSwatch::~ColorSwatch()
 
 void ColorSwatch::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
-    QPointF mousePosition = event->pos();
-    QRgb color = swatch.pixel(mousePosition.x(), mousePosition.y());
-    emit newColorSelected(color);
+    const int x = event->pos().x();
+    const int y = event->pos().y();
+
+    //get the color under the mouse
+    QRgb color = swatch.pixel(x, y);
+    QRect rect;
+
+    //determine the bounding rectangle for this color swatch
+    QSize size = pixmap().size();
+    QRgb test;
+    int i;
+
+    //left bound
+    test = color;
+    i = x;
+    while(test == color)
+    {
+        //record the current valid pixel extent
+        rect.setX(i);
+        //increment/finish
+        if((--i) < 0) break;
+        //lookup the next pixel
+        test = swatch.pixel(i, y);
+    }
+
+    //upper bound
+    test = color;
+    i = y;
+    while(test == color)
+    {
+        rect.setY(i);
+        if((--i) < 0) break;
+        test = swatch.pixel(x, i);
+    }
+
+    //right bound
+    test = color;
+    i = x;
+    while(test == color)
+    {
+        rect.setWidth(i - rect.x() + 1);
+        if((++i) >= size.width()) break;
+        test = swatch.pixel(i, y);
+    }
+
+    //lower bound
+    test = color;
+    i = y;
+    while(test == color)
+    {
+        rect.setHeight(i - rect.y() + 1);
+        if((++i) >= size.height()) break;
+        test = swatch.pixel(x, i);
+    }
+
+    emit newColorSelected(color, rect);
 }
