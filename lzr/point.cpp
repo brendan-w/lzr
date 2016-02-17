@@ -1,6 +1,14 @@
 
 #include "point.h"
 
+#define POINT_RADIUS 10
+#define POINT_DIAMETER (POINT_RADIUS * 2)
+#define POINT_INNER_RADIUS 2
+#define POINT_INNER_DIAMETER (POINT_INNER_RADIUS * 2)
+
+#define HANDLE_COLOR 100, 100, 100, 255
+
+
 
 
 Point::Point(QGraphicsItem *parent) : QGraphicsItem(parent)

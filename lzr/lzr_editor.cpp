@@ -19,7 +19,7 @@ LZREditor::~LZREditor()
 void LZREditor::setupUi()
 {
     if (this->objectName().isEmpty())
-    this->resize(762, 544);
+    this->resize(1024, 768);
 
     centralWidget = new QWidget(this);
     this->setCentralWidget(centralWidget);
