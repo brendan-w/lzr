@@ -1,12 +1,11 @@
 
 #include <QtGui>
 #include "frameview.h"
-#include "point.h"
 
 
 FrameView::FrameView(QWidget *parent) : QGraphicsView(parent)
 {
-    setRenderHint(QPainter::Antialiasing);
+    // setRenderHint(QPainter::Antialiasing);
 
     //enforce custom coordinate system [-1.0, 1.0]
     //Y is negative to make positive values go upwards
@@ -18,6 +17,9 @@ FrameView::FrameView(QWidget *parent) : QGraphicsView(parent)
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setScene(scene);
+
+    grid = new Grid;
+    scene->addItem(grid);
 }
 
 FrameView::~FrameView()
@@ -45,8 +47,17 @@ void FrameView::resizeEvent(QResizeEvent* e)
 
     //when the view is resized, we need update the transform of the individual items
     //to keep them in "pixel" coordinates
-    foreach(QGraphicsItem* item, items())
-    {
-        item->setTransform(t.inverted());
-    }
+    // foreach(QGraphicsItem* item, items())
+    // {
+    //     item->setTransform(t.inverted());
+    // }
+}
+
+void FrameView::wheelEvent(QWheelEvent* event)
+{
+    double factor = 1.2;
+    if(event->angleDelta().y() < 0)
+        factor = 1.0 / factor;
+
+    scale(factor, factor);
 }

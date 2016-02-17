@@ -55,7 +55,7 @@ QVariant Point::itemChange(GraphicsItemChange change, const QVariant &value)
 
     if(scene() && change == ItemPositionChange)
     {
-        qDebug() << "pos (" << pos().x() << ", " << pos().y() << ")";
+        // qDebug() << "pos (" << pos().x() << ", " << pos().y() << ")";
 
         // Keep the item inside the scene rect.
         QPointF newPos = value.toPointF();
