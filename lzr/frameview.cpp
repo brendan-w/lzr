@@ -11,7 +11,8 @@ FrameView::FrameView(QWidget *parent) : QGraphicsView(parent)
     //Y is negative to make positive values go upwards
 
     scene = new QGraphicsScene(this);
-    scene->setSceneRect(-1.0, -1.0, 2.0, 2.0);
+    // scene->setSceneRect(-1.0, -1.0, 2.0, 2.0);
+    scene->setSceneRect(-5.0, -5.0, 10.0, 10.0);
     scene->setBackgroundBrush(Qt::black);
 
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -52,7 +53,7 @@ void FrameView::resizeEvent(QResizeEvent* e)
 
     //make a new transformation matrix that's scaled correctly
     QTransform t;
-    double s = qMin(width(), height()) / scene->sceneRect().width(); // min(w, h) / 2.0
+    double s = qMin(width(), height()) / scene->itemsBoundingRect().width(); // min(w, h) / 2.0
     t.scale(s, -s);
     setTransform(t);
 
