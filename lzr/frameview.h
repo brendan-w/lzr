@@ -33,7 +33,9 @@ protected:
 
 private:
     void addItem(QGraphicsItem* item);
+    void resize_graphics();
 
     QGraphicsScene* scene;
     Grid* grid;
+    QList<QGraphicsItem*> points;
 };

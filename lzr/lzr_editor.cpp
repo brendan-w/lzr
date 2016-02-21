@@ -7,8 +7,8 @@ LZREditor::LZREditor()
     setupUi();
 
     //add some points to test with
-    // frame->addPoint();
-    // frame->addPoint();
+    frame->addPoint();
+    frame->addPoint();
 }
 
 LZREditor::~LZREditor()

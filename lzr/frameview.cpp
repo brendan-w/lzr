@@ -20,7 +20,6 @@ FrameView::FrameView(QWidget *parent) : QGraphicsView(parent)
 
     grid = new Grid;
     scene->addItem(grid);
-
 }
 
 FrameView::~FrameView()
@@ -33,6 +32,17 @@ void FrameView::addPoint()
     QGraphicsItem* point = new Point;
     point->setTransform(transform().inverted());
     scene->addItem(point);
+    points.append(point);
+}
+
+void FrameView::resize_graphics()
+{
+    //when the view is resized, we need update the transform of the individual items
+    //to keep them in "pixel" coordinates
+    foreach(QGraphicsItem* item, points)
+    {
+        item->setTransform(transform().inverted());
+    }
 }
 
 void FrameView::resizeEvent(QResizeEvent* e)
@@ -46,12 +56,7 @@ void FrameView::resizeEvent(QResizeEvent* e)
     t.scale(s, -s);
     setTransform(t);
 
-    //when the view is resized, we need update the transform of the individual items
-    //to keep them in "pixel" coordinates
-    // foreach(QGraphicsItem* item, items())
-    // {
-    //     item->setTransform(t.inverted());
-    // }
+    resize_graphics();
 }
 
 void FrameView::keyPressEvent(QKeyEvent* e)
@@ -83,4 +88,5 @@ void FrameView::wheelEvent(QWheelEvent* event)
         factor = 1.0 / factor;
 
     scale(factor, factor);
+    resize_graphics();
 }
