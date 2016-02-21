@@ -14,10 +14,12 @@ public:
     Grid(QGraphicsItem *parent = 0);
     ~Grid();
 
+public slots:
+    void setDivisions(size_t d);
+
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
 private:
     size_t divisions;
-    QPen pen;
 };
