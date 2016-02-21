@@ -25,7 +25,11 @@ public:
 
 protected:
     void resizeEvent(QResizeEvent* e);
-    void wheelEvent(QWheelEvent* event);
+
+    void keyPressEvent(QKeyEvent* e);
+    void keyReleaseEvent(QKeyEvent* e);
+
+    void wheelEvent(QWheelEvent* e);
 
 private:
     void addItem(QGraphicsItem* item);

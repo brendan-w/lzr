@@ -20,6 +20,7 @@ FrameView::FrameView(QWidget *parent) : QGraphicsView(parent)
 
     grid = new Grid;
     scene->addItem(grid);
+
 }
 
 FrameView::~FrameView()
@@ -51,6 +52,28 @@ void FrameView::resizeEvent(QResizeEvent* e)
     // {
     //     item->setTransform(t.inverted());
     // }
+}
+
+void FrameView::keyPressEvent(QKeyEvent* e)
+{
+    if(e->key() == Qt::Key_Space)
+    {
+        setInteractive(false);
+        setDragMode(QGraphicsView::ScrollHandDrag);
+    }
+
+    QGraphicsView::keyPressEvent(e);
+}
+
+void FrameView::keyReleaseEvent(QKeyEvent* e)
+{
+    if(e->key() == Qt::Key_Space)
+    {
+        setInteractive(true);
+        setDragMode(QGraphicsView::NoDrag);
+    }
+
+    QGraphicsView::keyReleaseEvent(e);
 }
 
 void FrameView::wheelEvent(QWheelEvent* event)
