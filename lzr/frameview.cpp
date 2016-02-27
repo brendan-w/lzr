@@ -62,10 +62,13 @@ void FrameView::resizeEvent(QResizeEvent* e)
 
 void FrameView::keyPressEvent(QKeyEvent* e)
 {
-    if(e->key() == Qt::Key_Space)
+    if(!e->isAutoRepeat())
     {
-        setInteractive(false);
-        setDragMode(QGraphicsView::ScrollHandDrag);
+        if(e->key() == Qt::Key_Space)
+        {
+            setInteractive(false);
+            setDragMode(ScrollHandDrag);
+        }
     }
 
     QGraphicsView::keyPressEvent(e);
@@ -73,10 +76,13 @@ void FrameView::keyPressEvent(QKeyEvent* e)
 
 void FrameView::keyReleaseEvent(QKeyEvent* e)
 {
-    if(e->key() == Qt::Key_Space)
+    if(!e->isAutoRepeat())
     {
-        setInteractive(true);
-        setDragMode(QGraphicsView::NoDrag);
+        if(e->key() == Qt::Key_Space)
+        {
+            setInteractive(true);
+            setDragMode(NoDrag);
+        }
     }
 
     QGraphicsView::keyReleaseEvent(e);
