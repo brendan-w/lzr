@@ -4,9 +4,18 @@
 #include <QDebug>
 #include "flowlayout.h"
 
-/*
-    The dock widget itself
-*/
+
+
+enum tool_t {
+    MOVE,
+    LINE,
+    DRAW,
+    ADD,
+    DEL
+};
+
+
+
 class ToolDock : public QDockWidget
 {
     Q_OBJECT
@@ -15,15 +24,21 @@ public:
     explicit ToolDock(QWidget* parent = 0);
     virtual ~ToolDock();
 
+signals:
+    void tool_changed(tool_t tool);
+
+public slots:
+    void set_tool(tool_t tool);
+
 private:
-    QPushButton* makeTool(QString text);
+    QToolButton* makeTool();
 
     QWidget* content;
     FlowLayout* layout;
 
-    QPushButton* move;
-    QPushButton* line;
-    QPushButton* draw;
-    QPushButton* add_point;
-    QPushButton* del_point;
+    QToolButton* move;
+    QToolButton* line;
+    QToolButton* draw;
+    QToolButton* add_point;
+    QToolButton* del_point;
 };

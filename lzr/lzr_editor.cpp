@@ -35,15 +35,15 @@ void LZREditor::setupUi()
     menuBar->setGeometry(QRect(0, 0, 762, 20));
     this->setMenuBar(menuBar);
 
-    mainToolBar = new QToolBar(this);
-    this->addToolBar(Qt::TopToolBarArea, mainToolBar);
+    // mainToolBar = new QToolBar(this);
+    // this->addToolBar(Qt::TopToolBarArea, mainToolBar);
 
     statusBar = new QStatusBar(this);
     this->setStatusBar(statusBar);
 
+    tools = new ToolDock(this);
+    this->addDockWidget(Qt::LeftDockWidgetArea, tools);
+
     color = new ColorDock(this);
     this->addDockWidget(Qt::LeftDockWidgetArea, color);
-
-    tools = new ToolDock(this);
-    this->addDockWidget(Qt::TopDockWidgetArea, tools);
 }

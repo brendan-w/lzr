@@ -23,7 +23,7 @@ ColorDock::ColorDock(QWidget* parent) : QDockWidget(parent)
     scene = new QGraphicsScene(content);
     view->setScene(scene);
 
-    layout->addItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
+    layout->addSpacerItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
 
     colors = new ColorSwatch(QPixmap("colors.png"));
     scene->addItem(colors);

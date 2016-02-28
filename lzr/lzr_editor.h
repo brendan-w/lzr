@@ -22,11 +22,11 @@ private:
     QVBoxLayout *verticalLayout;
     FrameView* frame;
     QMenuBar *menuBar;
-    QToolBar *mainToolBar;
+    // QToolBar *mainToolBar;
     QStatusBar *statusBar;
 
-    ColorDock* color;
     ToolDock* tools;
+    ColorDock* color;
 };
 
 #endif // FRAMEEDITOR_H
