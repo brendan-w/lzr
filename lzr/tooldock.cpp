@@ -19,12 +19,6 @@ ToolDock::ToolDock(QWidget* parent) : QDockWidget(parent)
     add_point = makeTool();
     del_point = makeTool();
 
-    layout->addWidget(move);
-    layout->addWidget(line);
-    layout->addWidget(draw);
-    layout->addWidget(add_point);
-    layout->addWidget(del_point);
-
     move->setChecked(true);
 }
 
@@ -47,8 +41,9 @@ void ToolDock::set_tool(tool_t tool)
 
 QToolButton* ToolDock::makeTool()
 {
-    QToolButton* button = new QToolButton(content);
-    button->setCheckable(true);
-    button->setAutoExclusive(true);
-    return button;
+    QToolButton* tool = new QToolButton(content);
+    tool->setCheckable(true);
+    tool->setAutoExclusive(true);
+    layout->addWidget(tool);
+    return tool;
 }
