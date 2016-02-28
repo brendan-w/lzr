@@ -43,4 +43,7 @@ void LZREditor::setupUi()
 
     color = new ColorDock(this);
     this->addDockWidget(Qt::LeftDockWidgetArea, color);
+
+    tools = new ToolDock(this);
+    this->addDockWidget(Qt::TopDockWidgetArea, tools);
 }
