@@ -2,6 +2,8 @@
 #include <QtGui>
 #include "frameview.h"
 
+#define ZOOM_FACTOR 1.2
+
 
 FrameView::FrameView(QWidget *parent) : QGraphicsView(parent)
 {
@@ -90,9 +92,10 @@ void FrameView::keyReleaseEvent(QKeyEvent* e)
 
 void FrameView::wheelEvent(QWheelEvent* event)
 {
-    double factor = 1.2;
+    double factor = ZOOM_FACTOR;
+
     if(event->angleDelta().y() < 0)
-        factor = 1.0 / factor;
+        factor = 1.0 / ZOOM_FACTOR;
 
     scale(factor, factor);
     resize_graphics();

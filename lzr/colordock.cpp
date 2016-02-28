@@ -1,5 +1,4 @@
 
-#include <QDebug>
 #include "colordock.h"
 
 

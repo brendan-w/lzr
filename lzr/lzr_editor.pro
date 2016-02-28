@@ -15,9 +15,17 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         lzr_editor.cpp\
+        flowlayout.cpp\
         frameview.cpp\
         grid.cpp\
         point.cpp\
-        colordock.cpp
+        colordock.cpp\
+        tooldock.cpp
 
-HEADERS  += lzr_editor.h frameview.h grid.h point.h colordock.h
+HEADERS  += lzr_editor.h\
+            flowlayout.h\
+            frameview.h\
+            grid.h\
+            point.h\
+            colordock.h\
+            tooldock.h

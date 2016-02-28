@@ -4,6 +4,7 @@
 #include <QtWidgets>
 #include "frameview.h"
 #include "colordock.h"
+#include "tooldock.h"
 
 
 class LZREditor : public QMainWindow
@@ -25,6 +26,7 @@ private:
     QStatusBar *statusBar;
 
     ColorDock* color;
+    ToolDock* tools;
 };
 
 #endif // FRAMEEDITOR_H
