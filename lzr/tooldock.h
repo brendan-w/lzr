@@ -31,14 +31,14 @@ public slots:
     void set_tool(tool_t tool);
 
 private:
-    QToolButton* makeTool();
+    QToolButton* makeTool(const QString& tooltip);
 
     QWidget* content;
     FlowLayout* layout;
 
-    QToolButton* move;
     QToolButton* line;
     QToolButton* draw;
+    QToolButton* move;
     QToolButton* add_point;
     QToolButton* del_point;
 };
