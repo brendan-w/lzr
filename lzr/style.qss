@@ -1,0 +1,9 @@
+
+QMainWindow {
+    background: #222;
+}
+
+QMainWindow,
+QMainWindow * {
+    color:#AAA;
+}
