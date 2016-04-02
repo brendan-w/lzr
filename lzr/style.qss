@@ -7,3 +7,7 @@ QMainWindow,
 QMainWindow * {
     color:#AAA;
 }
+
+QToolButton {
+    background: #333;
+}

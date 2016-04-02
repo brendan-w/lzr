@@ -8,6 +8,7 @@
 FrameView::FrameView(QWidget *parent) : QGraphicsView(parent)
 {
     // setRenderHint(QPainter::Antialiasing);
+    setFrameStyle(QFrame::NoFrame);
 
     //enforce custom coordinate system [-1.0, 1.0]
     //Y is negative to make positive values go upwards
