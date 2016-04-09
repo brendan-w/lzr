@@ -1,5 +1,6 @@
 
 #include <stdio.h>
+#include <iostream>
 #include <unistd.h>
 #include <assert.h>
 
@@ -7,9 +8,10 @@
 
 using namespace lzr;
 
-#define BEAMS 5
-#define N_BEAM_POINTS 1
-#define N_BLANK_POINTS 1
+#define BEAMS 8
+#define WIDTH 1.7
+#define N_BEAM_POINTS 8
+#define N_BLANK_POINTS 9
 #define COLOR 0, 255, 0, 255
 
 
@@ -32,7 +34,8 @@ int main()
     //upper fan
     for(int i = 0; i < BEAMS; i++)
     {
-        double x = ((2.0 / (BEAMS - 1)) * i) - 1.0;
+        double x = ((WIDTH / (BEAMS - 1)) * i) - (WIDTH / 2);
+        std::cout << x << std::endl;
 
         //beam
         for(int n = 0; n < N_BEAM_POINTS; n++)
@@ -50,7 +53,7 @@ int main()
     //upper fan
     for(int i = 0; i < BEAMS; i++)
     {
-        double x = ((2.0 / (BEAMS - 1)) * i) - 1.0;
+        double x = ((WIDTH / (BEAMS - 1)) * i) - (WIDTH / 2);
         x *= -1.0;
 
         //beam
@@ -63,7 +66,7 @@ int main()
         frame.add(Point(-1.0, -1.0, 0, 0, 0, 0));
 
 
-    interpolate(frame);
+    interpolate(frame, INTERP_DEFAULT + 0.01);
 
 
     //use the first frame
