@@ -59,7 +59,7 @@ QVariant Point::itemChange(GraphicsItemChange change, const QVariant &value)
 
         // Keep the item inside the scene rect.
         QPointF newPos = value.toPointF();
-        QRectF rect = scene()->sceneRect();
+        QRectF rect(-1.0, -1.0, 2.0, 2.0);
 
         if(!rect.contains(newPos))
         {
