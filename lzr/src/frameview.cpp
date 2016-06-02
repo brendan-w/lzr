@@ -9,21 +9,16 @@ FrameView::FrameView(QWidget *parent) : QGraphicsView(parent)
 {
     // setRenderHint(QPainter::Antialiasing);
     setFrameStyle(QFrame::NoFrame);
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     //enforce custom coordinate system [-1.0, 1.0]
     //Y is negative to make positive values go upwards
-
-    scene = new QGraphicsScene(this);
-    // scene->setSceneRect(-1.0, -1.0, 2.0, 2.0);
-    scene->setSceneRect(-5.0, -5.0, 10.0, 10.0);
+    setScene(scene = new QGraphicsScene(this));
+    scene->setSceneRect(-5.0, -5.0, 10.0, 10.0); //bigger than (-1.0, -1.0, 2.0, 2.0) for scrollability
     scene->setBackgroundBrush(Qt::black);
 
-    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    setScene(scene);
-
-    grid = new Grid;
-    scene->addItem(grid);
+    scene->addItem(grid = new Grid);
 }
 
 FrameView::~FrameView()

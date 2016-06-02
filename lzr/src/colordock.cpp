@@ -10,7 +10,7 @@ ColorDock::ColorDock(QWidget* parent) : QDockWidget(parent)
 
     content = new QWidget();
     setWidget(content);
-    
+
     layout = new QVBoxLayout(content);
 
     view = new QGraphicsView(content);

@@ -7,9 +7,7 @@ ToolDock::ToolDock(QWidget* parent) : QDockWidget(parent)
     setWindowTitle("Tools");
     setFeatures(QDockWidget::DockWidgetMovable);
 
-    content = new QWidget();
-    setWidget(content);
-    
+    setWidget(content = new QWidget());
     layout = new FlowLayout(content, -1, 0, 0);
 
     line = makeTool("Line draw");
