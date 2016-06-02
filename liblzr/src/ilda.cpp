@@ -1,6 +1,6 @@
 
 #include <string.h> //strcmp()
-#include <lzr.h>
+#include <liblzr.h>
 #include "ilda.h"
 
 namespace lzr {

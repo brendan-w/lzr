@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include <lzr.h>
+#include <liblzr.h>
 
 namespace lzr {
 

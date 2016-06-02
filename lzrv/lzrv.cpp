@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <SDL.h>
-#include <lzr.h>
+#include <liblzr.h>
 
 using namespace lzr;
 

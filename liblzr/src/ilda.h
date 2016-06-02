@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <endian.h>
-#include <lzr.h>
+#include <liblzr.h>
 
 namespace lzr {
 

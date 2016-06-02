@@ -31,9 +31,8 @@ OBJS := src/point.o \
         src/optimizer_reorder_paths.o \
         src/optimizer_compile_paths.o
 
-HEADERS := lzr.h \
-           src/ilda.h \
-           src/optimizer.h
+HEADERS := liblzr.h \
+           src/*.h
 
 TESTS := test_interpolator \
          test_optimizer

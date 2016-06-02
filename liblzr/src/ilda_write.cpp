@@ -1,6 +1,6 @@
 
 #include <string.h> //memset() zeroing out struct
-#include <lzr.h>
+#include <liblzr.h>
 #include "ilda.h"
 
 namespace lzr {

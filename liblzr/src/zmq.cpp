@@ -2,7 +2,7 @@
 #include <assert.h>
 #include <string.h>
 #include <zmq.h>
-#include <lzr.h>
+#include <liblzr.h>
 
 namespace lzr {
 

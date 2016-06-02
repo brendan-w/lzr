@@ -11,7 +11,7 @@
 #include <math.h>
 
 #include <vector>
-#include <lzr.h>
+#include <liblzr.h>
 #include <zmq.h>
 #include "libetherdream/etherdream.h"
 
