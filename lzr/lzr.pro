@@ -11,3 +11,4 @@ OBJECTS_DIR = build/
 
 SOURCES += src/*.cpp
 HEADERS += src/*.h
+INCLUDEPATH += ../liblzr/
