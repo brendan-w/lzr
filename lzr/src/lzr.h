@@ -18,13 +18,16 @@ public:
 private:
     void setupUi();
 
-    QWidget *centralWidget;
-    QVBoxLayout *verticalLayout;
+    QStackedWidget* stack;
+
     FrameView* frame;
-    QMenuBar *menuBar;
-    // QToolBar *mainToolBar;
-    QStatusBar *statusBar;
 
     ToolDock* tools;
     ColorDock* color;
+
+    /*
+    QMenuBar *menuBar;
+    QToolBar *mainToolBar;
+    QStatusBar *statusBar;
+    */
 };
