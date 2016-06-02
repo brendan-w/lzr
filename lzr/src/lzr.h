@@ -2,7 +2,7 @@
 #pragma once
 
 #include <QtWidgets>
-#include "frameview.h"
+#include "frameeditor.h"
 #include "colordock.h"
 #include "tooldock.h"
 
@@ -20,7 +20,7 @@ private:
 
     QStackedWidget* stack;
 
-    FrameView* frame;
+    FrameEditor* frame;
 
     ToolDock* tools;
     ColorDock* color;

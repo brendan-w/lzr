@@ -22,7 +22,7 @@ void LZR::setupUi()
         resize(1024, 768);
 
     setCentralWidget(stack = new QStackedWidget(this));
-    stack->addWidget(frame = new FrameView(stack));
+    stack->addWidget(frame = new FrameEditor(stack));
 
     addDockWidget(Qt::LeftDockWidgetArea, tools = new ToolDock(this));
     addDockWidget(Qt::LeftDockWidgetArea, color = new ColorDock(this));

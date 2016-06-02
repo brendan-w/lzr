@@ -10,25 +10,21 @@
 
 
 
-class FrameView : public QGraphicsView
+class FrameEditor : public QGraphicsView
 {
     Q_OBJECT
 
 public:
-    FrameView(QWidget* parent = 0);
-    ~FrameView();
+    FrameEditor(QWidget* parent = 0);
+    ~FrameEditor();
 
     void addPoint();
     QSize sizeHint();
 
-    void fillWindow();
-
 protected:
     void resizeEvent(QResizeEvent* e);
-
     void keyPressEvent(QKeyEvent* e);
     void keyReleaseEvent(QKeyEvent* e);
-
     void wheelEvent(QWheelEvent* e);
 
 private:

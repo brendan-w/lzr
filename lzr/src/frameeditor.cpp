@@ -1,11 +1,11 @@
 
 #include <QtGui>
-#include "frameview.h"
+#include "frameeditor.h"
 
 #define ZOOM_FACTOR 1.2
 
 
-FrameView::FrameView(QWidget *parent) : QGraphicsView(parent)
+FrameEditor::FrameEditor(QWidget *parent) : QGraphicsView(parent)
 {
     // setRenderHint(QPainter::Antialiasing);
     setFrameStyle(QFrame::NoFrame);
@@ -21,12 +21,12 @@ FrameView::FrameView(QWidget *parent) : QGraphicsView(parent)
     scene->addItem(grid = new Grid);
 }
 
-FrameView::~FrameView()
+FrameEditor::~FrameEditor()
 {
 
 }
 
-void FrameView::addPoint()
+void FrameEditor::addPoint()
 {
     QGraphicsItem* point = new Point;
     point->setTransform(transform().inverted());
@@ -34,7 +34,7 @@ void FrameView::addPoint()
     points.append(point);
 }
 
-void FrameView::resize_graphics()
+void FrameEditor::resize_graphics()
 {
     //when the view is resized, we need update the transform of the individual items
     //to keep them in "pixel" coordinates
@@ -44,7 +44,7 @@ void FrameView::resize_graphics()
     }
 }
 
-void FrameView::resizeEvent(QResizeEvent* e)
+void FrameEditor::resizeEvent(QResizeEvent* e)
 {
     //resize
     QGraphicsView::resizeEvent(e);
@@ -58,7 +58,7 @@ void FrameView::resizeEvent(QResizeEvent* e)
     resize_graphics();
 }
 
-void FrameView::keyPressEvent(QKeyEvent* e)
+void FrameEditor::keyPressEvent(QKeyEvent* e)
 {
     if(!e->isAutoRepeat())
     {
@@ -72,7 +72,7 @@ void FrameView::keyPressEvent(QKeyEvent* e)
     QGraphicsView::keyPressEvent(e);
 }
 
-void FrameView::keyReleaseEvent(QKeyEvent* e)
+void FrameEditor::keyReleaseEvent(QKeyEvent* e)
 {
     if(!e->isAutoRepeat())
     {
@@ -86,7 +86,7 @@ void FrameView::keyReleaseEvent(QKeyEvent* e)
     QGraphicsView::keyReleaseEvent(e);
 }
 
-void FrameView::wheelEvent(QWheelEvent* event)
+void FrameEditor::wheelEvent(QWheelEvent* event)
 {
     double factor = ZOOM_FACTOR;
 
