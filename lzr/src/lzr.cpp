@@ -1,8 +1,8 @@
 
-#include "lzr_editor.h"
+#include "lzr.h"
 
 
-LZREditor::LZREditor()
+LZR::LZR()
 {
     setupUi();
 
@@ -11,12 +11,12 @@ LZREditor::LZREditor()
     frame->addPoint();
 }
 
-LZREditor::~LZREditor()
+LZR::~LZR()
 {
 
 }
 
-void LZREditor::setupUi()
+void LZR::setupUi()
 {
     if (this->objectName().isEmpty())
     this->resize(1024, 768);
@@ -27,7 +27,7 @@ void LZREditor::setupUi()
     verticalLayout = new QVBoxLayout(centralWidget);
     verticalLayout->setSpacing(6);
     verticalLayout->setContentsMargins(11, 11, 11, 11);
-    
+
     frame = new FrameView(centralWidget);
     verticalLayout->addWidget(frame);
 

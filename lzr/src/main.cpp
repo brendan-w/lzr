@@ -1,4 +1,4 @@
-#include "lzr_editor.h"
+#include "lzr.h"
 #include <QApplication>
 
 int main(int argc, char *argv[])
@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
     QString style = QLatin1String(style_file.readAll());
     a.setStyleSheet(style);
 
-    LZREditor w;
+    LZR w;
     w.show();
 
     return a.exec();

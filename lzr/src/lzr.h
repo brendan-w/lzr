@@ -1,5 +1,5 @@
-#ifndef FRAMEEDITOR_H
-#define FRAMEEDITOR_H
+
+#pragma once
 
 #include <QtWidgets>
 #include "frameview.h"
@@ -7,13 +7,13 @@
 #include "tooldock.h"
 
 
-class LZREditor : public QMainWindow
+class LZR : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    explicit LZREditor();
-    ~LZREditor();
+    explicit LZR();
+    ~LZR();
 
 private:
     void setupUi();
@@ -28,5 +28,3 @@ private:
     ToolDock* tools;
     ColorDock* color;
 };
-
-#endif // FRAMEEDITOR_H
