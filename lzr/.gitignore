@@ -1,6 +1,9 @@
 
+# build directory
+build/
+
 # binaries
-lzr_editor
+lzr
 
 # Created by https://www.gitignore.io/api/qt
 
