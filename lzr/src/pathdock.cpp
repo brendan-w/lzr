@@ -4,11 +4,11 @@
 
 PathDock::PathDock(QWidget* parent) : QDockWidget(parent)
 {
-    this->setWindowTitle("Paths");
-    this->setFeatures(QDockWidget::DockWidgetMovable);
+    setWindowTitle("Paths");
+    setFeatures(QDockWidget::DockWidgetMovable);
 
     content = new QWidget();
-    this->setWidget(content);
+    setWidget(content);
 }
 
 PathDock::~PathDock()

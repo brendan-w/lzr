@@ -4,11 +4,11 @@
 
 ToolDock::ToolDock(QWidget* parent) : QDockWidget(parent)
 {
-    this->setWindowTitle("Tools");
-    this->setFeatures(QDockWidget::DockWidgetMovable);
+    setWindowTitle("Tools");
+    setFeatures(QDockWidget::DockWidgetMovable);
 
     content = new QWidget();
-    this->setWidget(content);
+    setWidget(content);
     
     layout = new FlowLayout(content, -1, 0, 0);
 
