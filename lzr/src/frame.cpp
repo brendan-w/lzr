@@ -26,11 +26,12 @@ QVariant Frame::data(const QModelIndex& index, int role) const
     if(!index.isValid())
         return QVariant();
 
-    if(index.row() >= rowCount())
+    if(index.row() < 0 || index.row() >= rowCount())
         return QVariant();
 
-    //TODO
-    return QVariant();
+    QVariant v;
+    v.setValue(paths[index.row()]);
+    return v;
 }
 
 int Frame::columnCount(const QModelIndex& index) const
@@ -58,7 +59,13 @@ QModelIndex Frame::parent(const QModelIndex& index) const
     return QModelIndex();
 }
 
-
+lzr::Point Frame::get_point(int i)
+{
+    if(i < 0 || i >= (int) frame.size())
+        return lzr::Point();
+    else
+        return frame[i];
+}
 
 void Frame::find_paths()
 {
@@ -128,10 +135,19 @@ int Path::columnCount(const QModelIndex& index) const
 
 QVariant Path::data(const QModelIndex &index, int role) const
 {
-    Q_UNUSED(index);
     Q_UNUSED(role);
 
-    return QVariant();
+    QModelIndex source_index = mapToSource(index);
+
+    if(!source_index.isValid())
+        return QVariant();
+
+    //lookup the point in the raw frame
+    lzr::Point p = ((Frame*)sourceModel())->get_point(source_index.row());
+
+    QVariant v;
+    v.setValue(p);
+    return v;
 }
 
 QModelIndex Path::index(int row, int column, const QModelIndex& parent) const

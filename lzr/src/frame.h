@@ -17,7 +17,7 @@ public:
     Path(QAbstractItemModel* frame, size_t s, size_t e);
     int rowCount(const QModelIndex &parent=QModelIndex()) const;
     int columnCount(const QModelIndex& index) const;
-    QVariant data(const QModelIndex &index, int role) const; //retrieve one of the points
+    QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const; //retrieve one of the points
     QModelIndex index(int row, int column=0, const QModelIndex& parent=QModelIndex()) const;
     QModelIndex parent(const QModelIndex& index) const;
     QModelIndex mapToSource(const QModelIndex& index) const;
@@ -46,9 +46,11 @@ public:
     ~Frame();
     int rowCount(const QModelIndex &parent = QModelIndex()) const; //reports the number of paths in the frame
     int columnCount(const QModelIndex& index) const;
-    QVariant data(const QModelIndex &index, int role) const; //retrieve one of the paths
+    QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const; //retrieve one of the paths
     QModelIndex index(int row, int column=0, const QModelIndex& parent=QModelIndex()) const;
     QModelIndex parent(const QModelIndex& index) const;
+
+    lzr::Point get_point(int i);
 
 private:
     lzr::Frame frame; //the raw frame of points
