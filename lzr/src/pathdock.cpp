@@ -12,6 +12,8 @@ PathDock::PathDock(QWidget* parent) : QDockWidget(parent)
 
     layout = new QVBoxLayout(content);
     layout->addWidget(paths = new QListView());
+
+    paths->setFrameShape(QFrame::NoFrame);
 }
 
 PathDock::~PathDock()
