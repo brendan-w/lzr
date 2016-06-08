@@ -21,9 +21,9 @@ LZR::LZR()
     frame = new Frame(f);
 
     qDebug() << frame->rowCount();
-    QVariant v = frame->data(frame->index(0));
-    Path* p = v.value<Path*>();
-    qDebug() << p->rowCount();
+    QVariant v = frame->data(frame->index(2));
+    lzr::Frame p = v.value<lzr::Frame>();
+    qDebug() << p.size();
 }
 
 LZR::~LZR()
