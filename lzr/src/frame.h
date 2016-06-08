@@ -5,7 +5,6 @@
 #include <QAbstractListModel>
 #include <QAbstractProxyModel>
 
-Q_DECLARE_METATYPE(lzr::Point);
 
 /*
 
@@ -15,17 +14,28 @@ class Path : public QAbstractProxyModel
     Q_OBJECT
 
 public:
+    Path(QAbstractItemModel* frame, size_t s, size_t e);
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
-    QVariant data(const QModelIndex &index, int role) const;
-    void setPathNumber(int _n);
+    int columnCount(const QModelIndex& index) const;
+    QVariant data(const QModelIndex &index, int role) const; //retrieve one of the points
+    QModelIndex index(int row, int column, const QModelIndex& index) const;
+    QModelIndex parent(const QModelIndex& index) const;
+    QModelIndex mapToSource(const QModelIndex& index) const;
+    QModelIndex mapFromSource(const QModelIndex& index) const;
 
 private:
-    int n;
+    size_t start; //point indices in the raw lzr::Frame
+    size_t end;
 };
 
 
 /*
- * main frame model, representing a list of points
+ * Main frame model
+ *
+ * This model exposes the vector data as a list of paths (proxy models)
+ * paths are contiguous, lit points, and are handled as
+ * individual entities by the UI. This model handles all
+ * abstraction of paths vs the raw list of points in the frame.
  */
 class Frame : public QAbstractListModel
 {
@@ -33,9 +43,21 @@ class Frame : public QAbstractListModel
 
 public:
     Frame(lzr::Frame& f);
-    int rowCount(const QModelIndex &parent = QModelIndex()) const;
-    QVariant data(const QModelIndex &index, int role) const;
+    ~Frame();
+    int rowCount(const QModelIndex &parent = QModelIndex()) const; //reports the number of paths in the frame
+    int columnCount(const QModelIndex& index) const;
+    QVariant data(const QModelIndex &index, int role) const; //retrieve one of the paths
+    QModelIndex index(int row, int column, const QModelIndex& index) const;
+    QModelIndex parent(const QModelIndex& index) const;
 
 private:
-    lzr::Frame frame;
+    lzr::Frame frame; //the raw frame of points
+    QList<Path*> paths;
+
+    void find_paths();
+    void clear_paths();
 };
+
+
+//Q_DECLARE_METATYPE(lzr::Point);
+//Q_DECLARE_METATYPE(Path);
