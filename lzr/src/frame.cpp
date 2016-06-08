@@ -39,12 +39,17 @@ int Frame::columnCount(const QModelIndex& index) const
     return 1;
 }
 
-QModelIndex Frame::index(int row, int column, const QModelIndex& index) const
+QModelIndex Frame::index(int row, int column, const QModelIndex& parent) const
 {
-    Q_UNUSED(column);
-    Q_UNUSED(index);
-    //TODO
-    return QModelIndex();
+    Q_UNUSED(parent);
+
+    if(column != 0)
+        return QModelIndex();
+
+    if(row >= rowCount())
+        return QModelIndex();
+
+    return createIndex(row, 0);
 }
 
 QModelIndex Frame::parent(const QModelIndex& index) const
@@ -125,13 +130,21 @@ QVariant Path::data(const QModelIndex &index, int role) const
 {
     Q_UNUSED(index);
     Q_UNUSED(role);
-    //TODO
+
     return QVariant();
 }
 
-QModelIndex Path::index(int row, int column, const QModelIndex& index) const
+QModelIndex Path::index(int row, int column, const QModelIndex& parent) const
 {
-    return QModelIndex();
+    Q_UNUSED(parent);
+
+    if(column != 0)
+        return QModelIndex();
+
+    if(row >= rowCount())
+        return QModelIndex();
+
+    return createIndex(row, 0);
 }
 
 QModelIndex Path::parent(const QModelIndex& index) const
@@ -140,15 +153,30 @@ QModelIndex Path::parent(const QModelIndex& index) const
     return QModelIndex();
 }
 
-
 QModelIndex Path::mapToSource(const QModelIndex& index) const
 {
-    Q_UNUSED(index);
-    return QModelIndex();
+    if(!index.isValid())
+        return QModelIndex();
+
+    if(index.column() != 0)
+        return QModelIndex();
+
+    if(index.row() < 0 || index.row() >= rowCount())
+        return QModelIndex();
+
+    return createIndex(index.row() + start, 0);
 }
 
 QModelIndex Path::mapFromSource(const QModelIndex& index) const
 {
-    Q_UNUSED(index);
-    return QModelIndex();
+    if(!index.isValid())
+        return QModelIndex();
+
+    if(index.column() != 0)
+        return QModelIndex();
+
+    if(index.row() < (int) start || index.row() > (int) end)
+        return QModelIndex();
+
+    return createIndex(index.row() - start, 0);
 }

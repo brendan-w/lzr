@@ -15,10 +15,10 @@ class Path : public QAbstractProxyModel
 
 public:
     Path(QAbstractItemModel* frame, size_t s, size_t e);
-    int rowCount(const QModelIndex &parent = QModelIndex()) const;
+    int rowCount(const QModelIndex &parent=QModelIndex()) const;
     int columnCount(const QModelIndex& index) const;
     QVariant data(const QModelIndex &index, int role) const; //retrieve one of the points
-    QModelIndex index(int row, int column, const QModelIndex& index) const;
+    QModelIndex index(int row, int column=0, const QModelIndex& parent=QModelIndex()) const;
     QModelIndex parent(const QModelIndex& index) const;
     QModelIndex mapToSource(const QModelIndex& index) const;
     QModelIndex mapFromSource(const QModelIndex& index) const;
@@ -47,17 +47,17 @@ public:
     int rowCount(const QModelIndex &parent = QModelIndex()) const; //reports the number of paths in the frame
     int columnCount(const QModelIndex& index) const;
     QVariant data(const QModelIndex &index, int role) const; //retrieve one of the paths
-    QModelIndex index(int row, int column, const QModelIndex& index) const;
+    QModelIndex index(int row, int column=0, const QModelIndex& parent=QModelIndex()) const;
     QModelIndex parent(const QModelIndex& index) const;
 
 private:
     lzr::Frame frame; //the raw frame of points
-    QList<Path*> paths;
+    QList<Path*> paths; //list of proxy models representing sequences of points
 
     void find_paths();
     void clear_paths();
 };
 
 
-//Q_DECLARE_METATYPE(lzr::Point);
-//Q_DECLARE_METATYPE(Path);
+Q_DECLARE_METATYPE(lzr::Point);
+Q_DECLARE_METATYPE(Path*);
