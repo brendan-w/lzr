@@ -11,4 +11,8 @@ OBJECTS_DIR = build/
 
 SOURCES += src/*.cpp
 HEADERS += src/*.h
-INCLUDEPATH += ../liblzr/
+INCLUDEPATH += ../liblzr
+
+# TODO: switch this to the installed path
+LIBS += ../liblzr/liblzr.so
+# LIBS += -llzr
