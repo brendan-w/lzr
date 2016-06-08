@@ -8,6 +8,7 @@ QMainWindow * {
     color:#AAA;
 }
 
-QToolButton {
+QToolButton,
+QListView {
     background: #333;
 }

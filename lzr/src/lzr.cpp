@@ -26,6 +26,7 @@ void LZR::setupUi()
 
     addDockWidget(Qt::LeftDockWidgetArea, tools = new ToolDock(this));
     addDockWidget(Qt::LeftDockWidgetArea, color = new ColorDock(this));
+    addDockWidget(Qt::RightDockWidgetArea, paths = new PathDock(this));
 
     /*
     setMenuBar(menuBar = new QMenuBar(this));

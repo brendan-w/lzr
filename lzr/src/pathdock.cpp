@@ -9,6 +9,9 @@ PathDock::PathDock(QWidget* parent) : QDockWidget(parent)
 
     content = new QWidget();
     setWidget(content);
+
+    layout = new QVBoxLayout(content);
+    layout->addWidget(paths = new QListView());
 }
 
 PathDock::~PathDock()

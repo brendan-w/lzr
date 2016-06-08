@@ -15,7 +15,9 @@ class Path : public QAbstractProxyModel
     Q_OBJECT
 
 public:
-    void setPathNumber(int n);
+    int rowCount(const QModelIndex &parent = QModelIndex()) const;
+    QVariant data(const QModelIndex &index, int role) const;
+    void setPathNumber(int _n);
 
 private:
     int n;

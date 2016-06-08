@@ -14,4 +14,6 @@ public:
 
 private:
     QWidget* content;
+    QVBoxLayout* layout;
+    QListView* paths;
 };

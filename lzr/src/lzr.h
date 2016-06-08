@@ -5,6 +5,7 @@
 #include "frameeditor.h"
 #include "colordock.h"
 #include "tooldock.h"
+#include "pathdock.h"
 
 
 class LZR : public QMainWindow
@@ -24,6 +25,7 @@ private:
 
     ToolDock* tools;
     ColorDock* color;
+    PathDock* paths;
 
     /*
     QMenuBar *menuBar;
