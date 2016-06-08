@@ -16,7 +16,7 @@ Frame::~Frame()
 int Frame::rowCount(const QModelIndex& parent) const
 {
     Q_UNUSED(parent);
-    return frame.size();
+    return paths.size();
 }
 
 QVariant Frame::data(const QModelIndex& index, int role) const
@@ -124,7 +124,7 @@ Path::Path(QAbstractItemModel* frame, size_t s, size_t e)
 int Path::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return end - start;
+    return (end - start) + 1;
 }
 
 int Path::columnCount(const QModelIndex& index) const

@@ -3,6 +3,7 @@
 
 #include <QtWidgets>
 #include "frameeditor.h"
+#include "frame.h"
 #include "colordock.h"
 #include "tooldock.h"
 #include "pathdock.h"
@@ -21,7 +22,8 @@ private:
 
     QStackedWidget* stack;
 
-    FrameEditor* frame;
+    FrameEditor* editor;
+    Frame* frame;
 
     ToolDock* tools;
     ColorDock* color;
