@@ -32,6 +32,11 @@ void Point::setColor(int r, int g, int b)
     color = QColor(r, g, b);
 }
 
+QColor Point::getColor() const
+{
+    return color;
+}
+
 
 QRectF Point::boundingRect() const
 {

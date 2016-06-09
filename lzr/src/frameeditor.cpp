@@ -73,15 +73,16 @@ Point* FrameEditor::addPoint(lzr::Point orig)
 void FrameEditor::drawForeground(QPainter* painter, const QRectF& rect)
 {
     //draw the lines between points
-    /*
-    for(int i = 0; i < points.size() - 1; i++)
+    foreach(const QList<Point*>& points, paths)
     {
-        Point& p1 = points[i];
-        Point& p2 = points[i+1];
-        painter->setPen(QPen(QColor(p2.r, p2.g, p2.b), 0));
-        painter->drawLine(p1.x(), p1.y(), p2.x(), p2.y());
+        for(int i = 0; i < points.size() - 1; i++)
+        {
+            const Point* p1 = points[i];
+            const Point* p2 = points[i+1];
+            painter->setPen(QPen(p2->getColor(), 0));
+            painter->drawLine(p1->x(), p1->y(), p2->x(), p2->y());
+        }
     }
-    */
 }
 
 

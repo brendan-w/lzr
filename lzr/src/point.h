@@ -15,6 +15,7 @@ public:
 
     QRectF boundingRect() const;
     void setColor(int r, int g, int b);
+    QColor getColor() const;
 
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
