@@ -11,13 +11,14 @@
 
 
 
+
 Point::Point(lzr::Point p) : QGraphicsItem(0)
 {
     setFlag(QGraphicsItem::ItemIsMovable);
     setFlag(QGraphicsItem::ItemSendsGeometryChanges);
     setAcceptHoverEvents(true);
     setPos(p.x, p.y);
-    setColor(p.r, p.g, p.b);
+    setColor(p.r, p.g, p.b, p.i);
     hovered = false;
 }
 
@@ -27,9 +28,9 @@ Point::~Point()
 }
 
 
-void Point::setColor(int r, int g, int b)
+void Point::setColor(int r, int g, int b, int a)
 {
-    color = QColor(r, g, b);
+    color = QColor(r, g, b, a);
 }
 
 QColor Point::getColor() const
@@ -37,6 +38,15 @@ QColor Point::getColor() const
     return color;
 }
 
+lzr::Point Point::to_LZR() const
+{
+    return lzr::Point(x(),
+                      y(),
+                      color.red(),
+                      color.green(),
+                      color.blue(),
+                      color.alpha());
+}
 
 QRectF Point::boundingRect() const
 {

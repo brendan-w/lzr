@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
     a.setStyleSheet(style);
 
     LZR w;
-    inspect(&w);
+    //inspect(&w);
     w.show();
 
     return a.exec();
