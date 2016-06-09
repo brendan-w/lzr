@@ -1,7 +1,6 @@
 
 #include "lzr.h"
 
-
 LZR::LZR()
 {
     setupUi();
@@ -20,10 +19,7 @@ LZR::LZR()
 
     frame = new Frame(f);
 
-    qDebug() << frame->rowCount();
-    QVariant v = frame->data(frame->index(2));
-    lzr::Frame p = v.value<lzr::Frame>();
-    qDebug() << p.size();
+    paths->setModel(frame);
 }
 
 LZR::~LZR()

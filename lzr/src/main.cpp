@@ -1,5 +1,6 @@
 #include "lzr.h"
 #include <QApplication>
+#include "inspect.h"
 
 int main(int argc, char *argv[])
 {
@@ -12,6 +13,7 @@ int main(int argc, char *argv[])
     a.setStyleSheet(style);
 
     LZR w;
+    inspect(&w);
     w.show();
 
     return a.exec();

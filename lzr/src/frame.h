@@ -20,7 +20,7 @@ class Frame : public QAbstractListModel
     Q_OBJECT
 
 public:
-    Frame(lzr::Frame& f);
+    Frame(lzr::Frame& frame);
     int rowCount(const QModelIndex &parent = QModelIndex()) const; //reports the number of paths in the frame
     int columnCount(const QModelIndex& index) const;
     QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const; //retrieve one of the paths
