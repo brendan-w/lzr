@@ -13,7 +13,6 @@ public:
     virtual ~PathDock();
     void setModel(QAbstractItemModel* model);
 
-
 private:
     QWidget* content;
     QVBoxLayout* layout;

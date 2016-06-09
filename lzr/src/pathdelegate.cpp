@@ -2,6 +2,7 @@
 #include <QPainter>
 #include "pathdelegate.h"
 #include "frame.h" //lzr::frame QT Metatype
+#include <QDebug>
 
 
 void PathDelegate::paint(QPainter* painter,
@@ -11,12 +12,15 @@ void PathDelegate::paint(QPainter* painter,
     if(option.state & QStyle::State_Selected)
         painter->fillRect(option.rect, option.palette.highlight());
 
+    int WIDTH = option.rect.width();
+
     painter->save();
 
     painter->translate(option.rect.x(), option.rect.y());
-    painter->fillRect(0, 0, PATH_DELEGATE_SIZE, PATH_DELEGATE_SIZE, Qt::black);
+    painter->fillRect(0, 0, WIDTH, WIDTH, Qt::black);
 
-    painter->scale((PATH_DELEGATE_SIZE/2), -(PATH_DELEGATE_SIZE/2));
+    WIDTH--; //compensate for a OBO pxiel issue with drawing at the edges
+    painter->scale((WIDTH/2), -(WIDTH/2));
     painter->translate(1, -1);
 
     //get the raw point data from the model index
@@ -45,5 +49,6 @@ QSize PathDelegate::sizeHint(const QStyleOptionViewItem& option,
 {
     Q_UNUSED(option);
     Q_UNUSED(index);
-    return QSize(PATH_DELEGATE_SIZE, PATH_DELEGATE_SIZE);
+    return QSize(PATH_DELEGATE_SIZE,
+                 PATH_DELEGATE_SIZE);
 }
