@@ -11,18 +11,25 @@
 
 
 
-Point::Point(QGraphicsItem *parent) : QGraphicsItem(parent)
+Point::Point(lzr::Point p) : QGraphicsItem(0)
 {
     setFlag(QGraphicsItem::ItemIsMovable);
     setFlag(QGraphicsItem::ItemSendsGeometryChanges);
     setAcceptHoverEvents(true);
-    setPos(0, 0);
+    setPos(p.x, p.y);
+    setColor(p.r, p.g, p.b);
     hovered = false;
 }
 
 Point::~Point()
 {
 
+}
+
+
+void Point::setColor(int r, int g, int b)
+{
+    color = QColor(r, g, b);
 }
 
 
@@ -44,7 +51,7 @@ void Point::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     }
 
     painter->setPen(Qt::NoPen);
-    painter->setBrush(Qt::green);
+    painter->setBrush(color);
     painter->drawEllipse(-POINT_INNER_RADIUS, -POINT_INNER_RADIUS, POINT_INNER_DIAMETER, POINT_INNER_DIAMETER);
 }
 

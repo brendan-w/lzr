@@ -3,16 +3,18 @@
 
 #include <QtWidgets>
 #include <QDebug>
+#include "liblzr.h"
 
 
 
 class Point : public QGraphicsItem
 {
 public:
-    Point(QGraphicsItem *parent = 0);
+    Point(lzr::Point);
     ~Point();
 
     QRectF boundingRect() const;
+    void setColor(int r, int g, int b);
 
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
@@ -22,5 +24,6 @@ protected:
     void hoverLeaveEvent(QGraphicsSceneHoverEvent* event);
 
 private:
+    QColor color;
     bool hovered;
 };

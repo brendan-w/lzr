@@ -5,10 +5,6 @@ LZR::LZR()
 {
     setupUi();
 
-    //add some points to test with
-    editor->addPoint();
-    editor->addPoint();
-
     //test the Frame model
     lzr::Frame f;
     f.add(                lzr::Point(-1, -1, 255, 0, 0, 255));
@@ -25,6 +21,7 @@ LZR::LZR()
     frame = new Frame(f);
 
     paths->setModel(frame);
+    editor->setModel(frame);
 }
 
 LZR::~LZR()

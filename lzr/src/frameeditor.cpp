@@ -26,21 +26,75 @@ FrameEditor::~FrameEditor()
 
 }
 
-void FrameEditor::addPoint()
+void FrameEditor::reset()
 {
-    QGraphicsItem* point = new Point;
+    foreach(const QList<Point*>& points, paths)
+    {
+        foreach(Point* point, points)
+        {
+            scene->removeItem(point);
+            delete point;
+        }
+    }
+
+    paths.clear();
+    //TODO: disconnect signals from the model
+    model = NULL;
+}
+
+void FrameEditor::setModel(Frame* m)
+{
+    reset();
+    model = m;
+    //TODO connect signals
+
+    //create all of the path objects in the model
+    for(int i = 0; i < model->rowCount(); i++)
+    {
+        QModelIndex index = model->index(i);
+        lzr::Frame path = index.data().value<lzr::Frame>();
+
+        foreach(const lzr::Point& p, path)
+        {
+            paths[index].append(addPoint(p));
+        }
+    }
+}
+
+
+Point* FrameEditor::addPoint(lzr::Point orig)
+{
+    Point* point = new Point(orig);
     point->setTransform(transform().inverted());
     scene->addItem(point);
-    points.append(point);
+    return point;
 }
+
+void FrameEditor::drawForeground(QPainter* painter, const QRectF& rect)
+{
+    //draw the lines between points
+    /*
+    for(int i = 0; i < points.size() - 1; i++)
+    {
+        Point& p1 = points[i];
+        Point& p2 = points[i+1];
+        painter->setPen(QPen(QColor(p2.r, p2.g, p2.b), 0));
+        painter->drawLine(p1.x(), p1.y(), p2.x(), p2.y());
+    }
+    */
+}
+
 
 void FrameEditor::resize_graphics()
 {
     //when the view is resized, we need update the transform of the individual items
     //to keep them in "pixel" coordinates
-    foreach(QGraphicsItem* item, points)
+    foreach(const QList<Point*>& points, paths)
     {
-        item->setTransform(transform().inverted());
+        foreach(Point* point, points)
+        {
+            point->setTransform(transform().inverted());
+        }
     }
 }
 
