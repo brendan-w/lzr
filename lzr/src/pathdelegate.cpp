@@ -9,10 +9,16 @@ void PathDelegate::paint(QPainter* painter,
                          const QStyleOptionViewItem& option,
                          const QModelIndex& index) const
 {
-    Q_UNUSED(option);
+    if(option.state & QStyle::State_Selected)
+        painter->fillRect(option.rect, option.palette.highlight());
 
-    painter->scale(SIZE, -SIZE);
-    painter->translate(0.5, -0.5);
+    painter->save();
+
+    painter->translate(option.rect.x(), option.rect.y());
+    painter->fillRect(0, 0, SIZE, SIZE, Qt::black);
+
+    painter->scale((SIZE/2), -(SIZE/2));
+    painter->translate(1, -1);
 
     //get the raw point data from the model index
     lzr::Frame path = index.data().value<lzr::Frame>();
@@ -31,6 +37,8 @@ void PathDelegate::paint(QPainter* painter,
         painter->setPen(pen);
         painter->drawLine(line);
     }
+
+    painter->restore();
 }
 
 QSize PathDelegate::sizeHint(const QStyleOptionViewItem& option,

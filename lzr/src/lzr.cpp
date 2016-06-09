@@ -11,11 +11,16 @@ LZR::LZR()
 
     //test the Frame model
     lzr::Frame f;
-    f.add(                lzr::Point(0, 0,   255, 255, 255, 255));
-    f.add(                lzr::Point(0, 0.5, 255, 255, 255, 255));
-    f.add(                lzr::Point(0, 1,   255, 255, 255, 255));
-    f.add_with_blank_jump(lzr::Point(1, 0,   255, 255, 255, 255));
-    f.add(                lzr::Point(1, 1,   255, 255, 255, 255));
+    f.add(                lzr::Point(-1, -1, 255, 0, 0, 255));
+    f.add(                lzr::Point(-1, 0,  255, 0, 0, 255));
+    f.add(                lzr::Point(-1, 1,  255, 0, 0, 255));
+    f.add_with_blank_jump(lzr::Point(0,  -1, 0, 255, 0, 255));
+    f.add(                lzr::Point(0,  1,  0, 255, 0, 255));
+    f.add_with_blank_jump(lzr::Point(1,  -1, 0, 0, 255, 255));
+    f.add(                lzr::Point(1,  1,  0, 0, 255, 255));
+    f.add_with_blank_jump(lzr::Point(-1, 1,  255, 255, 255, 255));
+    f.add(                lzr::Point(0,  0,  255, 255, 255, 255));
+    f.add(                lzr::Point(-1, -1,  0, 255, 255, 255));
 
     frame = new Frame(f);
 
