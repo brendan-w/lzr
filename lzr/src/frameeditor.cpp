@@ -9,8 +9,11 @@ FrameEditor::FrameEditor(QWidget *parent) : QGraphicsView(parent)
 {
     // setRenderHint(QPainter::Antialiasing);
     setFrameStyle(QFrame::NoFrame);
+    //disable all scroll bars
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    //when points move, the connecting lines must be redrawn
+    setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
 
     //enforce custom coordinate system [-1.0, 1.0]
     //Y is negative to make positive values go upwards
@@ -19,9 +22,18 @@ FrameEditor::FrameEditor(QWidget *parent) : QGraphicsView(parent)
     scene->setBackgroundBrush(Qt::black);
 
     scene->addItem(grid = new Grid);
+
+    connect(scene, SIGNAL(changed(const QList<QRectF>&)),
+            this, SLOT(scene_changed(const QList<QRectF>&)));
+
 }
 
 FrameEditor::~FrameEditor()
+{
+
+}
+
+void FrameEditor::scene_changed(const QList<QRectF>& region)
 {
 
 }
@@ -79,8 +91,9 @@ void FrameEditor::drawForeground(QPainter* painter, const QRectF& rect)
         {
             const Point* p1 = points[i];
             const Point* p2 = points[i+1];
+            QLineF line(p1->x(), p1->y(), p2->x(), p2->y());
             painter->setPen(QPen(p2->getColor(), 0));
-            painter->drawLine(p1->x(), p1->y(), p2->x(), p2->y());
+            painter->drawLine(line);
         }
     }
 }

@@ -25,6 +25,9 @@ public:
     void setModel(Frame* m);
     void reset();
 
+private slots:
+    void scene_changed(const QList<QRectF>& region);
+
 protected:
     void resizeEvent(QResizeEvent* e);
     void keyPressEvent(QKeyEvent* e);
@@ -35,7 +38,6 @@ protected:
 private:
     Point* addPoint(lzr::Point orig);
     void resize_graphics();
-
 
     Frame* model;
     QGraphicsScene* scene;
