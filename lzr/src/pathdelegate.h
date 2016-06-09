@@ -1,6 +1,8 @@
 
 #include <QStyledItemDelegate>
 
+#define PATH_DELEGATE_SIZE 50
+
 
 class PathDelegate : public QStyledItemDelegate
 {

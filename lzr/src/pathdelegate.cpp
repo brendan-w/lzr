@@ -3,7 +3,6 @@
 #include "pathdelegate.h"
 #include "frame.h" //lzr::frame QT Metatype
 
-#define SIZE 100
 
 void PathDelegate::paint(QPainter* painter,
                          const QStyleOptionViewItem& option,
@@ -15,9 +14,9 @@ void PathDelegate::paint(QPainter* painter,
     painter->save();
 
     painter->translate(option.rect.x(), option.rect.y());
-    painter->fillRect(0, 0, SIZE, SIZE, Qt::black);
+    painter->fillRect(0, 0, PATH_DELEGATE_SIZE, PATH_DELEGATE_SIZE, Qt::black);
 
-    painter->scale((SIZE/2), -(SIZE/2));
+    painter->scale((PATH_DELEGATE_SIZE/2), -(PATH_DELEGATE_SIZE/2));
     painter->translate(1, -1);
 
     //get the raw point data from the model index
@@ -46,5 +45,5 @@ QSize PathDelegate::sizeHint(const QStyleOptionViewItem& option,
 {
     Q_UNUSED(option);
     Q_UNUSED(index);
-    return QSize(SIZE, SIZE);
+    return QSize(PATH_DELEGATE_SIZE, PATH_DELEGATE_SIZE);
 }
