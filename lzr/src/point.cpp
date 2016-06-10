@@ -84,7 +84,9 @@ QVariant Point::itemChange(GraphicsItemChange change, const QVariant &value)
             newPos.setY(qMin(rect.bottom(), qMax(newPos.y(), rect.top())));
             return newPos;
         }
-
+    }
+    else if(scene() && change == ItemPositionHasChanged)
+    {
         //moving the child should trigger a change in the parent
         emit changed();
     }

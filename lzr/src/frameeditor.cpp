@@ -135,10 +135,10 @@ void FrameEditor::wheelEvent(QWheelEvent* event)
 
 void FrameEditor::path_changed(Path* path)
 {
+    //update the model with the new path data
     QVariant v;
     v.setValue(path->to_LZR());
     model->setData(path->get_index(), v);
-    //qDebug() << "point changed";
 }
 
 
