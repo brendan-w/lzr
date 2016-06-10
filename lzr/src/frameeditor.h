@@ -15,14 +15,22 @@ class Path : public QGraphicsObject
     Q_OBJECT
 
 public:
-    Path(lzr::Frame frame);
+    Path(QModelIndex i, lzr::Frame frame);
     QRectF boundingRect() const;
+    lzr::Frame to_LZR() const;
+    QModelIndex get_index();
+
+signals:
+    void changed(Path* path);
 
 public slots:
     void point_changed();
 
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+
+private:
+    QModelIndex index;
 };
 
 
@@ -42,6 +50,9 @@ public:
 
     void setModel(Frame* m);
     void reset();
+
+public slots:
+    void path_changed(Path* path);
 
 protected:
     void resizeEvent(QResizeEvent* e);

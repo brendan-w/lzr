@@ -26,7 +26,7 @@ FrameEditor::FrameEditor(QWidget *parent) : QGraphicsView(parent)
 
 FrameEditor::~FrameEditor()
 {
-
+    reset();
 }
 
 void FrameEditor::reset()
@@ -54,9 +54,12 @@ void FrameEditor::setModel(Frame* m)
         QModelIndex index = model->index(i);
         lzr::Frame lzr_path = index.data().value<lzr::Frame>();
 
-        Path* path = new Path(lzr_path);
+        Path* path = new Path(index, lzr_path);
         paths.append(path);
         scene->addItem(path);
+
+        connect(path, SIGNAL(changed(Path*)),
+                this, SLOT(path_changed(Path*)));
     }
 }
 
@@ -130,11 +133,24 @@ void FrameEditor::wheelEvent(QWheelEvent* event)
 }
 
 
-
-
-
-Path::Path(lzr::Frame frame) : QGraphicsObject(0)
+void FrameEditor::path_changed(Path* path)
 {
+    QVariant v;
+    v.setValue(path->to_LZR());
+    model->setData(path->get_index(), v);
+    //qDebug() << "point changed";
+}
+
+
+
+
+
+
+
+Path::Path(QModelIndex i, lzr::Frame frame) : QGraphicsObject(0)
+{
+    index = i;
+
     for(lzr::Point lzr_point : frame)
     {
         Point* point = new Point(lzr_point);
@@ -151,7 +167,11 @@ QRectF Path::boundingRect() const
 
 void Path::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+    Q_UNUSED(option);
+    Q_UNUSED(widget);
+
     QList<QGraphicsItem*> points = childItems();
+
     for(int i = 0; i < points.size() - 1; i++)
     {
         const Point* p1 = (Point*) points[i];
@@ -162,7 +182,24 @@ void Path::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
     }
 }
 
+lzr::Frame Path::to_LZR() const
+{
+    lzr::Frame frame;
+    foreach(QGraphicsItem* item, childItems())
+    {
+        Point* point = (Point*) item;
+        frame.add(point->to_LZR());
+    }
+
+    return frame;
+}
+
+QModelIndex Path::get_index()
+{
+    return index;
+}
+
 void Path::point_changed()
 {
-    qDebug() << "point changed";
+    emit changed(this);
 }
