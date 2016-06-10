@@ -12,14 +12,16 @@ void PathDelegate::paint(QPainter* painter,
     if(option.state & QStyle::State_Selected)
         painter->fillRect(option.rect, option.palette.highlight());
 
-    int WIDTH = option.rect.width();
 
     painter->save();
 
-    painter->translate(option.rect.x(), option.rect.y());
+    int WIDTH = option.rect.width()- 2; //put a one pixel border around it (so the selection marker is visible)
+
+    painter->translate(option.rect.x() + 1, option.rect.y() + 1);
     painter->fillRect(0, 0, WIDTH, WIDTH, Qt::black);
 
-    WIDTH--; //compensate for a OBO pxiel issue with drawing at the edges
+    WIDTH--; //compensate for OBO error on outer edges when drawing lines
+
     painter->scale((WIDTH/2), -(WIDTH/2));
     painter->translate(1, -1);
 
