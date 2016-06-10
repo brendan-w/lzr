@@ -10,14 +10,17 @@ ToolDock::ToolDock(QWidget* parent) : QDockWidget(parent)
     setWidget(content = new QWidget());
     layout = new FlowLayout(content, -1, 0, 0);
 
-    line = makeTool("Line draw");
-    draw = makeTool("Free draw");
-    move = makeTool("Move points");
-    add_point = makeTool("Add point");
-    del_point = makeTool("Delete point");
+    actions = new QActionGroup(content);
+    actions->setExclusive(true);
+
+    line = makeTool(MOVE, "Line draw");
+    draw = makeTool(LINE, "Free draw");
+    move = makeTool(DRAW, "Move points");
+    add_point = makeTool(ADD, "Add point");
+    del_point = makeTool(DEL, "Delete point");
 
     //set default tool
-    line->setChecked(true);
+    line->defaultAction()->toggle();
 }
 
 ToolDock::~ToolDock()
@@ -25,24 +28,31 @@ ToolDock::~ToolDock()
 
 }
 
-void ToolDock::set_tool(tool_t tool)
+void ToolDock::tool_toggled(bool checked)
 {
-    switch(tool)
+    if(checked) //ignore the uncheck events from the previous tool
     {
-        case LINE: line->setChecked(true); break;
-        case DRAW: draw->setChecked(true); break;
-        case MOVE: move->setChecked(true); break;
-        case ADD:  add_point->setChecked(true); break;
-        case DEL:  del_point->setChecked(true); break;
+        QAction* action = (QAction*) sender();
+        emit tool_changed(action->data().value<tool_t>());
     }
 }
 
-QToolButton* ToolDock::makeTool(const QString& tooltip)
+QToolButton* ToolDock::makeTool(tool_t tool, const QString& tooltip)
 {
-    QToolButton* tool = new QToolButton(content);
-    tool->setCheckable(true);
-    tool->setAutoExclusive(true);
-    tool->setToolTip(tooltip);
-    layout->addWidget(tool);
-    return tool;
+    QToolButton* button = new QToolButton(content);
+    QAction* action = new QAction(tooltip, button);
+
+    //load details into the action
+    QVariant v;
+    v.setValue(tool);
+    action->setCheckable(true);
+    action->setData(v);
+
+    connect(action, SIGNAL(toggled(bool)),
+            this, SLOT(tool_toggled(bool)));
+
+    actions->addAction(action);
+    button->setDefaultAction(action);
+    layout->addWidget(button);
+    return button;
 }

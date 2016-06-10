@@ -1,19 +1,14 @@
 
 #pragma once
+
 #include <QtWidgets>
 #include <QDebug>
 #include "flowlayout.h"
+#include "frameeditor.h"
 
 
 
-enum tool_t {
-    MOVE,
-    LINE,
-    DRAW,
-    ADD,
-    DEL
-};
-
+Q_DECLARE_METATYPE(tool_t);
 
 
 class ToolDock : public QDockWidget
@@ -28,14 +23,15 @@ signals:
     void tool_changed(tool_t tool);
 
 public slots:
-    void set_tool(tool_t tool);
+    void tool_toggled(bool checked);
 
 private:
-    QToolButton* makeTool(const QString& tooltip);
+    QToolButton* makeTool(tool_t tool, const QString& tooltip);
 
     QWidget* content;
     FlowLayout* layout;
 
+    QActionGroup* actions;
     QToolButton* line;
     QToolButton* draw;
     QToolButton* move;

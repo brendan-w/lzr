@@ -9,6 +9,15 @@
 #include "path.h"
 
 
+enum tool_t {
+    MOVE,
+    LINE,
+    DRAW,
+    ADD,
+    DEL
+};
+
+
 /*
  * Editor for Frame models
  * this should really be a subclass of QAbstractItemView,
@@ -26,7 +35,9 @@ public:
     void reset();
 
 public slots:
-    void path_changed(Path* path);
+    void path_changed(Path* p);
+    void tool_changed(tool_t t);
+    void color_changed(QColor c);
 
 protected:
     void resizeEvent(QResizeEvent* e);
@@ -37,9 +48,16 @@ protected:
 private:
     void resize_graphics();
 
+    //data
     Frame* model;
+
+    //gui
     QGraphicsScene* scene;
     Grid* grid;
     QList<QGraphicsObject*> points;
     QList<Path*> paths;
+
+    //controls
+    QColor color;
+    tool_t tool;
 };

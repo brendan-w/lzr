@@ -18,7 +18,7 @@ FrameEditor::FrameEditor(QWidget *parent) : QGraphicsView(parent)
     //enforce custom coordinate system [-1.0, 1.0]
     //Y is negative to make positive values go upwards
     setScene(scene = new QGraphicsScene(this));
-    scene->setSceneRect(-5.0, -5.0, 10.0, 10.0); //bigger than (-1.0, -1.0, 2.0, 2.0) for scrollability
+    scene->setSceneRect(-3.0, -3.0, 6.0, 6.0); //bigger than (-1.0, -1.0, 2.0, 2.0) for scrollability
     scene->setBackgroundBrush(Qt::black);
 
     scene->addItem(grid = new Grid);
@@ -31,6 +31,8 @@ FrameEditor::~FrameEditor()
 
 void FrameEditor::reset()
 {
+    fitInView(scene->itemsBoundingRect(), Qt::KeepAspectRatio);
+
     foreach(Path* path, paths)
     {
         scene->removeItem(path);
@@ -132,10 +134,25 @@ void FrameEditor::wheelEvent(QWheelEvent* event)
 }
 
 
+/*
+ * Slots
+ */
+
 void FrameEditor::path_changed(Path* path)
 {
     //update the model with the new path data
     QVariant v;
     v.setValue(path->to_LZR());
     model->setData(path->get_index(), v);
+}
+
+void FrameEditor::tool_changed(tool_t t)
+{
+    qDebug() << "changed " << t;
+    tool = t;
+}
+
+void FrameEditor::color_changed(QColor c)
+{
+    color = c;
 }

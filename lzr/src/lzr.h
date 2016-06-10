@@ -19,11 +19,11 @@ public:
 
 private:
     void setupUi();
+    void show_frameeditor(Frame* frame);
 
     QStackedWidget* stack;
 
     FrameEditor* editor;
-    Frame* frame;
 
     ToolDock* tools;
     ColorDock* color;
