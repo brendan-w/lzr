@@ -133,12 +133,14 @@ void FrameEditor::wheelEvent(QWheelEvent* event)
 
 
 
-Path::Path(lzr::Frame frame)
+Path::Path(lzr::Frame frame) : QGraphicsObject(0)
 {
     for(lzr::Point lzr_point : frame)
     {
         Point* point = new Point(lzr_point);
         point->setParentItem(this);
+        connect(point, SIGNAL(changed()),
+                this, SLOT(point_changed()));
     }
 }
 
@@ -160,8 +162,7 @@ void Path::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
     }
 }
 
-QVariant Path::itemChange(GraphicsItemChange change, const QVariant &value)
+void Path::point_changed()
 {
-    qDebug() << "change " << change;
-    return QGraphicsItem::itemChange(change, value);
+    qDebug() << "point changed";
 }

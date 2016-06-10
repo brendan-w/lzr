@@ -10,16 +10,19 @@
 
 
 
-class Path : public QGraphicsItem
+class Path : public QGraphicsObject
 {
+    Q_OBJECT
+
 public:
     Path(lzr::Frame frame);
     QRectF boundingRect() const;
 
+public slots:
+    void point_changed();
+
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-    QVariant itemChange(GraphicsItemChange change, const QVariant &value);
-
 };
 
 
@@ -52,6 +55,6 @@ private:
     Frame* model;
     QGraphicsScene* scene;
     Grid* grid;
-    QList<QGraphicsItem*> points;
+    QList<QGraphicsObject*> points;
     QList<Path*> paths;
 };

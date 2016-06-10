@@ -12,7 +12,7 @@
 
 
 
-Point::Point(lzr::Point p) : QGraphicsItem(0)
+Point::Point(lzr::Point p) : QGraphicsObject(0)
 {
     setFlag(QGraphicsItem::ItemIsMovable);
     setFlag(QGraphicsItem::ItemSendsGeometryChanges);
@@ -26,7 +26,6 @@ Point::~Point()
 {
 
 }
-
 
 void Point::setColor(int r, int g, int b, int a)
 {
@@ -73,12 +72,8 @@ void Point::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 
 QVariant Point::itemChange(GraphicsItemChange change, const QVariant &value)
 {
-    // qDebug() << "change" << change;
-
     if(scene() && change == ItemPositionChange)
     {
-        // qDebug() << "pos (" << pos().x() << ", " << pos().y() << ")";
-
         // Keep the item inside the scene rect.
         QPointF newPos = value.toPointF();
         QRectF rect(-1.0, -1.0, 2.0, 2.0);
@@ -89,6 +84,9 @@ QVariant Point::itemChange(GraphicsItemChange change, const QVariant &value)
             newPos.setY(qMin(rect.bottom(), qMax(newPos.y(), rect.top())));
             return newPos;
         }
+
+        //moving the child should trigger a change in the parent
+        emit changed();
     }
 
     //call default handler
