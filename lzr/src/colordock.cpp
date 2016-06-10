@@ -32,16 +32,11 @@ ColorDock::ColorDock(QWidget* parent) : QDockWidget(parent)
     scene->addItem(indicator);
 
     //listen to color changes
-    connect(colors, SIGNAL(newColorSelected(QRgb, QRect)),
-            this, SLOT(setColor(QRgb, QRect)));
+    connect(colors, SIGNAL(color_selected(QRgb, QRect)),
+            this, SLOT(color_selected(QRgb, QRect)));
 }
 
-ColorDock::~ColorDock()
-{
-
-}
-
-void ColorDock::setColor(QRgb rgb, QRect rect)
+void ColorDock::color_selected(QRgb rgb, QRect rect)
 {
     color.setRgb(rgb);
 
@@ -52,6 +47,8 @@ void ColorDock::setColor(QRgb rgb, QRect rect)
 
     indicator->setPen(pen);
     indicator->setRect(rect);
+
+    emit color_changed(color);
 }
 
 
@@ -66,11 +63,6 @@ ColorSwatch::ColorSwatch(const QPixmap& pixmap, QGraphicsItem* parent) :
 {
     //save a copy of the swatch so we don't have to do this on every click
     swatch = pixmap.toImage();
-}
-
-ColorSwatch::~ColorSwatch()
-{
-
 }
 
 void ColorSwatch::mousePressEvent(QGraphicsSceneMouseEvent* event)
@@ -130,5 +122,5 @@ void ColorSwatch::mousePressEvent(QGraphicsSceneMouseEvent* event)
         test = swatch.pixel(x, i);
     }
 
-    emit newColorSelected(color, rect);
+    emit color_selected(color, rect);
 }

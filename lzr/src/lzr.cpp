@@ -38,6 +38,8 @@ void LZR::setupUi()
 
     connect(tools, SIGNAL(tool_changed(tool_t)),
             editor, SLOT(tool_changed(tool_t)));
+    connect(color, SIGNAL(color_changed(QColor)),
+            editor, SLOT(color_changed(QColor)));
     /*
     setMenuBar(menuBar = new QMenuBar(this));
     menuBar->setGeometry(QRect(0, 0, 762, 20));

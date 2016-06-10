@@ -13,13 +13,12 @@ class ColorSwatch : public QObject, public QGraphicsPixmapItem
 
 public:
     explicit ColorSwatch(const QPixmap& pixmap, QGraphicsItem* parent = 0);
-    virtual ~ColorSwatch();
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent* event);
 
 signals:
-    void newColorSelected(QRgb rgb, QRect rect);
+    void color_selected(QRgb rgb, QRect rect);
 
 private:
     QImage swatch;
@@ -36,10 +35,12 @@ class ColorDock : public QDockWidget
 
 public:
     explicit ColorDock(QWidget* parent = 0);
-    virtual ~ColorDock();
+
+signals:
+    void color_changed(QColor color);
 
 public slots:
-    void setColor(QRgb rgb, QRect rect);
+    void color_selected(QRgb rgb, QRect rect);
 
 private:
     QColor color; //the currently selected color

@@ -148,7 +148,6 @@ void FrameEditor::path_changed(Path* path)
 
 void FrameEditor::tool_changed(tool_t t)
 {
-    qDebug() << "changed " << t;
     tool = t;
 }
 
