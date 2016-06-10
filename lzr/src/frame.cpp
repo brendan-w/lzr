@@ -52,6 +52,24 @@ QVariant Frame::data(const QModelIndex& index, int role) const
     return v;
 }
 
+bool Frame::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    Q_UNUSED(role);
+
+    if(!index.isValid())
+        return false;
+
+    if(index.row() < 0 || index.row() >= rowCount())
+        return false;
+
+    //store the new vector data
+    lzr::Frame path = value.value<lzr::Frame>();
+    paths[index.row()] = path;
+
+    emit dataChanged(index, index); //only every updates one index at a time
+    return true;
+}
+
 int Frame::columnCount(const QModelIndex& index) const
 {
     Q_UNUSED(index);
