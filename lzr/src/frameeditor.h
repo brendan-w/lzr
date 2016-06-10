@@ -9,6 +9,21 @@
 #include "point.h"
 
 
+
+class Path : public QGraphicsItem
+{
+public:
+    Path(lzr::Frame frame);
+    QRectF boundingRect() const;
+
+protected:
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+    QVariant itemChange(GraphicsItemChange change, const QVariant &value);
+
+};
+
+
+
 /*
  * Editor for Frame models
  * this should really be a subclass of QAbstractItemView,
@@ -25,23 +40,18 @@ public:
     void setModel(Frame* m);
     void reset();
 
-private slots:
-    void scene_changed(const QList<QRectF>& region);
-
 protected:
     void resizeEvent(QResizeEvent* e);
     void keyPressEvent(QKeyEvent* e);
     void keyReleaseEvent(QKeyEvent* e);
     void wheelEvent(QWheelEvent* e);
-    void drawForeground(QPainter* painter, const QRectF& rect);
 
 private:
-    Point* addPoint(lzr::Point orig);
     void resize_graphics();
 
     Frame* model;
     QGraphicsScene* scene;
     Grid* grid;
     QList<QGraphicsItem*> points;
-    QMap<QModelIndex, QList<Point*>> paths;
+    QList<Path*> paths;
 };
