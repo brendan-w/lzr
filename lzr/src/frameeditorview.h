@@ -17,9 +17,6 @@ public:
     FrameEditor(QWidget* parent = 0);
     void reset();
 
-signals:
-    void transform_changed(const QTransform& transform);
-
 protected:
     void resizeEvent(QResizeEvent* e);
     void keyPressEvent(QKeyEvent* e);

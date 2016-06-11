@@ -34,8 +34,6 @@ void LZR::setupUi()
 
     editor_scene = new FrameScene(this);
     editor_view->setScene(editor_scene);
-    connect(editor_view, SIGNAL(transform_changed(const QTransform)),
-            editor_scene, SLOT(compensate_for_view_transform(const QTransform)));
 
     addDockWidget(Qt::LeftDockWidgetArea, tools = new ToolDock(this));
     addDockWidget(Qt::LeftDockWidgetArea, color = new ColorDock(this));

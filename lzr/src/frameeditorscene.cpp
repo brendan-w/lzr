@@ -1,6 +1,7 @@
 
 #include <QtGui>
 #include "frameeditorscene.h"
+#include "utils.h"
 
 
 FrameScene::FrameScene(QWidget *parent) : QGraphicsScene(parent)
@@ -46,21 +47,6 @@ void FrameScene::setSelectionModel(QItemSelectionModel* model)
     selection = model;
 }
 
-void FrameScene::compensate_for_view_transform(const QTransform& transform)
-{
-    //when the view is resized, we need update the transform of the individual items
-    //to keep them in "pixel" coordinates
-
-    foreach(Path* path, paths)
-    {
-        //path->setTransform(transform().inverted());
-        foreach(QGraphicsItem* point, path->childItems())
-        {
-            point->setTransform(transform.inverted());
-        }
-    }
-}
-
 void FrameScene::mouseMoveEvent(QGraphicsSceneMouseEvent* e)
 {
     mouse = e->scenePos();
@@ -73,17 +59,35 @@ void FrameScene::mouseMoveEvent(QGraphicsSceneMouseEvent* e)
     QGraphicsScene::mouseMoveEvent(e);
 }
 
+void FrameScene::mousePressEvent(QGraphicsSceneMouseEvent* e)
+{
+    if(tool == LINE && selection->hasSelection())
+    {
+        QModelIndex index = selection->currentIndex();
+        Path* path = paths[index.row()];
+        Point* old_point = (Point*) path->childItems().back();
+        QPointF pos = constrain_to_frame(e->scenePos());
+        Point* point = new Point(pos, old_point->getColor());
+        path->add_point(point);
+    }
+
+    QGraphicsScene::mousePressEvent(e);
+}
+
 void FrameScene::drawForeground(QPainter *painter, const QRectF &rect)
 {
+    Q_UNUSED(rect); //because we always render the entire scene
+
     if(tool == LINE && selection->hasSelection())
     {
         //lookup the currently selected path
         QModelIndex index = selection->currentIndex();
         Path* path = paths[index.row()];
         Point* point = (Point*) path->childItems().back();
+        QPointF pos = constrain_to_frame(mouse);
 
         painter->setPen(QPen(Qt::darkGray, 0));
-        painter->drawLine(QLineF(point->x(), point->y(), mouse.x(), mouse.y()));
+        painter->drawLine(QLineF(point->x(), point->y(), pos.x(), pos.y()));
     }
 }
 
@@ -103,7 +107,6 @@ void FrameScene::path_changed(Path* path)
 
 void FrameScene::tool_changed(tool_t t)
 {
-    qDebug() << "asdf";
     tool = t;
     update();
 }

@@ -8,10 +8,7 @@ Path::Path(QModelIndex i, lzr::Frame frame) : QGraphicsObject(0)
 
     for(lzr::Point lzr_point : frame)
     {
-        Point* point = new Point(lzr_point);
-        point->setParentItem(this);
-        connect(point, SIGNAL(changed()),
-                this, SLOT(point_changed()));
+        own_point(new Point(lzr_point));
     }
 }
 
@@ -37,6 +34,12 @@ void Path::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
     }
 }
 
+void Path::add_point(Point* point)
+{
+    own_point(point);
+    emit changed(this);
+}
+
 lzr::Frame Path::to_LZR() const
 {
     lzr::Frame frame;
@@ -57,4 +60,12 @@ QModelIndex Path::get_index()
 void Path::point_changed()
 {
     emit changed(this);
+}
+
+void Path::own_point(Point* point)
+{
+    point->setParentItem(this);
+    point->compensate_for_view_transform();
+    connect(point, SIGNAL(changed()),
+            this, SLOT(point_changed()));
 }

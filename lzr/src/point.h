@@ -6,19 +6,20 @@
 #include "liblzr.h"
 
 
-
 class Point : public QGraphicsObject
 {
     Q_OBJECT
 
 public:
     Point(lzr::Point p);
-    ~Point();
+    Point(QPointF p, QColor c);
+    void init();
 
     QRectF boundingRect() const;
-    void setColor(int r, int g, int b, int a);
+    void setColor(const QColor& c);
     QColor getColor() const;
     lzr::Point to_LZR() const;
+    void compensate_for_view_transform();
 
 signals:
     void changed();
@@ -31,6 +32,7 @@ protected:
     void hoverLeaveEvent(QGraphicsSceneHoverEvent* event);
 
 private:
+
     QColor color;
     bool hovered;
 };

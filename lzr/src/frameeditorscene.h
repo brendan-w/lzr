@@ -32,13 +32,13 @@ public:
     void setSelectionModel(QItemSelectionModel* model);
 
 public slots:
-    void compensate_for_view_transform(const QTransform& transform);
     void path_changed(Path* p);
     void tool_changed(tool_t t);
     void color_changed(QColor c);
 
 protected:
     void mouseMoveEvent(QGraphicsSceneMouseEvent* e);
+    void mousePressEvent(QGraphicsSceneMouseEvent* e);
     void drawForeground(QPainter *painter, const QRectF &rect);
 
 private:

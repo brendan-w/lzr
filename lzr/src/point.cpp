@@ -1,5 +1,7 @@
 
 #include "point.h"
+#include "utils.h"
+
 
 #define POINT_RADIUS 10
 #define POINT_DIAMETER (POINT_RADIUS * 2)
@@ -14,22 +16,29 @@
 
 Point::Point(lzr::Point p) : QGraphicsObject(0)
 {
+    init();
+    setPos(p.x, p.y);
+    color = QColor(p.r, p.g, p.b, p.i);
+}
+
+Point::Point(QPointF p, QColor c) : QGraphicsObject(0)
+{
+    init();
+    setPos(p);
+    color = c;
+}
+
+void Point::init()
+{
     setFlag(QGraphicsItem::ItemIsMovable);
     setFlag(QGraphicsItem::ItemSendsGeometryChanges);
     setAcceptHoverEvents(true);
-    setPos(p.x, p.y);
-    setColor(p.r, p.g, p.b, p.i);
     hovered = false;
 }
 
-Point::~Point()
+void Point::setColor(const QColor& c)
 {
-
-}
-
-void Point::setColor(int r, int g, int b, int a)
-{
-    color = QColor(r, g, b, a);
+    color = c;
 }
 
 QColor Point::getColor() const
@@ -58,6 +67,8 @@ void Point::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
+    compensate_for_view_transform();
+
     if(hovered)
     {
         painter->setPen(QColor(HANDLE_COLOR));
@@ -75,14 +86,12 @@ QVariant Point::itemChange(GraphicsItemChange change, const QVariant &value)
     if(scene() && change == ItemPositionChange)
     {
         // Keep the item inside the scene rect.
-        QPointF newPos = value.toPointF();
-        QRectF rect(-1.0, -1.0, 2.0, 2.0);
+        QPointF pos = constrain_to_frame(value.toPointF());
 
-        if(!rect.contains(newPos))
+        //if the point changed, return the changed point
+        if(value.toPointF() != pos)
         {
-            newPos.setX(qMin(rect.right(), qMax(newPos.x(), rect.left())));
-            newPos.setY(qMin(rect.bottom(), qMax(newPos.y(), rect.top())));
-            return newPos;
+            return pos;
         }
     }
     else if(scene() && change == ItemPositionHasChanged)
@@ -108,4 +117,15 @@ void Point::hoverLeaveEvent(QGraphicsSceneHoverEvent* event)
 {
     hovered = false;
     return QGraphicsItem::hoverEnterEvent(event);
+}
+
+void Point::compensate_for_view_transform()
+{
+    QGraphicsScene* s = scene();
+
+    if(s && s->views().size() > 0)
+    {
+        QGraphicsView* view = s->views()[0];
+        setTransform(view->transform().inverted());
+    }
 }

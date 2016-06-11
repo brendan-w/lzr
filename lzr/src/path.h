@@ -11,6 +11,7 @@ class Path : public QGraphicsObject
 public:
     Path(QModelIndex i, lzr::Frame frame);
     QRectF boundingRect() const;
+    void add_point(Point* point);
     lzr::Frame to_LZR() const;
     QModelIndex get_index();
 
@@ -24,5 +25,6 @@ protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
 private:
+    void own_point(Point* point);
     QModelIndex index;
 };

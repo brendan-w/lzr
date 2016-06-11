@@ -33,8 +33,6 @@ void FrameEditor::resizeEvent(QResizeEvent* e)
     double s = qMin(width(), height()) / scene()->itemsBoundingRect().width(); // min(w, h) / 2.0
     t.scale(s, -s);
     setTransform(t);
-
-    emit transform_changed(transform());
 }
 
 void FrameEditor::keyPressEvent(QKeyEvent* e)
@@ -73,5 +71,4 @@ void FrameEditor::wheelEvent(QWheelEvent* event)
         factor = 1.0 / ZOOM_FACTOR;
 
     scale(factor, factor);
-    emit transform_changed(transform());
 }
