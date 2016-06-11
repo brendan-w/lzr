@@ -32,7 +32,6 @@ protected:
     void hoverLeaveEvent(QGraphicsSceneHoverEvent* event);
 
 private:
-
     QColor color;
     bool hovered;
 };

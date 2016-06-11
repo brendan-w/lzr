@@ -27,9 +27,9 @@ class FrameScene : public QGraphicsScene
 
 public:
     FrameScene(QWidget* parent = 0);
-
     void setModel(Frame* m);
-    void setSelectionModel(QItemSelectionModel* model);
+    void setPathSelection(QItemSelectionModel* path_sel);
+
 
 public slots:
     void path_changed(Path* p);
@@ -44,7 +44,7 @@ protected:
 private:
     //data
     Frame* model;
-    QItemSelectionModel* selection;
+    QItemSelectionModel* path_selection;
 
     //gui
     Grid* grid;
@@ -54,4 +54,6 @@ private:
     QPointF mouse;
     QColor color;
     tool_t tool;
+
+    Path* current_path();
 };

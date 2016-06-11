@@ -42,16 +42,16 @@ void FrameScene::setModel(Frame* m)
     }
 }
 
-void FrameScene::setSelectionModel(QItemSelectionModel* model)
+void FrameScene::setPathSelection(QItemSelectionModel* path_sel)
 {
-    selection = model;
+    path_selection = path_sel;
 }
 
 void FrameScene::mouseMoveEvent(QGraphicsSceneMouseEvent* e)
 {
     mouse = e->scenePos();
 
-    if(tool == LINE && selection->hasSelection())
+    if(tool == LINE && current_path())
     {
         update();
     }
@@ -61,10 +61,9 @@ void FrameScene::mouseMoveEvent(QGraphicsSceneMouseEvent* e)
 
 void FrameScene::mousePressEvent(QGraphicsSceneMouseEvent* e)
 {
-    if(tool == LINE && selection->hasSelection())
+    if(tool == LINE && current_path())
     {
-        QModelIndex index = selection->currentIndex();
-        Path* path = paths[index.row()];
+        Path* path = current_path();
         Point* old_point = (Point*) path->childItems().back();
         QPointF pos = constrain_to_frame(e->scenePos());
         Point* point = new Point(pos, old_point->getColor());
@@ -78,17 +77,23 @@ void FrameScene::drawForeground(QPainter *painter, const QRectF &rect)
 {
     Q_UNUSED(rect); //because we always render the entire scene
 
-    if(tool == LINE && selection->hasSelection())
+    if(tool == LINE && current_path())
     {
         //lookup the currently selected path
-        QModelIndex index = selection->currentIndex();
-        Path* path = paths[index.row()];
+        Path* path = current_path();
         Point* point = (Point*) path->childItems().back();
         QPointF pos = constrain_to_frame(mouse);
 
         painter->setPen(QPen(Qt::darkGray, 0));
         painter->drawLine(QLineF(point->x(), point->y(), pos.x(), pos.y()));
     }
+}
+
+Path* FrameScene::current_path()
+{
+    if(path_selection->hasSelection())
+        return paths[path_selection->currentIndex().row()];
+    return NULL;
 }
 
 

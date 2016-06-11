@@ -58,7 +58,7 @@ void LZR::show_frameeditor(Frame* frame)
     tools->set_tool(LINE);
     paths->setModel(frame);
     editor_scene->setModel(frame);
-    editor_scene->setSelectionModel(paths->selectionModel());
+    editor_scene->setPathSelection(paths->selectionModel());
     editor_view->reset();
     stack->setCurrentWidget(editor_view);
 }
