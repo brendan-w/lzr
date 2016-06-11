@@ -87,7 +87,8 @@ QVariant Point::itemChange(GraphicsItemChange change, const QVariant &value)
     }
     else if(scene() && change == ItemPositionHasChanged)
     {
-        //moving the child should trigger a change in the parent
+        //moving the child should trigger a change in the parent,
+        //to redraw the connecting lines
         emit changed();
     }
 

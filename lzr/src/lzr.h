@@ -24,7 +24,7 @@ private:
 
     QStackedWidget* stack;
 
-    FrameEditor* editor;
+    FrameEditor* editor_view;
     FrameScene* editor_scene;
 
     ToolDock* tools;

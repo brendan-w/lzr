@@ -13,19 +13,27 @@ ToolDock::ToolDock(QWidget* parent) : QDockWidget(parent)
     actions = new QActionGroup(content);
     actions->setExclusive(true);
 
-    line      = makeTool(MOVE, "Line draw",    QKeySequence(Qt::Key_L));
-    draw      = makeTool(LINE, "Free draw",    QKeySequence(Qt::Key_F));
-    move      = makeTool(DRAW, "Move points",  QKeySequence(Qt::Key_M));
+    line      = makeTool(LINE, "Line draw",    QKeySequence(Qt::Key_L));
+    draw      = makeTool(DRAW, "Free draw",    QKeySequence(Qt::Key_F));
+    move      = makeTool(MOVE, "Move points",  QKeySequence(Qt::Key_M));
     add_point = makeTool(ADD,  "Add point",    QKeySequence(Qt::Key_A));
     del_point = makeTool(DEL,  "Delete point", QKeySequence(Qt::Key_D));
-
-    //set default tool
-    line->defaultAction()->toggle();
 }
 
-ToolDock::~ToolDock()
+void ToolDock::set_tool(tool_t tool)
 {
+    QToolButton* button;
+    
+    switch(tool)
+    {
+    case LINE: button = line; break;
+    case DRAW: button = draw; break;
+    case MOVE: button = move; break;
+    case ADD:  button = add_point; break;
+    case DEL:  button = del_point; break;
+    }
 
+    button->defaultAction()->setChecked(true);
 }
 
 void ToolDock::tool_toggled(bool checked)

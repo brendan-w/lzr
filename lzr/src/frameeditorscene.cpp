@@ -64,14 +64,27 @@ void FrameScene::compensate_for_view_transform(const QTransform& transform)
 void FrameScene::mouseMoveEvent(QGraphicsSceneMouseEvent* e)
 {
     mouse = e->scenePos();
-    //update();
+
+    if(tool == LINE && selection->hasSelection())
+    {
+        update();
+    }
+
     QGraphicsScene::mouseMoveEvent(e);
 }
 
 void FrameScene::drawForeground(QPainter *painter, const QRectF &rect)
 {
-    //painter->setPen(QPen(Qt::gray, 0));
-    //painter->drawLine(QLineF(0, 0, mouse.x(), mouse.y()));
+    if(tool == LINE && selection->hasSelection())
+    {
+        //lookup the currently selected path
+        QModelIndex index = selection->currentIndex();
+        Path* path = paths[index.row()];
+        Point* point = (Point*) path->childItems().back();
+
+        painter->setPen(QPen(Qt::darkGray, 0));
+        painter->drawLine(QLineF(point->x(), point->y(), mouse.x(), mouse.y()));
+    }
 }
 
 
@@ -90,7 +103,9 @@ void FrameScene::path_changed(Path* path)
 
 void FrameScene::tool_changed(tool_t t)
 {
+    qDebug() << "asdf";
     tool = t;
+    update();
 }
 
 void FrameScene::color_changed(QColor c)
