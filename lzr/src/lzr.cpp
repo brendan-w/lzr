@@ -54,5 +54,6 @@ void LZR::show_frameeditor(Frame* frame)
     //TODO:show/hide dock widgets
     paths->setModel(frame);
     editor->setModel(frame);
+    editor->setSelectionModel(paths->selectionModel());
     stack->setCurrentWidget(editor);
 }

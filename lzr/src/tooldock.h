@@ -26,7 +26,7 @@ public slots:
     void tool_toggled(bool checked);
 
 private:
-    QToolButton* makeTool(tool_t tool, const QString& tooltip);
+    QToolButton*makeTool(tool_t tool, const QString& tooltip, const QKeySequence& shortcut);
 
     QWidget* content;
     FlowLayout* layout;

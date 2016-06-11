@@ -33,3 +33,8 @@ void PathDock::setModel(QAbstractItemModel* model)
 {
     paths->setModel(model);
 }
+
+QItemSelectionModel* PathDock::selectionModel()
+{
+    return paths->selectionModel();
+}

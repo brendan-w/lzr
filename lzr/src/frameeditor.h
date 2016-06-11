@@ -32,6 +32,7 @@ public:
     ~FrameEditor();
 
     void setModel(Frame* m);
+    void setSelectionModel(QItemSelectionModel* model);
     void reset();
 
 public slots:
@@ -50,6 +51,7 @@ private:
 
     //data
     Frame* model;
+    QItemSelectionModel* selection;
 
     //gui
     QGraphicsScene* scene;

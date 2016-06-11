@@ -65,6 +65,11 @@ void FrameEditor::setModel(Frame* m)
     }
 }
 
+void FrameEditor::setSelectionModel(QItemSelectionModel* model)
+{
+    selection = model;
+}
+
 void FrameEditor::resize_graphics()
 {
     //when the view is resized, we need update the transform of the individual items

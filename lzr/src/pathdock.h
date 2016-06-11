@@ -12,6 +12,7 @@ public:
     explicit PathDock(QWidget* parent = 0);
     virtual ~PathDock();
     void setModel(QAbstractItemModel* model);
+    QItemSelectionModel* selectionModel();
 
 private:
     QWidget* content;
