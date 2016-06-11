@@ -24,11 +24,6 @@ PathDock::PathDock(QWidget* parent) : QDockWidget(parent)
     content->setFixedWidth(PATH_DELEGATE_SIZE + 20);
 }
 
-PathDock::~PathDock()
-{
-
-}
-
 void PathDock::setModel(QAbstractItemModel* model)
 {
     paths->setModel(model);

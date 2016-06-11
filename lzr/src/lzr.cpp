@@ -32,14 +32,19 @@ void LZR::setupUi()
     setCentralWidget(stack = new QStackedWidget(this));
     stack->addWidget(editor = new FrameEditor(stack));
 
+    editor_scene = new FrameScene(this);
+    editor->setScene(editor_scene);
+    connect(editor, SIGNAL(transform_changed(const QTransform)),
+            editor_scene, SLOT(compensate_for_view_transform(const QTransform)));
+
     addDockWidget(Qt::LeftDockWidgetArea, tools = new ToolDock(this));
     addDockWidget(Qt::LeftDockWidgetArea, color = new ColorDock(this));
     addDockWidget(Qt::RightDockWidgetArea, paths = new PathDock(this));
 
     connect(tools, SIGNAL(tool_changed(tool_t)),
-            editor, SLOT(tool_changed(tool_t)));
+            editor_scene, SLOT(tool_changed(tool_t)));
     connect(color, SIGNAL(color_changed(QColor)),
-            editor, SLOT(color_changed(QColor)));
+            editor_scene, SLOT(color_changed(QColor)));
     /*
     setMenuBar(menuBar = new QMenuBar(this));
     menuBar->setGeometry(QRect(0, 0, 762, 20));
@@ -53,7 +58,8 @@ void LZR::show_frameeditor(Frame* frame)
 {
     //TODO:show/hide dock widgets
     paths->setModel(frame);
-    editor->setModel(frame);
-    editor->setSelectionModel(paths->selectionModel());
+    editor_scene->setModel(frame);
+    editor_scene->setSelectionModel(paths->selectionModel());
+    editor->reset();
     stack->setCurrentWidget(editor);
 }

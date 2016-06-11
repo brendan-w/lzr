@@ -4,7 +4,7 @@
 #include <QtWidgets>
 #include <QDebug>
 #include "flowlayout.h"
-#include "frameeditor.h"
+#include "frameeditorscene.h"
 
 
 
