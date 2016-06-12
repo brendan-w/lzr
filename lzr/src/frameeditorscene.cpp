@@ -49,6 +49,27 @@ void FrameScene::setPathSelection(QItemSelectionModel* path_sel)
     path_selection = path_sel;
 }
 
+void FrameScene::drawForeground(QPainter *painter, const QRectF &rect)
+{
+    Q_UNUSED(rect); //because we always render the entire scene
+
+    if(tool == LINE && current_path())
+    {
+        //lookup the currently selected path
+        Path* path = current_path();
+        Point* point;
+
+        if(!reverse)
+            point = path->last();
+        else
+            point = path->first();
+
+        QPointF pos = grid->constrain_and_maybe_snap(mouse);
+        painter->setPen(QPen(Qt::darkGray, 0));
+        painter->drawLine(QLineF(point->x(), point->y(), pos.x(), pos.y()));
+    }
+}
+
 void FrameScene::mouseMoveEvent(QGraphicsSceneMouseEvent* e)
 {
     mouse = e->scenePos();
@@ -68,7 +89,7 @@ void FrameScene::mousePressEvent(QGraphicsSceneMouseEvent* e)
         Path* path = current_path();
         Point* old_point = path->last();
         QPointF pos = grid->constrain_and_maybe_snap(e->scenePos());
-        path->add_point(new Point(pos, old_point->getColor()));
+        path->add_point(new Point(pos, old_point->getColor()), reverse);
     }
 
     QGraphicsScene::mousePressEvent(e);
@@ -84,7 +105,10 @@ void FrameScene::keyPressEvent(QKeyEvent* e)
                 grid->set_snapping(true);
                 update();
                 break;
-            case EDITOR_REVERSE_KEY: reverse = true; break;
+            case EDITOR_REVERSE_KEY:
+                reverse = true;
+                update();
+                break;
         }
     }
 
@@ -101,26 +125,14 @@ void FrameScene::keyReleaseEvent(QKeyEvent* e)
                 grid->set_snapping(false);
                 update();
                 break;
-            case EDITOR_REVERSE_KEY: reverse = false; break;
+            case EDITOR_REVERSE_KEY:
+                reverse = false;
+                update();
+                break;
         }
     }
 
     QGraphicsScene::keyReleaseEvent(e);
-}
-
-void FrameScene::drawForeground(QPainter *painter, const QRectF &rect)
-{
-    Q_UNUSED(rect); //because we always render the entire scene
-
-    if(tool == LINE && current_path())
-    {
-        //lookup the currently selected path
-        Path* path = current_path();
-        Point* point = (Point*) path->childItems().back();
-        QPointF pos = grid->constrain_and_maybe_snap(mouse);
-        painter->setPen(QPen(Qt::darkGray, 0));
-        painter->drawLine(QLineF(point->x(), point->y(), pos.x(), pos.y()));
-    }
 }
 
 Path* FrameScene::current_path()
