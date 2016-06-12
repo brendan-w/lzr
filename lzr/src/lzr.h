@@ -8,6 +8,7 @@
 #include "colordock.h"
 #include "tooldock.h"
 #include "pathdock.h"
+#include "settingsdock.h"
 
 
 class LZR : public QMainWindow
@@ -30,6 +31,7 @@ private:
     ToolDock* tools;
     ColorDock* color;
     PathDock* paths;
+    SettingsDock* settings;
 
     /*
     QMenuBar *menuBar;

@@ -120,3 +120,8 @@ void FrameScene::color_changed(QColor c)
 {
     color = c;
 }
+
+void FrameScene::grid_changed(int divisions)
+{
+    grid->set_divisions(divisions);
+}

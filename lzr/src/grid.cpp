@@ -11,12 +11,7 @@ Grid::Grid(QGraphicsItem* parent) :
     setRect(-1.0, -1.0, 2.0, 2.0);
 }
 
-Grid::~Grid()
-{
-
-}
-
-void Grid::setDivisions(size_t d)
+void Grid::set_divisions(int d)
 {
     divisions = d;
     update();
@@ -30,7 +25,7 @@ void Grid::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
     QRectF r = rect();
     QLineF line;
 
-    for(size_t i = 1; i < divisions; i++)
+    for(int i = 1; i < divisions; i++)
     {
         //normalized
         double n = (double) i / divisions;

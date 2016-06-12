@@ -37,12 +37,15 @@ void LZR::setupUi()
 
     addDockWidget(Qt::LeftDockWidgetArea, tools = new ToolDock(this));
     addDockWidget(Qt::LeftDockWidgetArea, color = new ColorDock(this));
+    addDockWidget(Qt::LeftDockWidgetArea, settings = new SettingsDock(this));
     addDockWidget(Qt::RightDockWidgetArea, paths = new PathDock(this));
 
     connect(tools, SIGNAL(tool_changed(tool_t)),
             editor_scene, SLOT(tool_changed(tool_t)));
     connect(color, SIGNAL(color_changed(QColor)),
             editor_scene, SLOT(color_changed(QColor)));
+    connect(settings, SIGNAL(grid_changed(int)),
+            editor_scene, SLOT(grid_changed(int)));
     /*
     setMenuBar(menuBar = new QMenuBar(this));
     menuBar->setGeometry(QRect(0, 0, 762, 20));

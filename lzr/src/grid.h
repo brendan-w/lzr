@@ -12,14 +12,11 @@ class Grid : public QObject, public QGraphicsRectItem
 
 public:
     Grid(QGraphicsItem *parent = 0);
-    ~Grid();
-
-public slots:
-    void setDivisions(size_t d);
+    void set_divisions(int d);
 
 protected:
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem* option, QWidget *widget);
 
 private:
-    size_t divisions;
+    int divisions;
 };

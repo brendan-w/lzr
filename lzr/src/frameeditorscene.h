@@ -30,11 +30,11 @@ public:
     void setModel(Frame* m);
     void setPathSelection(QItemSelectionModel* path_sel);
 
-
 public slots:
     void path_changed(Path* p);
     void tool_changed(tool_t t);
     void color_changed(QColor c);
+    void grid_changed(int divisions);
 
 protected:
     void mouseMoveEvent(QGraphicsSceneMouseEvent* e);
