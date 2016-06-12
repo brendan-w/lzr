@@ -18,7 +18,6 @@ public:
     void reset();
 
 protected:
-    void resizeEvent(QResizeEvent* e);
     void keyPressEvent(QKeyEvent* e);
     void keyReleaseEvent(QKeyEvent* e);
     void wheelEvent(QWheelEvent* e);

@@ -19,7 +19,6 @@ public:
     void setColor(const QColor& c);
     QColor getColor() const;
     lzr::Point to_LZR() const;
-    void compensate_for_view_transform();
 
 signals:
     void changed();

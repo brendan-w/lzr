@@ -53,7 +53,6 @@ void Path::point_changed()
 void Path::own_point(Point* point)
 {
     point->setParentItem(this);
-    point->compensate_for_view_transform();
     connect(point, SIGNAL(changed()),
             this, SLOT(point_changed()));
 }

@@ -21,19 +21,7 @@ FrameEditor::FrameEditor(QWidget *parent) : QGraphicsView(parent)
 void FrameEditor::reset()
 {
     fitInView(scene()->itemsBoundingRect(), Qt::KeepAspectRatio);
-}
-
-
-void FrameEditor::resizeEvent(QResizeEvent* e)
-{
-    //resize
-    QGraphicsView::resizeEvent(e);
-
-    //make a new transformation matrix that's scaled correctly
-    QTransform t;
-    double s = qMin(width(), height()) / scene()->itemsBoundingRect().width(); // min(w, h) / 2.0
-    t.scale(s, -s);
-    setTransform(t);
+    scale(1, -1); //keep the Y axis inverted to match reality
 }
 
 void FrameEditor::keyPressEvent(QKeyEvent* e)

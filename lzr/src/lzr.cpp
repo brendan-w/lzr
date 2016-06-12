@@ -63,5 +63,6 @@ void LZR::show_frameeditor(Frame* frame)
     editor_scene->setModel(frame);
     editor_scene->setPathSelection(paths->selectionModel());
     editor_view->reset();
+    editor_view->scale(200, 200); //TODO, this is a quick hack to make the initial reset() work
     stack->setCurrentWidget(editor_view);
 }

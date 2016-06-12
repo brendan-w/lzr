@@ -1,6 +1,5 @@
 
 #include "point.h"
-#include "utils.h"
 
 
 #define POINT_RADIUS 10
@@ -32,6 +31,7 @@ void Point::init()
 {
     setFlag(QGraphicsItem::ItemIsMovable);
     setFlag(QGraphicsItem::ItemSendsGeometryChanges);
+    setFlag(QGraphicsItem::ItemIgnoresTransformations);
     setAcceptHoverEvents(true);
     hovered = false;
 }
@@ -66,8 +66,6 @@ void Point::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 {
     Q_UNUSED(option);
     Q_UNUSED(widget);
-
-    compensate_for_view_transform();
 
     if(hovered)
     {
@@ -117,15 +115,4 @@ void Point::hoverLeaveEvent(QGraphicsSceneHoverEvent* event)
 {
     hovered = false;
     return QGraphicsItem::hoverEnterEvent(event);
-}
-
-void Point::compensate_for_view_transform()
-{
-    QGraphicsScene* s = scene();
-
-    if(s && s->views().size() > 0)
-    {
-        QGraphicsView* view = s->views()[0];
-        setTransform(view->transform().inverted());
-    }
 }
