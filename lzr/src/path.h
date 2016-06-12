@@ -14,6 +14,8 @@ public:
     void add_point(Point* point);
     lzr::Frame to_LZR() const;
     QModelIndex get_index();
+    Point* first();
+    Point* last();
 
 signals:
     void changed(Path* path);

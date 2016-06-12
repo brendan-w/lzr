@@ -12,26 +12,14 @@ Path::Path(QModelIndex i, lzr::Frame frame) : QGraphicsObject(0)
     }
 }
 
-QRectF Path::boundingRect() const
+Point* Path::first()
 {
-    return QRectF(-1,-1,2,2); //the whole screen/grid
+    return (Point*) childItems().front();
 }
 
-void Path::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+Point* Path::last()
 {
-    Q_UNUSED(option);
-    Q_UNUSED(widget);
-
-    QList<QGraphicsItem*> points = childItems();
-
-    for(int i = 0; i < points.size() - 1; i++)
-    {
-        const Point* p1 = (Point*) points[i];
-        const Point* p2 = (Point*) points[i+1];
-        QLineF line(p1->x(), p1->y(), p2->x(), p2->y());
-        painter->setPen(QPen(p2->getColor(), 0));
-        painter->drawLine(line);
-    }
+    return (Point*) childItems().back();
 }
 
 void Path::add_point(Point* point)
@@ -68,4 +56,26 @@ void Path::own_point(Point* point)
     point->compensate_for_view_transform();
     connect(point, SIGNAL(changed()),
             this, SLOT(point_changed()));
+}
+
+QRectF Path::boundingRect() const
+{
+    return QRectF(-1,-1,2,2); //the whole screen/grid
+}
+
+void Path::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+    Q_UNUSED(option);
+    Q_UNUSED(widget);
+
+    QList<QGraphicsItem*> points = childItems();
+
+    for(int i = 0; i < points.size() - 1; i++)
+    {
+        const Point* p1 = (Point*) points[i];
+        const Point* p2 = (Point*) points[i+1];
+        QLineF line(p1->x(), p1->y(), p2->x(), p2->y());
+        painter->setPen(QPen(p2->getColor(), 0));
+        painter->drawLine(line);
+    }
 }

@@ -12,7 +12,6 @@ FrameScene::FrameScene(QWidget *parent) : QGraphicsScene(parent)
     setSceneRect(-3.0, -3.0, 6.0, 6.0); //bigger than (-1.0, -1.0, 2.0, 2.0) for scrollability
     setBackgroundBrush(Qt::black);
     addItem(grid = new Grid);
-    snap = false;
     reverse = false;
 }
 
@@ -67,12 +66,8 @@ void FrameScene::mousePressEvent(QGraphicsSceneMouseEvent* e)
     if(tool == LINE && current_path())
     {
         Path* path = current_path();
-        Point* old_point = (Point*) path->childItems().back();
-        QPointF pos = constrain_to_frame(e->scenePos());
-
-        if(snap)
-            pos = grid->snap_to_grid(pos);
-
+        Point* old_point = path->last();
+        QPointF pos = grid->constrain_and_maybe_snap(e->scenePos());
         path->add_point(new Point(pos, old_point->getColor()));
     }
 
@@ -85,7 +80,10 @@ void FrameScene::keyPressEvent(QKeyEvent* e)
     {
         switch(e->key())
         {
-            case EDITOR_SNAP_KEY: snap = true; break;
+            case EDITOR_SNAP_KEY:
+                grid->set_snapping(true);
+                update();
+                break;
             case EDITOR_REVERSE_KEY: reverse = true; break;
         }
     }
@@ -99,7 +97,10 @@ void FrameScene::keyReleaseEvent(QKeyEvent* e)
     {
         switch(e->key())
         {
-            case EDITOR_SNAP_KEY: snap = false; break;
+            case EDITOR_SNAP_KEY:
+                grid->set_snapping(false);
+                update();
+                break;
             case EDITOR_REVERSE_KEY: reverse = false; break;
         }
     }
@@ -116,11 +117,7 @@ void FrameScene::drawForeground(QPainter *painter, const QRectF &rect)
         //lookup the currently selected path
         Path* path = current_path();
         Point* point = (Point*) path->childItems().back();
-        QPointF pos = constrain_to_frame(mouse);
-
-        if(snap)
-            pos = grid->snap_to_grid(pos);
-
+        QPointF pos = grid->constrain_and_maybe_snap(mouse);
         painter->setPen(QPen(Qt::darkGray, 0));
         painter->drawLine(QLineF(point->x(), point->y(), pos.x(), pos.y()));
     }

@@ -54,7 +54,6 @@ private:
 
     //controls
     QPointF mouse;
-    bool snap; //momentary hotkey
     bool reverse; //momentary hotkey
     QColor color;
     tool_t tool;

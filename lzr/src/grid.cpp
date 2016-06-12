@@ -3,18 +3,43 @@
 #include <QDebug>
 
 
+static const QRectF frame_bounds(-1.0, -1.0, 2.0, 2.0);
+
+
 Grid::Grid(QGraphicsItem* parent) :
     QGraphicsRectItem(parent)
 {
     divisions = 8;
+    snapping = false;
     setPen(QPen(QColor(60, 60, 60), 0));
-    setRect(-1.0, -1.0, 2.0, 2.0);
+    setRect(frame_bounds);
 }
 
 void Grid::set_divisions(int d)
 {
     divisions = d;
     update();
+}
+
+void Grid::set_snapping(bool snap)
+{
+    snapping = snap;
+}
+
+QPointF Grid::constrain_and_maybe_snap(QPointF p)
+{
+    p = constrain_to_frame(p);
+    if(snapping)
+        p = snap_to_grid(p);
+    return p;
+}
+
+//constrains the given point to the area of LZR's frame
+QPointF Grid::constrain_to_frame(QPointF p)
+{
+    p.setX(qMin(frame_bounds.right(), qMax(p.x(), frame_bounds.left())));
+    p.setY(qMin(frame_bounds.bottom(), qMax(p.y(), frame_bounds.top())));
+    return p;
 }
 
 QPointF Grid::snap_to_grid(const QPointF& point)
@@ -45,7 +70,7 @@ float Grid::single_axis_snap(float x)
         return x - (division_size + remainder);
     }
 
-    return 0; //else, something when wrong...
+    return 0; //else, something went wrong...
 }
 
 

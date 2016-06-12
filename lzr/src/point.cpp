@@ -86,7 +86,7 @@ QVariant Point::itemChange(GraphicsItemChange change, const QVariant &value)
     if(scene() && change == ItemPositionChange)
     {
         // Keep the item inside the scene rect.
-        QPointF pos = constrain_to_frame(value.toPointF());
+        QPointF pos = value.toPointF();//constrain_to_frame(value.toPointF());
 
         //if the point changed, return the changed point
         if(value.toPointF() != pos)
