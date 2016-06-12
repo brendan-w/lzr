@@ -13,11 +13,11 @@ ColorDock::ColorDock(QWidget* parent) : QDockWidget(parent)
 
     layout = new QVBoxLayout(content);
 
-    view = new QGraphicsView(content);
+    layout->addWidget(view = new QGraphicsView(content));
     view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     view->setFrameShape(QFrame::NoFrame);
-    layout->addWidget(view);
+    view->setFocusPolicy(Qt::NoFocus);
 
     scene = new QGraphicsScene(content);
     view->setScene(scene);

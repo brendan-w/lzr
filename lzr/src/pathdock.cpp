@@ -16,9 +16,10 @@ PathDock::PathDock(QWidget* parent) : QDockWidget(parent)
     paths->setEditTriggers(QAbstractItemView::NoEditTriggers);
     paths->setSelectionMode(QAbstractItemView::ExtendedSelection);
     paths->setFrameShape(QFrame::NoFrame);
-    //paths->setResizeMode(QListView::Adjust);
     paths->setUniformItemSizes(true);
     paths->setItemDelegate(new PathDelegate());
+    paths->setFocusPolicy(Qt::NoFocus);
+    //paths->setResizeMode(QListView::Adjust);
 
     paths->setFixedWidth(PATH_DELEGATE_SIZE);
     content->setFixedWidth(PATH_DELEGATE_SIZE + 20);

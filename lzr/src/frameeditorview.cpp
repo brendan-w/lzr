@@ -1,6 +1,7 @@
 
 #include <QtGui>
 #include "frameeditorview.h"
+#include "settings.h"
 
 
 #define ZOOM_FACTOR 1.2
@@ -39,7 +40,7 @@ void FrameEditor::keyPressEvent(QKeyEvent* e)
 {
     if(!e->isAutoRepeat())
     {
-        if(e->key() == Qt::Key_Space)
+        if(e->key() == EDITOR_PAN_KEY)
         {
             setInteractive(false);
             setDragMode(ScrollHandDrag);
@@ -53,7 +54,7 @@ void FrameEditor::keyReleaseEvent(QKeyEvent* e)
 {
     if(!e->isAutoRepeat())
     {
-        if(e->key() == Qt::Key_Space)
+        if(e->key() == EDITOR_PAN_KEY)
         {
             setInteractive(true);
             setDragMode(NoDrag);

@@ -14,6 +14,8 @@ SettingsDock::SettingsDock(QWidget* parent) : QDockWidget(parent)
     grid_divisions->setRange(1, 120); //TODO: somewhat arbitrary, choose a better value
     grid_divisions->setValue(8);
 
+    grid_divisions->setFocusPolicy(Qt::NoFocus);
+
     connect(grid_divisions, SIGNAL(valueChanged(int)),
             this, SIGNAL(grid_changed(int)));
 }

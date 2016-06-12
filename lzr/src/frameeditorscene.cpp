@@ -2,6 +2,7 @@
 #include <QtGui>
 #include "frameeditorscene.h"
 #include "utils.h"
+#include "settings.h"
 
 
 FrameScene::FrameScene(QWidget *parent) : QGraphicsScene(parent)
@@ -11,6 +12,8 @@ FrameScene::FrameScene(QWidget *parent) : QGraphicsScene(parent)
     setSceneRect(-3.0, -3.0, 6.0, 6.0); //bigger than (-1.0, -1.0, 2.0, 2.0) for scrollability
     setBackgroundBrush(Qt::black);
     addItem(grid = new Grid);
+    snap = false;
+    reverse = false;
 }
 
 void FrameScene::setModel(Frame* m)
@@ -66,11 +69,42 @@ void FrameScene::mousePressEvent(QGraphicsSceneMouseEvent* e)
         Path* path = current_path();
         Point* old_point = (Point*) path->childItems().back();
         QPointF pos = constrain_to_frame(e->scenePos());
-        Point* point = new Point(pos, old_point->getColor());
-        path->add_point(point);
+
+        if(snap)
+            pos = grid->snap_to_grid(pos);
+
+        path->add_point(new Point(pos, old_point->getColor()));
     }
 
     QGraphicsScene::mousePressEvent(e);
+}
+
+void FrameScene::keyPressEvent(QKeyEvent* e)
+{
+    if(!e->isAutoRepeat())
+    {
+        switch(e->key())
+        {
+            case EDITOR_SNAP_KEY: snap = true; break;
+            case EDITOR_REVERSE_KEY: reverse = true; break;
+        }
+    }
+
+    QGraphicsScene::keyPressEvent(e);
+}
+
+void FrameScene::keyReleaseEvent(QKeyEvent* e)
+{
+    if(!e->isAutoRepeat())
+    {
+        switch(e->key())
+        {
+            case EDITOR_SNAP_KEY: snap = false; break;
+            case EDITOR_REVERSE_KEY: reverse = false; break;
+        }
+    }
+
+    QGraphicsScene::keyReleaseEvent(e);
 }
 
 void FrameScene::drawForeground(QPainter *painter, const QRectF &rect)
@@ -84,6 +118,9 @@ void FrameScene::drawForeground(QPainter *painter, const QRectF &rect)
         Point* point = (Point*) path->childItems().back();
         QPointF pos = constrain_to_frame(mouse);
 
+        if(snap)
+            pos = grid->snap_to_grid(pos);
+
         painter->setPen(QPen(Qt::darkGray, 0));
         painter->drawLine(QLineF(point->x(), point->y(), pos.x(), pos.y()));
     }
@@ -95,7 +132,6 @@ Path* FrameScene::current_path()
         return paths[path_selection->currentIndex().row()];
     return NULL;
 }
-
 
 
 /*

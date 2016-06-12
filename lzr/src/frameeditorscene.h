@@ -39,6 +39,8 @@ public slots:
 protected:
     void mouseMoveEvent(QGraphicsSceneMouseEvent* e);
     void mousePressEvent(QGraphicsSceneMouseEvent* e);
+    void keyPressEvent(QKeyEvent* e);
+    void keyReleaseEvent(QKeyEvent* e);
     void drawForeground(QPainter *painter, const QRectF &rect);
 
 private:
@@ -52,6 +54,8 @@ private:
 
     //controls
     QPointF mouse;
+    bool snap; //momentary hotkey
+    bool reverse; //momentary hotkey
     QColor color;
     tool_t tool;
 
