@@ -3,18 +3,20 @@
 #include "settings.h"
 
 
-Point::Point(lzr::Point p) : QGraphicsObject(0)
+Point::Point(lzr::Point p, Grid* g) : QGraphicsObject(0)
 {
     init();
     setPos(p.x, p.y);
     color = QColor(p.r, p.g, p.b, p.i);
+    grid = g;
 }
 
-Point::Point(QPointF p, QColor c) : QGraphicsObject(0)
+Point::Point(QPointF p, QColor c, Grid* g) : QGraphicsObject(0)
 {
     init();
     setPos(p);
     color = c;
+    grid = g;
 }
 
 void Point::init()
@@ -74,7 +76,7 @@ QVariant Point::itemChange(GraphicsItemChange change, const QVariant &value)
     if(scene() && change == ItemPositionChange)
     {
         // Keep the item inside the scene rect.
-        QPointF pos = value.toPointF();//constrain_to_frame(value.toPointF());
+        QPointF pos = grid->constrain_and_maybe_snap(value.toPointF());
 
         //if the point changed, return the changed point
         if(value.toPointF() != pos)

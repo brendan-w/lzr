@@ -2,6 +2,7 @@
 #pragma once
 
 #include "point.h"
+#include "grid.h"
 
 
 class Path : public QGraphicsObject
@@ -9,7 +10,7 @@ class Path : public QGraphicsObject
     Q_OBJECT
 
 public:
-    Path(QModelIndex i, lzr::Frame frame);
+    Path(QModelIndex i, lzr::Frame frame, Grid* grid);
     QRectF boundingRect() const;
     void add_point(Point* point, bool add_at_front=false);
     lzr::Frame to_LZR() const;

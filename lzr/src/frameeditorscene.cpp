@@ -34,7 +34,7 @@ void FrameScene::setModel(Frame* m, QItemSelectionModel* path_sel)
         QModelIndex index = model->index(i);
         lzr::Frame lzr_path = index.data().value<lzr::Frame>();
 
-        Path* path = new Path(index, lzr_path);
+        Path* path = new Path(index, lzr_path, grid);
         paths.append(path);
         addItem(path);
 
@@ -89,7 +89,7 @@ void FrameScene::mousePressEvent(QGraphicsSceneMouseEvent* e)
     {
         Path* path = current_path();
         QPointF pos = grid->constrain_and_maybe_snap(e->scenePos());
-        path->add_point(new Point(pos, color), reverse);
+        path->add_point(new Point(pos, color, grid), reverse);
     }
 
     QGraphicsScene::mousePressEvent(e);

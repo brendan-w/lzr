@@ -2,13 +2,13 @@
 #include "path.h"
 
 
-Path::Path(QModelIndex i, lzr::Frame frame) : QGraphicsObject(0)
+Path::Path(QModelIndex i, lzr::Frame frame, Grid* grid) : QGraphicsObject(0)
 {
     index = i;
 
     for(lzr::Point lzr_point : frame)
     {
-        own_point(new Point(lzr_point), points.size());
+        own_point(new Point(lzr_point, grid), points.size());
     }
 
     setEnabled(false);
