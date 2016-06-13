@@ -1,16 +1,6 @@
 
 #include "point.h"
-
-
-#define POINT_RADIUS 10
-#define POINT_DIAMETER (POINT_RADIUS * 2)
-#define POINT_INNER_RADIUS 2
-#define POINT_INNER_DIAMETER (POINT_INNER_RADIUS * 2)
-
-#define HANDLE_COLOR 100, 100, 100, 255
-
-
-
+#include "settings.h"
 
 
 Point::Point(lzr::Point p) : QGraphicsObject(0)
@@ -69,7 +59,7 @@ void Point::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 
     if(hovered)
     {
-        painter->setPen(QColor(HANDLE_COLOR));
+        painter->setPen(POINT_HANDLE_COLOR);
         painter->drawEllipse(-POINT_RADIUS, -POINT_RADIUS, POINT_DIAMETER, POINT_DIAMETER);
     }
 
