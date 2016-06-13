@@ -48,6 +48,7 @@ private:
     //data
     Frame* model;
     QItemSelectionModel* path_selection;
+    QSet<Path*> selected_paths;
 
     //gui
     Grid* grid;

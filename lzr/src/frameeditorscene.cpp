@@ -153,13 +153,17 @@ void FrameScene::path_selection_changed(const QItemSelection& selected,
     //deselect paths
     foreach(const QModelIndex& index, deselected.indexes())
     {
-        paths[index.row()]->setEnabled(false);
+        Path* path = paths[index.row()];
+        path->setEnabled(false);
+        selected_paths.remove(path);
     }
 
     //select paths
     foreach(const QModelIndex& index, selected.indexes())
     {
-        paths[index.row()]->setEnabled(true);
+        Path* path = paths[index.row()];
+        path->setEnabled(true);
+        selected_paths.remove(path);
     }
 }
 
