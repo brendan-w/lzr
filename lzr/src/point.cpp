@@ -63,7 +63,12 @@ void Point::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 
     if(hovered)
     {
-        painter->setPen(POINT_HANDLE_COLOR);
+        painter->setPen(POINT_HANDLE_HOVER_COLOR);
+        painter->drawEllipse(-POINT_RADIUS, -POINT_RADIUS, POINT_DIAMETER, POINT_DIAMETER);
+    }
+    else if(isSelected())
+    {
+        painter->setPen(POINT_HANDLE_SELECTED_COLOR);
         painter->drawEllipse(-POINT_RADIUS, -POINT_RADIUS, POINT_DIAMETER, POINT_DIAMETER);
     }
 
@@ -101,7 +106,7 @@ QVariant Point::itemChange(GraphicsItemChange change, const QVariant &value)
 
 void Point::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
-    if(state->tool == DEL)
+    if(state->tool == DELETE)
     {
         emit remove();
     }

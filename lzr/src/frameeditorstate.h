@@ -6,7 +6,7 @@ enum tool_t {
     LINE,
     DRAW,
     ADD,
-    DEL
+    DELETE
 };
 
 typedef struct {
