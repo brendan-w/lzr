@@ -3,6 +3,7 @@
 
 #include "point.h"
 #include "grid.h"
+#include "frameeditorstate.h"
 
 
 class Path : public QGraphicsObject
@@ -10,7 +11,7 @@ class Path : public QGraphicsObject
     Q_OBJECT
 
 public:
-    Path(QModelIndex i, lzr::Frame frame, Grid* grid);
+    Path(FrameEditorState* state, QModelIndex i, lzr::Frame frame);
     QRectF boundingRect() const;
     void add_point(Point* point, bool add_at_front=false);
     lzr::Frame to_LZR() const;

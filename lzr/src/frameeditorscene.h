@@ -5,18 +5,8 @@
 #include <QDebug>
 
 #include "frame.h"
-#include "grid.h"
 #include "path.h"
-
-
-enum tool_t {
-    MOVE,
-    LINE,
-    DRAW,
-    ADD,
-    DEL
-};
-
+#include "frameeditorstate.h"
 
 /*
  * Editor for Frame models
@@ -45,20 +35,12 @@ protected:
     void drawForeground(QPainter* painter, const QRectF& rect);
 
 private:
-    //data
     Frame* model;
     QItemSelectionModel* path_selection;
-    QSet<Path*> selected_paths;
-
-    //gui
-    Grid* grid;
     QList<Path*> paths;
-
-    //controls
+    QSet<Path*> selected_paths;
     QPointF mouse;
-    bool reverse; //momentary hotkey
-    QColor color;
-    tool_t tool;
+    FrameEditorState* state;
 
     Path* current_path();
 };

@@ -11,13 +11,15 @@ FrameScene::FrameScene(QWidget *parent) : QGraphicsScene(parent)
     //Y is negative to make positive values go upwards
     setSceneRect(-3.0, -3.0, 6.0, 6.0); //bigger than (-1.0, -1.0, 2.0, 2.0) for scrollability
     setBackgroundBrush(Qt::black);
-    addItem(grid = new Grid);
-    reverse = false;
+
+    state = new FrameEditorState;
+    state->grid = new Grid();
+    state->reverse = false;
+    addItem(state->grid);
 }
 
 void FrameScene::setModel(Frame* m, QItemSelectionModel* path_sel)
 {
-    //
     foreach(Path* path, paths)
     {
         removeItem(path);
@@ -34,7 +36,7 @@ void FrameScene::setModel(Frame* m, QItemSelectionModel* path_sel)
         QModelIndex index = model->index(i);
         lzr::Frame lzr_path = index.data().value<lzr::Frame>();
 
-        Path* path = new Path(index, lzr_path, grid);
+        Path* path = new Path(state, index, lzr_path);
         paths.append(path);
         addItem(path);
 
@@ -54,18 +56,18 @@ void FrameScene::drawForeground(QPainter* painter, const QRectF& rect)
 {
     Q_UNUSED(rect); //because we always render the entire scene
 
-    if(tool == LINE && current_path())
+    if(state->tool == LINE && current_path())
     {
         //lookup the currently selected path
         Path* path = current_path();
         Point* point;
 
-        if(!reverse)
+        if(!state->reverse)
             point = path->last();
         else
             point = path->first();
 
-        QPointF pos = grid->constrain_and_maybe_snap(mouse);
+        QPointF pos = state->grid->constrain_and_maybe_snap(mouse);
         painter->setPen(QPen(Qt::darkGray, 0));
         painter->drawLine(QLineF(point->x(), point->y(), pos.x(), pos.y()));
     }
@@ -75,7 +77,7 @@ void FrameScene::mouseMoveEvent(QGraphicsSceneMouseEvent* e)
 {
     mouse = e->scenePos();
 
-    if(tool == LINE && current_path())
+    if(state->tool == LINE && current_path())
     {
         update();
     }
@@ -85,11 +87,11 @@ void FrameScene::mouseMoveEvent(QGraphicsSceneMouseEvent* e)
 
 void FrameScene::mousePressEvent(QGraphicsSceneMouseEvent* e)
 {
-    if(tool == LINE && current_path())
+    if(state->tool == LINE && current_path())
     {
         Path* path = current_path();
-        QPointF pos = grid->constrain_and_maybe_snap(e->scenePos());
-        path->add_point(new Point(pos, color, grid), reverse);
+        QPointF pos = state->grid->constrain_and_maybe_snap(e->scenePos());
+        path->add_point(new Point(state, pos, state->color), state->reverse);
     }
 
     QGraphicsScene::mousePressEvent(e);
@@ -102,11 +104,11 @@ void FrameScene::keyPressEvent(QKeyEvent* e)
         switch(e->key())
         {
             case EDITOR_SNAP_KEY:
-                grid->set_snapping(true);
+                state->grid->set_snapping(true);
                 update();
                 break;
             case EDITOR_REVERSE_KEY:
-                reverse = true;
+                state->reverse = true;
                 update();
                 break;
         }
@@ -122,11 +124,11 @@ void FrameScene::keyReleaseEvent(QKeyEvent* e)
         switch(e->key())
         {
             case EDITOR_SNAP_KEY:
-                grid->set_snapping(false);
+                state->grid->set_snapping(false);
                 update();
                 break;
             case EDITOR_REVERSE_KEY:
-                reverse = false;
+                state->reverse = false;
                 update();
                 break;
         }
@@ -177,16 +179,16 @@ void FrameScene::path_changed(Path* path)
 
 void FrameScene::tool_changed(tool_t t)
 {
-    tool = t;
+    state->tool = t;
     update();
 }
 
 void FrameScene::color_changed(QColor c)
 {
-    color = c;
+    state->color = c;
 }
 
 void FrameScene::grid_changed(int divisions)
 {
-    grid->set_divisions(divisions);
+    state->grid->set_divisions(divisions);
 }

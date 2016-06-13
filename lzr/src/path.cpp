@@ -2,13 +2,13 @@
 #include "path.h"
 
 
-Path::Path(QModelIndex i, lzr::Frame frame, Grid* grid) : QGraphicsObject(0)
+Path::Path(FrameEditorState* state, QModelIndex i, lzr::Frame frame) : QGraphicsObject(0)
 {
     index = i;
 
     for(lzr::Point lzr_point : frame)
     {
-        own_point(new Point(lzr_point, grid), points.size());
+        own_point(new Point(state, lzr_point), points.size());
     }
 
     setEnabled(false);
@@ -43,7 +43,7 @@ void Path::add_point(Point* point, bool add_at_front)
         //since this point was added at the back, and colors are stored on
         //the second point, we need to copy this point's color to the next point
         if(points.size() > 1)
-            points[1]->setColor(points[0]->getColor());
+            points[1]->set_color(points[0]->get_color());
     }
     else
     {
@@ -98,7 +98,7 @@ void Path::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
         const Point* p1 = points[i];
         const Point* p2 = points[i+1];
         QLineF line(p1->x(), p1->y(), p2->x(), p2->y());
-        painter->setPen(QPen(p2->getColor(), 0));
+        painter->setPen(QPen(p2->get_color(), 0));
         painter->drawLine(line);
     }
 }

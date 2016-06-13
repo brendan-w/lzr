@@ -5,6 +5,7 @@
 #include <QDebug>
 #include "liblzr.h"
 #include "grid.h"
+#include "frameeditorstate.h"
 
 
 class Point : public QGraphicsObject
@@ -12,13 +13,13 @@ class Point : public QGraphicsObject
     Q_OBJECT
 
 public:
-    Point(lzr::Point p, Grid* g);
-    Point(QPointF p, QColor c, Grid* g);
+    Point(FrameEditorState* state, lzr::Point p);
+    Point(FrameEditorState* state, QPointF p, QColor c);
     void init();
 
     QRectF boundingRect() const;
-    void setColor(const QColor& c);
-    QColor getColor() const;
+    void set_color(const QColor& c);
+    QColor get_color() const;
     lzr::Point to_LZR() const;
 
 signals:
@@ -34,5 +35,5 @@ protected:
 private:
     QColor color;
     bool hovered;
-    Grid* grid; //used for snapping
+    FrameEditorState* state;
 };

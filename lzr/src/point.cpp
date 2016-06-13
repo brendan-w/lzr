@@ -3,37 +3,38 @@
 #include "settings.h"
 
 
-Point::Point(lzr::Point p, Grid* g) : QGraphicsObject(0)
+Point::Point(FrameEditorState* s, lzr::Point p) : QGraphicsObject(0)
 {
     init();
     setPos(p.x, p.y);
     color = QColor(p.r, p.g, p.b, p.i);
-    grid = g;
+    state = s;
 }
 
-Point::Point(QPointF p, QColor c, Grid* g) : QGraphicsObject(0)
+Point::Point(FrameEditorState* s, QPointF p, QColor c) : QGraphicsObject(0)
 {
     init();
     setPos(p);
     color = c;
-    grid = g;
+    state = s;
 }
 
 void Point::init()
 {
     setFlag(QGraphicsItem::ItemIsMovable);
+    setFlag(QGraphicsItem::ItemIsSelectable);
     setFlag(QGraphicsItem::ItemSendsGeometryChanges);
     setFlag(QGraphicsItem::ItemIgnoresTransformations);
     setAcceptHoverEvents(true);
     hovered = false;
 }
 
-void Point::setColor(const QColor& c)
+void Point::set_color(const QColor& c)
 {
     color = c;
 }
 
-QColor Point::getColor() const
+QColor Point::get_color() const
 {
     return color;
 }
@@ -76,7 +77,7 @@ QVariant Point::itemChange(GraphicsItemChange change, const QVariant &value)
     if(scene() && change == ItemPositionChange)
     {
         // Keep the item inside the scene rect.
-        QPointF pos = grid->constrain_and_maybe_snap(value.toPointF());
+        QPointF pos = state->grid->constrain_and_maybe_snap(value.toPointF());
 
         //if the point changed, return the changed point
         if(value.toPointF() != pos)
