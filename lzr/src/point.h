@@ -4,7 +4,6 @@
 #include <QtWidgets>
 #include <QDebug>
 #include "liblzr.h"
-#include "grid.h"
 #include "frameeditorstate.h"
 
 
@@ -24,11 +23,12 @@ public:
 
 signals:
     void changed();
+    void remove();
 
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
-
+    void mousePressEvent(QGraphicsSceneMouseEvent* event);
     void hoverEnterEvent(QGraphicsSceneHoverEvent* event);
     void hoverLeaveEvent(QGraphicsSceneHoverEvent* event);
 

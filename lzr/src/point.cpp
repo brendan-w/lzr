@@ -99,6 +99,14 @@ QVariant Point::itemChange(GraphicsItemChange change, const QVariant &value)
     return QGraphicsItem::itemChange(change, value);
 }
 
+void Point::mousePressEvent(QGraphicsSceneMouseEvent* event)
+{
+    if(state->tool == DEL)
+    {
+        emit remove();
+    }
+}
+
 
 void Point::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
 {

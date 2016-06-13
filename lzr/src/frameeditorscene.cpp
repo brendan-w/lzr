@@ -63,7 +63,7 @@ void FrameScene::drawForeground(QPainter* painter, const QRectF& rect)
 {
     Q_UNUSED(rect); //because we always render the entire scene
 
-    if(state->tool == LINE && current_path())
+    if(state->tool == LINE && current_path() && current_path()->size() > 0)
     {
         //lookup the currently selected path
         Path* path = current_path();

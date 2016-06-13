@@ -28,7 +28,7 @@ void PathDelegate::paint(QPainter* painter,
     //get the raw point data from the model index
     lzr::Frame path = index.data().value<lzr::Frame>();
 
-    for(size_t i = 0; i < path.size() - 1; i++)
+    for(int i = 0; i < (int) path.size() - 1; i++)
     {
         lzr::Point& p1 = path[i];
         lzr::Point& p2 = path[i+1];

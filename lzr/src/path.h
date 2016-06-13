@@ -2,7 +2,6 @@
 #pragma once
 
 #include "point.h"
-#include "grid.h"
 #include "frameeditorstate.h"
 
 
@@ -16,6 +15,7 @@ public:
     void add_point(Point* point, bool add_at_front=false);
     lzr::Frame to_LZR() const;
     QModelIndex get_index();
+    size_t size();
     Point* first();
     Point* last();
     void setEnabled(bool enabled);
@@ -25,6 +25,7 @@ signals:
 
 public slots:
     void point_changed();
+    void remove_point();
 
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);

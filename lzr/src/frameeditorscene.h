@@ -5,6 +5,7 @@
 #include <QDebug>
 
 #include "frame.h"
+#include "grid.h"
 #include "path.h"
 #include "frameeditorstate.h"
 
