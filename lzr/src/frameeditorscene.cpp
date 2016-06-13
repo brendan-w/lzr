@@ -15,8 +15,9 @@ FrameScene::FrameScene(QWidget *parent) : QGraphicsScene(parent)
     reverse = false;
 }
 
-void FrameScene::setModel(Frame* m)
+void FrameScene::setModel(Frame* m, QItemSelectionModel* path_sel)
 {
+    //
     foreach(Path* path, paths)
     {
         removeItem(path);
@@ -25,9 +26,7 @@ void FrameScene::setModel(Frame* m)
 
     paths.clear();
 
-    //TODO: disconnect signals from the model
     model = m;
-    //TODO connect signals
 
     //create all of the path objects in the model
     for(int i = 0; i < model->rowCount(); i++)
@@ -42,14 +41,14 @@ void FrameScene::setModel(Frame* m)
         connect(path, SIGNAL(changed(Path*)),
                 this, SLOT(path_changed(Path*)));
     }
-}
 
-void FrameScene::setPathSelection(QItemSelectionModel* path_sel)
-{
+    //the path selection model
     path_selection = path_sel;
+    connect(path_selection, SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
+            this, SLOT(path_selection_changed(const QItemSelection&, const QItemSelection&)));
 }
 
-void FrameScene::drawForeground(QPainter *painter, const QRectF &rect)
+void FrameScene::drawForeground(QPainter* painter, const QRectF& rect)
 {
     Q_UNUSED(rect); //because we always render the entire scene
 
@@ -146,6 +145,21 @@ Path* FrameScene::current_path()
 /*
  * Slots
  */
+
+void FrameScene::path_selection_changed(const QItemSelection& selected, const QItemSelection& deselected)
+{
+    //deselect paths
+    foreach(const QModelIndex& index, deselected.indexes())
+    {
+        paths[index.row()]->setEnabled(false);
+    }
+
+    //select paths
+    foreach(const QModelIndex& index, selected.indexes())
+    {
+        paths[index.row()]->setEnabled(true);
+    }
+}
 
 void FrameScene::path_changed(Path* path)
 {

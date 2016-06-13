@@ -16,6 +16,7 @@ public:
     QModelIndex get_index();
     Point* first();
     Point* last();
+    void setEnabled(bool enabled);
 
 signals:
     void changed(Path* path);

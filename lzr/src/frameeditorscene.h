@@ -27,10 +27,10 @@ class FrameScene : public QGraphicsScene
 
 public:
     FrameScene(QWidget* parent = 0);
-    void setModel(Frame* m);
-    void setPathSelection(QItemSelectionModel* path_sel);
+    void setModel(Frame* m, QItemSelectionModel* path_sel);
 
 public slots:
+    void path_selection_changed(const QItemSelection& selected, const QItemSelection& deselected);
     void path_changed(Path* p);
     void tool_changed(tool_t t);
     void color_changed(QColor c);
@@ -41,7 +41,7 @@ protected:
     void mousePressEvent(QGraphicsSceneMouseEvent* e);
     void keyPressEvent(QKeyEvent* e);
     void keyReleaseEvent(QKeyEvent* e);
-    void drawForeground(QPainter *painter, const QRectF &rect);
+    void drawForeground(QPainter* painter, const QRectF& rect);
 
 private:
     //data

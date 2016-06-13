@@ -10,6 +10,8 @@ Path::Path(QModelIndex i, lzr::Frame frame) : QGraphicsObject(0)
     {
         own_point(new Point(lzr_point), points.size());
     }
+
+    setEnabled(false);
 }
 
 Point* Path::first()
@@ -20,6 +22,17 @@ Point* Path::first()
 Point* Path::last()
 {
     return points.back();
+}
+
+void Path::setEnabled(bool enabled)
+{
+    foreach(Point* point, points)
+    {
+        point->setEnabled(enabled);
+
+    }
+
+    setZValue(enabled ? 1 : 0);
 }
 
 void Path::add_point(Point* point, bool add_at_front)
@@ -35,9 +48,9 @@ void Path::add_point(Point* point, bool add_at_front)
 lzr::Frame Path::to_LZR() const
 {
     lzr::Frame frame;
-    foreach(Point* item, points)
+
+    foreach(Point* point, points)
     {
-        Point* point = (Point*) item;
         frame.add(point->to_LZR());
     }
 
