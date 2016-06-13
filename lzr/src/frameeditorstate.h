@@ -10,8 +10,9 @@ enum tool_t {
 };
 
 typedef struct {
-    Grid* grid;
-    bool reverse; //momentary hotkey
-    QColor color;
     tool_t tool;
+    QColor color;
+    int grid_divisions;
+    bool snap; //momentary hotkeys
+    bool reverse;
 } FrameEditorState;

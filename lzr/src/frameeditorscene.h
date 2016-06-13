@@ -17,6 +17,7 @@ class FrameScene : public QGraphicsScene
 
 public:
     FrameScene(QWidget* parent = 0);
+    ~FrameScene();
     void setModel(Frame* m, QItemSelectionModel* path_sel);
 
 public slots:
@@ -37,6 +38,7 @@ protected:
 private:
     Frame* model;
     QItemSelectionModel* path_selection;
+    Grid* grid;
     QList<Path*> paths;
     QSet<Path*> selected_paths;
     QPointF mouse;

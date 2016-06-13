@@ -1,6 +1,7 @@
 
 #include "point.h"
 #include "settings.h"
+#include "utils.h"
 
 
 Point::Point(FrameEditorState* s, lzr::Point p) : QGraphicsObject(0)
@@ -77,7 +78,9 @@ QVariant Point::itemChange(GraphicsItemChange change, const QVariant &value)
     if(scene() && change == ItemPositionChange)
     {
         // Keep the item inside the scene rect.
-        QPointF pos = state->grid->constrain_and_maybe_snap(value.toPointF());
+        QPointF pos = constrain_and_snap(value.toPointF(),
+                                         state->snap,
+                                         state->grid_divisions);
 
         //if the point changed, return the changed point
         if(value.toPointF() != pos)

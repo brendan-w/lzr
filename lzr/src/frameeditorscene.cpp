@@ -13,9 +13,16 @@ FrameScene::FrameScene(QWidget *parent) : QGraphicsScene(parent)
     setBackgroundBrush(Qt::black);
 
     state = new FrameEditorState;
-    state->grid = new Grid();
+    state->grid_divisions = 8;
+    state->snap = false;
     state->reverse = false;
-    addItem(state->grid);
+
+    addItem(grid = new Grid(state));
+}
+
+FrameScene::~FrameScene()
+{
+    delete state;
 }
 
 void FrameScene::setModel(Frame* m, QItemSelectionModel* path_sel)
@@ -67,7 +74,9 @@ void FrameScene::drawForeground(QPainter* painter, const QRectF& rect)
         else
             point = path->first();
 
-        QPointF pos = state->grid->constrain_and_maybe_snap(mouse);
+        QPointF pos = constrain_and_snap(mouse,
+                                         state->snap,
+                                         state->grid_divisions);
         painter->setPen(QPen(Qt::darkGray, 0));
         painter->drawLine(QLineF(point->x(), point->y(), pos.x(), pos.y()));
     }
@@ -90,7 +99,9 @@ void FrameScene::mousePressEvent(QGraphicsSceneMouseEvent* e)
     if(state->tool == LINE && current_path())
     {
         Path* path = current_path();
-        QPointF pos = state->grid->constrain_and_maybe_snap(e->scenePos());
+        QPointF pos = constrain_and_snap(e->scenePos(),
+                                         state->snap,
+                                         state->grid_divisions);
         path->add_point(new Point(state, pos, state->color), state->reverse);
     }
 
@@ -104,7 +115,7 @@ void FrameScene::keyPressEvent(QKeyEvent* e)
         switch(e->key())
         {
             case EDITOR_SNAP_KEY:
-                state->grid->set_snapping(true);
+                state->snap = true;
                 update();
                 break;
             case EDITOR_REVERSE_KEY:
@@ -124,7 +135,7 @@ void FrameScene::keyReleaseEvent(QKeyEvent* e)
         switch(e->key())
         {
             case EDITOR_SNAP_KEY:
-                state->grid->set_snapping(false);
+                state->snap = false;
                 update();
                 break;
             case EDITOR_REVERSE_KEY:
@@ -190,5 +201,5 @@ void FrameScene::color_changed(QColor c)
 
 void FrameScene::grid_changed(int divisions)
 {
-    state->grid->set_divisions(divisions);
+    state->grid_divisions = divisions;
 }
