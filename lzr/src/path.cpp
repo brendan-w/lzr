@@ -29,18 +29,26 @@ void Path::setEnabled(bool enabled)
     foreach(Point* point, points)
     {
         point->setEnabled(enabled);
-
     }
 
+    QGraphicsObject::setEnabled(enabled);
     setZValue(enabled ? 1 : 0);
 }
 
 void Path::add_point(Point* point, bool add_at_front)
 {
     if(add_at_front)
+    {
         own_point(point, 0);
+        //since this point was added at the back, and colors are stored on
+        //the second point, we need to copy this point's color to the next point
+        if(points.size() > 1)
+            points[1]->setColor(points[0]->getColor());
+    }
     else
+    {
         own_point(point, points.size());
+    }
 
     emit changed(this);
 }

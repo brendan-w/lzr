@@ -44,8 +44,10 @@ void FrameScene::setModel(Frame* m, QItemSelectionModel* path_sel)
 
     //the path selection model
     path_selection = path_sel;
-    connect(path_selection, SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
-            this, SLOT(path_selection_changed(const QItemSelection&, const QItemSelection&)));
+    connect(path_selection, SIGNAL(selectionChanged(const QItemSelection&,
+                                                    const QItemSelection&)),
+            this, SLOT(path_selection_changed(const QItemSelection&,
+                                              const QItemSelection&)));
 }
 
 void FrameScene::drawForeground(QPainter* painter, const QRectF& rect)
@@ -86,9 +88,8 @@ void FrameScene::mousePressEvent(QGraphicsSceneMouseEvent* e)
     if(tool == LINE && current_path())
     {
         Path* path = current_path();
-        Point* old_point = path->last();
         QPointF pos = grid->constrain_and_maybe_snap(e->scenePos());
-        path->add_point(new Point(pos, old_point->getColor()), reverse);
+        path->add_point(new Point(pos, color), reverse);
     }
 
     QGraphicsScene::mousePressEvent(e);
@@ -146,7 +147,8 @@ Path* FrameScene::current_path()
  * Slots
  */
 
-void FrameScene::path_selection_changed(const QItemSelection& selected, const QItemSelection& deselected)
+void FrameScene::path_selection_changed(const QItemSelection& selected,
+                                        const QItemSelection& deselected)
 {
     //deselect paths
     foreach(const QModelIndex& index, deselected.indexes())

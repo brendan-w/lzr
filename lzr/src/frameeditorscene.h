@@ -30,7 +30,8 @@ public:
     void setModel(Frame* m, QItemSelectionModel* path_sel);
 
 public slots:
-    void path_selection_changed(const QItemSelection& selected, const QItemSelection& deselected);
+    void path_selection_changed(const QItemSelection& selected,
+                                const QItemSelection& deselected);
     void path_changed(Path* p);
     void tool_changed(tool_t t);
     void color_changed(QColor c);
