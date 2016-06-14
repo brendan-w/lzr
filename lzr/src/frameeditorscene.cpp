@@ -202,4 +202,5 @@ void FrameScene::color_changed(QColor c)
 void FrameScene::grid_changed(int divisions)
 {
     state->grid_divisions = divisions;
+    update();
 }

@@ -9,6 +9,19 @@ QMainWindow * {
 }
 
 QToolButton,
-QListView {
+QListView,
+QSpinBox {
     background: #333;
+}
+
+QSpinBox::up-button {
+    subcontrol-origin: border;
+    subcontrol-position: top right;
+    width: 25px;
+}
+
+QSpinBox::down-button {
+    subcontrol-origin: border;
+    subcontrol-position: bottom right;
+    width: 25px;
 }

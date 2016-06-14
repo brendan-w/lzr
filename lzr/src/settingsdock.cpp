@@ -15,6 +15,7 @@ SettingsDock::SettingsDock(QWidget* parent) : QDockWidget(parent)
     grid_divisions->setValue(8);
 
     grid_divisions->setFocusPolicy(Qt::NoFocus);
+    grid_divisions->setFrame(false);
 
     connect(grid_divisions, SIGNAL(valueChanged(int)),
             this, SIGNAL(grid_changed(int)));
