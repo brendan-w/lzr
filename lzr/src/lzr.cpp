@@ -58,7 +58,7 @@ void LZR::setupUi()
 void LZR::show_frameeditor(Frame* frame)
 {
     //TODO:show/hide dock widgets
-    tools->set_tool(LINE);
+    tools->set_tool(POINTER);
     paths->setModel(frame);
     editor_scene->setModel(frame, paths->selectionModel());
     editor_view->reset();

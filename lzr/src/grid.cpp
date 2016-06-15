@@ -9,6 +9,7 @@ Grid::Grid(FrameEditorState* s) :
     state = s;
     setPen(QPen(QColor(60, 60, 60), 0));
     setRect(frame_bounds);
+    setEnabled(false); //never respond to events
 }
 
 void Grid::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
