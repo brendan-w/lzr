@@ -114,7 +114,7 @@ void Point::mousePressEvent(QGraphicsSceneMouseEvent* event)
     }
     else if(state->tool == DELETE)
     {
-        emit remove();
+        emit remove(this);
     }
 }
 

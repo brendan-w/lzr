@@ -80,8 +80,8 @@ void Path::own_point(Point* point, int where)
     point->setParentItem(this);
     connect(point, SIGNAL(changed()),
             this, SLOT(point_changed()));
-    connect(point, SIGNAL(remove()),
-            this, SLOT(remove_point()));
+    connect(point, SIGNAL(remove(Point*)),
+            this, SLOT(remove_point(Point*)));
 }
 
 QRectF Path::boundingRect() const
@@ -109,9 +109,8 @@ void Path::point_changed()
     emit changed(this);
 }
 
-void Path::remove_point()
+void Path::remove_point(Point* point)
 {
-    Point* point = (Point*) sender();
     points.removeAll(point);
     scene()->removeItem(point);
     delete point;

@@ -25,7 +25,7 @@ signals:
 
 public slots:
     void point_changed();
-    void remove_point();
+    void remove_point(Point* point);
 
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
