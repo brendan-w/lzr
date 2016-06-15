@@ -20,10 +20,11 @@ public:
     void set_color(const QColor& c);
     QColor get_color() const;
     lzr::Point to_LZR() const;
+    void remove();
 
 signals:
     void changed();
-    void remove(Point* point);
+    void remove_point(Point* point);
 
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);

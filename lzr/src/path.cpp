@@ -80,7 +80,7 @@ void Path::own_point(Point* point, int where)
     point->setParentItem(this);
     connect(point, SIGNAL(changed()),
             this, SLOT(point_changed()));
-    connect(point, SIGNAL(remove(Point*)),
+    connect(point, SIGNAL(remove_point(Point*)),
             this, SLOT(remove_point(Point*)));
 }
 

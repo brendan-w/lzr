@@ -122,6 +122,13 @@ void FrameScene::keyPressEvent(QKeyEvent* e)
                 state->reverse = true;
                 update();
                 break;
+            case EDITOR_DELETE_KEY:
+                foreach(QGraphicsItem* item, selectedItems())
+                {
+                    ((Point*) item)->remove();
+                }
+                update();
+                break;
         }
     }
 

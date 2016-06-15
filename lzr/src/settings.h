@@ -4,6 +4,7 @@
 #define EDITOR_PAN_KEY     Qt::Key_Space
 #define EDITOR_SNAP_KEY    Qt::Key_Shift
 #define EDITOR_REVERSE_KEY Qt::Key_Alt
+#define EDITOR_DELETE_KEY  Qt::Key_Delete
 
 #define POINT_RADIUS 10
 #define POINT_DIAMETER (POINT_RADIUS * 2)

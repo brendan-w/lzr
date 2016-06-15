@@ -49,6 +49,11 @@ lzr::Point Point::to_LZR() const
                       color.alpha());
 }
 
+void Point::remove()
+{
+    emit remove_point(this);
+}
+
 QRectF Point::boundingRect() const
 {
     return QRectF(-POINT_RADIUS, -POINT_RADIUS, POINT_DIAMETER, POINT_DIAMETER);
@@ -114,7 +119,7 @@ void Point::mousePressEvent(QGraphicsSceneMouseEvent* event)
     }
     else if(state->tool == DELETE)
     {
-        emit remove(this);
+        remove();
     }
 }
 
