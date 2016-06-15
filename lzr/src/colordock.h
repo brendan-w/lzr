@@ -13,15 +13,17 @@ class ColorSwatch : public QObject, public QGraphicsPixmapItem
 
 public:
     explicit ColorSwatch(const QPixmap& pixmap, QGraphicsItem* parent = 0);
+    void select_color_at(const QPoint pos);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent* event);
 
 signals:
-    void color_selected(QRgb rgb, QRect rect);
+    void color_selected(QColor c, QRect rect);
 
 private:
     QImage swatch;
+    QRect rect_around_color(const QPoint pos, const QColor color);
 };
 
 
@@ -40,7 +42,7 @@ signals:
     void color_changed(QColor color);
 
 public slots:
-    void color_selected(QRgb rgb, QRect rect);
+    void color_selected(QColor c, QRect rect);
 
 private:
     QColor color; //the currently selected color

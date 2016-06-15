@@ -32,13 +32,15 @@ ColorDock::ColorDock(QWidget* parent) : QDockWidget(parent)
     scene->addItem(indicator);
 
     //listen to color changes
-    connect(colors, SIGNAL(color_selected(QRgb, QRect)),
-            this, SLOT(color_selected(QRgb, QRect)));
+    connect(colors, SIGNAL(color_selected(QColor, QRect)),
+            this, SLOT(color_selected(QColor, QRect)));
+
+    colors->select_color_at(QPoint(0, 0));
 }
 
-void ColorDock::color_selected(QRgb rgb, QRect rect)
+void ColorDock::color_selected(QColor c, QRect rect)
 {
-    color.setRgb(rgb);
+    color = c;
 
     //indicate with white, if it's a dark color
     QPen pen(Qt::black, 0);
@@ -56,8 +58,6 @@ void ColorDock::color_selected(QRgb rgb, QRect rect)
 
 
 
-
-
 ColorSwatch::ColorSwatch(const QPixmap& pixmap, QGraphicsItem* parent) :
     QGraphicsPixmapItem(pixmap, parent)
 {
@@ -65,23 +65,32 @@ ColorSwatch::ColorSwatch(const QPixmap& pixmap, QGraphicsItem* parent) :
     swatch = pixmap.toImage();
 }
 
+void ColorSwatch::select_color_at(const QPoint pos)
+{
+    //get the color under the mouse
+    QColor color = swatch.pixelColor(pos);
+    QRect rect = rect_around_color(pos, color);
+    emit color_selected(color, rect);
+}
+
+
 void ColorSwatch::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
-    const int x = event->pos().x();
-    const int y = event->pos().y();
+    select_color_at(event->pos().toPoint());
+}
 
-    //get the color under the mouse
-    QRgb color = swatch.pixel(x, y);
+QRect ColorSwatch::rect_around_color(const QPoint pos, const QColor color)
+{
     QRect rect;
 
     //determine the bounding rectangle for this color swatch
     QSize size = pixmap().size();
-    QRgb test;
+    QColor test;
     int i;
 
     //left bound
     test = color;
-    i = x;
+    i = pos.x();
     while(test == color)
     {
         //record the current valid pixel extent
@@ -89,38 +98,38 @@ void ColorSwatch::mousePressEvent(QGraphicsSceneMouseEvent* event)
         //increment/finish
         if((--i) < 0) break;
         //lookup the next pixel
-        test = swatch.pixel(i, y);
+        test = swatch.pixelColor(i, pos.y());
     }
 
     //upper bound
     test = color;
-    i = y;
+    i = pos.y();
     while(test == color)
     {
         rect.setY(i);
         if((--i) < 0) break;
-        test = swatch.pixel(x, i);
+        test = swatch.pixelColor(pos.x(), i);
     }
 
     //right bound
     test = color;
-    i = x;
+    i = pos.x();
     while(test == color)
     {
         rect.setWidth(i - rect.x());
         if((++i) >= size.width()) break;
-        test = swatch.pixel(i, y);
+        test = swatch.pixelColor(i, pos.y());
     }
 
     //lower bound
     test = color;
-    i = y;
+    i = pos.y();
     while(test == color)
     {
         rect.setHeight(i - rect.y());
         if((++i) >= size.height()) break;
-        test = swatch.pixel(x, i);
+        test = swatch.pixelColor(pos.x(), i);
     }
 
-    emit color_selected(color, rect);
+    return rect;
 }
