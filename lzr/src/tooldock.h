@@ -37,4 +37,5 @@ private:
     QToolButton* move;
     QToolButton* add_point;
     QToolButton* del_point;
+    QToolButton* select;
 };

@@ -106,9 +106,17 @@ QVariant Point::itemChange(GraphicsItemChange change, const QVariant &value)
 
 void Point::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
-    if(state->tool == DELETE)
+    if(state->tool == MOVE)
+    {
+        QGraphicsObject::mousePressEvent(event);
+    }
+    else if(state->tool == DELETE)
     {
         emit remove();
+    }
+    else if(state->tool == SELECT)
+    {
+        setSelected(!isSelected()); //toggle selection status
     }
 }
 

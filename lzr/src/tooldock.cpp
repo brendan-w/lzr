@@ -18,6 +18,7 @@ ToolDock::ToolDock(QWidget* parent) : QDockWidget(parent)
     move      = makeTool(MOVE,   "Move",   QKeySequence(Qt::Key_M));
     add_point = makeTool(ADD,    "Add",    QKeySequence(Qt::Key_A));
     del_point = makeTool(DELETE, "Delete", QKeySequence(Qt::Key_D));
+    select    = makeTool(SELECT, "Select", QKeySequence(Qt::Key_S));
 }
 
 void ToolDock::set_tool(tool_t tool)
@@ -31,6 +32,7 @@ void ToolDock::set_tool(tool_t tool)
     case MOVE:   button = move; break;
     case ADD:    button = add_point; break;
     case DELETE: button = del_point; break;
+    case SELECT: button = select; break;
     }
 
     button->defaultAction()->setChecked(true);
