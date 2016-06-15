@@ -22,7 +22,6 @@ Point::Point(FrameEditorState* s, QPointF p, QColor c) : QGraphicsObject(0)
 
 void Point::init()
 {
-    setFlag(QGraphicsItem::ItemIsMovable);
     setFlag(QGraphicsItem::ItemIsSelectable);
     setFlag(QGraphicsItem::ItemSendsGeometryChanges);
     setFlag(QGraphicsItem::ItemIgnoresTransformations);
@@ -106,20 +105,18 @@ QVariant Point::itemChange(GraphicsItemChange change, const QVariant &value)
 
 void Point::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
-    if(state->tool == MOVE)
+    setFlag(QGraphicsItem::ItemIsMovable, false);
+
+    if(state->tool == POINTER)
     {
+        setFlag(QGraphicsItem::ItemIsMovable, true);
         QGraphicsObject::mousePressEvent(event);
     }
     else if(state->tool == DELETE)
     {
         emit remove();
     }
-    else if(state->tool == SELECT)
-    {
-        setSelected(!isSelected()); //toggle selection status
-    }
 }
-
 
 void Point::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
 {

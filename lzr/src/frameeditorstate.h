@@ -2,12 +2,11 @@
 #pragma once
 
 enum tool_t {
-    MOVE,
+    POINTER,
     LINE,
     DRAW,
     ADD,
-    DELETE,
-    SELECT
+    DELETE
 };
 
 typedef struct {

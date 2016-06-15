@@ -34,8 +34,7 @@ private:
     QActionGroup* actions;
     QToolButton* line;
     QToolButton* draw;
-    QToolButton* move;
+    QToolButton* pointer;
     QToolButton* add_point;
     QToolButton* del_point;
-    QToolButton* select;
 };

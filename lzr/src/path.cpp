@@ -11,7 +11,7 @@ Path::Path(FrameEditorState* state, QModelIndex i, lzr::Frame frame) : QGraphics
         own_point(new Point(state, lzr_point), points.size());
     }
 
-    setEnabled(false);
+    setEnabled(false); //never handle user events
 }
 
 Point* Path::first()
@@ -31,7 +31,6 @@ void Path::setEnabled(bool enabled)
         point->setEnabled(enabled);
     }
 
-    QGraphicsObject::setEnabled(enabled);
     setZValue(enabled ? 1 : 0);
 }
 
