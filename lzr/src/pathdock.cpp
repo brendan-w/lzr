@@ -31,9 +31,10 @@ PathDock::PathDock(QWidget* parent) : QDockWidget(parent)
             this, SLOT(showContextMenu(const QPoint&)));
 }
 
-void PathDock::setModel(Frame* frame)
+void PathDock::setModel(Frame* f)
 {
-    paths->setModel(frame);
+    paths->setModel(f);
+    frame = f;
 }
 
 QItemSelectionModel* PathDock::selectionModel()
@@ -67,10 +68,7 @@ void PathDock::showContextMenu(const QPoint& mouse)
 
 void PathDock::duplicate()
 {
-    QModelIndexList selected = paths->selectionModel()->selectedRows();
-    Frame* frame = (Frame*) paths->model();
-
-    foreach(const QModelIndex& index, selected)
+    foreach(const QModelIndex& index, selectionModel()->selectedRows())
     {
         frame->duplicate(index);
     }
@@ -78,10 +76,7 @@ void PathDock::duplicate()
 
 void PathDock::mirror_h()
 {
-    QModelIndexList selected = paths->selectionModel()->selectedRows();
-    Frame* frame = (Frame*) paths->model();
-
-    foreach(const QModelIndex& index, selected)
+    foreach(const QModelIndex& index, selectionModel()->selectedRows())
     {
         lzr::Frame path = frame->get_path(index);
         lzr::mirror(path, lzr::Point(), true, false);
@@ -91,15 +86,17 @@ void PathDock::mirror_h()
 
 void PathDock::mirror_v()
 {
-    
+    foreach(const QModelIndex& index, selectionModel()->selectedRows())
+    {
+        lzr::Frame path = frame->get_path(index);
+        lzr::mirror(path, lzr::Point(), false, true);
+        frame->set_path(index, path);
+    }
 }
 
 void PathDock::remove()
 {
-    QModelIndexList selected = paths->selectionModel()->selectedRows();
-    Frame* frame = (Frame*) paths->model();
-
-    foreach(const QModelIndex& index, selected)
+    foreach(const QModelIndex& index, selectionModel()->selectedRows())
     {
         frame->removeRow(index.row());
     }

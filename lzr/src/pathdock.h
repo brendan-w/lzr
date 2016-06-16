@@ -2,7 +2,6 @@
 #pragma once
 #include <QtWidgets>
 #include <QDebug>
-
 #include "frame.h"
 
 
@@ -23,6 +22,8 @@ public slots:
     void remove();
 
 private:
+    Frame* frame;
+
     QWidget* content;
     QVBoxLayout* layout;
     QListView* paths;
