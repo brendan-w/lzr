@@ -83,7 +83,7 @@ QModelIndex Frame::index(int row, int column, const QModelIndex& parent) const
     if(column != 0)
         return QModelIndex();
 
-    if(row >= rowCount())
+    if(row < 0 || row >= rowCount())
         return QModelIndex();
 
     return createIndex(row, 0);
@@ -94,3 +94,23 @@ QModelIndex Frame::parent(const QModelIndex& index) const
     Q_UNUSED(index);
     return QModelIndex();
 }
+
+QModelIndex Frame::duplicate(const QModelIndex& index)
+{
+    if(!index.isValid())
+        return QModelIndex();
+
+    if(index.row() < 0 || index.row() >= rowCount())
+        return QModelIndex();
+
+    int newRow = paths.size();
+
+    beginInsertRows(QModelIndex(), newRow, newRow);
+
+    paths.append(paths[index.row()]); //copy the data to a new path
+
+    endInsertRows();
+
+    return this->index(newRow);
+}
+

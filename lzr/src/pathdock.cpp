@@ -29,9 +29,9 @@ PathDock::PathDock(QWidget* parent) : QDockWidget(parent)
             this, SLOT(showContextMenu(const QPoint&)));
 }
 
-void PathDock::setModel(QAbstractItemModel* model)
+void PathDock::setModel(Frame* frame)
 {
-    paths->setModel(model);
+    paths->setModel(frame);
 }
 
 QItemSelectionModel* PathDock::selectionModel()
@@ -53,11 +53,37 @@ void PathDock::showContextMenu(const QPoint& mouse)
     }
     else
     {
-        contextMenu.addAction("Duplicate");
-        contextMenu.addAction("Mirror Horizontally");
-        contextMenu.addAction("Mirror Vertically");
-        contextMenu.addAction("Delete");
+        contextMenu.addAction("Duplicate", this, SLOT(duplicate()));
+        contextMenu.addAction("Mirror Horizontally", this, SLOT(mirror_h()));
+        contextMenu.addAction("Mirror Vertically", this, SLOT(mirror_v()));
+        contextMenu.addAction("Delete", this, SLOT(remove()));
     }
 
     contextMenu.exec(paths->mapToGlobal(mouse));
+}
+
+void PathDock::duplicate()
+{
+    QModelIndexList selected = paths->selectionModel()->selectedRows();
+    Frame* frame = (Frame*) paths->model();
+
+    foreach(const QModelIndex& index, selected)
+    {
+        frame->duplicate(index);
+    }
+}
+
+void PathDock::mirror_h()
+{
+    
+}
+
+void PathDock::mirror_v()
+{
+    
+}
+
+void PathDock::remove()
+{
+    
 }

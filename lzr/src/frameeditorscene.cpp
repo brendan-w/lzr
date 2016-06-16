@@ -173,6 +173,12 @@ void FrameScene::path_selection_changed(const QItemSelection& selected,
     //deselect paths
     foreach(const QModelIndex& index, deselected.indexes())
     {
+        if(index.row() >= paths.size())
+        {
+            qDebug() << "Error: model refers to path that doesn't exist in the editor";
+            continue;
+        }
+
         Path* path = paths[index.row()];
         path->setEnabled(false);
         selected_paths.remove(path);
@@ -181,6 +187,12 @@ void FrameScene::path_selection_changed(const QItemSelection& selected,
     //select paths
     foreach(const QModelIndex& index, selected.indexes())
     {
+        if(index.row() >= paths.size())
+        {
+            qDebug() << "Error: model refers to path that doesn't exist in the editor";
+            continue;
+        }
+
         Path* path = paths[index.row()];
         path->setEnabled(true);
         selected_paths.remove(path);

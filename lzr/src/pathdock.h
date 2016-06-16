@@ -3,6 +3,8 @@
 #include <QtWidgets>
 #include <QDebug>
 
+#include "frame.h"
+
 
 class PathDock : public QDockWidget
 {
@@ -10,11 +12,15 @@ class PathDock : public QDockWidget
 
 public:
     explicit PathDock(QWidget* parent = 0);
-    void setModel(QAbstractItemModel* model);
+    void setModel(Frame* frame);
     QItemSelectionModel* selectionModel();
 
 public slots:
     void showContextMenu(const QPoint& mouse);
+    void duplicate();
+    void mirror_h();
+    void mirror_v();
+    void remove();
 
 private:
     QWidget* content;
