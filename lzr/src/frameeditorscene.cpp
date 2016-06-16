@@ -218,9 +218,17 @@ void FrameScene::model_changed(const QModelIndex& first, const QModelIndex& last
 
 void FrameScene::path_changed(Path* path)
 {
+    //temporarily disconnect, to prevent the dataChanged() signal from thrashing the GUI
+    //TODO: there must be a better way to do this...
+    disconnect(model, SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
+               this, SLOT(model_changed(const QModelIndex&, const QModelIndex&)));
+
     //update the model with the new path data
     model->set_path(path->get_index(),
                     path->to_LZR());
+
+    connect(model, SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
+            this, SLOT(model_changed(const QModelIndex&, const QModelIndex&)));
 }
 
 void FrameScene::path_added(const QModelIndex& parent, int first, int last)
