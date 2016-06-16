@@ -2,17 +2,15 @@
 #include "path.h"
 
 
-Path::Path(FrameEditorState* state, QModelIndex& i) : QGraphicsObject(0),
-                                                      index(i)
+Path::Path(FrameEditorState* s, QModelIndex& i) : QGraphicsObject(0),
+                                                  state(s),
+                                                  index(i)
 {
     setEnabled(false); //never handle user events
 
     //convert laser path into actual point items
     lzr::Frame path = index.data().value<lzr::Frame>();
-    for(lzr::Point lzr_point : path)
-    {
-        own_point(new Point(state, lzr_point), points.size());
-    }
+    from_LZR(path);
 }
 
 Point* Path::first()
@@ -23,6 +21,38 @@ Point* Path::first()
 Point* Path::last()
 {
     return points.back();
+}
+
+size_t Path::size()
+{
+    return points.size();
+}
+
+lzr::Frame Path::to_LZR() const
+{
+    lzr::Frame frame;
+
+    foreach(Point* point, points)
+    {
+        frame.add(point->to_LZR());
+    }
+
+    return frame;
+}
+
+void Path::from_LZR(lzr::Frame& path)
+{
+    foreach(Point* point, points)
+    {
+        delete point;
+    }
+
+    points.clear();
+
+    for(lzr::Point lzr_point : path)
+    {
+        own_point(new Point(state, lzr_point), points.size());
+    }
 }
 
 void Path::setEnabled(bool enabled)
@@ -54,26 +84,9 @@ void Path::add_point(Point* point, bool add_at_front)
     emit changed(this);
 }
 
-lzr::Frame Path::to_LZR() const
-{
-    lzr::Frame frame;
-
-    foreach(Point* point, points)
-    {
-        frame.add(point->to_LZR());
-    }
-
-    return frame;
-}
-
 QModelIndex Path::get_index()
 {
     return index;
-}
-
-size_t Path::size()
-{
-    return points.size();
 }
 
 void Path::own_point(Point* point, int where)

@@ -22,6 +22,8 @@ public:
     void setModel(Frame* m, QItemSelectionModel* path_sel);
 
 public slots:
+    void model_changed(const QModelIndex& first,
+                       const QModelIndex& last);
     void path_selection_changed(const QItemSelection& selected,
                                 const QItemSelection& deselected);
     void path_added(const QModelIndex& parent, int first, int last);

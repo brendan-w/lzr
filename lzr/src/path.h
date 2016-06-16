@@ -11,14 +11,15 @@ class Path : public QGraphicsObject
     Q_OBJECT
 
 public:
-    Path(FrameEditorState* state, QModelIndex& i);
-    QRectF boundingRect() const;
-    void add_point(Point* point, bool add_at_front=false);
-    lzr::Frame to_LZR() const;
-    QModelIndex get_index();
-    size_t size();
+    Path(FrameEditorState* s, QModelIndex& i);
     Point* first();
     Point* last();
+    size_t size();
+    void from_LZR(lzr::Frame& path);
+    lzr::Frame to_LZR() const;
+    QRectF boundingRect() const;
+    void add_point(Point* point, bool add_at_front=false);
+    QModelIndex get_index();
     void setEnabled(bool enabled);
 
 signals:
@@ -33,6 +34,8 @@ protected:
 
 private:
     void own_point(Point* point, int where);
+
+    FrameEditorState* state;
     QPersistentModelIndex index;
     QList<Point*> points;
 };
