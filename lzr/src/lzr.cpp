@@ -58,10 +58,19 @@ void LZR::setupUi()
 void LZR::show_frameeditor(Frame* frame)
 {
     //TODO:show/hide dock widgets
-    tools->set_tool(POINTER);
+
+    //set models
     paths->setModel(frame);
     editor_scene->setModel(frame, paths->selectionModel());
+
+    //rearrange the viewport for the new model
     editor_view->reset();
     editor_view->scale(200, 200); //TODO, this is a quick hack to make the initial reset() work
+
+    //reload each dock's settings
+    tools->set_tool(POINTER);
+    color->emit_color_changed();
+
+    //show the editor
     stack->setCurrentWidget(editor_view);
 }

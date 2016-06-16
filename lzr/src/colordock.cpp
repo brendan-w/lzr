@@ -53,6 +53,10 @@ void ColorDock::color_selected(QColor c, QRect rect)
     emit color_changed(color);
 }
 
+void ColorDock::emit_color_changed()
+{
+    emit color_changed(color);
+}
 
 
 
