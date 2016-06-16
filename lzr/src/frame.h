@@ -33,6 +33,8 @@ public:
 
     //custom Frame functions
     QModelIndex duplicate(const QModelIndex& index);
+    lzr::Frame get_path(const QModelIndex& index) const;
+    bool set_path(const QModelIndex& index, lzr::Frame path);
 
 private:
     QList<lzr::Frame> paths; //partial laser frames, split by blanking jumps

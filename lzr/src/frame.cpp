@@ -40,34 +40,15 @@ int Frame::rowCount(const QModelIndex& parent) const
 QVariant Frame::data(const QModelIndex& index, int role) const
 {
     Q_UNUSED(role);
-
-    if(!index.isValid())
-        return QVariant();
-
-    if(index.row() < 0 || index.row() >= rowCount())
-        return QVariant();
-
     QVariant v;
-    v.setValue(paths[index.row()]);
+    v.setValue(get_path(index));
     return v;
 }
 
 bool Frame::setData(const QModelIndex& index, const QVariant& value, int role)
 {
     Q_UNUSED(role);
-
-    if(!index.isValid())
-        return false;
-
-    if(index.row() < 0 || index.row() >= rowCount())
-        return false;
-
-    //store the new vector data
-    lzr::Frame path = value.value<lzr::Frame>();
-    paths[index.row()] = path;
-
-    emit dataChanged(index, index); //only every updates one index at a time
-    return true;
+    return set_path(index, value.value<lzr::Frame>());
 }
 
 int Frame::columnCount(const QModelIndex& index) const
@@ -106,6 +87,10 @@ bool Frame::removeRow(int row, const QModelIndex& parent)
     return true;
 }
 
+/*
+ * Custom model functions
+ */
+
 QModelIndex Frame::duplicate(const QModelIndex& index)
 {
     if(!index.isValid())
@@ -123,3 +108,28 @@ QModelIndex Frame::duplicate(const QModelIndex& index)
     return this->index(newRow);
 }
 
+lzr::Frame Frame::get_path(const QModelIndex& index) const
+{
+    if(!index.isValid())
+        return lzr::Frame();
+
+    if(index.row() < 0 || index.row() >= rowCount())
+        return lzr::Frame();
+
+    return paths[index.row()];
+}
+
+bool Frame::set_path(const QModelIndex& index, lzr::Frame path)
+{
+    if(!index.isValid())
+        return false;
+
+    if(index.row() < 0 || index.row() >= rowCount())
+        return false;
+
+    //store the new vector data
+    paths[index.row()] = path;
+
+    emit dataChanged(index, index); //only every updates one index at a time
+    return true;
+}
