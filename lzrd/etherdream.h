@@ -13,12 +13,13 @@ public:
     EtherDream(std::string name);
     ~EtherDream();
 
-    int write(Frame frame);
+    int send(Frame frame);
     int stop();
     int set_pps(int pps);
 
 private:
-    const std::string prefix;
     struct etherdream* dac;
+    std::vector<struct etherdream_point> buffer;
     int pps;
+    int success;
 };

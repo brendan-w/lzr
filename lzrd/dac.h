@@ -6,8 +6,12 @@
 #include <iomanip>
 #include <iostream>
 #include <vector>
+#include <math.h>
 #include <liblzr.h>
+
 using namespace lzr;
+
+#define CLAMP(d) ( fmin(fmax(d, -1.0), 1.0) )
 
 #define PREFIX_ETHERDREAM "EtherDream-"
 
@@ -18,10 +22,11 @@ class DAC
 {
 public:
     DAC(std::string name);
+    virtual ~DAC();
 
     //standard DAC interface
     std::string name();
-    virtual int write(Frame frame) = 0;
+    virtual int send(Frame frame) = 0;
     virtual int stop() = 0;
     virtual int set_pps(int pps) = 0;
 

@@ -33,7 +33,12 @@ DAC* dac_connect(std::string name)
 
 DAC::DAC(std::string name) : _name(name)
 {
-    
+
+}
+
+DAC::~DAC()
+{
+
 }
 
 std::string DAC::name()
