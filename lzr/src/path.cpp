@@ -2,16 +2,17 @@
 #include "path.h"
 
 
-Path::Path(FrameEditorState* state, QModelIndex i, lzr::Frame frame) : QGraphicsObject(0)
+Path::Path(FrameEditorState* state, QModelIndex& i) : QGraphicsObject(0),
+                                                      index(i)
 {
-    index = i;
+    setEnabled(false); //never handle user events
 
-    for(lzr::Point lzr_point : frame)
+    //convert laser path into actual point items
+    lzr::Frame path = index.data().value<lzr::Frame>();
+    for(lzr::Point lzr_point : path)
     {
         own_point(new Point(state, lzr_point), points.size());
     }
-
-    setEnabled(false); //never handle user events
 }
 
 Point* Path::first()
@@ -31,6 +32,7 @@ void Path::setEnabled(bool enabled)
         point->setEnabled(enabled);
     }
 
+    //always show the enabled paths on top of the disabled ones
     setZValue(enabled ? 1 : 0);
 }
 
@@ -112,7 +114,6 @@ void Path::point_changed()
 void Path::remove_point(Point* point)
 {
     points.removeAll(point);
-    scene()->removeItem(point);
     delete point;
 
     emit changed(this);

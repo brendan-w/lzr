@@ -117,9 +117,7 @@ QModelIndex Frame::duplicate(const QModelIndex& index)
     int newRow = paths.size();
 
     beginInsertRows(QModelIndex(), newRow, newRow);
-
     paths.append(paths[index.row()]); //copy the data to a new path
-
     endInsertRows();
 
     return this->index(newRow);

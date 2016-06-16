@@ -46,9 +46,8 @@ void FrameScene::setModel(Frame* m, QItemSelectionModel* path_sel)
     for(int i = 0; i < model->rowCount(); i++)
     {
         QModelIndex index = model->index(i);
-        lzr::Frame lzr_path = index.data().value<lzr::Frame>();
 
-        Path* path = new Path(state, index, lzr_path);
+        Path* path = new Path(state, index);
         paths.append(path);
         addItem(path);
 
@@ -218,6 +217,12 @@ void FrameScene::path_added(const QModelIndex& parent, int first, int last)
 void FrameScene::path_removed(const QModelIndex& parent, int first, int last)
 {
     Q_UNUSED(parent);
+
+    for(int i = first; i <= last; i++)
+    {
+        delete paths[first];
+        paths.removeAt(first);
+    }
 }
 
 void FrameScene::tool_changed(tool_t t)

@@ -2,6 +2,7 @@
 #pragma once
 
 #include "point.h"
+#include "frame.h"
 #include "frameeditorstate.h"
 
 
@@ -10,7 +11,7 @@ class Path : public QGraphicsObject
     Q_OBJECT
 
 public:
-    Path(FrameEditorState* state, QModelIndex i, lzr::Frame frame);
+    Path(FrameEditorState* state, QModelIndex& i);
     QRectF boundingRect() const;
     void add_point(Point* point, bool add_at_front=false);
     lzr::Frame to_LZR() const;
@@ -32,6 +33,6 @@ protected:
 
 private:
     void own_point(Point* point, int where);
+    QPersistentModelIndex index;
     QList<Point*> points;
-    QModelIndex index;
 };

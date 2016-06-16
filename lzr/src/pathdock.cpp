@@ -93,5 +93,4 @@ void PathDock::remove()
     {
         frame->removeRow(index.row());
     }
-
 }
