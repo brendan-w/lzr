@@ -14,6 +14,10 @@ public:
     void setModel(Frame* frame);
     QItemSelectionModel* selectionModel();
 
+signals:
+    void select_all_points();
+    void deselect_all_points();
+
 public slots:
     void showContextMenu(const QPoint& mouse);
     void duplicate();
@@ -27,4 +31,8 @@ private:
     QWidget* content;
     QVBoxLayout* layout;
     QListView* paths;
+
+    //context menus
+    QMenu menu_for_selection;
+    QMenu menu_for_no_selection;
 };

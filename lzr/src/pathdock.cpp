@@ -24,11 +24,25 @@ PathDock::PathDock(QWidget* parent) : QDockWidget(parent)
     paths->setContextMenuPolicy(Qt::CustomContextMenu);
     //paths->setResizeMode(QListView::Adjust);
 
+    //layout constrictions
     paths->setFixedWidth(PATH_DELEGATE_SIZE);
     content->setFixedWidth(PATH_DELEGATE_SIZE + 20);
 
+    //make the menus
+    menu_for_selection.addAction("Select All Points", this, SIGNAL(select_all_points()));
+    menu_for_selection.addAction("Deselect All Points", this, SIGNAL(deselect_all_points()));
+    menu_for_selection.addSeparator();
+    menu_for_selection.addAction("Duplicate", this, SLOT(duplicate()));
+    menu_for_selection.addAction("Mirror Horizontally", this, SLOT(mirror_h()));
+    menu_for_selection.addAction("Mirror Vertically", this, SLOT(mirror_v()));
+    menu_for_selection.addSeparator();
+    menu_for_selection.addAction("Delete", this, SLOT(remove()));
+
+    menu_for_no_selection.addAction("Add Path");
+
     connect(paths, SIGNAL(customContextMenuRequested(const QPoint&)),
             this, SLOT(showContextMenu(const QPoint&)));
+
 }
 
 void PathDock::setModel(Frame* f)
@@ -48,22 +62,10 @@ QItemSelectionModel* PathDock::selectionModel()
 
 void PathDock::showContextMenu(const QPoint& mouse)
 {
-    QMenu contextMenu;
-
     if(paths->selectionModel()->selectedRows().size() == 0)
-    {
-        contextMenu.addAction("Add Path");
-    }
+        menu_for_no_selection.exec(paths->mapToGlobal(mouse));
     else
-    {
-        contextMenu.addAction("Select All Points");
-        contextMenu.addAction("Duplicate", this, SLOT(duplicate()));
-        contextMenu.addAction("Mirror Horizontally", this, SLOT(mirror_h()));
-        contextMenu.addAction("Mirror Vertically", this, SLOT(mirror_v()));
-        contextMenu.addAction("Delete", this, SLOT(remove()));
-    }
-
-    contextMenu.exec(paths->mapToGlobal(mouse));
+        menu_for_selection.exec(paths->mapToGlobal(mouse));
 }
 
 void PathDock::duplicate()

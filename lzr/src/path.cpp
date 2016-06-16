@@ -66,6 +66,26 @@ void Path::setEnabled(bool enabled)
     setZValue(enabled ? 1 : 0);
 }
 
+QRectF Path::boundingRect() const
+{
+    return QRectF(-1,-1,2,2); //the whole screen/grid
+}
+
+void Path::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+    Q_UNUSED(option);
+    Q_UNUSED(widget);
+
+    for(int i = 0; i < points.size() - 1; i++)
+    {
+        const Point* p1 = points[i];
+        const Point* p2 = points[i+1];
+        QLineF line(p1->x(), p1->y(), p2->x(), p2->y());
+        painter->setPen(QPen(p2->get_color(), 0));
+        painter->drawLine(line);
+    }
+}
+
 void Path::add_point(Point* point, bool add_at_front)
 {
     if(add_at_front)
@@ -89,6 +109,22 @@ QModelIndex Path::get_index()
     return index;
 }
 
+void Path::select_all()
+{
+    foreach(Point* point, points)
+    {
+        point->setSelected(true);
+    }
+}
+
+void Path::deselect_all()
+{
+    foreach(Point* point, points)
+    {
+        point->setSelected(false);
+    }
+}
+
 void Path::own_point(Point* point, int where)
 {
     points.insert(where, point);
@@ -99,25 +135,11 @@ void Path::own_point(Point* point, int where)
             this, SLOT(remove_point(Point*)));
 }
 
-QRectF Path::boundingRect() const
-{
-    return QRectF(-1,-1,2,2); //the whole screen/grid
-}
 
-void Path::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
-{
-    Q_UNUSED(option);
-    Q_UNUSED(widget);
 
-    for(int i = 0; i < points.size() - 1; i++)
-    {
-        const Point* p1 = points[i];
-        const Point* p2 = points[i+1];
-        QLineF line(p1->x(), p1->y(), p2->x(), p2->y());
-        painter->setPen(QPen(p2->get_color(), 0));
-        painter->drawLine(line);
-    }
-}
+/*
+ * Slots
+ */
 
 void Path::point_changed()
 {

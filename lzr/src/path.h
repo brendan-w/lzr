@@ -15,12 +15,14 @@ public:
     Point* first();
     Point* last();
     size_t size();
+    QModelIndex get_index();
     void from_LZR(lzr::Frame& path);
     lzr::Frame to_LZR() const;
     QRectF boundingRect() const;
-    void add_point(Point* point, bool add_at_front=false);
-    QModelIndex get_index();
     void setEnabled(bool enabled);
+    void add_point(Point* point, bool add_at_front=false);
+    void select_all();
+    void deselect_all();
 
 signals:
     void changed(Path* path);

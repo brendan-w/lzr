@@ -268,3 +268,19 @@ void FrameScene::grid_changed(int divisions)
     state->grid_divisions = divisions;
     update();
 }
+
+void FrameScene::select_all_points()
+{
+    foreach(const QModelIndex& index, path_selection->selectedRows())
+    {
+        paths[index.row()]->select_all();
+    }
+}
+
+void FrameScene::deselect_all_points()
+{
+    foreach(const QModelIndex& index, path_selection->selectedRows())
+    {
+        paths[index.row()]->deselect_all();
+    }
+}

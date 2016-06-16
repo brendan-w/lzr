@@ -40,6 +40,10 @@ void LZR::setupUi()
     addDockWidget(Qt::LeftDockWidgetArea, settings = new SettingsDock(this));
     addDockWidget(Qt::RightDockWidgetArea, paths = new PathDock(this));
 
+    connect(paths, SIGNAL(select_all_points()),
+            editor_scene, SLOT(select_all_points()));
+    connect(paths, SIGNAL(deselect_all_points()),
+            editor_scene, SLOT(deselect_all_points()));
     connect(tools, SIGNAL(tool_changed(tool_t)),
             editor_scene, SLOT(tool_changed(tool_t)));
     connect(color, SIGNAL(color_changed(QColor)),
