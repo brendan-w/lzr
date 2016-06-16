@@ -1,4 +1,6 @@
 
+
+#include "liblzr.h"
 #include "pathdock.h"
 #include "pathdelegate.h"
 
@@ -76,7 +78,19 @@ void PathDock::duplicate()
 
 void PathDock::mirror_h()
 {
-    
+    QModelIndexList selected = paths->selectionModel()->selectedRows();
+    Frame* frame = (Frame*) paths->model();
+
+    foreach(const QModelIndex& index, selected)
+    {
+        lzr::Frame path = index.data().value<lzr::Frame>();
+
+        lzr::mirror(path, lzr::Point(), true, false);
+
+        QVariant v;
+        v.setValue(path);
+        frame->setData(index, v);
+    }
 }
 
 void PathDock::mirror_v()
