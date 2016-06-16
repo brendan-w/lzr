@@ -13,6 +13,9 @@ public:
     void setModel(QAbstractItemModel* model);
     QItemSelectionModel* selectionModel();
 
+public slots:
+    void showContextMenu(const QPoint& mouse);
+
 private:
     QWidget* content;
     QVBoxLayout* layout;
