@@ -211,7 +211,7 @@ void FrameScene::model_changed(const QModelIndex& first, const QModelIndex& last
 {
     for(int i = first.row(); i <= last.row(); i++)
     {
-        lzr::Frame path = model->index(i).data().value<lzr::Frame>();
+        lzr::Frame path = model->get_path(model->index(i));
         paths[i]->from_LZR(path);
     }
 }
@@ -219,9 +219,8 @@ void FrameScene::model_changed(const QModelIndex& first, const QModelIndex& last
 void FrameScene::path_changed(Path* path)
 {
     //update the model with the new path data
-    QVariant v;
-    v.setValue(path->to_LZR());
-    model->setData(path->get_index(), v);
+    model->set_path(path->get_index(),
+                    path->to_LZR());
 }
 
 void FrameScene::path_added(const QModelIndex& parent, int first, int last)

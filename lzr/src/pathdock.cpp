@@ -83,13 +83,9 @@ void PathDock::mirror_h()
 
     foreach(const QModelIndex& index, selected)
     {
-        lzr::Frame path = index.data().value<lzr::Frame>();
-
+        lzr::Frame path = frame->get_path(index);
         lzr::mirror(path, lzr::Point(), true, false);
-
-        QVariant v;
-        v.setValue(path);
-        frame->setData(index, v);
+        frame->set_path(index, path);
     }
 }
 
