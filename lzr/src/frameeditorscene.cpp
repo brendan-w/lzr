@@ -45,14 +45,7 @@ void FrameScene::setModel(Frame* m, QItemSelectionModel* path_sel)
     //create all of the path objects in the model
     for(int i = 0; i < model->rowCount(); i++)
     {
-        QModelIndex index = model->index(i);
-
-        Path* path = new Path(state, index);
-        paths.append(path);
-        addItem(path);
-
-        connect(path, SIGNAL(changed(Path*)),
-                this, SLOT(path_changed(Path*)));
+        paths.append(new_path(model->index(i)));
     }
 
     //the path selection model
@@ -61,6 +54,17 @@ void FrameScene::setModel(Frame* m, QItemSelectionModel* path_sel)
                                                     const QItemSelection&)),
             this, SLOT(path_selection_changed(const QItemSelection&,
                                               const QItemSelection&)));
+}
+
+Path* FrameScene::new_path(QModelIndex index)
+{
+    Path* path = new Path(state, index);
+    addItem(path);
+
+    connect(path, SIGNAL(changed(Path*)),
+            this, SLOT(path_changed(Path*)));
+
+    return path;
 }
 
 void FrameScene::drawForeground(QPainter* painter, const QRectF& rect)
@@ -212,6 +216,11 @@ void FrameScene::path_changed(Path* path)
 void FrameScene::path_added(const QModelIndex& parent, int first, int last)
 {
     Q_UNUSED(parent);
+
+    for(int i = first; i <= last; i++)
+    {
+        paths.insert(i, new_path(model->index(i)));
+    }
 }
 
 void FrameScene::path_removed(const QModelIndex& parent, int first, int last)

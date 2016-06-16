@@ -46,5 +46,6 @@ private:
     QPointF mouse;
     FrameEditorState* state;
 
+    Path* new_path(QModelIndex index);
     Path* current_path();
 };
