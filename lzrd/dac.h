@@ -26,12 +26,14 @@ public:
 
     //standard DAC interface
     std::string name();
+    bool success();
     virtual int send(Frame frame) = 0;
     virtual int stop() = 0;
     virtual int set_pps(int pps) = 0;
 
 protected:
     std::string _name;
+    int _success;
 };
 
 //main DAC handling functions

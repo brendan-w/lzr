@@ -21,5 +21,4 @@ private:
     struct etherdream* dac;
     std::vector<struct etherdream_point> buffer;
     int pps;
-    int success;
 };

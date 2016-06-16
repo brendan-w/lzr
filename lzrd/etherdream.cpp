@@ -9,7 +9,7 @@ EtherDream::EtherDream(std::string name) : DAC(name),
     name = name.substr(sizeof(PREFIX_ETHERDREAM) - 1);
     unsigned long id = strtoul(name.c_str(), NULL, 16);
     dac = etherdream_get(id);
-    success = etherdream_connect(dac);
+    _success = etherdream_connect(dac);
 }
 
 EtherDream::~EtherDream()

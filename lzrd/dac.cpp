@@ -21,9 +21,21 @@ static inline bool starts_with(const std::string& str,
 
 DAC* dac_connect(std::string name)
 {
+    DAC* dac = NULL;
+
+    //instantiate the right connection class
     if(starts_with(name, PREFIX_ETHERDREAM))
     {
-        return new EtherDream(name);
+        dac = new EtherDream(name);
+    }
+
+    //check that we did something worth returning
+    if(dac)
+    {
+        if(dac->success())
+            return dac; //success!
+        else
+            delete dac; //failed: abort
     }
 
     return NULL;
@@ -44,4 +56,9 @@ DAC::~DAC()
 std::string DAC::name()
 {
     return _name;
+}
+
+bool DAC::success()
+{
+    return _success == 0;
 }
