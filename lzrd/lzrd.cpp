@@ -15,6 +15,9 @@
 #include <zmq.h>
 #include "libetherdream/etherdream.h"
 
+#include "dac.h"
+
+
 using namespace lzr;
 
 
@@ -70,8 +73,20 @@ int main()
     zmq_sub      = frame_sub_new(zmq_ctx, LZRD_GRAPHICS_ENDPOINT);
     ether_points.clear();
 
+    init_dacs();
 
-    etherdream_lib_start();
+    DACList dacs;
+    while(dacs.size() == 0)
+    {
+        printf("Searching for Etherdream...\n");
+        sleep(1); //wait for the etherdream lib to see pings from the dacs
+        dacs = list_dacs();
+    }
+
+    for(std::string& name : dacs)
+        std::cout << name << std::endl;
+
+    dac_connect(dacs[0]);
 
     //discover DACs
     int dac_count = 0;

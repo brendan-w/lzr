@@ -14,10 +14,14 @@ LIBS      = -lzmq -lm -lpthread
 
 INSTALL_PREFIX ?= /usr/local
 
-OBJS := lzrd.o
+OBJS := lzrd.o \
+        dac.o \
+        etherdream.o
 
 
-HEADERS += lzr.h
+HEADERS += lzr.h \
+           dac.h \
+           etherdream.h
 
 TESTS := ilda_server
          # interp_server \
