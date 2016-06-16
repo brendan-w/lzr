@@ -53,6 +53,7 @@ void PathDock::showContextMenu(const QPoint& mouse)
     }
     else
     {
+        contextMenu.addAction("Select All Points");
         contextMenu.addAction("Duplicate", this, SLOT(duplicate()));
         contextMenu.addAction("Mirror Horizontally", this, SLOT(mirror_h()));
         contextMenu.addAction("Mirror Vertically", this, SLOT(mirror_v()));
@@ -85,5 +86,12 @@ void PathDock::mirror_v()
 
 void PathDock::remove()
 {
-    
+    QModelIndexList selected = paths->selectionModel()->selectedRows();
+    Frame* frame = (Frame*) paths->model();
+
+    foreach(const QModelIndex& index, selected)
+    {
+        frame->removeRow(index.row());
+    }
+
 }

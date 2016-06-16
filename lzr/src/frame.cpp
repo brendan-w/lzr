@@ -52,7 +52,7 @@ QVariant Frame::data(const QModelIndex& index, int role) const
     return v;
 }
 
-bool Frame::setData(const QModelIndex &index, const QVariant &value, int role)
+bool Frame::setData(const QModelIndex& index, const QVariant& value, int role)
 {
     Q_UNUSED(role);
 
@@ -93,6 +93,17 @@ QModelIndex Frame::parent(const QModelIndex& index) const
 {
     Q_UNUSED(index);
     return QModelIndex();
+}
+
+bool Frame::removeRow(int row, const QModelIndex& parent)
+{
+    if(row < 0 || row >= rowCount())
+        return false;
+
+    beginRemoveRows(parent, row, row);
+    paths.removeAt(row);
+    endRemoveRows();
+    return true;
 }
 
 QModelIndex Frame::duplicate(const QModelIndex& index)

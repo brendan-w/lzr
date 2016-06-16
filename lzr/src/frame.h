@@ -23,12 +23,13 @@ public:
     Frame(lzr::Frame& frame);
 
     //QAbstractItemModel functions
-    int rowCount(const QModelIndex &parent = QModelIndex()) const; //reports the number of paths in the frame
+    int rowCount(const QModelIndex& parent = QModelIndex()) const; //reports the number of paths in the frame
     int columnCount(const QModelIndex& index) const;
-    QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const; //retrieve one of the paths
-    bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
+    QVariant data(const QModelIndex& index, int role=Qt::DisplayRole) const; //retrieve one of the paths
+    bool setData(const QModelIndex& index, const QVariant& value, int role = Qt::EditRole);
     QModelIndex index(int row, int column=0, const QModelIndex& parent=QModelIndex()) const;
     QModelIndex parent(const QModelIndex& index) const;
+    bool removeRow(int row, const QModelIndex& parent = QModelIndex());
 
     //custom Frame functions
     QModelIndex duplicate(const QModelIndex& index);
