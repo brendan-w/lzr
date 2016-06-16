@@ -24,6 +24,8 @@ public:
 public slots:
     void path_selection_changed(const QItemSelection& selected,
                                 const QItemSelection& deselected);
+    void path_added(const QModelIndex& parent, int first, int last);
+    void path_removed(const QModelIndex& parent, int first, int last);
     void path_changed(Path* p);
     void tool_changed(tool_t t);
     void color_changed(QColor c);
@@ -41,7 +43,6 @@ private:
     QItemSelectionModel* path_selection;
     Grid* grid;
     QList<Path*> paths;
-    QSet<Path*> selected_paths;
     QPointF mouse;
     FrameEditorState* state;
 

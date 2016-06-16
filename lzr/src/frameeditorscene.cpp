@@ -37,6 +37,11 @@ void FrameScene::setModel(Frame* m, QItemSelectionModel* path_sel)
 
     model = m;
 
+    connect(model, SIGNAL(rowsInserted(const QModelIndex&, int, int)),
+            this, SLOT(path_added(const QModelIndex&, int, int)));
+    connect(model, SIGNAL(rowsRemoved(const QModelIndex&, int, int)),
+            this, SLOT(path_removed(const QModelIndex&, int, int)));
+
     //create all of the path objects in the model
     for(int i = 0; i < model->rowCount(); i++)
     {
@@ -181,7 +186,6 @@ void FrameScene::path_selection_changed(const QItemSelection& selected,
 
         Path* path = paths[index.row()];
         path->setEnabled(false);
-        selected_paths.remove(path);
     }
 
     //select paths
@@ -195,7 +199,6 @@ void FrameScene::path_selection_changed(const QItemSelection& selected,
 
         Path* path = paths[index.row()];
         path->setEnabled(true);
-        selected_paths.remove(path);
     }
 }
 
@@ -205,6 +208,16 @@ void FrameScene::path_changed(Path* path)
     QVariant v;
     v.setValue(path->to_LZR());
     model->setData(path->get_index(), v);
+}
+
+void FrameScene::path_added(const QModelIndex& parent, int first, int last)
+{
+    Q_UNUSED(parent);
+}
+
+void FrameScene::path_removed(const QModelIndex& parent, int first, int last)
+{
+    Q_UNUSED(parent);
 }
 
 void FrameScene::tool_changed(tool_t t)
