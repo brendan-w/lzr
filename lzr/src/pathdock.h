@@ -24,6 +24,7 @@ public slots:
     void mirror_h();
     void mirror_v();
     void remove();
+    void add();
 
 private:
     Frame* frame;

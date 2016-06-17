@@ -99,10 +99,15 @@ QModelIndex Frame::duplicate(const QModelIndex& index)
     if(index.row() < 0 || index.row() >= rowCount())
         return QModelIndex();
 
+    return add_path(paths[index.row()]);
+}
+
+QModelIndex Frame::add_path(const lzr::Frame& path)
+{
     int newRow = paths.size();
 
     beginInsertRows(QModelIndex(), newRow, newRow);
-    paths.append(paths[index.row()]); //copy the data to a new path
+    paths.append(path); //copy the data to the new path
     endInsertRows();
 
     return this->index(newRow);

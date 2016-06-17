@@ -33,6 +33,7 @@ public:
 
     //custom Frame functions
     QModelIndex duplicate(const QModelIndex& index);
+    QModelIndex add_path(const lzr::Frame& path=lzr::Frame());
     lzr::Frame get_path(const QModelIndex& index) const;
     bool set_path(const QModelIndex& index, lzr::Frame path);
 

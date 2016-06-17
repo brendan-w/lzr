@@ -38,7 +38,7 @@ PathDock::PathDock(QWidget* parent) : QDockWidget(parent)
     menu_for_selection.addSeparator();
     menu_for_selection.addAction("Delete", this, SLOT(remove()));
 
-    menu_for_no_selection.addAction("Add Path");
+    menu_for_no_selection.addAction("Add Path", this, SLOT(add()));
 
     connect(paths, SIGNAL(customContextMenuRequested(const QPoint&)),
             this, SLOT(showContextMenu(const QPoint&)));
@@ -102,4 +102,9 @@ void PathDock::remove()
     {
         frame->removeRow(index.row());
     }
+}
+
+void PathDock::add()
+{
+    frame->add_path();
 }
