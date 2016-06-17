@@ -112,23 +112,16 @@ QVariant Point::itemChange(GraphicsItemChange change, const QVariant &value)
 
 void Point::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
-    if(state->tool == POINTER)
-        QGraphicsObject::mousePressEvent(event);
-    else if(state->tool == DELETE)
+    if(state->tool == DELETE)
         remove();
+    else
+        QGraphicsObject::mousePressEvent(event);
 }
 
 void Point::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
     if(state->tool == POINTER)
         QGraphicsObject::mouseMoveEvent(event);
-    //else, ignore (prevents item from being movable)
-}
-
-void Point::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
-{
-    if(state->tool == POINTER)
-        QGraphicsObject::mouseReleaseEvent(event);
     //else, ignore (prevents item from being movable)
 }
 
