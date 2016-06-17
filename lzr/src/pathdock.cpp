@@ -62,10 +62,10 @@ QItemSelectionModel* PathDock::selectionModel()
 
 void PathDock::showContextMenu(const QPoint& mouse)
 {
-    if(paths->selectionModel()->selectedRows().size() == 0)
-        menu_for_no_selection.exec(paths->mapToGlobal(mouse));
-    else
+    if(paths->indexAt(mouse).isValid())
         menu_for_selection.exec(paths->mapToGlobal(mouse));
+    else
+        menu_for_no_selection.exec(paths->mapToGlobal(mouse));
 }
 
 void PathDock::duplicate()
@@ -114,5 +114,6 @@ void PathDock::remove()
 
 void PathDock::add()
 {
-    frame->add_path();
+    selectionModel()->select(frame->add_path(),
+                             QItemSelectionModel::ClearAndSelect);
 }
