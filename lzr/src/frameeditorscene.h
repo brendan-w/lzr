@@ -45,10 +45,13 @@ protected:
 private:
     Frame* model;
     QItemSelectionModel* path_selection;
-    Grid* grid;
-    QList<Path*> paths;
-    QPointF mouse;
+
     FrameEditorState* state;
+    QPointF mouse;
+
+    Grid* grid;
+    Point* marker;
+    QList<Path*> paths;
 
     Path* new_path(QModelIndex index);
     Path* current_path();

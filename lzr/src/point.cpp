@@ -4,6 +4,17 @@
 #include "utils.h"
 
 
+Point::Point(FrameEditorState* s) : QGraphicsObject(0)
+{
+    //this constructor is only used when making points for cosmetic purposes
+    //(marking the position of a first point as a drawing aid)
+    state = s;
+    setVisible(false);
+    setEnabled(false);
+    hovered = false;
+    setFlag(QGraphicsItem::ItemIgnoresTransformations);
+}
+
 Point::Point(FrameEditorState* s, lzr::Point p) : QGraphicsObject(0)
 {
     init();

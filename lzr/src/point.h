@@ -12,6 +12,7 @@ class Point : public QGraphicsObject
     Q_OBJECT
 
 public:
+    Point(FrameEditorState* state);
     Point(FrameEditorState* state, lzr::Point p);
     Point(FrameEditorState* state, QPointF p, QColor c);
     void init();

@@ -18,6 +18,7 @@ FrameScene::FrameScene(QWidget *parent) : QGraphicsScene(parent)
     state->reverse = false;
 
     addItem(grid = new Grid(state));
+    addItem(marker = new Point(state));
 }
 
 FrameScene::~FrameScene()
@@ -76,10 +77,20 @@ void FrameScene::drawForeground(QPainter* painter, const QRectF& rect)
     //lookup the currently selected path
     Path* path = current_path();
 
-    if(path && path->size() > 0)
+    if(path && (state->tool == LINE ||
+                state->tool == DRAW))
     {
-        if(state->tool == LINE ||
-           state->tool == DRAW)
+        QPointF pos = constrain_and_snap(mouse,
+                                         state->snap,
+                                         state->grid_divisions);
+
+        marker->set_color(state->color);
+        marker->setPos(pos);
+        marker->setVisible(true);
+
+        painter->setPen(QPen(Qt::darkGray, 0));
+
+        if(path->size() > 0)
         {
             Point* point;
 
@@ -88,14 +99,14 @@ void FrameScene::drawForeground(QPainter* painter, const QRectF& rect)
             else
                 point = path->first();
 
-            QPointF pos = constrain_and_snap(mouse,
-                                             state->snap,
-                                             state->grid_divisions);
-            painter->setPen(QPen(Qt::darkGray, 0));
             painter->drawLine(QLineF(point->x(), point->y(), pos.x(), pos.y()));
         }
-    }
 
+    }
+    else
+    {
+        marker->setVisible(false);
+    }
 }
 
 void FrameScene::mouseMoveEvent(QGraphicsSceneMouseEvent* e)
