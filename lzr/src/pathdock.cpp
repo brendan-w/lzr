@@ -98,7 +98,15 @@ void PathDock::mirror_v()
 
 void PathDock::remove()
 {
+    //use persistent indexes to keep things consistent during deletion
+    QList<QPersistentModelIndex> indices;
+
     foreach(const QModelIndex& index, selectionModel()->selectedRows())
+    {
+        indices.append(index);
+    }
+
+    foreach(const QPersistentModelIndex& index, indices)
     {
         frame->removeRow(index.row());
     }
