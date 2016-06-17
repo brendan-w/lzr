@@ -73,30 +73,37 @@ void FrameScene::drawForeground(QPainter* painter, const QRectF& rect)
 {
     Q_UNUSED(rect); //because we always render the entire scene
 
-    if(state->tool == LINE && current_path() && current_path()->size() > 0)
+    //lookup the currently selected path
+    Path* path = current_path();
+
+    if(path && path->size() > 0)
     {
-        //lookup the currently selected path
-        Path* path = current_path();
-        Point* point;
+        if(state->tool == LINE ||
+           state->tool == DRAW)
+        {
+            Point* point;
 
-        if(!state->reverse)
-            point = path->last();
-        else
-            point = path->first();
+            if(!state->reverse)
+                point = path->last();
+            else
+                point = path->first();
 
-        QPointF pos = constrain_and_snap(mouse,
-                                         state->snap,
-                                         state->grid_divisions);
-        painter->setPen(QPen(Qt::darkGray, 0));
-        painter->drawLine(QLineF(point->x(), point->y(), pos.x(), pos.y()));
+            QPointF pos = constrain_and_snap(mouse,
+                                             state->snap,
+                                             state->grid_divisions);
+            painter->setPen(QPen(Qt::darkGray, 0));
+            painter->drawLine(QLineF(point->x(), point->y(), pos.x(), pos.y()));
+        }
     }
+
 }
 
 void FrameScene::mouseMoveEvent(QGraphicsSceneMouseEvent* e)
 {
     mouse = e->scenePos();
 
-    if(state->tool == LINE && current_path())
+    if(current_path() && (state->tool == LINE ||
+                          state->tool == DRAW))
     {
         update();
     }
@@ -106,13 +113,19 @@ void FrameScene::mouseMoveEvent(QGraphicsSceneMouseEvent* e)
 
 void FrameScene::mousePressEvent(QGraphicsSceneMouseEvent* e)
 {
-    if(state->tool == LINE && current_path())
+    //lookup the currently selected path
+    Path* path = current_path();
+
+    if(path)
     {
-        Path* path = current_path();
-        QPointF pos = constrain_and_snap(e->scenePos(),
-                                         state->snap,
-                                         state->grid_divisions);
-        path->add_point(new Point(state, pos, state->color), state->reverse);
+        if(state->tool == LINE ||
+           state->tool == DRAW)
+        {
+            QPointF pos = constrain_and_snap(e->scenePos(),
+                                             state->snap,
+                                             state->grid_divisions);
+            path->add_point(new Point(state, pos, state->color), state->reverse);
+        }
     }
 
     QGraphicsScene::mousePressEvent(e);
