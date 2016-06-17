@@ -19,6 +19,11 @@ FrameScene::FrameScene(QWidget *parent) : QGraphicsScene(parent)
 
     addItem(grid = new Grid(state));
     addItem(marker = new Point(state));
+    addItem(selector = new QGraphicsRectItem());
+
+    selector->setVisible(false);
+    selector->setEnabled(false);
+    selector->setPen(QPen(QColor(60, 60, 60), 0));
 }
 
 FrameScene::~FrameScene()
@@ -197,6 +202,15 @@ Path* FrameScene::current_path()
     return NULL;
 }
 
+bool FrameScene::clicked_on_point(QPointF mouse)
+{
+    if(views().size() == 0)
+        return false;
+
+    QGraphicsItem* item = itemAt(mouse, views()[0]->transform());
+    Point* point = qgraphicsitem_cast<Point*>(item);
+    return (point ? true : false);
+}
 
 /*
  * Slots

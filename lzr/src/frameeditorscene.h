@@ -51,8 +51,10 @@ private:
 
     Grid* grid;
     Point* marker;
+    QGraphicsRectItem* selector;
     QList<Path*> paths;
 
     Path* new_path(QModelIndex index);
     Path* current_path();
+    bool clicked_on_point(QPointF mouse);
 };

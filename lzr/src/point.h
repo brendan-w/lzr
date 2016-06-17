@@ -12,11 +12,14 @@ class Point : public QGraphicsObject
     Q_OBJECT
 
 public:
+    enum { Type = UserType + 1 };
+
     Point(FrameEditorState* state);
     Point(FrameEditorState* state, lzr::Point p);
     Point(FrameEditorState* state, QPointF p, QColor c);
     void init();
 
+    int type() const { return Type; }
     QRectF boundingRect() const;
     void set_color(const QColor& c);
     QColor get_color() const;

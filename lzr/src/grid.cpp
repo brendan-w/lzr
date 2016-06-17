@@ -3,8 +3,7 @@
 #include "utils.h"
 
 
-Grid::Grid(FrameEditorState* s) :
-    QGraphicsRectItem(0)
+Grid::Grid(FrameEditorState* s) : QGraphicsRectItem(0)
 {
     state = s;
     setPen(QPen(QColor(60, 60, 60), 0));
