@@ -101,6 +101,8 @@ void Path::add_point(Point* point, bool add_at_front)
         own_point(point, points.size());
     }
 
+    point->setEnabled(true);
+
     emit changed(this);
 }
 
