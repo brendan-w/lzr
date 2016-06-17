@@ -11,6 +11,7 @@ Point::Point(FrameEditorState* s) : QGraphicsObject(0)
     state = s;
     setVisible(false);
     setEnabled(false);
+    setZValue(2); //placed over top of disabled paths (0) and enabled paths(1)
     hovered = false;
     setFlag(QGraphicsItem::ItemIgnoresTransformations);
 }
