@@ -116,27 +116,29 @@ void FrameScene::drawForeground(QPainter* painter, const QRectF& rect)
 
 void FrameScene::mousePressEvent(QGraphicsSceneMouseEvent* e)
 {
-    //lookup the currently selected path
-    Path* path = current_path();
-
-    if(path)
+    switch(state->tool)
     {
-        if(state->tool == LINE ||
-           state->tool == DRAW)
-        {
-            QPointF pos = constrain_and_snap(e->scenePos(),
-                                             state->snap,
-                                             state->grid_divisions);
-            path->add_point(new Point(state, pos, state->color), state->reverse);
-        }
-    }
-
-    if(state->tool == POINTER && !clicked_on_point(e))
-    {
-        //if the user DIDN'T click on a point, start a selection rectangle
-        selector->setVisible(true);
-        QRectF rect(e->scenePos(), e->scenePos());
-        selector->setRect(rect);
+        case LINE:
+        case DRAW:
+            if(current_path())
+            {
+                QPointF pos = constrain_and_snap(e->scenePos(),
+                                                 state->snap,
+                                                 state->grid_divisions);
+                current_path()->add_point(new Point(state, pos, state->color), state->reverse);
+            }
+            break;
+        case POINTER:
+            if(!clicked_on_point(e))
+            {
+                //if the user DIDN'T click on a point, start a selection rectangle
+                QRectF rect(e->scenePos(), e->scenePos());
+                selector->setRect(rect);
+                selector->setVisible(true);
+            }
+            break;
+        default:
+            break;
     }
 
     QGraphicsScene::mousePressEvent(e);
@@ -146,7 +148,6 @@ void FrameScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* e)
 {
     if(selector->isVisible())
     {
-        //TODO: perform selection
         select_rect(selector->rect());
         selector->setVisible(false);
         update();
