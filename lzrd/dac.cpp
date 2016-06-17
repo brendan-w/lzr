@@ -2,6 +2,18 @@
 #include "dac.h"
 #include "etherdream.h"
 
+
+static inline bool starts_with(const std::string& str,
+                               const std::string& substr)
+{
+    return str.compare(0, substr.length(), substr) == 0;
+}
+
+static inline void append_dacs(DACList& master, DACList other)
+{
+    master.insert(master.end(), other.begin(), other.end());
+}
+
 void init_dacs()
 {
     etherdream_lib_start();
@@ -9,14 +21,9 @@ void init_dacs()
 
 DACList list_dacs()
 {
-    return EtherDream::list_dacs();
-}
-
-
-static inline bool starts_with(const std::string& str,
-                               const std::string& substr)
-{
-    return str.compare(0, substr.length(), substr) == 0;
+    DACList list;
+    append_dacs(list, EtherDream::list_dacs());
+    return list;
 }
 
 DAC* dac_connect(std::string name)
