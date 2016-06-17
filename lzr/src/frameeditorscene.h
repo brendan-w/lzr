@@ -36,8 +36,9 @@ public slots:
     void deselect_all_points();
 
 protected:
-    void mouseMoveEvent(QGraphicsSceneMouseEvent* e);
     void mousePressEvent(QGraphicsSceneMouseEvent* e);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent* e);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent* e);
     void keyPressEvent(QKeyEvent* e);
     void keyReleaseEvent(QKeyEvent* e);
     void drawForeground(QPainter* painter, const QRectF& rect);
@@ -56,5 +57,5 @@ private:
 
     Path* new_path(QModelIndex index);
     Path* current_path();
-    bool clicked_on_point(QPointF mouse);
+    bool clicked_on_point(QGraphicsSceneMouseEvent* e);
 };

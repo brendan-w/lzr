@@ -23,7 +23,7 @@ FrameScene::FrameScene(QWidget *parent) : QGraphicsScene(parent)
 
     selector->setVisible(false);
     selector->setEnabled(false);
-    selector->setPen(QPen(QColor(60, 60, 60), 0));
+    selector->setPen(QPen(Qt::gray, 0, Qt::DashLine));
 }
 
 FrameScene::~FrameScene()
@@ -114,19 +114,6 @@ void FrameScene::drawForeground(QPainter* painter, const QRectF& rect)
     }
 }
 
-void FrameScene::mouseMoveEvent(QGraphicsSceneMouseEvent* e)
-{
-    mouse = e->scenePos();
-
-    if(current_path() && (state->tool == LINE ||
-                          state->tool == DRAW))
-    {
-        update();
-    }
-
-    QGraphicsScene::mouseMoveEvent(e);
-}
-
 void FrameScene::mousePressEvent(QGraphicsSceneMouseEvent* e)
 {
     //lookup the currently selected path
@@ -144,7 +131,47 @@ void FrameScene::mousePressEvent(QGraphicsSceneMouseEvent* e)
         }
     }
 
+    if(state->tool == POINTER && !clicked_on_point(e))
+    {
+        //if the user DIDN'T click on a point, start a selection rectangle
+        selector->setVisible(true);
+        QRectF rect(e->scenePos(), e->scenePos());
+        selector->setRect(rect);
+    }
+
     QGraphicsScene::mousePressEvent(e);
+}
+
+void FrameScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* e)
+{
+    if(selector->isVisible())
+    {
+        //TODO: perform selection
+        selector->setVisible(false);
+        update();
+    }
+
+    QGraphicsScene::mouseReleaseEvent(e);
+}
+
+void FrameScene::mouseMoveEvent(QGraphicsSceneMouseEvent* e)
+{
+    mouse = e->scenePos();
+
+    if(current_path() && (state->tool == LINE ||
+                          state->tool == DRAW))
+    {
+        update(); //keep the screen updated during drawing
+    }
+    else if(selector->isVisible())
+    {
+        //if we're in selecting with the box, keep the box size updated
+        QRectF rect = selector->rect();
+        rect.setBottomRight(e->scenePos());
+        selector->setRect(rect);
+    }
+
+    QGraphicsScene::mouseMoveEvent(e);
 }
 
 void FrameScene::keyPressEvent(QKeyEvent* e)
@@ -202,12 +229,13 @@ Path* FrameScene::current_path()
     return NULL;
 }
 
-bool FrameScene::clicked_on_point(QPointF mouse)
+bool FrameScene::clicked_on_point(QGraphicsSceneMouseEvent* e)
 {
     if(views().size() == 0)
         return false;
 
-    QGraphicsItem* item = itemAt(mouse, views()[0]->transform());
+    QGraphicsItem* item = itemAt(e->scenePos(),
+                                 views()[0]->transform());
     Point* point = qgraphicsitem_cast<Point*>(item);
 
     if(!point)
