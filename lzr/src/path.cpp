@@ -60,6 +60,7 @@ void Path::setEnabled(bool enabled)
     foreach(Point* point, points)
     {
         point->setEnabled(enabled);
+        point->setVisible(enabled);
     }
 
     //always show the enabled paths on top of the disabled ones

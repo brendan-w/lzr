@@ -39,6 +39,7 @@ void Point::init()
     setFlag(QGraphicsItem::ItemSendsGeometryChanges);
     setFlag(QGraphicsItem::ItemIgnoresTransformations);
     setEnabled(false);
+    setVisible(false);
     setAcceptHoverEvents(true);
     hovered = false;
 }
