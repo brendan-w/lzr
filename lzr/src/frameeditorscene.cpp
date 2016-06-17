@@ -147,6 +147,7 @@ void FrameScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* e)
     if(selector->isVisible())
     {
         //TODO: perform selection
+        select_rect(selector->rect());
         selector->setVisible(false);
         update();
     }
@@ -242,6 +243,17 @@ bool FrameScene::clicked_on_point(QGraphicsSceneMouseEvent* e)
         return false;
     else
         return point->isEnabled();
+}
+
+void FrameScene::select_rect(QRectF rect)
+{
+    QPainterPath path;
+    path.addRect(rect);
+
+    if(views().size() == 0)
+        return;
+
+    setSelectionArea(path, views()[0]->transform());
 }
 
 /*

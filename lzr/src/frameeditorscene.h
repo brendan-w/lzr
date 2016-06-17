@@ -58,4 +58,5 @@ private:
     Path* new_path(QModelIndex index);
     Path* current_path();
     bool clicked_on_point(QGraphicsSceneMouseEvent* e);
+    void select_rect(QRectF rect);
 };
