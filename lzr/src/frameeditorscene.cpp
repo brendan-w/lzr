@@ -209,7 +209,11 @@ bool FrameScene::clicked_on_point(QPointF mouse)
 
     QGraphicsItem* item = itemAt(mouse, views()[0]->transform());
     Point* point = qgraphicsitem_cast<Point*>(item);
-    return (point ? true : false);
+
+    if(!point)
+        return false;
+    else
+        return point->isEnabled();
 }
 
 /*
