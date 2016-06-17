@@ -25,6 +25,7 @@ void Point::init()
     setFlag(QGraphicsItem::ItemIsSelectable);
     setFlag(QGraphicsItem::ItemSendsGeometryChanges);
     setFlag(QGraphicsItem::ItemIgnoresTransformations);
+    setEnabled(false);
     setAcceptHoverEvents(true);
     hovered = false;
 }
