@@ -180,8 +180,9 @@ void FrameScene::keyReleaseEvent(QKeyEvent* e)
 
 Path* FrameScene::current_path()
 {
-    if(path_selection->hasSelection())
-        return paths[path_selection->currentIndex().row()];
+    QModelIndex current = path_selection->currentIndex();
+    if(current.isValid())
+        return paths[current.row()];
     return NULL;
 }
 

@@ -114,6 +114,7 @@ void PathDock::remove()
 
 void PathDock::add()
 {
-    selectionModel()->select(frame->add_path(),
-                             QItemSelectionModel::ClearAndSelect);
+    QModelIndex index = frame->add_path();
+    selectionModel()->setCurrentIndex(index, QItemSelectionModel::ClearAndSelect);
+
 }
