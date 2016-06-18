@@ -13,7 +13,10 @@ inline float distance_between_points(const QPointF& a, const QPointF& b)
     return QVector2D(a).distanceToPoint(QVector2D(b));
 }
 
-inline QPointF perpendicular_intersection(const QPointF& a, const QPointF& b, const QPointF& x)
+inline QPointF perpendicular_intersection(const QPointF& a,
+                                          const QPointF& b,
+                                          const QPointF& x,
+                                          bool& inside)
 {
     QVector2D ab(b - a);
     QVector2D ax(x - a);
@@ -22,6 +25,9 @@ inline QPointF perpendicular_intersection(const QPointF& a, const QPointF& b, co
     intersection.normalize();
     intersection *= QVector2D::dotProduct(intersection, ax);
     intersection += QVector2D(a);
+
+    float dot = QVector2D::dotProduct(ab, ax);
+    inside = (dot > 0.0) && (dot < 2.0);
 
     return intersection.toPointF();
 }
