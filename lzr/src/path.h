@@ -12,9 +12,10 @@ class Path : public QGraphicsObject
 
 public:
     Path(FrameEditorState* s, QModelIndex& i);
-    Point* first();
-    Point* last();
-    size_t size();
+    Point* at(int i) const;
+    Point* first() const;
+    Point* last() const;
+    size_t size() const;
     QModelIndex get_index();
     void from_LZR(lzr::Frame& path);
     lzr::Frame to_LZR() const;

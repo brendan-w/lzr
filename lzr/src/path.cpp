@@ -13,17 +13,22 @@ Path::Path(FrameEditorState* s, QModelIndex& i) : QGraphicsObject(0),
     from_LZR(path);
 }
 
-Point* Path::first()
+Point* Path::at(int i) const
+{
+    return points[i];
+}
+
+Point* Path::first() const
 {
     return points.front();
 }
 
-Point* Path::last()
+Point* Path::last() const
 {
     return points.back();
 }
 
-size_t Path::size()
+size_t Path::size() const
 {
     return points.size();
 }
