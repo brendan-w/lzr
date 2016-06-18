@@ -82,8 +82,7 @@ void FrameScene::drawForeground(QPainter* painter, const QRectF& rect)
     //lookup the currently selected path
     Path* path = current_path();
 
-    if(path && (state->tool == LINE ||
-                state->tool == DRAW))
+    if(path && state->tool == DRAW)
     {
         QPointF pos = constrain_and_snap(mouse,
                                          state->snap,
@@ -118,7 +117,6 @@ void FrameScene::mousePressEvent(QGraphicsSceneMouseEvent* e)
 {
     switch(state->tool)
     {
-        case LINE:
         case DRAW:
             if(current_path())
             {
@@ -177,8 +175,6 @@ void FrameScene::mouseMoveEvent(QGraphicsSceneMouseEvent* e)
                 if(dist >= 0.05) //TODO: make this a setting
                     current_path()->add_point(new Point(state, pos, state->color), state->reverse);
             }
-            //fall through for update
-        case LINE:
             update(); //keep the screen updated during drawing
             break;
         case POINTER:

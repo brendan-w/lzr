@@ -3,7 +3,6 @@
 
 enum tool_t {
     POINTER,
-    LINE,
     DRAW,
     ADD,
     DELETE
