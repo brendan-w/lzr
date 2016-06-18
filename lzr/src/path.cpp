@@ -103,6 +103,7 @@ void Path::add_point(Point* point, bool add_at_front)
     }
 
     point->setEnabled(true);
+    point->setVisible(true);
 
     emit changed(this);
 }

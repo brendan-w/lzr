@@ -159,18 +159,39 @@ void FrameScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* e)
 void FrameScene::mouseMoveEvent(QGraphicsSceneMouseEvent* e)
 {
     mouse = e->scenePos();
+    Path* path = current_path();
 
-    if(current_path() && (state->tool == LINE ||
-                          state->tool == DRAW))
+    switch(state->tool)
     {
-        update(); //keep the screen updated during drawing
-    }
-    else if(selector->isVisible())
-    {
-        //if we're in selecting with the box, keep the box size updated
-        QRectF rect = selector->rect();
-        rect.setBottomRight(e->scenePos());
-        selector->setRect(rect);
+        case DRAW:
+            if(path &&
+               (path->size() > 0) &&
+               (e->buttons() & Qt::LeftButton))
+            {
+                QPointF prev = path->last()->pos();
+                QPointF pos = constrain_and_snap(mouse,
+                                                 state->snap,
+                                                 state->grid_divisions);
+                float dist = distance_between_points(prev, pos);
+
+                if(dist >= 0.05) //TODO: make this a setting
+                    current_path()->add_point(new Point(state, pos, state->color), state->reverse);
+            }
+            //fall through for update
+        case LINE:
+            update(); //keep the screen updated during drawing
+            break;
+        case POINTER:
+            if(selector->isVisible())
+            {
+                //if we're in selecting with the box, keep the box size updated
+                QRectF rect = selector->rect();
+                rect.setBottomRight(e->scenePos());
+                selector->setRect(rect);
+            }
+            break;
+        default:
+            break;
     }
 
     QGraphicsScene::mouseMoveEvent(e);
