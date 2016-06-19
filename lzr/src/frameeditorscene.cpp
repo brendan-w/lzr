@@ -124,7 +124,8 @@ void FrameScene::mousePressEvent(QGraphicsSceneMouseEvent* e)
                 QPointF pos = constrain_and_snap(e->scenePos(),
                                                  state->snap,
                                                  state->grid_divisions);
-                current_path()->add_point(new Point(state, pos, state->color), state->reverse);
+                current_path()->add_point(pos,
+                                          state->reverse ? PATH_START : PATH_END);
             }
             break;
         case POINTER:
@@ -135,6 +136,20 @@ void FrameScene::mousePressEvent(QGraphicsSceneMouseEvent* e)
                 selector->setRect(rect);
                 selector->setVisible(true);
             }
+            break;
+        case INSERT:
+        {
+            QPointF pos;
+            Path* path_picked;
+            int after; //where in the path to insert the new point
+
+            if(nearest_point_to_add(e->scenePos(), pos, path_picked, after))
+            {
+                qDebug() << after;
+                path_picked->add_point(pos, after + 1);
+                marker->setVisible(false);
+            }
+        }
             break;
         default:
             break;
@@ -174,7 +189,8 @@ void FrameScene::mouseMoveEvent(QGraphicsSceneMouseEvent* e)
                 float dist = distance_between_points(prev, pos);
 
                 if(dist >= 0.05) //TODO: make this a setting
-                    current_path()->add_point(new Point(state, pos, state->color), state->reverse);
+                    current_path()->add_point(pos,
+                                              state->reverse ? PATH_START : PATH_END);
             }
             update(); //keep the screen updated during drawing
             break;

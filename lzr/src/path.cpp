@@ -92,23 +92,21 @@ void Path::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
     }
 }
 
-void Path::add_point(Point* point, bool add_at_front)
+void Path::add_point(QPointF pos, int where)
 {
-    if(add_at_front)
-    {
-        own_point(point, 0);
-        //since this point was added at the back, and colors are stored on
-        //the second point, we need to copy this point's color to the next point
-        if(points.size() > 1)
-            points[1]->set_color(points[0]->get_color());
-    }
-    else
-    {
-        own_point(point, points.size());
-    }
-
+    Point* point = new Point(state, pos, state->color);
     point->setEnabled(true);
     point->setVisible(true);
+
+    if(where == PATH_END)
+        own_point(point, points.size());
+    else
+        own_point(point, where);
+
+    //since this point was added at the back, and colors are stored on
+    //the second point, we need to copy this point's color to the next point
+    if(where == PATH_START && size() > 1)
+        points[1]->set_color(points[0]->get_color());
 
     emit changed(this);
 }

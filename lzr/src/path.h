@@ -5,6 +5,9 @@
 #include "frame.h"
 #include "frameeditorstate.h"
 
+#define PATH_END -1
+#define PATH_START 0
+
 
 class Path : public QGraphicsObject
 {
@@ -21,7 +24,7 @@ public:
     lzr::Frame to_LZR() const;
     QRectF boundingRect() const;
     void setEnabled(bool enabled);
-    void add_point(Point* point, bool add_at_front=false);
+    void add_point(QPointF pos, int where = PATH_END);
     void select_all();
     void deselect_all();
 
