@@ -109,7 +109,8 @@ void FrameScene::drawForeground(QPainter* painter, const QRectF& rect)
     }
     else
     {
-        marker->setVisible(false);
+        if(state->tool != ADD)
+            marker->setVisible(false);
     }
 }
 
@@ -185,6 +186,20 @@ void FrameScene::mouseMoveEvent(QGraphicsSceneMouseEvent* e)
                 rect.setBottomRight(e->scenePos());
                 selector->setRect(rect);
             }
+            break;
+        case ADD:
+        {
+            QPointF point;
+            Path* path_picked;
+            int after; //where in the path to insert the new point
+
+            if(nearest_point_to_add(mouse, point, path_picked, after))
+            {
+                marker->set_color(Qt::white);
+                marker->setPos(point);
+                marker->setVisible(true);
+            }
+        }
             break;
         default:
             break;
@@ -272,6 +287,39 @@ void FrameScene::select_rect(QRectF rect)
         return;
 
     setSelectionArea(path, views()[0]->transform());
+}
+
+bool FrameScene::nearest_point_to_add(const QPointF& mouse,
+                                      QPointF& point, //the point we'd be adding
+                                      Path*& best_path, //the path we'd add it to
+                                      int& after) //where in the path to add the point
+{
+    float best_distance = 2.0;
+
+    foreach(const QModelIndex& index, path_selection->selectedRows())
+    {
+        Path* path = paths[index.row()];
+        for(int p = 0; p < (int) path->size() - 1; p++)
+        {
+            QPointF a = path->at(p)->pos();
+            QPointF b = path->at(p + 1)->pos();
+            QPointF i;
+
+            if(perpendicular_intersection(a, b, mouse, i))
+            {
+                float dist = distance_between_points(mouse, i);
+                if(dist < best_distance)
+                {
+                    best_path = path;
+                    best_distance = dist;
+                    point = i;
+                    after = p;
+                }
+            }
+        }
+    }
+
+    return (best_path != NULL);
 }
 
 /*

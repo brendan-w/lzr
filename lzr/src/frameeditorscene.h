@@ -59,4 +59,8 @@ private:
     Path* current_path();
     bool clicked_on_point(QGraphicsSceneMouseEvent* e);
     void select_rect(QRectF rect);
+    bool nearest_point_to_add(const QPointF& mouse,
+                              QPointF& point,
+                              Path*& best_path,
+                              int& after);
 };
