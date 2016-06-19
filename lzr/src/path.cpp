@@ -56,7 +56,9 @@ void Path::from_LZR(lzr::Frame& path)
 
     for(lzr::Point lzr_point : path)
     {
-        own_point(new Point(state, lzr_point), points.size());
+        Point* point = new Point(state, lzr_point);
+        own_point(point);
+        points.append(point);
     }
 }
 
@@ -95,13 +97,14 @@ void Path::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
 void Path::add_point(QPointF pos, int where)
 {
     Point* point = new Point(state, pos, state->color);
+    own_point(point);
     point->setEnabled(true);
     point->setVisible(true);
 
     if(where == PATH_END)
-        own_point(point, points.size());
+        points.append(point);
     else
-        own_point(point, where);
+        points.insert(where, point);
 
     //since this point was added at the back, and colors are stored on
     //the second point, we need to copy this point's color to the next point
@@ -132,9 +135,8 @@ void Path::deselect_all()
     }
 }
 
-void Path::own_point(Point* point, int where)
+void Path::own_point(Point* point)
 {
-    points.insert(where, point);
     point->setParentItem(this);
     connect(point, SIGNAL(changed()),
             this, SLOT(point_changed()));

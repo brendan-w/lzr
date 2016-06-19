@@ -39,9 +39,9 @@ protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
 private:
-    void own_point(Point* point, int where);
+    void own_point(Point* point);
 
-    FrameEditorState* state;
+    FrameEditorState* state; //only used for point construction
     QPersistentModelIndex index;
     QList<Point*> points;
 };
