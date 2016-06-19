@@ -199,6 +199,10 @@ void FrameScene::mouseMoveEvent(QGraphicsSceneMouseEvent* e)
                 marker->setPos(point);
                 marker->setVisible(true);
             }
+            else
+            {
+                marker->setVisible(false);
+            }
         }
             break;
         default:
@@ -308,7 +312,9 @@ bool FrameScene::nearest_point_to_add(const QPointF& mouse,
             if(perpendicular_intersection(a, b, mouse, i))
             {
                 float dist = distance_between_points(mouse, i);
-                if(dist < best_distance)
+
+                if((dist < EDITOR_INSERT_DIST) &&
+                   (dist < best_distance))
                 {
                     best_path = path;
                     best_distance = dist;

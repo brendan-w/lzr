@@ -6,6 +6,8 @@
 #define EDITOR_REVERSE_KEY Qt::Key_Alt
 #define EDITOR_DELETE_KEY  Qt::Key_Delete
 
+#define EDITOR_INSERT_DIST 0.05
+
 #define POINT_RADIUS 10
 #define POINT_DIAMETER (POINT_RADIUS * 2)
 #define POINT_INNER_RADIUS 2
