@@ -46,6 +46,8 @@ protected:
 private:
     Frame* model;
     QItemSelectionModel* path_selection;
+    QItemSelection saved_selection; //used for the momentary add-path hotkey
+    QModelIndex saved_current;
 
     FrameEditorState* state;
     QPointF mouse;

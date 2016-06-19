@@ -1,10 +1,11 @@
 
 #include <Qt>
 
-#define EDITOR_PAN_KEY     Qt::Key_Space
-#define EDITOR_SNAP_KEY    Qt::Key_Shift
-#define EDITOR_REVERSE_KEY Qt::Key_Alt
-#define EDITOR_DELETE_KEY  Qt::Key_Delete
+#define EDITOR_PAN_KEY      Qt::Key_Space
+#define EDITOR_ADD_PATH_KEY Qt::Key_Alt
+#define EDITOR_SNAP_KEY     Qt::Key_Shift
+#define EDITOR_REVERSE_KEY  Qt::Key_Control
+#define EDITOR_DELETE_KEY   Qt::Key_Delete
 
 #define EDITOR_INSERT_DIST 0.1
 

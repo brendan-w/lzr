@@ -249,6 +249,13 @@ void FrameScene::keyPressEvent(QKeyEvent* e)
                 }
                 update();
                 break;
+            case EDITOR_ADD_PATH_KEY:
+                //stow the current path selection
+                saved_selection = path_selection->selection();
+                saved_current = path_selection->currentIndex();
+                path_selection->setCurrentIndex(model->add_path(),
+                                                QItemSelectionModel::ClearAndSelect);
+                break;
         }
     }
 
@@ -268,6 +275,19 @@ void FrameScene::keyReleaseEvent(QKeyEvent* e)
             case EDITOR_REVERSE_KEY:
                 state->reverse = false;
                 update();
+                break;
+            case EDITOR_ADD_PATH_KEY:
+                if(paths.back()->size() == 0)
+                {
+                    //remove the still-empty path
+                    model->removeRow(paths.size() - 1);
+
+                    //reinstate the old path selection
+                    path_selection->select(saved_selection,
+                                           QItemSelectionModel::ClearAndSelect);
+                    path_selection->setCurrentIndex(saved_current,
+                                                    QItemSelectionModel::Select);
+                }
                 break;
         }
     }
