@@ -182,7 +182,7 @@ void FrameScene::mouseMoveEvent(QGraphicsSceneMouseEvent* e)
                (path->size() > 0) &&
                (e->buttons() & Qt::LeftButton))
             {
-                QPointF prev = path->last()->pos();
+                QPointF prev = state->reverse ? path->first()->pos() : path->last()->pos();
                 QPointF pos = constrain_and_snap(mouse,
                                                  state->snap,
                                                  state->grid_divisions);
