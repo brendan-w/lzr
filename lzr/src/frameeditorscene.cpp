@@ -79,6 +79,9 @@ void FrameScene::drawForeground(QPainter* painter, const QRectF& rect)
 {
     Q_UNUSED(rect); //because we always render the entire scene
 
+    //always keep the marker set to the current color
+    marker->set_color(state->color);
+
     //lookup the currently selected path
     Path* path = current_path();
 
@@ -88,7 +91,6 @@ void FrameScene::drawForeground(QPainter* painter, const QRectF& rect)
                                          state->snap,
                                          state->grid_divisions);
 
-        marker->set_color(state->color);
         marker->setPos(pos);
         marker->setVisible(true);
 
@@ -145,7 +147,6 @@ void FrameScene::mousePressEvent(QGraphicsSceneMouseEvent* e)
 
             if(nearest_point_to_add(e->scenePos(), pos, path_picked, after))
             {
-                qDebug() << after;
                 path_picked->add_point(pos, after + 1);
                 marker->setVisible(false);
             }
@@ -211,7 +212,6 @@ void FrameScene::mouseMoveEvent(QGraphicsSceneMouseEvent* e)
 
             if(nearest_point_to_add(mouse, point, path_picked, after))
             {
-                marker->set_color(Qt::white);
                 marker->setPos(point);
                 marker->setVisible(true);
             }
@@ -314,6 +314,7 @@ bool FrameScene::nearest_point_to_add(const QPointF& mouse,
                                       Path*& best_path, //the path we'd add it to
                                       int& after) //where in the path to add the point
 {
+    best_path = NULL;
     float best_distance = 2.0;
 
     foreach(const QModelIndex& index, path_selection->selectedRows())
