@@ -4,7 +4,7 @@
 enum tool_t {
     POINTER,
     DRAW,
-    ADD,
+    INSERT,
     DELETE
 };
 

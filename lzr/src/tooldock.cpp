@@ -13,10 +13,10 @@ ToolDock::ToolDock(QWidget* parent) : QDockWidget(parent)
     actions = new QActionGroup(content);
     actions->setExclusive(true);
 
-    pointer   = makeTool(POINTER, "Pointer", QKeySequence(Qt::Key_P));
-    draw      = makeTool(DRAW,    "Draw",    QKeySequence(Qt::Key_F));
-    add_point = makeTool(ADD,     "Add",     QKeySequence(Qt::Key_A));
-    del_point = makeTool(DELETE,  "Delete",  QKeySequence(Qt::Key_D));
+    pointer = makeTool(POINTER, "Pointer", QKeySequence(Qt::Key_P));
+    draw    = makeTool(DRAW,    "Draw",    QKeySequence(Qt::Key_F));
+    insert  = makeTool(INSERT,  "Insert",  QKeySequence(Qt::Key_A));
+    del     = makeTool(DELETE,  "Delete",  QKeySequence(Qt::Key_D));
 }
 
 void ToolDock::set_tool(tool_t tool)
@@ -27,8 +27,8 @@ void ToolDock::set_tool(tool_t tool)
     {
     case POINTER: button = pointer; break;
     case DRAW:    button = draw; break;
-    case ADD:     button = add_point; break;
-    case DELETE:  button = del_point; break;
+    case INSERT:  button = insert; break;
+    case DELETE:  button = del; break;
     }
 
     button->defaultAction()->setChecked(true);

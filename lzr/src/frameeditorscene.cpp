@@ -109,7 +109,7 @@ void FrameScene::drawForeground(QPainter* painter, const QRectF& rect)
     }
     else
     {
-        if(state->tool != ADD)
+        if(state->tool != INSERT)
             marker->setVisible(false);
     }
 }
@@ -187,7 +187,7 @@ void FrameScene::mouseMoveEvent(QGraphicsSceneMouseEvent* e)
                 selector->setRect(rect);
             }
             break;
-        case ADD:
+        case INSERT:
         {
             QPointF point;
             Path* path_picked;

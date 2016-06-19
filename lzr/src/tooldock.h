@@ -32,8 +32,8 @@ private:
     FlowLayout* layout;
 
     QActionGroup* actions;
-    QToolButton* draw;
     QToolButton* pointer;
-    QToolButton* add_point;
-    QToolButton* del_point;
+    QToolButton* draw;
+    QToolButton* insert;
+    QToolButton* del;
 };
