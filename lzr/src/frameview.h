@@ -11,6 +11,8 @@ class FrameView : public QWidget
 public:
     FrameView(QWidget* parent = 0);
     void setFrame(lzr::Frame f);
+    QSize sizeHint() const;
+    QSizePolicy sizePolicy() const;
 
 protected:
     void paintEvent(QPaintEvent* event);

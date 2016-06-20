@@ -8,6 +8,17 @@ FrameView::FrameView(QWidget* parent) : QWidget(parent)
 
 }
 
+QSize FrameView::sizeHint() const
+{
+    return QSize(200, 200);
+}
+
+QSizePolicy FrameView::sizePolicy() const
+{
+    return QSizePolicy(QSizePolicy::Expanding,
+                       QSizePolicy::Expanding);
+}
+
 void FrameView::setFrame(lzr::Frame f)
 {
     frame = f;
