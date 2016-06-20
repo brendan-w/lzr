@@ -31,6 +31,7 @@ public slots:
     void path_changed(Path* p);
     void tool_changed(tool_t t);
     void color_changed(QColor c);
+    void brush_size_changed(double s);
     void grid_changed(int divisions);
     void draw_density_changed(double d);
     void select_all_points();

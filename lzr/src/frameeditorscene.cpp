@@ -13,6 +13,7 @@ FrameScene::FrameScene(QWidget *parent) : QGraphicsScene(parent)
     setBackgroundBrush(Qt::black);
 
     state = new FrameEditorState;
+    state->brush_size = 0.1;
     state->grid_divisions = 8;
     state->draw_density = 0.05;
     state->snap = false;
@@ -454,6 +455,11 @@ void FrameScene::tool_changed(tool_t t)
 void FrameScene::color_changed(QColor c)
 {
     state->color = c;
+}
+
+void FrameScene::brush_size_changed(double s)
+{
+    state->brush_size = s;
 }
 
 void FrameScene::grid_changed(int divisions)
