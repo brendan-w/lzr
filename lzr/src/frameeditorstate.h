@@ -5,7 +5,8 @@ enum tool_t {
     POINTER,
     DRAW,
     INSERT,
-    DELETE
+    DELETE,
+    BRUSH
 };
 
 typedef struct {

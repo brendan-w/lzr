@@ -36,4 +36,5 @@ private:
     QToolButton* draw;
     QToolButton* insert;
     QToolButton* del;
+    QToolButton* brush;
 };
