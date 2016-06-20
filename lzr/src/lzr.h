@@ -2,6 +2,7 @@
 #pragma once
 
 #include <QtWidgets>
+#include "clipeditor.h"
 #include "frameeditorview.h"
 #include "frameeditorscene.h"
 #include "frame.h"
@@ -42,6 +43,5 @@ private:
     SettingsDock* settings;
 
     //CLIP EDITOR
-    QSplitter* clip_main_split;
-    QSplitter* clip_sub_split;
+    ClipEditor* clip_editor;
 };

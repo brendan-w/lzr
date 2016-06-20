@@ -20,8 +20,8 @@ LZR::LZR()
     f.add(                lzr::Point(-1, -1,  0, 255, 255, 255));
 
     Frame* frame = new Frame(f);
-    show_frameeditor(frame);
-    //show_clipeditor();
+    //show_frameeditor(frame);
+    show_clipeditor();
 }
 
 LZR::~LZR()
@@ -32,19 +32,10 @@ LZR::~LZR()
 void LZR::setupUi()
 {
     setCentralWidget(stack = new QStackedWidget(this));
-    stack->addWidget(editor_view = new FrameEditor);
-    stack->addWidget(clip_main_split = new QSplitter);
-
-    //CLIP EDITOR
-    clip_main_split->setOrientation(Qt::Vertical);
-    clip_main_split->addWidget(clip_sub_split = new QSplitter);
-    clip_main_split->addWidget(new QWidget);
-
-    clip_sub_split->addWidget(new QWidget);
-    clip_sub_split->addWidget(new QWidget);
+    stack->addWidget(editor_view = new FrameEditor(this));
+    stack->addWidget(clip_editor = new ClipEditor(this));
 
     //FRAME EDITOR
-
     editor_scene = new FrameScene(this);
     editor_view->setScene(editor_scene);
 
@@ -103,5 +94,5 @@ void LZR::show_clipeditor()
     paths->hide();
 
     //show the clip editor
-    stack->setCurrentWidget(clip_main_split);
+    stack->setCurrentWidget(clip_editor);
 }
