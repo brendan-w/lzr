@@ -32,6 +32,7 @@ public slots:
     void tool_changed(tool_t t);
     void color_changed(QColor c);
     void grid_changed(int divisions);
+    void draw_density_changed(double d);
     void select_all_points();
     void deselect_all_points();
 

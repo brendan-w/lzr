@@ -14,6 +14,7 @@ FrameScene::FrameScene(QWidget *parent) : QGraphicsScene(parent)
 
     state = new FrameEditorState;
     state->grid_divisions = 8;
+    state->draw_density = 0.05;
     state->snap = false;
     state->reverse = false;
 
@@ -189,7 +190,7 @@ void FrameScene::mouseMoveEvent(QGraphicsSceneMouseEvent* e)
                                                  state->grid_divisions);
                 float dist = distance_between_points(prev, pos);
 
-                if(dist >= 0.05) //TODO: make this a setting
+                if(dist >= state->draw_density)
                     current_path()->add_point(pos,
                                               state->reverse ? PATH_START : PATH_END);
             }
@@ -459,6 +460,11 @@ void FrameScene::grid_changed(int divisions)
 {
     state->grid_divisions = divisions;
     update();
+}
+
+void FrameScene::draw_density_changed(double d)
+{
+    state->draw_density = d;
 }
 
 void FrameScene::select_all_points()

@@ -10,17 +10,20 @@ QMainWindow * {
 
 QToolButton,
 QListView,
-QSpinBox {
+QSpinBox,
+QDoubleSpinBox {
     background: #333;
 }
 
-QSpinBox::up-button {
+QSpinBox::up-button,
+QDoubleSpinBox::up-button {
     subcontrol-origin: border;
     subcontrol-position: top right;
     width: 25px;
 }
 
-QSpinBox::down-button {
+QSpinBox::down-button,
+QDoubleSpinBox::down-button {
     subcontrol-origin: border;
     subcontrol-position: bottom right;
     width: 25px;

@@ -14,10 +14,12 @@ public:
 
 signals:
     void grid_changed(int n);
+    void draw_density_changed(double d);
 
 private:
     QWidget* content;
     QVBoxLayout* layout;
 
     QSpinBox* grid_divisions;
+    QDoubleSpinBox* draw_density;
 };

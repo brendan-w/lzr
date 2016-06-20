@@ -50,6 +50,8 @@ void LZR::setupUi()
             editor_scene, SLOT(color_changed(QColor)));
     connect(settings, SIGNAL(grid_changed(int)),
             editor_scene, SLOT(grid_changed(int)));
+    connect(settings, SIGNAL(draw_density_changed(double)),
+            editor_scene, SLOT(draw_density_changed(double)));
     /*
     setMenuBar(menuBar = new QMenuBar(this));
     menuBar->setGeometry(QRect(0, 0, 762, 20));

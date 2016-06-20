@@ -12,6 +12,7 @@ typedef struct {
     tool_t tool;
     QColor color;
     int grid_divisions;
+    double draw_density;
     bool snap; //momentary hotkeys
     bool reverse;
 } FrameEditorState;
