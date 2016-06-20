@@ -35,6 +35,11 @@ ColorDock::ColorDock(QWidget* parent) : QDockWidget(parent)
     connect(colors, SIGNAL(color_selected(QColor, QRect)),
             this, SLOT(color_selected(QColor, QRect)));
 
+    reset();
+}
+
+void ColorDock::reset()
+{
     colors->select_color_at(QPoint(0, 0));
 }
 
@@ -50,11 +55,6 @@ void ColorDock::color_selected(QColor c, QRect rect)
     indicator->setPen(pen);
     indicator->setRect(rect);
 
-    emit color_changed(color);
-}
-
-void ColorDock::emit_color_changed()
-{
     emit color_changed(color);
 }
 

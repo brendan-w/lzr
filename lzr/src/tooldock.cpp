@@ -18,22 +18,13 @@ ToolDock::ToolDock(QWidget* parent) : QDockWidget(parent)
     insert  = makeTool(INSERT,  "Insert",  QKeySequence(Qt::Key_I));
     del     = makeTool(DELETE,  "Delete",  QKeySequence(Qt::Key_D));
     brush   = makeTool(BRUSH,   "Brush",   QKeySequence(Qt::Key_B));
+
+    reset();
 }
 
-void ToolDock::set_tool(tool_t tool)
+void ToolDock::reset()
 {
-    QToolButton* button;
-
-    switch(tool)
-    {
-    case POINTER: button = pointer; break;
-    case DRAW:    button = draw; break;
-    case INSERT:  button = insert; break;
-    case DELETE:  button = del; break;
-    case BRUSH:   button = brush; break;
-    }
-
-    button->defaultAction()->setChecked(true);
+    pointer->defaultAction()->setChecked(true);
 }
 
 void ToolDock::tool_toggled(bool checked)

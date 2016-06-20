@@ -17,7 +17,7 @@ class ToolDock : public QDockWidget
 
 public:
     explicit ToolDock(QWidget* parent = 0);
-    void set_tool(tool_t tool);
+    void reset();
 
 signals:
     void tool_changed(tool_t tool);

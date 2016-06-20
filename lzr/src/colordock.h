@@ -37,7 +37,7 @@ class ColorDock : public QDockWidget
 
 public:
     explicit ColorDock(QWidget* parent = 0);
-    void emit_color_changed(); //used for first-time update of the editors color
+    void reset();
 
 signals:
     void color_changed(QColor color);

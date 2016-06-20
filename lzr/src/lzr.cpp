@@ -20,8 +20,8 @@ LZR::LZR()
     f.add(                lzr::Point(-1, -1,  0, 255, 255, 255));
 
     Frame* frame = new Frame(f);
-    //show_frameeditor(frame);
-    show_clipeditor();
+    show_frameeditor(frame);
+    //show_clipeditor();
 }
 
 LZR::~LZR()
@@ -87,12 +87,9 @@ void LZR::show_frameeditor(Frame* frame)
     paths->setModel(frame);
     editor_scene->setModel(frame, paths->selectionModel());
 
-    //rearrange the viewport for the new model
-    editor_view->reset();
-
-    //reload each dock's settings
-    tools->set_tool(POINTER);
-    color->emit_color_changed();
+    editor_view->reset(); //rearrange the viewport for the new model
+    tools->reset(); //reload each dock's settings
+    color->reset();
 
     //show the frame editor
     stack->setCurrentWidget(editor_view);
