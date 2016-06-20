@@ -22,9 +22,17 @@ public:
 private:
     void setupUi();
     void show_frameeditor(Frame* frame);
+    void show_clipeditor();
 
     QStackedWidget* stack;
 
+    /*
+    QMenuBar *menuBar;
+    QToolBar *mainToolBar;
+    QStatusBar *statusBar;
+    */
+
+    //FRAME EDITOR
     FrameEditor* editor_view;
     FrameScene* editor_scene;
 
@@ -33,9 +41,7 @@ private:
     PathDock* paths;
     SettingsDock* settings;
 
-    /*
-    QMenuBar *menuBar;
-    QToolBar *mainToolBar;
-    QStatusBar *statusBar;
-    */
+    //CLIP EDITOR
+    QSplitter* clip_main_split;
+    QSplitter* clip_sub_split;
 };

@@ -4,6 +4,7 @@
 LZR::LZR()
 {
     setupUi();
+    resize(1024, 600);
 
     //test the Frame model
     lzr::Frame f;
@@ -19,7 +20,8 @@ LZR::LZR()
     f.add(                lzr::Point(-1, -1,  0, 255, 255, 255));
 
     Frame* frame = new Frame(f);
-    show_frameeditor(frame);
+    //show_frameeditor(frame);
+    show_clipeditor();
 }
 
 LZR::~LZR()
@@ -30,7 +32,18 @@ LZR::~LZR()
 void LZR::setupUi()
 {
     setCentralWidget(stack = new QStackedWidget(this));
-    stack->addWidget(editor_view = new FrameEditor(stack));
+    stack->addWidget(editor_view = new FrameEditor);
+    stack->addWidget(clip_main_split = new QSplitter);
+
+    //CLIP EDITOR
+    clip_main_split->setOrientation(Qt::Vertical);
+    clip_main_split->addWidget(clip_sub_split = new QSplitter);
+    clip_main_split->addWidget(new QWidget);
+
+    clip_sub_split->addWidget(new QWidget);
+    clip_sub_split->addWidget(new QWidget);
+
+    //FRAME EDITOR
 
     editor_scene = new FrameScene(this);
     editor_view->setScene(editor_scene);
@@ -65,7 +78,10 @@ void LZR::setupUi()
 
 void LZR::show_frameeditor(Frame* frame)
 {
-    //TODO:show/hide dock widgets
+    tools->show();
+    color->show();
+    settings->show();
+    paths->show();
 
     //set models
     paths->setModel(frame);
@@ -73,12 +89,22 @@ void LZR::show_frameeditor(Frame* frame)
 
     //rearrange the viewport for the new model
     editor_view->reset();
-    editor_view->scale(200, 200); //TODO, this is a quick hack to make the initial reset() work
 
     //reload each dock's settings
     tools->set_tool(POINTER);
     color->emit_color_changed();
 
-    //show the editor
+    //show the frame editor
     stack->setCurrentWidget(editor_view);
+}
+
+void LZR::show_clipeditor()
+{
+    tools->hide();
+    color->hide();
+    settings->hide();
+    paths->hide();
+
+    //show the clip editor
+    stack->setCurrentWidget(clip_main_split);
 }

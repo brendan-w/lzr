@@ -2,7 +2,7 @@
 #include <QtGui>
 #include "frameeditorview.h"
 #include "settings.h"
-
+#include "utils.h"
 
 #define ZOOM_FACTOR 1.2
 
@@ -20,7 +20,7 @@ FrameEditor::FrameEditor(QWidget *parent) : QGraphicsView(parent)
 
 void FrameEditor::reset()
 {
-    fitInView(scene()->itemsBoundingRect(), Qt::KeepAspectRatio);
+    fitInView(frame_bounds, Qt::KeepAspectRatio);
     scale(1, -1); //keep the Y axis inverted to match reality
 }
 

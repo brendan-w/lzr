@@ -8,6 +8,11 @@ QMainWindow * {
     color:#AAA;
 }
 
+QSplitter::handle:vertical,
+QSplitter::handle:horizontal {
+    background: #444;
+}
+
 QToolButton,
 QListView,
 QSpinBox,
