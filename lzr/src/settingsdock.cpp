@@ -33,6 +33,8 @@ SettingsDock::SettingsDock(QWidget* parent) : QDockWidget(parent)
     draw_density->setSingleStep(0.01);
     draw_density->setFocusPolicy(Qt::NoFocus);
 
+    layout->addStretch(1);
+
     //default values
     brush_size->setValue(0.05);
     grid_divisions->setValue(8);
