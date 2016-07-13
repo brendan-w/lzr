@@ -1,0 +1,30 @@
+/*
+    Example:
+
+    EtherDream-FE8372
+    {
+        endpoint: "tcp://127.0.0.1:5555"
+
+        # scanner settings (defaults)
+        interpolation_function: "linear"
+        interpolation_distance: 0.04
+        blanking_function: "linear"
+        blanking_distance: 0.4
+        anchor_points_lit: 1
+        anchor_points_blanked: 2
+        reorder_paths: true
+        path_split_angle: 45
+
+
+        # OR
+        # use an include to keep the scanner settings seperate from the DAC list
+        @include "langling.cfg"
+    }
+*/
+
+
+EtherDream-FE8372
+{
+    @include "langling.cfg"
+    endpoint: "tcp://127.0.0.1:5555"
+}

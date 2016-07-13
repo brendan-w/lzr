@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <liblzr.h>
 #include <zmq.h>
+#include <libconfig.h++>
 
 #include "dac.h"
 
