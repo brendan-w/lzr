@@ -148,6 +148,7 @@ static void microsleep(long long us) {
  * Utility function for logging.
  */
 static void trace(struct etherdream *d, char *fmt, ...) {
+#ifdef DEBUG
 	if (!trace_fp)
 		return;
 
@@ -169,6 +170,7 @@ static void trace(struct etherdream *d, char *fmt, ...) {
 	va_end(args);
 
 	fputs(buf, trace_fp);
+#endif
 }
 
 /* log_socket_error(d, call)
@@ -892,7 +894,7 @@ int etherdream_lib_start(void) {
 
 	// Set up the logging fd (just stderr for now)
 	trace_fp = stderr;
-	fprintf(trace_fp, "----------\n");
+	trace(NULL, "----------\n");
 	fflush(trace_fp);
 	trace(NULL, "== libetherdream started ==\n");
 

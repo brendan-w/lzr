@@ -24,6 +24,8 @@ endif
 .PHONY: all
 all: etherdream.a
 
+debug: CFLAGS += -DDEBUG
+debug: etherdream.a
 
 etherdream.a: $(OBJS)
 	$(AR) $(ARFLAGS) $@ $^
