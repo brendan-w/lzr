@@ -1,6 +1,6 @@
 
 #include "utils.h"
-
+#include <math.h>
 
 //constrains the given point to the area of LZR's frame
 QPointF constrain_to_frame(QPointF p)
