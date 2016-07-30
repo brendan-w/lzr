@@ -6,7 +6,7 @@
 CXX       = g++
 CXXFLAGS += -std=c++11 -Wall -Wextra -pedantic -fPIC -ggdb
 CXXFLAGS += -I.
-LIBS      = -lzmq -lm
+LIBS      = -lzmq -lm -lpthread
 ARFLAGS   = rs
 
 
@@ -29,10 +29,15 @@ OBJS := src/point.o \
         src/optimizer_path.o \
         src/optimizer_find_paths.o \
         src/optimizer_reorder_paths.o \
-        src/optimizer_compile_paths.o
+        src/optimizer_compile_paths.o \
+        src/dac/dac.o \
+        src/dac/etherdream.o
 
 HEADERS := liblzr.h \
-           src/*.h
+           src/*.h \
+           src/dac/*.h
+
+DACS := src/dac/libetherdream/etherdream.a
 
 TESTS := test_interpolator \
          test_optimizer
@@ -48,7 +53,7 @@ TESTS := test_interpolator \
 all: liblzr.so liblzr.a
 
 
-liblzr.so: $(OBJS)
+liblzr.so: $(OBJS) $(DACS)
 	$(CXX) -shared $^ $(LIBS) -o $@
 
 
@@ -58,6 +63,11 @@ liblzr.a: $(OBJS)
 
 %.o: %.cpp $(HEADERS)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+
+# DAC specific compilation
+src/dac/libetherdream/etherdream.a:
+	$(MAKE) -C src/dac/libetherdream/
 
 
 .PHONY: install

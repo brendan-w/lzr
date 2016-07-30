@@ -26,6 +26,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <vector>
+#include <string>
 
 namespace lzr {
 
@@ -169,7 +170,7 @@ int interpolate(Frame& frame,
 //20 points from one side of the frame to the other
 #define BLANK_INTERP_DEFAULT ((LZR_POSITION_MAX - LZR_POSITION_MIN) / 5.0)
 
-//forward declaration for optimizer internals
+//fwrd decl
 class Optimizer_Internals;
 
 class Optimizer
@@ -222,6 +223,47 @@ size_t ilda_projector_count(ILDA* f);
 //returns the number of frames for the given projector descriptor
 size_t ilda_frame_count(ILDA* f, size_t pd);
 
+
+
+/******************************************************************************/
+/*  LZR DAC Handling                                                          */
+/******************************************************************************/
+
+//fwrd decl
+class DAC_Internals;
+
+//the standard interface for DACS
+//do NOT instantiate this class yourself
+//use the dac_connect() factory function below
+class DAC
+{
+public:
+    DAC(std::string name);
+    virtual ~DAC();
+
+    //standard DAC interface
+    std::string name();
+    bool connected();
+
+    //DAC specific functions
+    virtual int send(Frame frame) = 0;
+    virtual int stop() = 0;
+    virtual void pps(int pps);
+    virtual int pps();
+
+protected:
+    DAC_Internals* internal;
+};
+
+
+//initialize individual DAC backends / prepare for hardware probing
+void init_dacs();
+
+//get list of connected DACs
+std::vector<std::string> list_dacs();
+
+//connect to a DAC
+DAC* dac_connect(std::string name);
 
 
 /******************************************************************************/

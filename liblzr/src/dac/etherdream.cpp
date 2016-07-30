@@ -1,15 +1,16 @@
 
 #include "etherdream.h"
 
+namespace lzr {
+
 
 EtherDream::EtherDream(std::string name) : DAC(name),
-                                           dac(NULL),
-                                           pps(15000)
+                                           dac(NULL)
 {
     name = name.substr(sizeof(PREFIX_ETHERDREAM) - 1);
     unsigned long id = strtoul(name.c_str(), NULL, 16);
     dac = etherdream_get(id);
-    _success = etherdream_connect(dac);
+    internal->connected = (etherdream_connect(dac) == 0);
 }
 
 EtherDream::~EtherDream()
@@ -63,7 +64,7 @@ int EtherDream::send(Frame frame)
             buffer[i] = ep;
         }
 
-        r = etherdream_write(dac, buffer.data(), buffer.size(), pps, -1);
+        r = etherdream_write(dac, buffer.data(), buffer.size(), internal->pps, -1);
     }
     //else, dump the frame, an old one is still being drawn
     //TODO: ^ is this really a good idea? Could create a stutterring animation
@@ -76,9 +77,5 @@ int EtherDream::stop()
     return etherdream_stop(dac);
 }
 
-int EtherDream::set_pps(int _pps)
-{
-    pps = _pps;
-    return 0;
-}
 
+} // namespace lzr

@@ -2,6 +2,8 @@
 #include "dac.h"
 #include "etherdream.h"
 
+namespace lzr {
+
 
 static inline bool starts_with(const std::string& str,
                                const std::string& substr)
@@ -39,7 +41,7 @@ DAC* dac_connect(std::string name)
     //check that we did something worth returning
     if(dac)
     {
-        if(dac->success())
+        if(dac->connected())
             return dac; //success!
         else
             delete dac; //failed: abort
@@ -50,22 +52,47 @@ DAC* dac_connect(std::string name)
 
 
 
-DAC::DAC(std::string name) : _name(name)
+DAC_Internals::DAC_Internals() : name(""),
+                                 pps(15000)
 {
 
+}
+
+
+/*
+ * DAC class functions
+ */
+
+DAC::DAC(std::string name)
+{
+    internal = new DAC_Internals();
+    internal->name = name;
 }
 
 DAC::~DAC()
 {
-
+    delete internal;
 }
 
 std::string DAC::name()
 {
-    return _name;
+    return internal->name;
 }
 
-bool DAC::success()
+bool DAC::connected()
 {
-    return _success == 0;
+    return internal->connected;
 }
+
+void DAC::pps(int pps)
+{
+    internal->pps = pps;
+}
+
+int DAC::pps()
+{
+    return internal->pps;
+}
+
+
+} // namespace lzr

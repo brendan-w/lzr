@@ -4,6 +4,8 @@
 #include "dac.h"
 #include "libetherdream/etherdream.h"
 
+namespace lzr {
+
 
 class EtherDream : public DAC
 {
@@ -15,10 +17,13 @@ public:
 
     int send(Frame frame);
     int stop();
-    int set_pps(int pps);
+    void pps(int pps);
+    int pps();
 
 private:
     struct etherdream* dac;
     std::vector<struct etherdream_point> buffer;
-    int pps;
+    int _pps;
 };
+
+} // namespace lzr
