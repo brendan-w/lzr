@@ -6,13 +6,14 @@ LZR
 
 Open Source Laser Projection Software
 
-LZR is currently a collection of backend libraries and binaries which can form the bones of laser show GUIs, or creative applications. There are three main components:
+LZR is currently collection of backend libraries and binaries which can form the bones of laser show GUIs, or creative applications. Here are the main components:
 
 liblzr
 ------
 
 Library containing basic laser utilities:
 
+- DAC drivers (currently only supports the [EtherDream DAC](http://www.ether-dream.com/), but implementations for other DACs are always welcome.)
 - point/frame structures
 - frame transformations
 - frame interpolator
@@ -20,14 +21,7 @@ Library containing basic laser utilities:
 - ILDA file reader/writer
 - ZeroMQ frame transport
 
-See [lzr.h](https://github.com/brendanwhitfield/lzr/blob/master/liblzr/lzr.h) for details.
-
-
-
-lzrd
-----
-
-Laser daemon/driver accepting frames via ZeroMQ. This executable contains the DAC-specific code needed to send frames to the hardware, and is meant to provide a common interface to programs using `liblzr`. `lzrd` currently only supports the [EtherDream DAC](http://www.ether-dream.com/), but implementations for other DACs are always welcome.
+See [lzr.h](https://github.com/brendanwhitfield/lzr/blob/master/liblzr/liblzr.h) for details.
 
 
 lzrv
@@ -57,7 +51,6 @@ This will produce the following binaries:
 
 - liblzr/liblzr.so
 - liblzr/liblzr.a
-- lzrd/lzrd
 - lzrv/lzrv
 
 
