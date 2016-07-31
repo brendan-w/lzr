@@ -45,21 +45,23 @@ void Optimizer_Path::invert()
     size_t temp = a;
     a = b;
     b = temp;
-
-    //invert the angles
-    entrance = ANGLE_OPPOSITE(entrance);
-    exit     = ANGLE_OPPOSITE(exit);
 }
 
 
 double Optimizer_Path::entrance_angle() const
 {
-    return entrance;
+    if(INVERTED)
+        return ANGLE_OPPOSITE(exit);
+    else
+        return entrance;
 }
 
 double Optimizer_Path::exit_angle() const
 {
-    return exit;
+    if(INVERTED)
+        return ANGLE_OPPOSITE(entrance);
+    else
+        return exit;
 }
 
 

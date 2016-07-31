@@ -1,7 +1,7 @@
 
 #include <stdio.h>
 #include <assert.h>
-#include <lzr.h>
+#include <liblzr.h>
 
 using namespace lzr;
 
