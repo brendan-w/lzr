@@ -67,7 +67,7 @@ liblzr.a: $(OBJS)
 
 # DAC specific compilation
 src/dac/libetherdream/etherdream.a:
-	$(MAKE) -C src/dac/libetherdream/
+	$(MAKE) -C $(dir $@)
 
 
 .PHONY: install
@@ -87,6 +87,7 @@ clean:
 	rm -f ilda/*.o
 	rm -f zmq/*.o
 	rm -f $(TESTS)
+	$(foreach dac,$(DACS),$(MAKE) -C $(dir $(dac)) clean)
 
 
 simple_server: tests/simple_server.cpp
