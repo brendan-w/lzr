@@ -10,7 +10,7 @@ typedef struct {
 } Line;
 
 
-
+/* TODO
 
 //off-the-shelf ray casting test
 static bool point_in_polygon(Point p, const Frame polygon)
@@ -92,6 +92,6 @@ int mask(Frame& frame, const Frame& mask, bool inverse)
 
     return LZR_SUCCESS;
 }
-
+*/
 
 } // namespace lzr

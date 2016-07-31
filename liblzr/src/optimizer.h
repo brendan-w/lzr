@@ -11,13 +11,16 @@ namespace lzr {
 
 //constants
 #define PI 3.14159265358979323846
-#define ANGLE_ANY 8.0 //an invalid point angle denoting no angle preference ( > 2*PI )
+#define ANGLE_ANY 0.0 //angle used to denote no angle preference
 
 //functions
 #define DEG_TO_RAD(deg)   ((deg) * PI / 180.0)
 #define ANGLE_NORM(a)     ( std::fmod(a, PI) ) //constrains angles to (-PI, PI]
 #define ANGLE_OPPOSITE(a) ( ANGLE_NORM(a + PI) )
-#define POINT_ANGLE(a, b) ( std::atan2(b.y - a.y, b.x - a.y) * -1 ) //the angle from point A to point B on range (-PI, PI] in screen coords
+
+//the angle from point A to point B on range (-PI, PI] in screen coords
+#define POINT_ANGLE(a, b) ( (a.x == b.x) && (a.y == b.y) ? ANGLE_ANY : \
+                                                           std::atan2(b.y - a.y, b.x - a.y) * -1 )
 
 /*
     The angle formed between three points. Because of the way point
