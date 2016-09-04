@@ -5,6 +5,7 @@
 #include <QDebug>
 #include <liblzr.h>
 #include "../frameview.h"
+#include "timelineview.h"
 
 class ClipEditor : public QSplitter
 {
@@ -19,4 +20,5 @@ private:
     QSplitter* clip_sub_split;
 
     FrameView* preview;
+    TimelineView* timeline_view;
 };
