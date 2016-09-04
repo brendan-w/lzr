@@ -1,13 +1,13 @@
 
 #include <QtGui>
-#include "timelineview.h"
+#include "curveview.h"
 #include "../settings.h"
 #include "../utils.h"
 
 #define ZOOM_FACTOR 1.2
 
 
-TimelineView::TimelineView(QWidget *parent) : QGraphicsView(parent)
+CurveView::CurveView(QWidget *parent) : QGraphicsView(parent)
 {
     // setRenderHint(QPainter::Antialiasing);
     setFrameStyle(QFrame::NoFrame);
@@ -18,13 +18,13 @@ TimelineView::TimelineView(QWidget *parent) : QGraphicsView(parent)
     setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
 }
 
-void TimelineView::reset()
+void CurveView::reset()
 {
     fitInView(frame_bounds, Qt::KeepAspectRatio);
     scale(1, -1); //keep the Y axis inverted to match reality
 }
 
-void TimelineView::keyPressEvent(QKeyEvent* e)
+void CurveView::keyPressEvent(QKeyEvent* e)
 {
     if(!e->isAutoRepeat())
     {
@@ -38,7 +38,7 @@ void TimelineView::keyPressEvent(QKeyEvent* e)
     QGraphicsView::keyPressEvent(e);
 }
 
-void TimelineView::keyReleaseEvent(QKeyEvent* e)
+void CurveView::keyReleaseEvent(QKeyEvent* e)
 {
     if(!e->isAutoRepeat())
     {
@@ -52,7 +52,7 @@ void TimelineView::keyReleaseEvent(QKeyEvent* e)
     QGraphicsView::keyReleaseEvent(e);
 }
 
-void TimelineView::wheelEvent(QWheelEvent* event)
+void CurveView::wheelEvent(QWheelEvent* event)
 {
     double factor = ZOOM_FACTOR;
 

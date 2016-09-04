@@ -12,7 +12,7 @@ void ClipEditor::setupUi()
     setOrientation(Qt::Vertical);
 
     addWidget(clip_sub_split = new QSplitter);
-    addWidget(timeline_view = new TimelineView(this));
+    addWidget(curve_view = new CurveView(this));
     clip_sub_split->addWidget(preview = new FrameView);
     clip_sub_split->addWidget(new QWidget);
 }

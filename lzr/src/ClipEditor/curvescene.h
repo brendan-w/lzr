@@ -5,13 +5,13 @@
 #include <QDebug>
 
 
-class TimelineScene : public QGraphicsScene
+class CurveScene : public QGraphicsScene
 {
     Q_OBJECT
 
 public:
-    TimelineScene(QWidget* parent = 0);
-    ~TimelineScene();
+    CurveScene(QWidget* parent = 0);
+    ~CurveScene();
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent* e);

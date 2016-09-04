@@ -5,12 +5,12 @@
 #include <QDebug>
 
 
-class TimelineView : public QGraphicsView
+class CurveView : public QGraphicsView
 {
     Q_OBJECT
 
 public:
-    TimelineView(QWidget* parent = 0);
+    CurveView(QWidget* parent = 0);
     void reset();
 
 protected:

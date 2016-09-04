@@ -1,10 +1,10 @@
 
 #include <QtGui>
-#include "timelinescene.h"
+#include "curvescene.h"
 #include "../utils.h"
 #include "../settings.h"
 
-TimelineScene::TimelineScene(QWidget *parent) : QGraphicsScene(parent)
+CurveScene::CurveScene(QWidget *parent) : QGraphicsScene(parent)
 {
     //enforce custom coordinate system [-1.0, 1.0]
     //Y is negative to make positive values go upwards
@@ -12,32 +12,32 @@ TimelineScene::TimelineScene(QWidget *parent) : QGraphicsScene(parent)
     setBackgroundBrush(Qt::black);
 }
 
-TimelineScene::~TimelineScene()
+CurveScene::~CurveScene()
 {
 
 }
 
-void TimelineScene::mousePressEvent(QGraphicsSceneMouseEvent* e)
+void CurveScene::mousePressEvent(QGraphicsSceneMouseEvent* e)
 {
     QGraphicsScene::mousePressEvent(e);
 }
 
-void TimelineScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* e)
+void CurveScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* e)
 {
     QGraphicsScene::mouseReleaseEvent(e);
 }
 
-void TimelineScene::mouseMoveEvent(QGraphicsSceneMouseEvent* e)
+void CurveScene::mouseMoveEvent(QGraphicsSceneMouseEvent* e)
 {
     QGraphicsScene::mouseMoveEvent(e);
 }
 
-void TimelineScene::keyPressEvent(QKeyEvent* e)
+void CurveScene::keyPressEvent(QKeyEvent* e)
 {
     QGraphicsScene::keyPressEvent(e);
 }
 
-void TimelineScene::keyReleaseEvent(QKeyEvent* e)
+void CurveScene::keyReleaseEvent(QKeyEvent* e)
 {
     QGraphicsScene::keyReleaseEvent(e);
 }
