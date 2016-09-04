@@ -1,7 +1,7 @@
 
 #include "point.h"
-#include "settings.h"
-#include "utils.h"
+#include "../settings.h"
+#include "../utils.h"
 
 
 Point::Point(FrameEditorState* s) : QGraphicsObject(0)

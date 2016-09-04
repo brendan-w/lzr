@@ -10,7 +10,13 @@ MOC_DIR = build/
 OBJECTS_DIR = build/
 
 SOURCES += src/*.cpp
+SOURCES += src/FrameEditor/*.cpp
+SOURCES += src/ClipEditor/*.cpp
+
 HEADERS += src/*.h
+HEADERS += src/FrameEditor/*.h
+HEADERS += src/ClipEditor/*.h
+
 INCLUDEPATH += ../liblzr
 
 # TODO: switch this to the installed path

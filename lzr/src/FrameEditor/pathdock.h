@@ -2,7 +2,7 @@
 #pragma once
 #include <QtWidgets>
 #include <QDebug>
-#include "frame.h"
+#include "../frame.h"
 
 
 class PathDock : public QDockWidget

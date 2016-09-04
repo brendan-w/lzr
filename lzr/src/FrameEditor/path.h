@@ -1,8 +1,8 @@
 
 #pragma once
 
+#include "../frame.h"
 #include "point.h"
-#include "frame.h"
 #include "frameeditorstate.h"
 
 #define PATH_END -1

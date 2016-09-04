@@ -1,6 +1,6 @@
 
 #include "grid.h"
-#include "utils.h"
+#include "../utils.h"
 
 
 Grid::Grid(FrameEditorState* s) : QGraphicsRectItem(0)

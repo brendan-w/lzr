@@ -2,7 +2,7 @@
 #pragma once
 
 #include <QtWidgets>
-#include "liblzr.h"
+#include <liblzr.h>
 
 class FrameView : public QWidget
 {

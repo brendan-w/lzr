@@ -1,8 +1,8 @@
 
 #include <QtGui>
 #include "frameeditorscene.h"
-#include "utils.h"
-#include "settings.h"
+#include "../utils.h"
+#include "../settings.h"
 
 
 FrameScene::FrameScene(QWidget *parent) : QGraphicsScene(parent)

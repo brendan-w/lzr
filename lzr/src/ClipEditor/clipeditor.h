@@ -3,8 +3,8 @@
 
 #include <QtWidgets>
 #include <QDebug>
-#include "frameview.h"
-#include "liblzr.h"
+#include <liblzr.h>
+#include "../frameview.h"
 
 class ClipEditor : public QSplitter
 {

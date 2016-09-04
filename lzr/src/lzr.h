@@ -2,14 +2,14 @@
 #pragma once
 
 #include <QtWidgets>
-#include "clipeditor.h"
-#include "frameeditorview.h"
-#include "frameeditorscene.h"
 #include "frame.h"
-#include "colordock.h"
-#include "tooldock.h"
-#include "pathdock.h"
-#include "settingsdock.h"
+#include "ClipEditor/clipeditor.h"
+#include "FrameEditor/frameeditorview.h"
+#include "FrameEditor/frameeditorscene.h"
+#include "FrameEditor/colordock.h"
+#include "FrameEditor/tooldock.h"
+#include "FrameEditor/pathdock.h"
+#include "FrameEditor/settingsdock.h"
 
 
 class LZR : public QMainWindow
