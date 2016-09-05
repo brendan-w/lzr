@@ -3,7 +3,6 @@
 
 #include <liblzr.h>
 #include <QAbstractListModel>
-#include <QAbstractProxyModel>
 
 
 Q_DECLARE_METATYPE(lzr::Frame);
