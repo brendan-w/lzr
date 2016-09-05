@@ -15,16 +15,7 @@ class Clip : public QAbstractListModel
 public:
     Clip();
 
-    lzr::Frame run(Time& t) {
-        lzr::Frame frame;
-
-        for(Effect* e : effects)
-        {
-            e->run(frame, t);
-        }
-
-        return frame;
-    };
+    lzr::Frame run(Time& t);
 
 private:
     QList<Effect*> effects;

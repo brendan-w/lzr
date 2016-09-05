@@ -47,6 +47,7 @@ public:
 
     virtual void run(lzr::Frame& frame, Time& t) = 0;
 
+    bool active;
     const QString name;
     const QMap<QString, EffectParam*> params;
 };
@@ -56,6 +57,27 @@ public:
 /*
  * EFFECTS
  */
+
+//The base frame/animation generator
+class FrameEffect : public Effect
+{
+public:
+    FrameEffect() : Effect("Frame", {
+            {"Frame Number", new EffectParam(DOUBLE)},
+        }) {};
+
+    void run(lzr::Frame& frame, Time& t)
+    {
+        int n = params["Frame Number"]->signal()->double_value(t);
+        n = qMin(frames.size(), qMax(0, n)); //clamp
+        frame = frames[n];
+    };
+
+private:
+    QList<lzr::Frame> frames;
+};
+
+
 
 class MoveEffect : public Effect
 {
@@ -72,4 +94,3 @@ public:
                        params["Y"]->signal()->double_value(t));
     };
 };
-
