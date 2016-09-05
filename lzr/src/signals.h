@@ -45,5 +45,5 @@ class ConstantDoubleSignal : public Signal
 {
 public:
     ConstantDoubleSignal() : Signal(DOUBLE) {};
-    double double_value(Time& t) { return 1.0; };
+    double double_value(Time& t) { Q_UNUSED(t); return 1.0; };
 };

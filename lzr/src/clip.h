@@ -14,7 +14,7 @@ class Clip : public QAbstractListModel
 
 public:
     Clip();
-
+    ~Clip();
     lzr::Frame run(Time& t);
 
 private:

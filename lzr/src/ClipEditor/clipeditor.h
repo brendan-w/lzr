@@ -3,6 +3,7 @@
 
 #include <QtWidgets>
 #include <QDebug>
+#include "../clip.h"
 
 class ClipEditor : public QWidget
 {
@@ -10,9 +11,14 @@ class ClipEditor : public QWidget
 
 public:
     ClipEditor(QWidget* parent = 0);
+    void setModel(Clip* clip);
 
 private:
     void setupUi();
 
+    //GUI
     QHBoxLayout* hbox;
+
+    //data
+    Clip* model;
 };
