@@ -17,7 +17,8 @@ private:
     void setupUi();
 
     //GUI
-    QHBoxLayout* hbox;
+    QVBoxLayout* vbox;
+    QListView* effects;
 
     //data
     Clip* model;

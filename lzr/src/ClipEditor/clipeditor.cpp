@@ -9,11 +9,15 @@ ClipEditor::ClipEditor(QWidget* parent) : QWidget(parent)
 
 void ClipEditor::setupUi()
 {
-    setLayout(hbox = new QHBoxLayout(this));
+    setLayout(vbox = new QVBoxLayout(this));
+
+    vbox->addWidget(new QWidget()); //TODO: write header
+    vbox->addWidget(effects = new QListView());
 }
 
 void ClipEditor::setModel(Clip* clip)
 {
     model = clip;
+    effects->setModel(clip);
     //TODO: connect signals
 }
