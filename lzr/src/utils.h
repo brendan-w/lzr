@@ -6,6 +6,12 @@
 #include <QVector2D>
 
 
+typedef struct {
+    double actual;     // seconds since show start
+    double normalized; // 0-1 normalized for the clip in question
+} Time;
+
+
 const QRectF frame_bounds(-1.0, -1.0, 2.0, 2.0);
 
 inline float distance_between_points(const QPointF& a, const QPointF& b)

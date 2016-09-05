@@ -4,42 +4,7 @@
 #include <liblzr.h>
 #include <QAbstractListModel>
 #include <QColor>
-
-
-typedef struct {
-    double actual;     // seconds since show start
-    double normalized; // 0-1 normalized for the clip in question
-} Time;
-
-
-enum SignalType {
-    DOUBLE,
-    COLOR
-};
-
-
-
-class Signal
-{
-public:
-    Signal(SignalType type) : type(type) {};
-    virtual ~Signal() {};
-
-    //accessor stubs. reimplement appropriately in subclass
-    virtual double double_value(Time& t) { Q_UNUSED(t); return 0; };
-    virtual QColor color_value(Time& t)  { Q_UNUSED(t); return QColor(); };
-
-    const SignalType type;
-};
-
-
-class ConstantSignal : public Signal
-{
-public:
-    ConstantSignal(SignalType type) : Signal(type) {};
-    double double_value(Time& t) { return 1; };
-};
-
+#include "signals.h"
 
 
 
@@ -48,11 +13,8 @@ class EffectParam
 {
 public:
     EffectParam(SignalType type) {
-        switch(type)
-        {
-        case DOUBLE:
-            sigs = { new ConstantSignal(type) };
-        }
+        //populate the signal choices
+        sigs = signals_of_type(type);
     };
 
     ~EffectParam() {

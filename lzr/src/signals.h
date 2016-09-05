@@ -1,0 +1,49 @@
+
+#pragma once
+
+#include <liblzr.h>
+#include <QAbstractListModel>
+#include <QColor>
+#include "utils.h"
+
+
+
+enum SignalType {
+    DOUBLE,
+    COLOR
+};
+
+
+/*
+ * Base signal class. Defines basic value generating functions with dummy definitions.
+ * Subclasses need only implement the accessors for their SignalType.
+ */
+class Signal
+{
+public:
+    Signal(SignalType type) : type(type) {};
+    virtual ~Signal() {};
+
+    //accessor stubs, one for every SignalType
+    //reimplement appropriately in subclass
+    virtual double double_value(Time& t) { Q_UNUSED(t); return 0; };
+    virtual QColor color_value(Time& t)  { Q_UNUSED(t); return QColor(); };
+
+    const SignalType type;
+};
+
+//factory for lists of applicable signals
+QList<Signal*> signals_of_type(SignalType type);
+
+
+
+/*
+ * Signal emitting DOUBLES
+ */
+
+class ConstantDoubleSignal : public Signal
+{
+public:
+    ConstantDoubleSignal() : Signal(DOUBLE) {};
+    double double_value(Time& t) { return 1.0; };
+};
