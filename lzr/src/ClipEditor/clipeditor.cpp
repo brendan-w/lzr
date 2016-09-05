@@ -2,17 +2,12 @@
 #include "clipeditor.h"
 
 
-ClipEditor::ClipEditor(QWidget* parent) : QSplitter(parent)
+ClipEditor::ClipEditor(QWidget* parent) : QWidget(parent)
 {
     setupUi();
 }
 
 void ClipEditor::setupUi()
 {
-    setOrientation(Qt::Vertical);
-
-    addWidget(clip_sub_split = new QSplitter);
-    addWidget(curve_view = new CurveView(this));
-    clip_sub_split->addWidget(preview = new FrameView);
-    clip_sub_split->addWidget(new QWidget);
+    setLayout(hbox = new QHBoxLayout(this));
 }

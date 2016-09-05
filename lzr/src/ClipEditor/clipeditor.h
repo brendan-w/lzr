@@ -3,11 +3,8 @@
 
 #include <QtWidgets>
 #include <QDebug>
-#include <liblzr.h>
-#include "../frameview.h"
-#include "curveview.h"
 
-class ClipEditor : public QSplitter
+class ClipEditor : public QWidget
 {
     Q_OBJECT
 
@@ -17,8 +14,5 @@ public:
 private:
     void setupUi();
 
-    QSplitter* clip_sub_split;
-
-    FrameView* preview;
-    CurveView* curve_view;
+    QHBoxLayout* hbox;
 };
