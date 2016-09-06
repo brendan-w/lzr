@@ -7,6 +7,9 @@ Clip::Clip()
 {
     //new clips are always populated with a base frame generator effect
     effects.push_back(new FrameEffect());
+
+    //TODO: remove
+    effects.push_back(new MoveEffect());
 }
 
 Clip::~Clip()

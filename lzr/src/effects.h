@@ -68,6 +68,9 @@ public:
 
     void run(lzr::Frame& frame, Time& t)
     {
+        if(frames.size() == 0)
+            return;
+
         int n = params["Frame Number"]->signal()->double_value(t);
         n = qMin(frames.size(), qMax(0, n)); //clamp
         frame = frames[n];
@@ -83,8 +86,8 @@ class MoveEffect : public Effect
 {
 public:
     MoveEffect() : Effect("Move", {
-            {"X", new EffectParam(DOUBLE)},
-            {"Y", new EffectParam(DOUBLE)}
+            {"X Position", new EffectParam(DOUBLE)},
+            {"Y Position", new EffectParam(DOUBLE)}
         }) {};
 
     void run(lzr::Frame& frame, Time& t)

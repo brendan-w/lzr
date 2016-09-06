@@ -4,24 +4,39 @@
 
 EffectItem::EffectItem(Effect* e, QWidget* parent) : QWidget(parent), effect(e)
 {
-    setLayout(hbox = new QHBoxLayout(this));
-
-    hbox->addLayout(main = new QVBoxLayout(this));
+    setLayout(grid = new QGridLayout(this));
 
     //the effect's name
-    main->addWidget(name = new QLabel(effect->name, this));
+    grid->addWidget(name = new QLabel(effect->name, this), 0, 0, 1, 3);
     QFont font = name->font();
-    font.setPointSize(12);
+    //font.setPointSize(10);
     font.setBold(true);
     name->setFont(font);
 
     //add lines for each parameter
+    int row = 1;
     for(QString param : effect->params.keys())
     {
-        main->addWidget(new QLabel(param, this));
-    }
+        QLabel* label = new QLabel(param, this);
+        QComboBox* signal_select = new QComboBox(this);
 
-    hbox->addWidget(new QPushButton("asdf", this));
+        for(Signal* s : effect->params[param]->sigs)
+        {
+            signal_select->addItem(s->name);
+        }
+
+        label->setMaximumWidth(100);
+        label->setContentsMargins(0, 3, 0, 3);
+        signal_select->setMaximumWidth(100);
+
+        grid->addWidget(label, row, 0, Qt::AlignTop);
+        grid->addWidget(signal_select, row, 1, Qt::AlignTop);
+
+        QPushButton* b = new QPushButton("asdf", this);
+        b->setMinimumHeight(100);
+        grid->addWidget(b, row, 2, Qt::AlignTop);
+        row++;
+    }
 }
 
 QSize EffectItem::sizeHint() const

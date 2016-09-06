@@ -29,7 +29,7 @@ void ClipEditor::setupUi()
                                    // QSizePolicy::MinimumExpanding);
 
     effects_vbox->setContentsMargins(0, 0, 0, 0);
-    effects_vbox->setSpacing(0);
+    effects_vbox->setSpacing(2);
 }
 
 void ClipEditor::setModel(Clip* clip)

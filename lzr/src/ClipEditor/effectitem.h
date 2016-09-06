@@ -19,8 +19,6 @@ public:
 private:
     Effect* effect;
 
-    QHBoxLayout* hbox;
-
-    QVBoxLayout* main;
+    QGridLayout* grid;
     QLabel* name;
 };
