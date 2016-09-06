@@ -19,8 +19,7 @@ private:
     //GUI
     QVBoxLayout* vbox;
     QScrollArea* effects_scroll;
-    QWidget* effects_content;
-    QVBoxLayout* effects_vbox;
+    QVBoxLayout* effects;
 
     //data
     Clip* model;

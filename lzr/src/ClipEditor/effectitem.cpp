@@ -18,19 +18,20 @@ EffectItem::EffectItem(Effect* e, QWidget* parent) : QWidget(parent), effect(e)
     for(QString param : effect->params.keys())
     {
         QLabel* label = new QLabel(param, this);
-        QComboBox* signal_select = new QComboBox(this);
+        QComboBox* combo = new QComboBox(this);
+        combo->setObjectName(param);
 
         for(Signal* s : effect->params[param]->sigs)
         {
-            signal_select->addItem(s->name);
+            combo->addItem(s->name);
         }
 
         label->setMaximumWidth(100);
         label->setContentsMargins(0, 3, 0, 3);
-        signal_select->setMaximumWidth(100);
+        combo->setMaximumWidth(100);
 
         grid->addWidget(label, row, 0, Qt::AlignTop);
-        grid->addWidget(signal_select, row, 1, Qt::AlignTop);
+        grid->addWidget(combo, row, 1, Qt::AlignTop);
 
         QPushButton* b = new QPushButton("asdf", this);
         b->setMinimumHeight(100);
