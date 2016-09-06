@@ -1,4 +1,6 @@
 
+#pragma once
+
 #include <QStyledItemDelegate>
 
 #define PATH_DELEGATE_SIZE 50

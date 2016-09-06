@@ -25,7 +25,6 @@ public:
     QModelIndex index(int row, int column=0, const QModelIndex& parent=QModelIndex()) const;
     Effect* get_effect(const QModelIndex& index) const;
 
-private:
     QString name;
     QList<Effect*> effects;
 };

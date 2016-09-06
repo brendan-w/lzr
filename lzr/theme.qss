@@ -16,7 +16,9 @@ QSplitter::handle:horizontal {
 QToolButton,
 QListView,
 QSpinBox,
-QDoubleSpinBox {
+QDoubleSpinBox,
+QScrollArea,
+#effects_content {
     background: #333;
 }
 
@@ -42,4 +44,9 @@ QToolButton {
 
 QToolButton:checked {
     border:1px solid #308cc6;
+}
+
+EffectItem
+{
+    background: #444;
 }

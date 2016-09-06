@@ -3,6 +3,7 @@
 
 #include <QtWidgets>
 #include "frame.h"
+#include "clip.h"
 #include "ClipEditor/clipeditor.h"
 #include "FrameEditor/frameeditorview.h"
 #include "FrameEditor/frameeditorscene.h"
@@ -23,7 +24,7 @@ public:
 private:
     void setupUi();
     void show_frameeditor(Frame* frame);
-    void show_clipeditor();
+    void show_clipeditor(Clip* clip);
 
     QStackedWidget* stack;
 

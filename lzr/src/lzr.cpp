@@ -21,7 +21,8 @@ LZR::LZR()
 
     //Frame* frame = new Frame(f);
     //show_frameeditor(frame);
-    show_clipeditor();
+    Clip* clip = new Clip();
+    show_clipeditor(clip);
 }
 
 LZR::~LZR()
@@ -86,12 +87,15 @@ void LZR::show_frameeditor(Frame* frame)
     stack->setCurrentWidget(editor_view);
 }
 
-void LZR::show_clipeditor()
+void LZR::show_clipeditor(Clip* clip)
 {
     tools->hide();
     color->hide();
     settings->hide();
     paths->hide();
+
+    //set models
+    clip_editor->setModel(clip);
 
     //show the clip editor
     stack->setCurrentWidget(clip_editor);
