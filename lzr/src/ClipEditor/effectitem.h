@@ -18,4 +18,9 @@ public:
 
 private:
     Effect* effect;
+
+    QHBoxLayout* hbox;
+
+    QVBoxLayout* main;
+    QLabel* name;
 };

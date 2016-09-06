@@ -21,7 +21,7 @@ enum SignalType {
 class Signal
 {
 public:
-    Signal(SignalType type) : type(type) {};
+Signal(QString name, SignalType type) : name(name), type(type) {};
     virtual ~Signal() {};
 
     //accessor stubs, one for every SignalType
@@ -29,6 +29,7 @@ public:
     virtual double double_value(Time& t) { Q_UNUSED(t); return 0; };
     virtual QColor color_value(Time& t)  { Q_UNUSED(t); return QColor(); };
 
+    const QString name;
     const SignalType type;
 };
 
@@ -44,6 +45,6 @@ QList<Signal*> signals_of_type(SignalType type);
 class ConstantDoubleSignal : public Signal
 {
 public:
-    ConstantDoubleSignal() : Signal(DOUBLE) {};
+    ConstantDoubleSignal() : Signal("Constant", DOUBLE) {};
     double double_value(Time& t) { Q_UNUSED(t); return 1.0; };
 };
