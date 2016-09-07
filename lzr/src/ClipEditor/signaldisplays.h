@@ -14,9 +14,6 @@ public:
     ConstantSignalDisplay(Signal* s, QWidget* parent = 0);
     QSize sizeHint();
 
-public slots:
-    void constant_changed(double);
-
 private:
     ConstantSignal* signal;
     QDoubleSpinBox* spinner;

@@ -2,34 +2,46 @@
 #pragma once
 
 #include <liblzr.h>
+#include <QObject>
 #include "signals.h"
 
 
 /*
- * A parameter of an Effect. Can accept values from any signal
- * of its own SignalType.
+ * This base class is mostly for ease of iterating
+ * over possible signal sources in the UI
  */
-class EffectParam
+
+class Param
 {
 public:
-    EffectParam(SignalType type) {
-        //populate the signal choices
-        s = 0;
-        sigs = signals_of_type(type);
+    virtual ~Param()
+    {
+        for(Signal* s : sigs)
+            delete s;
     };
 
-    ~EffectParam() {
-        for(Signal* s : sigs) { delete s; }
-    };
-
-    Signal* signal() {
-        return sigs[s];
-    };
-
-    //all of the possible signal types
-    QList<Signal*> sigs;
-    int s;
+    Signal* current;
+    QMap<SignalType, Signal*> sigs;
 };
+
+
+class DoubleParam : public Param
+{
+public:
+    DoubleParam(double min, double max)
+    {
+        //all of the possible signals
+        sigs[CONSTANT] = new ConstantSignal(min, max);
+        sigs[CURVE]    = new CurveSignal(min, max);
+        current = sigs[CONSTANT];
+    };
+
+    double value(Time& t)
+    {
+        return ((DoubleSignal*)current)->value(t);
+    };
+};
+
 
 
 /*
@@ -39,62 +51,64 @@ public:
 class Effect
 {
 public:
-    Effect(QString name, QMap<QString, EffectParam*> params) :
-        name(name), params(params) {};
-
-    virtual ~Effect() {
-        for(EffectParam* p : params) { delete p; }
+    Effect(QString name) : name(name) {};
+    virtual ~Effect()
+    {
+        for(Param* p : params)
+            delete p;
     };
 
     virtual void run(lzr::Frame& frame, Time& t) = 0;
 
     bool active;
     const QString name;
-    const QMap<QString, EffectParam*> params;
+    QMap<QString, Param*> params;
 };
 
+//helpers for accessing values of effect parameters
+#define DOUBLE(p, t) (((DoubleParam*) params[p])->value(t))
 
 
 /*
  * EFFECTS
  */
 
-//The base frame/animation generator
+
 class FrameEffect : public Effect
 {
 public:
-    FrameEffect() : Effect("Frame", {
-            {"Frame Number", new EffectParam(DOUBLE)},
-        }) {};
+    FrameEffect() : Effect("Frame")
+    {
+        params["Frame Number"] = new DoubleParam(0.0, 0.0);
+    };
 
     void run(lzr::Frame& frame, Time& t)
     {
-        if(frames.size() == 0)
-            return;
-
-        int n = params["Frame Number"]->signal()->double_value(t);
-        n = qMin(frames.size(), qMax(0, n)); //clamp
-        frame = frames[n];
+        int n = DOUBLE("Frame Number", t);
+        frame = frames[n]; //TODO, make safe
     };
 
-    //the frame list
+private:
     QList<lzr::Frame> frames;
 };
+
+
 
 
 
 class MoveEffect : public Effect
 {
 public:
-    MoveEffect() : Effect("Move", {
-            {"X Position", new EffectParam(DOUBLE)},
-            {"Y Position", new EffectParam(DOUBLE)}
-        }) {};
+    MoveEffect() : Effect("Move")
+    {
+        params["X"] = new DoubleParam(-1.0, 1.0);
+        params["Y"] = new DoubleParam(-1.0, 1.0);
+    };
 
     void run(lzr::Frame& frame, Time& t)
     {
         lzr::translate(frame,
-                       params["X"]->signal()->double_value(t),
-                       params["Y"]->signal()->double_value(t));
+                       DOUBLE("X", t),
+                       DOUBLE("Y", t));
     };
 };

@@ -2,57 +2,88 @@
 #pragma once
 
 #include <liblzr.h>
-#include <QAbstractListModel>
+#include <QObject>
 #include <QColor>
 #include "utils.h"
 
 
-
+/*
+ * This is only for efficient matching of Signal models to their UI counterparts
+ */
 enum SignalType {
-    DOUBLE,
-    COLOR
+    CONSTANT=0,
+    CURVE
 };
 
 
 /*
- * Base signal class. Defines basic value generating functions with dummy definitions.
- * Subclasses need only implement the accessors for their SignalType.
+ * Base signal class. Only stores information neccessary for typecasting in the UI
  */
-class Signal
+class Signal : public QObject
 {
+    Q_OBJECT
 public:
-Signal(QString name, SignalType type) : name(name), type(type) {};
+    Signal(SignalType type) : type(type) {};
     virtual ~Signal() {};
-
-    //accessor stubs, one for every SignalType
-    //reimplement appropriately in subclass
-    virtual double double_value(Time& t) { Q_UNUSED(t); return 0; };
-    virtual QColor color_value(Time& t)  { Q_UNUSED(t); return QColor(); };
-
-    const QString name;
     const SignalType type;
 };
 
-//factory for lists of applicable signals
-QList<Signal*> signals_of_type(SignalType type);
+/*
+ * Signal Catagory subclasses. Catagorized by output value type
+ */
 
+class DoubleSignal : public Signal
+{
+    Q_OBJECT
+public:
+    DoubleSignal(SignalType type, double min, double max) : Signal(type)
+    {
+        v_min = min;
+        v_max = max;
+    };
+
+    virtual double value(Time& t) = 0;
+    double min() { return v_min; };
+    double max() { return v_max; };
+
+public slots:
+    void setMin(double min) { v_min = min; };
+    void setMax(double max) { v_max = max; };
+
+protected:
+    double clamp(double v) { return qMin(qMax(v, v_min), v_max); };
+
+private:
+    double v_min;
+    double v_max;
+};
 
 
 /*
  * Signal emitting DOUBLES
  */
 
-class ConstantSignal : public Signal
+class ConstantSignal : public DoubleSignal
 {
+    Q_OBJECT
 public:
-    ConstantSignal() : Signal("Constant", DOUBLE) { value = 0.0; };
-    double double_value(Time& t) { Q_UNUSED(t); return value; };
-    double value;
+    ConstantSignal(double min, double max) : DoubleSignal(CONSTANT, min, max) {};
+    double value(Time& t) { Q_UNUSED(t); return v; };
+
+public slots:
+    void setValue(double value) { v = clamp(value); };
+
+private:
+    double v = 0.0;
 };
 
-class CurveSignal : public Signal
+
+
+
+class CurveSignal : public DoubleSignal
 {
+    Q_OBJECT
 public:
-    CurveSignal() : Signal("Curve", DOUBLE) {};
-    double double_value(Time& t) { Q_UNUSED(t); return 1.0; };
+    CurveSignal(double min, double max) : DoubleSignal(CURVE, min, max) {};
+    double value(Time& t) { Q_UNUSED(t); return 1.0; };
 };

@@ -19,8 +19,3 @@ QSize ConstantSignalDisplay::sizeHint()
 {
     return spinner->sizeHint();
 }
-
-void ConstantSignalDisplay::constant_changed(double value)
-{
-    signal->value = value;
-}

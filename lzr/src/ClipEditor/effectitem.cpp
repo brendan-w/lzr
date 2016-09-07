@@ -5,6 +5,7 @@
 
 EffectItem::EffectItem(Effect* e, QWidget* parent) : QWidget(parent), effect(e)
 {
+    /*
     setLayout(grid = new QGridLayout(this));
 
     //the effect's name
@@ -53,6 +54,7 @@ EffectItem::EffectItem(Effect* e, QWidget* parent) : QWidget(parent), effect(e)
 
         row++;
     }
+    */
 }
 
 void EffectItem::paintEvent(QPaintEvent *e)
@@ -65,6 +67,7 @@ void EffectItem::paintEvent(QPaintEvent *e)
     style()->drawPrimitive(QStyle::PE_Widget, &o, &p, this);
 }
 
+/*
 void EffectItem::signalTypeChanged(int index)
 {
     //look up the effect parameter based on the ComboBox's name
@@ -97,3 +100,4 @@ QWidget* EffectItem::signalForParam(EffectParam* param)
 
     return w;
 }
+*/
