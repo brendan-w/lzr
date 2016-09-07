@@ -35,10 +35,6 @@ EffectItem::EffectItem(Effect* e, QWidget* parent) : QWidget(parent), effect(e)
             combo->addItem(s->name);
         }
 
-        //listen for changes in signal type
-        connect(combo, SIGNAL(currentIndexChanged(int)),
-                this, SLOT(signalTypeChanged(int)));
-
         label->setMaximumWidth(100);
         label->setContentsMargins(0, 3, 0, 3);
         combo->setMaximumWidth(100);
@@ -46,6 +42,10 @@ EffectItem::EffectItem(Effect* e, QWidget* parent) : QWidget(parent), effect(e)
 
         grid->addWidget(label, row, 0, Qt::AlignTop);
         grid->addWidget(combo, row, 1, Qt::AlignTop);
+
+        //listen for changes in signal type
+        connect(combo, SIGNAL(currentIndexChanged(int)),
+                this, SLOT(signalTypeChanged(int)));
 
         //trigger the creation of the signal widget
         combo->setCurrentIndex(ep->s);
@@ -72,8 +72,8 @@ void EffectItem::paintEvent(QPaintEvent *e)
 void EffectItem::signalTypeChanged(int index)
 {
     //look up the effect parameter based on the ComboBox's name
-    QString name = sender()->objectName();
-    EffectParamItem* param = &(params[name]);
+    QComboBox* combo = (QComboBox*) sender();
+    EffectParamItem* param = &(params[combo->objectName()]);
     param->param->s = index;
 
     //kill any old signal widgets
@@ -84,7 +84,7 @@ void EffectItem::signalTypeChanged(int index)
     }
 
     //instantiate the correct widget for this signal
-    QWidget* signal = signalForParam(name);
+    QWidget* signal = signalForParam(combo->currentText());
     grid->addWidget(signal, param->row, 2, Qt::AlignTop);
     param->signal = signal;
 }

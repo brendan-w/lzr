@@ -17,6 +17,7 @@ QToolButton,
 QListView,
 QSpinBox,
 QDoubleSpinBox,
+QComboBox,
 QScrollArea,
 #effects_content {
     background: #333;

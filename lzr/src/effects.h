@@ -14,6 +14,7 @@ class EffectParam
 public:
     EffectParam(SignalType type) {
         //populate the signal choices
+        s = 0;
         sigs = signals_of_type(type);
     };
 
@@ -76,7 +77,7 @@ public:
         frame = frames[n];
     };
 
-private:
+    //the frame list
     QList<lzr::Frame> frames;
 };
 
