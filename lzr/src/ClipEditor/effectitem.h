@@ -27,7 +27,6 @@ protected:
 
 public:
     EffectItem(Effect* e, QWidget* parent = 0);
-    QSize sizeHint() const;
 
 private slots:
     void signalTypeChanged(int index);

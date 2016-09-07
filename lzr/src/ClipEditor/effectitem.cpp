@@ -55,11 +55,6 @@ EffectItem::EffectItem(Effect* e, QWidget* parent) : QWidget(parent), effect(e)
     }
 }
 
-QSize EffectItem::sizeHint() const
-{
-    return QSize(100, 100);
-}
-
 void EffectItem::paintEvent(QPaintEvent *e)
 {
     Q_UNUSED(e);
@@ -86,7 +81,7 @@ void EffectItem::signalTypeChanged(int index)
 
     //instantiate the correct widget for this signal
     QWidget* signal = signalForParam(param->param);
-    grid->addWidget(signal, param->row, 2, Qt::AlignTop);
+    grid->addWidget(signal, param->row, 2);
     param->signal = signal;
 }
 
@@ -100,6 +95,5 @@ QWidget* EffectItem::signalForParam(EffectParam* param)
     else
         w = new QWidget(this);
 
-    w->setMinimumHeight(24);
     return w;
 }
