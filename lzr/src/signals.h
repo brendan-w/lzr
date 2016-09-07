@@ -28,6 +28,7 @@ public:
     const SignalType type;
 };
 
+
 /*
  * Signal Catagory subclasses. Catagorized by output value type
  */

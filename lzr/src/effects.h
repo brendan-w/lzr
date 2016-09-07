@@ -20,7 +20,14 @@ public:
             delete s;
     };
 
-    Signal* current;
+    void select(SignalType t)
+    {
+        type = t;
+        signal = sigs[t];
+    };
+
+    SignalType type;
+    Signal* signal;
     QMap<SignalType, Signal*> sigs;
 };
 
@@ -33,12 +40,12 @@ public:
         //all of the possible signals
         sigs[CONSTANT] = new ConstantSignal(min, max);
         sigs[CURVE]    = new CurveSignal(min, max);
-        current = sigs[CONSTANT];
+        select(CONSTANT); //default signal for params accepting doubles
     };
 
     double value(Time& t)
     {
-        return ((DoubleSignal*)current)->value(t);
+        return ((DoubleSignal*)signal)->value(t);
     };
 };
 

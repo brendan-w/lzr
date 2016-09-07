@@ -5,11 +5,11 @@
 
 EffectItem::EffectItem(Effect* e, QWidget* parent) : QWidget(parent), effect(e)
 {
-    /*
     setLayout(grid = new QGridLayout(this));
 
     //the effect's name
-    grid->addWidget(name = new QLabel(effect->name, this), 0, 0, 1, 3);
+    QLabel* name = new QLabel(effect->name, this);
+    grid->addWidget(name, 0, 0, 1, 3);
     QFont font = name->font();
     //font.setPointSize(10);
     font.setBold(true);
@@ -17,30 +17,30 @@ EffectItem::EffectItem(Effect* e, QWidget* parent) : QWidget(parent), effect(e)
 
     //add lines for each parameter
     int row = 1;
-    for(QString param : effect->params.keys())
+    for(QString param_name : effect->params.keys())
     {
-        EffectParam* ep = effect->params[param];
-        QLabel* label = new QLabel(param, this);
+        Param* param = effect->params[param_name];
+        QLabel* label = new QLabel(param_name, this);
         QComboBox* combo = new QComboBox(this);
 
         //zero out the signal widget map
-        params[param] = {
-            .param = ep,
+        params[param_name] = {
+            .param = param,
             .combo = combo,
             .signal = NULL,
             .row = row
         };
 
         //load the combobox
-        for(Signal* signal : ep->sigs)
+        for(SignalType type : param->sigs.keys())
         {
-            combo->addItem(signal->name);
+            combo->addItem(QString(type), type);
         }
 
         label->setMaximumWidth(100);
         label->setContentsMargins(0, 3, 0, 3);
         combo->setMaximumWidth(100);
-        combo->setObjectName(param);
+        combo->setObjectName(param_name);
 
         grid->addWidget(label, row, 0, Qt::AlignTop);
         grid->addWidget(combo, row, 1, Qt::AlignTop);
@@ -50,11 +50,10 @@ EffectItem::EffectItem(Effect* e, QWidget* parent) : QWidget(parent), effect(e)
                 this, SLOT(signalTypeChanged(int)));
 
         //trigger the creation of the signal widget
-        combo->setCurrentIndex(ep->s);
+        combo->setCurrentIndex(0);
 
         row++;
     }
-    */
 }
 
 void EffectItem::paintEvent(QPaintEvent *e)
@@ -67,37 +66,35 @@ void EffectItem::paintEvent(QPaintEvent *e)
     style()->drawPrimitive(QStyle::PE_Widget, &o, &p, this);
 }
 
-/*
+
 void EffectItem::signalTypeChanged(int index)
 {
     //look up the effect parameter based on the ComboBox's name
     QComboBox* combo = (QComboBox*) sender();
-    EffectParamItem* param = &(params[combo->objectName()]);
-    param->param->s = index;
+    ParamItem* param_item = &(params[combo->objectName()]);
+    Param* param = param_item->param;
+    param->select((SignalType) combo->currentData().toInt());
 
     //kill any old signal widgets
-    if(param->signal)
+    if(param_item->signal)
     {
-        delete param->signal;
-        param->signal = NULL;
+        delete param_item->signal;
+        param_item->signal = NULL;
     }
 
     //instantiate the correct widget for this signal
-    QWidget* signal = signalForParam(param->param);
-    grid->addWidget(signal, param->row, 2);
-    param->signal = signal;
+    QWidget* signal_widget = signalForParam(param);
+    grid->addWidget(signal_widget, param_item->row, 2);
+    param_item->signal = signal_widget;
 }
 
-QWidget* EffectItem::signalForParam(EffectParam* param)
+QWidget* EffectItem::signalForParam(Param* param)
 {
-    QWidget* w;
-    QString name = param->signal()->name;
-
-    if(name == "Constant")
-        w = new ConstantSignalDisplay(param->signal(), this);
-    else
-        w = new QWidget(this);
-
-    return w;
+    switch(param->type)
+    {
+    case CONSTANT:
+        return new ConstantSignalDisplay(param->signal, this);
+    default:
+        return new QWidget(this);
+    }
 }
-*/
