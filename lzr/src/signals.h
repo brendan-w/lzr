@@ -42,9 +42,16 @@ QList<Signal*> signals_of_type(SignalType type);
  * Signal emitting DOUBLES
  */
 
-class ConstantDoubleSignal : public Signal
+class ConstantSignal : public Signal
 {
 public:
-    ConstantDoubleSignal() : Signal("Constant", DOUBLE) {};
+    ConstantSignal() : Signal("Constant", DOUBLE) {};
+    double double_value(Time& t) { Q_UNUSED(t); return 1.0; };
+};
+
+class CurveSignal : public Signal
+{
+public:
+    CurveSignal() : Signal("Curve", DOUBLE) {};
     double double_value(Time& t) { Q_UNUSED(t); return 1.0; };
 };
