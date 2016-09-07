@@ -50,7 +50,7 @@ EffectItem::EffectItem(Effect* e, QWidget* parent) : QWidget(parent), effect(e)
                 this, SLOT(signalTypeChanged(int)));
 
         //trigger the creation of the signal widget
-        combo->setCurrentIndex(0);
+        combo->setCurrentIndex(combo->findData(param->type));
 
         row++;
     }
@@ -93,7 +93,7 @@ QWidget* EffectItem::signalForParam(Param* param)
     switch(param->type)
     {
     case CONSTANT:
-        return new ConstantSignalDisplay(param->signal, this);
+        return new ConstantSignalDisplay(param->signal(), this);
     default:
         return new QWidget(this);
     }

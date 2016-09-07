@@ -20,14 +20,10 @@ public:
             delete s;
     };
 
-    void select(SignalType t)
-    {
-        type = t;
-        signal = sigs[t];
-    };
+    void select(SignalType t) { type = t; };
+    Signal* signal() { return sigs[type]; }; //TODO: don't make everything go through the hashtable all the time
 
     SignalType type;
-    Signal* signal;
     QMap<SignalType, Signal*> sigs;
 };
 
@@ -45,7 +41,7 @@ public:
 
     double value(Time& t)
     {
-        return ((DoubleSignal*)signal)->value(t);
+        return ((DoubleSignal*)signal())->value(t);
     };
 };
 
