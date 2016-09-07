@@ -1,4 +1,5 @@
 
+#include "signaldisplays.h"
 #include "effectitem.h"
 
 
@@ -30,9 +31,9 @@ EffectItem::EffectItem(Effect* e, QWidget* parent) : QWidget(parent), effect(e)
         };
 
         //load the combobox
-        for(Signal* s : ep->sigs)
+        for(Signal* signal : ep->sigs)
         {
-            combo->addItem(s->name);
+            combo->addItem(signal->name);
         }
 
         label->setMaximumWidth(100);
@@ -84,22 +85,21 @@ void EffectItem::signalTypeChanged(int index)
     }
 
     //instantiate the correct widget for this signal
-    QWidget* signal = signalForParam(combo->currentText());
+    QWidget* signal = signalForParam(param->param);
     grid->addWidget(signal, param->row, 2, Qt::AlignTop);
     param->signal = signal;
 }
 
-QWidget* EffectItem::signalForParam(QString param)
+QWidget* EffectItem::signalForParam(EffectParam* param)
 {
     QWidget* w;
+    QString name = param->signal()->name;
 
-    if(param == "Constant")
-        w = new QWidget(this);
-    else if(param == "Curve")
-        w = new QWidget(this);
+    if(name == "Constant")
+        w = new ConstantSignalDisplay(param->signal(), this);
     else
         w = new QWidget(this);
 
-    w->setMinimumHeight(100);
+    w->setMinimumHeight(24);
     return w;
 }

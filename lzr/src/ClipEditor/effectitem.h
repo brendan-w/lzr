@@ -33,7 +33,7 @@ private slots:
     void signalTypeChanged(int index);
 
 private:
-    QWidget* signalForParam(QString param);
+    QWidget* signalForParam(EffectParam* param);
 
     //data
     Effect* effect;
