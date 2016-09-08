@@ -37,6 +37,23 @@ protected:
     void keyPressEvent(QKeyEvent* e);
     void keyReleaseEvent(QKeyEvent* e);
     void wheelEvent(QWheelEvent* e);
+};
+
+
+
+class CurveScene : public QGraphicsScene
+{
+    Q_OBJECT
+
+public:
+    CurveScene(Signal* s, QWidget* parent = 0);
+
+protected:
+    void mousePressEvent(QGraphicsSceneMouseEvent* e);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent* e);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent* e);
+    void keyPressEvent(QKeyEvent* e);
+    void keyReleaseEvent(QKeyEvent* e);
 
 private:
     CurveSignal* signal;

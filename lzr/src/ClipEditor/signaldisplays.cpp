@@ -44,18 +44,17 @@ void ConstantDisplay::setValue(int v)
 
 #define ZOOM_FACTOR 1.2
 
-CurveDisplay::CurveDisplay(Signal* s, QWidget* parent) : QGraphicsView(parent),
-                                                         signal((CurveSignal*) s)
+CurveDisplay::CurveDisplay(Signal* s, QWidget* parent) : QGraphicsView(parent)
 {
     // setRenderHint(QPainter::Antialiasing);
+    setFixedHeight(200);
     setFrameStyle(QFrame::NoFrame);
-    //disable all scroll bars
-    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
     //when points move, the connecting lines must be also redrawn
     setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
 
-    setFixedHeight(200);
+    //create the scene
 }
 
 void CurveDisplay::keyPressEvent(QKeyEvent* e)
@@ -94,4 +93,42 @@ void CurveDisplay::wheelEvent(QWheelEvent* event)
         factor = 1.0 / ZOOM_FACTOR;
 
     scale(factor, 1);
+}
+
+
+
+//SCENE
+
+CurveScene::CurveScene(Signal* s, QWidget *parent) : QGraphicsScene(parent),
+                                                          signal((CurveSignal*) s)
+{
+    //enforce custom coordinate system [0.0, 1.0]
+    //Y is negative to make positive values go upwards
+    setSceneRect(0.0, 0.0, 1.0, 1.0);
+    setBackgroundBrush(Qt::black);
+}
+
+void CurveScene::mousePressEvent(QGraphicsSceneMouseEvent* e)
+{
+    QGraphicsScene::mousePressEvent(e);
+}
+
+void CurveScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* e)
+{
+    QGraphicsScene::mouseReleaseEvent(e);
+}
+
+void CurveScene::mouseMoveEvent(QGraphicsSceneMouseEvent* e)
+{
+    QGraphicsScene::mouseMoveEvent(e);
+}
+
+void CurveScene::keyPressEvent(QKeyEvent* e)
+{
+    QGraphicsScene::keyPressEvent(e);
+}
+
+void CurveScene::keyReleaseEvent(QKeyEvent* e)
+{
+    QGraphicsScene::keyReleaseEvent(e);
 }
