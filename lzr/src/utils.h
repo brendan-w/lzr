@@ -41,4 +41,9 @@ inline bool perpendicular_intersection(const QPointF& a,
     return inside;
 }
 
+inline double clamp(double v, double min, double max)
+{
+    return qMin(qMax(v, min), max);
+}
+
 QPointF constrain_and_snap(QPointF p, bool snap=false, int divisions=1);

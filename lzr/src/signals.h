@@ -55,7 +55,7 @@ public slots:
     void setMax(double max) { v_max = max; };
 
 protected:
-    double clamp(double v) { return qMin(qMax(v, v_min), v_max); };
+    double output_clamp(double v) { return clamp(v, v_min, v_max); };
 
 private:
     double v_min;
@@ -77,7 +77,7 @@ public:
 public slots:
     void setValue(double value)
     {
-        v = clamp(value);
+        v = output_clamp(value);
         emit valueChanged(v);
     };
 
@@ -88,10 +88,29 @@ private:
 
 
 
+class CurvePoint
+{
+public:
+    double x;
+    double y;
+    QPointF left;  //bezier handles/control points
+    QPointF right;
+    bool left_is_bezier; //flag for whether the left side is a cubic bezier curve
+};
+
+
 class CurveSignal : public DoubleSignal
 {
     Q_OBJECT
 public:
     CurveSignal(double min, double max) : DoubleSignal(CURVE, min, max) {};
     double value(Time& t) { Q_UNUSED(t); return 1.0; };
+
+    CurvePoint* addPoint(QPointF pos);
+    bool removePoint(CurvePoint* p);
+    void movePoint(CurvePoint* p, QPointF pos);
+
+private:
+    double input_clamp(double v) { return clamp(v, 0, 1); };
+    QList<CurvePoint*> points;
 };
