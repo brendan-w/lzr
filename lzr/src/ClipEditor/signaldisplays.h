@@ -24,3 +24,20 @@ private:
     QLabel* digits;
     QSlider* slider;
 };
+
+
+
+class CurveDisplay : public QGraphicsView
+{
+    Q_OBJECT
+public:
+    CurveDisplay(Signal* s, QWidget* parent = 0);
+
+protected:
+    void keyPressEvent(QKeyEvent* e);
+    void keyReleaseEvent(QKeyEvent* e);
+    void wheelEvent(QWheelEvent* e);
+
+private:
+    CurveSignal* signal;
+};

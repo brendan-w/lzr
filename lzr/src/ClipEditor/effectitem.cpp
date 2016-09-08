@@ -99,6 +99,8 @@ QWidget* EffectItem::signalForParam(Param* param)
     {
     case CONSTANT:
         return new ConstantDisplay(param->signal(), this);
+    case CURVE:
+        return new CurveDisplay(param->signal(), this);
     default:
         return new QWidget(this);
     }
