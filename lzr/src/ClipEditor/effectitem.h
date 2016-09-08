@@ -32,6 +32,7 @@ protected:
 
 private:
     QWidget* signalForParam(Param* param);
+    QString nameForSignal(SignalType type);
 
     //data
     Effect* effect;

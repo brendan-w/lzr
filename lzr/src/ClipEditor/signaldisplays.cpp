@@ -5,8 +5,7 @@
 
 ConstantSignalDisplay::ConstantSignalDisplay(Signal* s, QWidget* parent) : QWidget(parent),
                                                                            signal((ConstantSignal*) s),
-                                                                           step(0.01),
-                                                                           tickStep(1)
+                                                                           step(0.01)
 {
     setLayout(hbox = new QHBoxLayout(this));
     hbox->addWidget(digits = new DoubleDisplay(s, this));
@@ -16,13 +15,11 @@ ConstantSignalDisplay::ConstantSignalDisplay(Signal* s, QWidget* parent) : QWidg
 
     slider->setMinimum((int) signal->min() / step);
     slider->setMaximum((int) signal->max() / step);
-    slider->setTickInterval((int) tickStep / step);
-    // slider->setTickPosition(QSlider::TicksBelow);
 
     Time t;
-    double value = signal->value(t) / step;
+    double value = signal->value(t);
     slider->setSliderPosition(value / step);
-    digits->setText(QString::number(value));
+    digits->valueChanged(value);
 
     connect(slider, SIGNAL(valueChanged(int)),
             this, SLOT(setValue(int)));
@@ -30,7 +27,5 @@ ConstantSignalDisplay::ConstantSignalDisplay(Signal* s, QWidget* parent) : QWidg
 
 void ConstantSignalDisplay::setValue(int v)
 {
-    double value = v * step;
-    signal->setValue(value);
-    digits->setText(QString::number(value));
+    signal->setValue(v * step);
 }

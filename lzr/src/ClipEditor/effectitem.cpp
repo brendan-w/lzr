@@ -34,7 +34,7 @@ EffectItem::EffectItem(Effect* e, QWidget* parent) : QWidget(parent), effect(e)
         //load the combobox
         for(SignalType type : param->sigs.keys())
         {
-            combo->addItem(QString(type), type);
+            combo->addItem(nameForSignal(type), type);
         }
 
         label->setFixedWidth(100);
@@ -49,8 +49,11 @@ EffectItem::EffectItem(Effect* e, QWidget* parent) : QWidget(parent), effect(e)
         connect(combo, SIGNAL(currentIndexChanged(int)),
                 this, SLOT(signalTypeChanged(int)));
 
-        //trigger the creation of the signal widget
+        //set the current signal type
         combo->setCurrentIndex(combo->findData(param->type));
+        QWidget* signal_widget = signalForParam(param);
+        grid->addWidget(signal_widget, row, 2);
+        params[param_name].signal = signal_widget;
 
         row++;
     }
@@ -69,6 +72,8 @@ void EffectItem::paintEvent(QPaintEvent *e)
 
 void EffectItem::signalTypeChanged(int index)
 {
+    Q_UNUSED(index);
+
     //look up the effect parameter based on the ComboBox's name
     QComboBox* combo = (QComboBox*) sender();
     ParamItem* param_item = &(params[combo->objectName()]);
@@ -96,5 +101,15 @@ QWidget* EffectItem::signalForParam(Param* param)
         return new ConstantSignalDisplay(param->signal(), this);
     default:
         return new QWidget(this);
+    }
+}
+
+QString EffectItem::nameForSignal(SignalType type)
+{
+    switch(type)
+    {
+    case CONSTANT: return "Constant";
+    case CURVE:    return "Curve";
+    default:       return "<unknown>";
     }
 }

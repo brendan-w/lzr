@@ -43,7 +43,6 @@ public slots:
 private:
     ConstantSignal* signal;
     const double step;
-    const double tickStep;
 
     QHBoxLayout* hbox;
     DoubleDisplay* digits;
