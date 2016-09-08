@@ -6,36 +6,12 @@
 #include "../signals.h"
 
 
-class DoubleDisplay : public QLabel
+
+class ConstantDisplay : public QWidget
 {
     Q_OBJECT
 public:
-    DoubleDisplay(Signal* s, QWidget* parent = 0) : QLabel(parent),
-                                                    signal((DoubleSignal*) s)
-    {
-        setFixedWidth(40);
-        connect(signal, SIGNAL(valueChanged(double)),
-                this, SLOT(valueChanged(double)));
-
-    };
-
-public slots:
-    void valueChanged(double v)
-    {
-        setText(QString::number(v));
-    };
-
-private:
-    DoubleSignal* signal;
-};
-
-
-
-class ConstantSignalDisplay : public QWidget
-{
-    Q_OBJECT
-public:
-    ConstantSignalDisplay(Signal* s, QWidget* parent = 0);
+    ConstantDisplay(Signal* s, QWidget* parent = 0);
 
 public slots:
     void setValue(int);
@@ -45,6 +21,6 @@ private:
     const double step;
 
     QHBoxLayout* hbox;
-    DoubleDisplay* digits;
+    QLabel* digits;
     QSlider* slider;
 };

@@ -18,6 +18,7 @@ CurvePoint* CurveSignal::addPoint(QPointF pos)
 
 bool CurveSignal::removePoint(CurvePoint* p)
 {
+    //there must always be at least 2 points in the curve
     if(points.size() <= 2)
         return false;
 

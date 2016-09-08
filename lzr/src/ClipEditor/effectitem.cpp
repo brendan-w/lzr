@@ -98,7 +98,7 @@ QWidget* EffectItem::signalForParam(Param* param)
     switch(param->type)
     {
     case CONSTANT:
-        return new ConstantSignalDisplay(param->signal(), this);
+        return new ConstantDisplay(param->signal(), this);
     default:
         return new QWidget(this);
     }
