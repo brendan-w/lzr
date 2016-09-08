@@ -37,9 +37,9 @@ EffectItem::EffectItem(Effect* e, QWidget* parent) : QWidget(parent), effect(e)
             combo->addItem(QString(type), type);
         }
 
-        label->setMaximumWidth(100);
+        label->setFixedWidth(100);
         label->setContentsMargins(0, 3, 0, 3);
-        combo->setMaximumWidth(100);
+        combo->setFixedWidth(100);
         combo->setObjectName(param_name);
 
         grid->addWidget(label, row, 0, Qt::AlignTop);

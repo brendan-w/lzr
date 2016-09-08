@@ -36,7 +36,9 @@ public:
         //all of the possible signals
         sigs[CONSTANT] = new ConstantSignal(min, max);
         sigs[CURVE]    = new CurveSignal(min, max);
-        select(CONSTANT); //default signal for params accepting doubles
+
+        //default signal for params accepting doubles
+        select(CONSTANT);
     };
 
     double value(Time& t)
@@ -69,7 +71,7 @@ public:
 };
 
 //helpers for accessing values of effect parameters
-#define DOUBLE(p, t) (((DoubleParam*) params[p])->value(t))
+#define DOUBLE_PARAM(p, t) (((DoubleParam*) params[p])->value(t))
 
 
 /*
@@ -87,7 +89,7 @@ public:
 
     void run(lzr::Frame& frame, Time& t)
     {
-        int n = DOUBLE("Frame Number", t);
+        int n = DOUBLE_PARAM("Frame Number", t);
         frame = frames[n]; //TODO, make safe
     };
 
@@ -111,7 +113,7 @@ public:
     void run(lzr::Frame& frame, Time& t)
     {
         lzr::translate(frame,
-                       DOUBLE("X", t),
-                       DOUBLE("Y", t));
+                       DOUBLE_PARAM("X", t),
+                       DOUBLE_PARAM("Y", t));
     };
 };

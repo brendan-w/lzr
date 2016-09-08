@@ -4,18 +4,33 @@
 
 
 ConstantSignalDisplay::ConstantSignalDisplay(Signal* s, QWidget* parent) : QWidget(parent),
-                                                                           signal((ConstantSignal*) s)
+                                                                           signal((ConstantSignal*) s),
+                                                                           step(0.01),
+                                                                           tickStep(1)
 {
-    spinner = new QDoubleSpinBox(this);
-    spinner->setRange(0.01, 2.0);
-    spinner->setSingleStep(0.01);
-    spinner->setFocusPolicy(Qt::NoFocus);
+    setLayout(hbox = new QHBoxLayout(this));
+    hbox->addWidget(digits = new DoubleDisplay(s, this));
+    hbox->addWidget(slider = new QSlider(Qt::Horizontal, this), 1);
 
-    // connect(spinner, SIGNAL(valueChanged(double)),
-            // this, SIGNAL(constant_changed(double)));
+    hbox->setContentsMargins(10, 0, 0, 0);
+
+    slider->setMinimum((int) signal->min() / step);
+    slider->setMaximum((int) signal->max() / step);
+    slider->setTickInterval((int) tickStep / step);
+    // slider->setTickPosition(QSlider::TicksBelow);
+
+    Time t;
+    double value = signal->value(t) / step;
+    slider->setSliderPosition(value / step);
+    digits->setText(QString::number(value));
+
+    connect(slider, SIGNAL(valueChanged(int)),
+            this, SLOT(setValue(int)));
 }
 
-QSize ConstantSignalDisplay::sizeHint()
+void ConstantSignalDisplay::setValue(int v)
 {
-    return spinner->sizeHint();
+    double value = v * step;
+    signal->setValue(value);
+    digits->setText(QString::number(value));
 }

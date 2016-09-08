@@ -47,6 +47,9 @@ public:
     double min() { return v_min; };
     double max() { return v_max; };
 
+signals:
+    void valueChanged(double v);
+
 public slots:
     void setMin(double min) { v_min = min; };
     void setMax(double max) { v_max = max; };
@@ -72,7 +75,11 @@ public:
     double value(Time& t) { Q_UNUSED(t); return v; };
 
 public slots:
-    void setValue(double value) { v = clamp(value); };
+    void setValue(double value)
+    {
+        v = clamp(value);
+        emit valueChanged(v);
+    };
 
 private:
     double v = 0.0;
