@@ -49,6 +49,7 @@ public:
     CurveScene(Signal* s, QWidget* parent = 0);
 
 protected:
+    void drawForeground(QPainter* painter, const QRectF& rect);
     void mousePressEvent(QGraphicsSceneMouseEvent* e);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent* e);
     void mouseMoveEvent(QGraphicsSceneMouseEvent* e);

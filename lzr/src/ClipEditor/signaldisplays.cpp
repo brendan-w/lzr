@@ -108,6 +108,33 @@ CurveScene::CurveScene(Signal* s, QWidget *parent) : QGraphicsScene(parent),
     setBackgroundBrush(Qt::black);
 }
 
+void CurveScene::drawForeground(QPainter* painter, const QRectF& rect)
+{
+    Q_UNUSED(rect); //because we always render the entire scene
+
+    painter->setPen(Qt::red);
+
+    QRectF r = sceneRect();
+    QLineF line;
+
+    int divisions = 4;
+    for(int i = 1; i < divisions; i++)
+    {
+        //normalized
+        double n = (double) i / divisions;
+
+        //vertical
+        double x = (r.width() * n) + r.left();
+        line.setLine(x, r.top(), x, r.bottom());
+        painter->drawLine(line); //need to use QLineF to get floating point
+
+        //horizontal
+        double y = (r.height() * n) + r.top();
+        line.setLine(r.left(), y, r.right(), y);
+        painter->drawLine(line);
+    }
+}
+
 void CurveScene::mousePressEvent(QGraphicsSceneMouseEvent* e)
 {
     QGraphicsScene::mousePressEvent(e);
