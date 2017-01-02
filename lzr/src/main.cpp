@@ -1,6 +1,6 @@
-#include "lzr.h"
+#include "lzr.hpp"
 #include <QApplication>
-#include "inspect.h"
+#include "inspect.hpp"
 
 int main(int argc, char *argv[])
 {

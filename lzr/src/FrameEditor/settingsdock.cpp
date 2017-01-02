@@ -1,5 +1,5 @@
 
-#include "settingsdock.h"
+#include "settingsdock.hpp"
 
 
 SettingsDock::SettingsDock(QWidget* parent) : QDockWidget(parent)

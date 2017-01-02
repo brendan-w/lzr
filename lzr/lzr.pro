@@ -13,9 +13,9 @@ SOURCES += src/*.cpp
 SOURCES += src/FrameEditor/*.cpp
 SOURCES += src/ClipEditor/*.cpp
 
-HEADERS += src/*.h
-HEADERS += src/FrameEditor/*.h
-HEADERS += src/ClipEditor/*.h
+HEADERS += src/*.hpp
+HEADERS += src/FrameEditor/*.hpp
+HEADERS += src/ClipEditor/*.hpp
 
 INCLUDEPATH += ../liblzr
 

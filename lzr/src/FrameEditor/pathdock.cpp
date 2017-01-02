@@ -1,8 +1,8 @@
 
 
 #include <liblzr.h>
-#include "pathdock.h"
-#include "pathdelegate.h"
+#include "pathdock.hpp"
+#include "pathdelegate.hpp"
 
 
 PathDock::PathDock(QWidget* parent) : QDockWidget(parent)

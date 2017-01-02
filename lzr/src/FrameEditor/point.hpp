@@ -4,7 +4,7 @@
 #include <QtWidgets>
 #include <QDebug>
 #include <liblzr.h>
-#include "frameeditorstate.h"
+#include "frameeditorstate.hpp"
 
 
 class Point : public QGraphicsObject

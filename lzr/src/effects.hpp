@@ -3,7 +3,7 @@
 
 #include <liblzr.h>
 #include <QObject>
-#include "signals.h"
+#include "signals.hpp"
 
 
 /*

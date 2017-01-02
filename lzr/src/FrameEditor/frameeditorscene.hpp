@@ -4,10 +4,10 @@
 #include <QtWidgets>
 #include <QDebug>
 
-#include "../frame.h"
-#include "grid.h"
-#include "path.h"
-#include "frameeditorstate.h"
+#include "../frame.hpp"
+#include "grid.hpp"
+#include "path.hpp"
+#include "frameeditorstate.hpp"
 
 /*
  * Editor for Frame models

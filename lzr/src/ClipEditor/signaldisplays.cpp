@@ -1,7 +1,7 @@
 
 
-#include "signaldisplays.h"
-#include "../settings.h"
+#include "signaldisplays.hpp"
+#include "../settings.hpp"
 
 /*
  * CONSTANT

@@ -1,8 +1,8 @@
 
 #include <QPainter>
 #include <QDebug>
-#include "pathdelegate.h"
-#include "../frame.h" //lzr::frame QT Metatype
+#include "pathdelegate.hpp"
+#include "../frame.hpp" //lzr::frame QT Metatype
 
 
 void PathDelegate::paint(QPainter* painter,

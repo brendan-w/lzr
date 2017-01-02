@@ -1,6 +1,6 @@
 
-#include "clipeditor.h"
-#include "effectitem.h"
+#include "clipeditor.hpp"
+#include "effectitem.hpp"
 
 
 ClipEditor::ClipEditor(QWidget* parent) : QWidget(parent)

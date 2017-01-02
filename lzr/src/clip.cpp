@@ -1,6 +1,6 @@
 
 
-#include "clip.h"
+#include "clip.hpp"
 
 
 Clip::Clip()

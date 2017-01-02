@@ -1,9 +1,9 @@
 
 #pragma once
 
-#include "../frame.h"
-#include "point.h"
-#include "frameeditorstate.h"
+#include "../frame.hpp"
+#include "point.hpp"
+#include "frameeditorstate.hpp"
 
 #define PATH_END -1
 #define PATH_START 0

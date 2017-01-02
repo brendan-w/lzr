@@ -1,6 +1,6 @@
 
-#include "signaldisplays.h"
-#include "effectitem.h"
+#include "signaldisplays.hpp"
+#include "effectitem.hpp"
 
 
 EffectItem::EffectItem(Effect* e, QWidget* parent) : QWidget(parent), effect(e)

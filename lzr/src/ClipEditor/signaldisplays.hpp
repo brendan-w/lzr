@@ -3,7 +3,7 @@
 
 #include <QtWidgets>
 #include <QDebug>
-#include "../signals.h"
+#include "../signals.hpp"
 
 
 

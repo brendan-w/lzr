@@ -1,5 +1,5 @@
 
-#include "lzr.h"
+#include "lzr.hpp"
 
 LZR::LZR()
 {

@@ -4,7 +4,7 @@
 #include <liblzr.h>
 #include <QAbstractListModel>
 #include <QColor>
-#include "effects.h"
+#include "effects.hpp"
 
 
 Q_DECLARE_METATYPE(Effect*);

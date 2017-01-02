@@ -4,7 +4,7 @@
 #include <liblzr.h>
 #include <QObject>
 #include <QColor>
-#include "utils.h"
+#include "utils.hpp"
 
 
 /*

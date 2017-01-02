@@ -3,7 +3,7 @@
 
 #include <QtWidgets>
 #include <QDebug>
-#include "../effects.h"
+#include "../effects.hpp"
 
 
 

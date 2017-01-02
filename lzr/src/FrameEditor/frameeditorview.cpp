@@ -1,8 +1,8 @@
 
 #include <QtGui>
-#include "frameeditorview.h"
-#include "../settings.h"
-#include "../utils.h"
+#include "frameeditorview.hpp"
+#include "../settings.hpp"
+#include "../utils.hpp"
 
 #define ZOOM_FACTOR 1.2
 

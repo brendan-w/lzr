@@ -3,7 +3,7 @@
 
 #include <QtWidgets>
 #include <QDebug>
-#include "frameeditorstate.h"
+#include "frameeditorstate.hpp"
 
 
 class Grid : public QGraphicsRectItem

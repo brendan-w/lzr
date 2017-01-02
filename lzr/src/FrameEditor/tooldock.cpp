@@ -1,5 +1,5 @@
 
-#include "tooldock.h"
+#include "tooldock.hpp"
 
 
 ToolDock::ToolDock(QWidget* parent) : QDockWidget(parent)

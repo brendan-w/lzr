@@ -1,5 +1,5 @@
 
-#include "path.h"
+#include "path.hpp"
 
 
 Path::Path(FrameEditorState* s, QModelIndex& i) : QGraphicsObject(0),

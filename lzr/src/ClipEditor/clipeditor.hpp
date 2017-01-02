@@ -3,7 +3,7 @@
 
 #include <QtWidgets>
 #include <QDebug>
-#include "../clip.h"
+#include "../clip.hpp"
 
 class ClipEditor : public QWidget
 {

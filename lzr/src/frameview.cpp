@@ -1,6 +1,6 @@
 
-#include "frameview.h"
-#include "utils.h"
+#include "frameview.hpp"
+#include "utils.hpp"
 
 
 FrameView::FrameView(QWidget* parent) : QWidget(parent)

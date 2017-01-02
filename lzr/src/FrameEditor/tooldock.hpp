@@ -3,8 +3,8 @@
 
 #include <QtWidgets>
 #include <QDebug>
-#include "../flowlayout.h"
-#include "frameeditorscene.h"
+#include "../flowlayout.hpp"
+#include "frameeditorscene.hpp"
 
 
 
