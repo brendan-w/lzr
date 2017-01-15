@@ -12,7 +12,6 @@
 /*      frame interpolator                                                    */
 /*      frame optimizer                                                       */
 /*      ILDA file reader/writer                                               */
-/*      ZeroMQ frame transport                                                */
 /*                                                                            */
 /******************************************************************************/
 
@@ -22,7 +21,6 @@
 
 #define LZR_VERSION "0.0.1"
 
-#include <zmq.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include <vector>
@@ -36,12 +34,10 @@ namespace lzr {
 /*  LZR Return Codes                                                          */
 /******************************************************************************/
 
-#define LZR_SUCCESS                 0
-#define LZR_FAILURE                -1
-#define LZR_WARNING                -2
-#define LZR_ERROR_TOO_MANY_POINTS  -3
-#define LZR_ERROR_TOO_MANY_FRAMES  -4
-#define LZR_ERROR_INVALID_ARG      -5
+#define LZR_SUCCESS            0
+#define LZR_FAILURE           -1
+#define LZR_WARNING           -2
+#define LZR_ERROR_INVALID_ARG -3
 
 
 
@@ -110,6 +106,13 @@ private:
 };
 
 
+/******************************************************************************/
+/*  LZR Animations                                                            */
+/******************************************************************************/
+
+typedef std::vector<Frame> FrameList;
+
+
 
 /******************************************************************************/
 /*  LZR Frame Transforms                                                      */
@@ -129,13 +132,6 @@ int dup_radial(Frame& frame, Point center, size_t n_dups, double angle, bool bla
 //the mask boundry will have additional points inserted at that boundry.
 // int mask(Frame& frame, const Frame& mask, bool inverse=false);
 
-
-
-/******************************************************************************/
-/*  LZR Animations                                                            */
-/******************************************************************************/
-
-typedef std::vector<Frame> FrameList;
 
 
 
@@ -264,25 +260,5 @@ std::vector<std::string> list_dacs();
 
 //connect to a DAC
 DAC* dac_connect(std::string name);
-
-
-/******************************************************************************/
-/*  LZR ZeroMQ Facilities                                                     */
-/******************************************************************************/
-
-#define LZRD_GRAPHICS_ENDPOINT "tcp://127.0.0.1:5555"
-
-//create a ZMQ transmitter (publisher)
-void* frame_pub_new(void* zmq_ctx, const char* address);
-
-//create a ZMQ reciever (subscriber)
-void* frame_sub_new(void* zmq_ctx, const char* address);
-
-//send a single frame
-int send_frame(void* pub, const Frame& frame);
-
-//recieve a single frame (blocking)
-int recv_frame(void* sub, Frame& frame);
-
 
 } // namespace lzr

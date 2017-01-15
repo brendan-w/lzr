@@ -6,7 +6,7 @@
 CXX       = g++
 CXXFLAGS += -std=c++11 -Wall -Wextra -pedantic -fPIC -ggdb
 CXXFLAGS += -I.
-LIBS      = -lzmq -lm -lpthread
+LIBS      = -lm -lpthread
 ARFLAGS   = rs
 
 
@@ -17,7 +17,6 @@ INSTALL_PREFIX ?= /usr/local
 
 OBJS := src/point.o \
         src/frame.o \
-        src/zmq.o \
         src/ilda.o \
         src/ilda_read.o \
         src/ilda_write.o \
