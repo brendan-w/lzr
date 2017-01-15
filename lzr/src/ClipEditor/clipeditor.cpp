@@ -30,7 +30,7 @@ void ClipEditor::setupUi()
                            // QSizePolicy::MinimumExpanding);
 
     effects->setContentsMargins(0, 0, 0, 0);
-    effects->setSpacing(2);
+    effects->setSpacing(3);
 }
 
 void ClipEditor::setModel(Clip* clip)

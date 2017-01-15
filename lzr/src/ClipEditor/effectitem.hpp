@@ -4,6 +4,7 @@
 #include <QtWidgets>
 #include <QDebug>
 #include "../effects.hpp"
+#include "../frameview.hpp"
 
 
 
@@ -38,5 +39,6 @@ private:
     Effect* effect;
 
     QGridLayout* grid;
+    FrameView* frame;
     QMap<QString, ParamItem> params;
 };

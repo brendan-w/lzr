@@ -5,10 +5,18 @@
 
 EffectItem::EffectItem(Effect* e, QWidget* parent) : QWidget(parent), effect(e)
 {
-    setLayout(grid = new QGridLayout(this));
+    QHBoxLayout* hbox = new QHBoxLayout(this);
+    hbox->setContentsMargins(0,0,0,0);
+    setLayout(hbox);
+    hbox->addLayout(grid = new QGridLayout());
+    hbox->addWidget(frame = new FrameView(this));
+
+    grid->setContentsMargins(6,6,6,6);
+
 
     //the effect's name
     QLabel* name = new QLabel(effect->name, this);
+    name->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum);
     grid->addWidget(name, 0, 0, 1, 3);
     QFont font = name->font();
     //font.setPointSize(10);
@@ -21,6 +29,7 @@ EffectItem::EffectItem(Effect* e, QWidget* parent) : QWidget(parent), effect(e)
     {
         Param* param = effect->params[param_name];
         QLabel* label = new QLabel(param_name, this);
+
         QComboBox* combo = new QComboBox(this);
 
         //zero out the signal widget map
@@ -52,7 +61,7 @@ EffectItem::EffectItem(Effect* e, QWidget* parent) : QWidget(parent), effect(e)
         //set the current signal type
         combo->setCurrentIndex(combo->findData(param->type));
         QWidget* signal_widget = signalForParam(param);
-        grid->addWidget(signal_widget, row, 2);
+        grid->addWidget(signal_widget, row, 2, Qt::AlignTop);
         params[param_name].signal = signal_widget;
 
         row++;
@@ -89,7 +98,7 @@ void EffectItem::signalTypeChanged(int index)
 
     //instantiate the correct widget for this signal
     QWidget* signal_widget = signalForParam(param);
-    grid->addWidget(signal_widget, param_item->row, 2);
+    grid->addWidget(signal_widget, param_item->row, 2, Qt::AlignTop);
     param_item->signal = signal_widget;
 }
 

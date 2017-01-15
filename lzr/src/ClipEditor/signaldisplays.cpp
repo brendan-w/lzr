@@ -8,8 +8,8 @@
  */
 
 ConstantDisplay::ConstantDisplay(Signal* s, QWidget* parent) : QWidget(parent),
-                                                                           signal((ConstantSignal*) s),
-                                                                           step(0.01)
+                                                               signal((ConstantSignal*) s),
+                                                               step(0.01)
 {
     setLayout(hbox = new QHBoxLayout(this));
     hbox->addWidget(digits = new QLabel(this));
@@ -18,6 +18,7 @@ ConstantDisplay::ConstantDisplay(Signal* s, QWidget* parent) : QWidget(parent),
     hbox->setContentsMargins(10, 0, 0, 0);
 
     digits->setFixedWidth(40);
+    digits->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum);
     slider->setMinimum((int) signal->min() / step);
     slider->setMaximum((int) signal->max() / step);
 

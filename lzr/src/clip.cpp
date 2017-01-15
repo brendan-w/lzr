@@ -6,6 +6,7 @@
 Clip::Clip()
 {
     //TODO: remove
+    effects.push_back(new FrameEffect());
     effects.push_back(new MoveEffect());
 }
 
