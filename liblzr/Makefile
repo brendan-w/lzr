@@ -29,10 +29,12 @@ OBJS := src/point.o \
         src/optimizer_find_paths.o \
         src/optimizer_reorder_paths.o \
         src/optimizer_compile_paths.o \
+        src/engine.o \
         src/dac/dac.o \
         src/dac/etherdream.o
 
 HEADERS := liblzr.h \
+		   engine.hpp \
            src/*.h \
            src/dac/*.h
 
