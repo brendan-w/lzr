@@ -30,6 +30,7 @@ OBJS := src/point.o \
         src/optimizer_reorder_paths.o \
         src/optimizer_compile_paths.o \
         src/engine.o \
+        src/engine_serialization.o \
         src/dac/dac.o \
         src/dac/etherdream.o
 

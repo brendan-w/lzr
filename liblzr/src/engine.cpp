@@ -5,10 +5,13 @@
 namespace lzr {
 
 
-Curve::Curve()
+void read_inputs(Inputs& inputs, InputMap& map)
 {
-
+    for(auto it : map)
+        *(it.first) = inputs[it.second];
 }
+
+
 
 Curve::~Curve()
 {
@@ -21,14 +24,14 @@ double Curve::operator()(Inputs& inputs)
     return compute();
 }
 
-CurvePoint* Curve::add(double x_)
+Curve::CurvePoint* Curve::add(double x_)
 {
-    CurvePoint* point = new CurvePoint();
+    Curve::CurvePoint* point = new CurvePoint();
     point->x = x_;
     points.push_back(point);
 
     // put the points back in ascending order
-    std::sort(points.begin(), points.end(), [](const CurvePoint* a, const CurvePoint* b) -> bool
+    std::sort(points.begin(), points.end(), [](const Curve::CurvePoint* a, const Curve::CurvePoint* b) -> bool
     { 
         return a->x > b->x;
     });
@@ -43,7 +46,7 @@ void Curve::remove(CurvePoint* point)
 
 void Curve::clear()
 {
-    
+
 }
 
 double Curve::compute()
@@ -64,8 +67,8 @@ double Curve::compute()
 
     // find the points to our left and right
     // TODO: binary search
-    CurvePoint* left_point;
-    CurvePoint* right_point;
+    Curve::CurvePoint* left_point;
+    Curve::CurvePoint* right_point;
     for(CurvePoint* point : points)
     {
         if(x < point->x)

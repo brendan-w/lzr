@@ -3,8 +3,12 @@
 
 #include <map>
 #include <vector>
+#include <fstream>
 
 #include <liblzr.h>
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
 
 namespace lzr {
 
@@ -35,12 +39,7 @@ typedef std::map<double*, std::string> InputMap;
  * Helper function for loading a new set of inputs
  * into their final destinations (as specified by the InputMap)
  */
-void read_inputs(Inputs& inputs, InputMap& map)
-{
-    for(auto it : map)
-        *(it.first) = inputs[it.second];
-}
-
+void read_inputs(Inputs& inputs, InputMap& map);
 
 /******************************************************************************/
 /*  Generators                                                                */
@@ -49,7 +48,13 @@ void read_inputs(Inputs& inputs, InputMap& map)
 template <typename T>
 struct Generator
 {
+    Generator(const char* name_) : name(name_) {};
     virtual T operator()(Inputs& inputs)=0;
+
+    virtual json serialize()=0;
+    virtual void unserialize(json j)=0;
+
+    const char* name;
     InputMap input_map;
 };
 
@@ -59,8 +64,12 @@ struct Generator
 
 struct Constant : public Generator<double>
 {
-    double v;
+    Constant() : Generator("Constant") {};
     double operator()(Inputs& inputs) { (void) inputs; return v; };
+    double v;
+
+    json serialize();
+    void unserialize(json j);
 };
 
 //
@@ -69,39 +78,46 @@ struct Constant : public Generator<double>
 
 struct Linear : public Generator<double>
 {
+    Linear() : Generator("Linear") {};
+    double operator()(Inputs& inputs)
+    {
+        read_inputs(inputs, input_map);
+        return (x - from_a) * (to_b - to_a) / (from_b - from_a) + to_a;
+    };
+    double x;
+    double from_a;
+    double from_b;
+    double to_a;
+    double to_b;
 
-};
-
-//
-// Oscillators
-//
-
-struct SinOscillator : public Generator<double>
-{
-
+    json serialize();
+    void unserialize(json j);
 };
 
 //
 // Curve
 //
 
-struct CurvePoint
-{
-    double x;
-    double y;
-    double lx;
-    double ly;
-    double rx;
-    double ry;
-};
-
 class Curve : public Generator<double>
 {
 public:
-    Curve();
+    struct CurvePoint
+    {
+        double x;
+        double y;
+        double lx;
+        double ly;
+        double rx;
+        double ry;
+    };
+
+    Curve() : Generator("Curve") {};
     ~Curve();
 
     double operator()(Inputs& inputs);
+
+    json serialize();
+    void unserialize(json j);
 
     CurvePoint* add(double x_);
     void remove(CurvePoint* point);
@@ -209,6 +225,9 @@ class Show
 
         return frame;
     }
+
+    json serialize();
+    void unserialize(json j);
 
     std::vector<Clip*> clips;
     std::vector<TimelineClip> timeline;
