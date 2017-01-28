@@ -58,8 +58,8 @@ typedef struct {
 typedef struct {
     int16_t     x;
     int16_t     y;
-    uint8_t     color;
     ilda_status status;
+    uint8_t     color;
 } ilda_point_2d_indexed;
 
 
