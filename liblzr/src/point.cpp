@@ -64,12 +64,12 @@ void Point::unblank()
     i = 255;
 }
 
-bool Point::is_blanked()
+bool Point::is_blanked() const
 {
     return (i == 0) || (r + g + b == 0);
 }
 
-bool Point::is_lit()
+bool Point::is_lit() const
 {
     return (i > 0) && (r + g + b > 0);
 }
