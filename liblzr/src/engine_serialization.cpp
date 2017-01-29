@@ -1,4 +1,6 @@
 
+#include <sys/stat.h> // mkdir
+#include <glob.h>
 #include <engine.hpp>
 
 namespace lzr {
@@ -13,6 +15,8 @@ namespace lzr {
     ├── inputs.json
     └── timeline.json
 */
+
+static const mode_t PERMS = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
 
 // show files
 static const char* TIMELINE = "timeline.json";
@@ -250,6 +254,16 @@ void Clip::load(std::string show)
 
 void Show::save(std::string show)
 {
+    int r = mkdir((show + "/" + CLIPS_DIR).c_str(), PERMS);
+
+    {
+        for(Clip* clip : clips)
+        {
+            r = mkdir((show + "/" + CLIPS_DIR + "/" + clip->name).c_str(), PERMS);
+            clip->save(show);
+        }
+    }
+
     {
         std::ofstream f(show + "/" + TIMELINE);
         f << std::setw(4) << serialize_timeline() << std::endl;
