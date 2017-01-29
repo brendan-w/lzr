@@ -24,30 +24,42 @@ const char* TranslateEffect::name = "TranslateEffect";
 
 /*
  * Helper to save and load values based on whether they're
- * constant, or have been mapped to inputs. Assumes that
- * a json object "j", and "input_map" are present in the scope.
+ * constant, or have been mapped to inputs.
  */
-#define SAVE(variable) {                                  \
+#define SAVE_INPUT(json, input_map, variable) {           \
     if(input_map.find(&(variable)) != input_map.end())    \
-        j[#variable] = input_map[&(variable)];            \
+        json[#variable] = input_map[&(variable)];         \
     else                                                  \
-        j[#variable] = (variable);                        \
+        json[#variable] = (variable);                     \
 }
 
-#define LOAD(variable) {                        \
-    if(j[#variable].is_string())                \
-        input_map[&variable] = j[#variable];    \
-    else                                        \
-        (variable) = j[#variable];              \
+#define LOAD_INPUT(json, input_map, variable) {    \
+    if(json[#variable].is_string())                \
+        input_map[&variable] = json[#variable];    \
+    else                                           \
+        (variable) = json[#variable];              \
 }
-
 
 /*
- * Helpers to instantiate Generators based on their names
+ * Helper to save and load effect parameters (generators).
+ * Not strictly neccessary, simply makes for concise code.
+ */
+#define SAVE_GENERATOR(json, variable) {          \
+    json[#variable] = (variable)->serialize();    \
+}
+
+#define LOAD_GENERATOR(json, variable) {                                     \
+    (variable) = make_double_generator(json[#variable]["__generator__"]);    \
+    (variable)->unserialize(json[#variable]);                                \
+}
+
+/*
+ * LUTs to instantiate Generators based on their names
  */
 
 static Generator<double>* make_double_generator(const std::string& name)
 {
+    // TODO: hash? to make faster?
     if(name == Constant::name)
         return new Constant();
     if(name == Linear::name)
@@ -57,6 +69,14 @@ static Generator<double>* make_double_generator(const std::string& name)
     return nullptr;
 }
 
+static Effect* make_effect(const std::string& name)
+{
+    if(name == FrameEffect::name)
+        return new FrameEffect();
+    if(name == TranslateEffect::name)
+        return new TranslateEffect();
+    return nullptr;
+}
 
 //
 // Constants
@@ -65,13 +85,13 @@ static Generator<double>* make_double_generator(const std::string& name)
 json Constant::serialize()
 {
     json j;
-    SAVE(x);
+    SAVE_INPUT(j, input_map, x);
     return j;
 }
 
 void Constant::unserialize(const json& j)
 {
-    LOAD(x);
+    LOAD_INPUT(j, input_map, x);
 }
 
 //
@@ -81,21 +101,21 @@ void Constant::unserialize(const json& j)
 json Linear::serialize()
 {
     json j;
-    SAVE(x);
-    SAVE(from_a);
-    SAVE(from_b);
-    SAVE(to_a);
-    SAVE(to_b);
+    SAVE_INPUT(j, input_map, x);
+    SAVE_INPUT(j, input_map, from_a);
+    SAVE_INPUT(j, input_map, from_b);
+    SAVE_INPUT(j, input_map, to_a);
+    SAVE_INPUT(j, input_map, to_b);
     return j;
 }
 
 void Linear::unserialize(const json& j)
 {
-    LOAD(x);
-    LOAD(from_a);
-    LOAD(from_b);
-    LOAD(to_a);
-    LOAD(to_b);
+    LOAD_INPUT(j, input_map, x);
+    LOAD_INPUT(j, input_map, from_a);
+    LOAD_INPUT(j, input_map, from_b);
+    LOAD_INPUT(j, input_map, to_a);
+    LOAD_INPUT(j, input_map, to_b);
 }
 
 //
@@ -105,8 +125,8 @@ void Linear::unserialize(const json& j)
 json Curve::serialize()
 {
     json j;
-    SAVE(x);
-    j["generator"] = name;
+    SAVE_INPUT(j, input_map, x);
+    j["__generator__"] = name;
     for(size_t i = 0; i < points.size(); i++)
     {
         j["points"][i] = points[i]->serialize(input_map);
@@ -116,65 +136,63 @@ json Curve::serialize()
 
 void Curve::unserialize(const json& j)
 {
-    LOAD(x);
+    LOAD_INPUT(j, input_map, x);
 
 }
 
 json Curve::CurvePoint::serialize(InputMap& input_map)
 {
     json j;
-    SAVE(x);
-    SAVE(y);
-    SAVE(lx);
-    SAVE(ly);
-    SAVE(rx);
-    SAVE(ry);
+    SAVE_INPUT(j, input_map, x);
+    SAVE_INPUT(j, input_map, y);
+    SAVE_INPUT(j, input_map, lx);
+    SAVE_INPUT(j, input_map, ly);
+    SAVE_INPUT(j, input_map, rx);
+    SAVE_INPUT(j, input_map, ry);
     return j;
 }
 
 void Curve::CurvePoint::unserialize(json& j, InputMap& input_map)
 {
-    LOAD(x);
-    LOAD(y);
-    LOAD(lx);
-    LOAD(ly);
-    LOAD(rx);
-    LOAD(ry);
+    LOAD_INPUT(j, input_map, x);
+    LOAD_INPUT(j, input_map, y);
+    LOAD_INPUT(j, input_map, lx);
+    LOAD_INPUT(j, input_map, ly);
+    LOAD_INPUT(j, input_map, rx);
+    LOAD_INPUT(j, input_map, ry);
 }
 
 //
 // Effects
 //
 
-
 json FrameEffect::serialize()
 {
     json j;
-    j["type"] = name;
-    j["n"] = n->serialize();
+    j["__effect__"] = name;
+    SAVE_GENERATOR(j, n);
     return j;
 }
 
 void FrameEffect::unserialize(const json& j)
 {
-    {
-        n = make_double_generator(j["n"]["generator"]);
-    }
+    LOAD_GENERATOR(j, n);
 }
 
 
 json TranslateEffect::serialize()
 {
     json j;
-    j["type"] = name;
-    j["x"] = x->serialize();
-    j["y"] = y->serialize();
+    j["__effect__"] = name;
+    SAVE_GENERATOR(j, x);
+    SAVE_GENERATOR(j, y);
     return j;
 }
 
 void TranslateEffect::unserialize(const json& j)
 {
-    (void) j;
+    LOAD_GENERATOR(j, x);
+    LOAD_GENERATOR(j, y);
 }
 
 

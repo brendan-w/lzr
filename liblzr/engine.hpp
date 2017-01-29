@@ -144,7 +144,7 @@ struct Effect
 {
     virtual void operator()(Frame& frame, Inputs& inputs)=0;
     virtual json serialize()=0;
-    virtual void unserialize(json& j)=0;
+    virtual void unserialize(const json& j)=0;
 };
 
 struct FrameEffect : public Effect
