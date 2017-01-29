@@ -39,7 +39,11 @@ typedef std::map<double*, std::string> InputMap;
  * Helper function for loading a new set of inputs
  * into their final destinations (as specified by the InputMap)
  */
-void read_inputs(Inputs& inputs, InputMap& map);
+inline void read_inputs(Inputs& inputs, InputMap& map)
+{
+    for(auto it : map)
+        *(it.first) = inputs[it.second];
+}
 
 /******************************************************************************/
 /*  Generators                                                                */
@@ -111,7 +115,7 @@ public:
         double ry;
 
         json serialize(InputMap& input_map);
-        void unserialize(json& j, InputMap& input_map);
+        void unserialize(const json& j, InputMap& input_map);
     };
 
     ~Curve();

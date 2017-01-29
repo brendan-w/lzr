@@ -5,14 +5,6 @@
 namespace lzr {
 
 
-void read_inputs(Inputs& inputs, InputMap& map)
-{
-    for(auto it : map)
-        *(it.first) = inputs[it.second];
-}
-
-
-
 Curve::~Curve()
 {
 

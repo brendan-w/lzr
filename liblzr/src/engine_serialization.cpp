@@ -3,12 +3,24 @@
 
 namespace lzr {
 
+/*
+    Shows have the following directory structure:
+    .
+    ├── clips/
+    │   └── stars/
+    │       ├── effects.json
+    │       └── frames.ild
+    ├── inputs.json
+    └── timeline.json
+*/
+
 // show files
-static const char* TIMELINE = "/timeline.json";
+static const char* TIMELINE = "timeline.json";
 static const char* CLIPS_DIR = "clips";
 
 // clip files
-static const char* CLIP_EFFECTS = "/effects.json";
+static const char* CLIP_EFFECTS = "effects.json";
+
 
 
 // Generator names
@@ -137,7 +149,12 @@ json Curve::serialize()
 void Curve::unserialize(const json& j)
 {
     LOAD_INPUT(j, input_map, x);
-
+    for(const json jp : j["points"])
+    {
+        CurvePoint* p = new CurvePoint();
+        p->unserialize(jp, input_map);
+        points.push_back(p);
+    }
 }
 
 json Curve::CurvePoint::serialize(InputMap& input_map)
@@ -152,7 +169,7 @@ json Curve::CurvePoint::serialize(InputMap& input_map)
     return j;
 }
 
-void Curve::CurvePoint::unserialize(json& j, InputMap& input_map)
+void Curve::CurvePoint::unserialize(const json& j, InputMap& input_map)
 {
     LOAD_INPUT(j, input_map, x);
     LOAD_INPUT(j, input_map, y);
@@ -203,28 +220,26 @@ void TranslateEffect::unserialize(const json& j)
 
 void Clip::save(std::string show)
 {
+    std::ofstream f(show + "/" + CLIPS_DIR + "/" + name + "/" + CLIP_EFFECTS);
+    json j;
+    for(size_t i = 0; i < effects.size(); i++)
     {
-        std::ofstream f(show + "/" + CLIPS_DIR + "/" + name + "/" + CLIP_EFFECTS);
-        json j;
-        for(size_t i = 0; i < effects.size(); i++)
-        {
-            j[i] = effects[i]->serialize();
-        }
-        f << std::setw(4) << j << std::endl;
+        j[i] = effects[i]->serialize();
     }
+    f << std::setw(4) << j << std::endl;
 }
 
 void Clip::load(std::string show)
 {
+    std::ifstream f(show + "/" + CLIPS_DIR + "/" + name + "/" +  + CLIP_EFFECTS);
+    json j;
+    f >> j;
+
+    for(const json je : j)
     {
-        std::ifstream f(show + "/" + CLIPS_DIR + "/" + name + "/" +  + CLIP_EFFECTS);
-        json j;
-        f >> j;
-
-        for(json e : j)
-        {
-
-        }
+        Effect* effect = make_effect(je["__effect__"]);
+        effect->unserialize(je);
+        effects.push_back(effect);
     }
 }
 
@@ -236,7 +251,7 @@ void Clip::load(std::string show)
 void Show::save(std::string show)
 {
     {
-        std::ofstream f(show + TIMELINE);
+        std::ofstream f(show + "/" + TIMELINE);
         f << std::setw(4) << serialize_timeline() << std::endl;
     }
 }
@@ -244,7 +259,7 @@ void Show::save(std::string show)
 void Show::load(std::string show)
 {
     {
-        std::ifstream f(show + TIMELINE);
+        std::ifstream f(show + "/" + TIMELINE);
         json j;
         f >> j;
         unserialize_timeline(j);
