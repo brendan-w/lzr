@@ -1,0 +1,9 @@
+
+# hack to ignore files with no extensions
+tests/*
+!tests/*/
+!tests/*.*
+
+tools/*
+!tools/*/
+!tools/*.*

@@ -1,22 +1,4 @@
 
-# liblzr test binaries
-liblzr/test_optimizer
-liblzr/test_interpolator
-liblzr/test_transformations
-liblzr/test_ilda_read
-liblzr/test_ilda_write
-liblzr/simple_server
-
-# lzrd test binaries
-lzrd/lzrd
-lzrd/spiro_server
-lzrd/interp_server
-lzrd/ilda_server
-lzrd/transform_server
-
-# lzrv binaries
-lzrv/lzrv
-
 # Created by https://www.gitignore.io
 
 ### C ###

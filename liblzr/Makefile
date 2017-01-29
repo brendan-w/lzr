@@ -22,13 +22,20 @@ HEADERS := liblzr.hpp \
 DACS := src/dac/libetherdream/etherdream.a
 
 
+TOOLS_SRC = $(wildcard tools/*.cpp)
+TOOLS = $(TOOLS_SRC:.cpp=)
+
+
 TESTS_SRC = $(wildcard tests/*.cpp)
 TESTS = $(TESTS_SRC:.cpp=)
 
 # ============================= main targets =============================
 
 .PHONY: all
-all: liblzr.so liblzr.a
+all: liblzr.so liblzr.a tools
+
+.PHONY: tools
+tools: all $(TOOLS)
 
 .PHONY: test
 test: all $(TESTS)
@@ -42,8 +49,11 @@ liblzr.a: $(OBJS)
 %.o: %.cpp $(HEADERS)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-tests/% : tests/%.cpp
+tests/%: tests/%.cpp
 	$(CXX) $(CXXFLAGS) $(LIBS) $< ./liblzr.a -o $@
+
+tools/ilda: tools/ilda.cpp
+	$(CXX) $(CXXFLAGS) -I/usr/include/SDL2 -lSDL2 $< ./liblzr.a -o $@
 
 # DAC specific compilation
 src/dac/libetherdream/etherdream.a:
@@ -57,6 +67,7 @@ install:
 
 .PHONY: clean
 clean:
+	rm -f *.so *.a
 	find ./ -name "*.o" -type f -delete
 	find ./ -executable -type f -delete
 	$(foreach dac,$(DACS),$(MAKE) -C $(dir $(dac)) clean)

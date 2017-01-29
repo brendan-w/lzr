@@ -1,10 +1,9 @@
 
-#include <pthread.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
 #include <SDL.h>
-#include <liblzr.h>
+#include <liblzr.hpp>
 
 using namespace lzr;
 
@@ -15,76 +14,25 @@ using namespace lzr;
 
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
-Uint32 NEW_FRAME; //SDL event for new lzr frames
 
-void* zmq_ctx;
-pthread_t zmq_thread;
-
-pthread_mutex_t frame_lock = PTHREAD_MUTEX_INITIALIZER;
-Frame frame;
+FrameList frames;
+int frame_n = 0;
 
 //settings
 bool show_blanks = false;
 bool show_points = false;
 
-
-static void trigger_new_frame()
+static inline void next_frame()
 {
-    SDL_Event e;
-    SDL_zero(e);
-    e.type = NEW_FRAME;
-    e.user.data1 = NULL; //don't bother with data
-    e.user.data2 = NULL;
-
-    //flush any existing frame events, so they don't pile up
-    SDL_FlushEvent(NEW_FRAME);
-
-    //try to push onto SDL event queue
-    int r = SDL_PushEvent(&e);
-
-    if(r < 0)
-    {
-        fprintf(stderr, "SDL_PushEvent() failed\n%s\n", SDL_GetError());
-    }
-    else if(r == 0)
-    {
-        fprintf(stderr, "SDL_PushEvent() was filtered\n");
-    }
+    frame_n++;
+    frame_n = (frame_n >= (int)frames.size()) ? 0 : frame_n;
 }
 
-//ZMQ recv thread
-static void* zmq_loop(void* data)
+static inline void prev_frame()
 {
-    (void)data; //param is required, but not used
-
-    void* zmq_sub = frame_sub_new(zmq_ctx, LZRD_GRAPHICS_ENDPOINT);
-    Frame temp_frame;
-
-    while(1)
-    {
-        int r = recv_frame(zmq_sub, temp_frame);
-        std::cout << "recv frame: " << temp_frame.size() << std::endl;
-
-        if(r > 0)
-        {
-            pthread_mutex_lock(&frame_lock);
-            frame = temp_frame;
-            pthread_mutex_unlock(&frame_lock);
-            trigger_new_frame();
-        }
-        else if((r == -1) && (errno == ETERM))
-        {
-            //zmq_ctx has been terminated, stop looping,
-            //close the socket, and prepare for the join()
-            break;
-        }
-    }
-
-    zmq_close(zmq_sub);
-
-    return NULL;
+    frame_n--;
+    frame_n = (frame_n < 0) ? frames.size() - 1 : frame_n;
 }
-
 
 static inline int lzr_coord_to_screen(double v, bool invert)
 {
@@ -142,8 +90,7 @@ static void render()
 
     SDL_RenderClear(renderer);
 
-    //begin processing the current frame
-    pthread_mutex_lock(&frame_lock);
+    Frame& frame = frames[frame_n];
 
     //NOTE: using int's to avoid rollover problems with -1 (empty frames)
     for(int i = 0; i < ((int)frame.size() - 1); i++)
@@ -183,8 +130,6 @@ static void render()
         }
     }
 
-    pthread_mutex_unlock(&frame_lock);
-
     SDL_RenderPresent(renderer);
 }
 
@@ -198,9 +143,6 @@ static void loop()
         SDL_WaitEvent(NULL);
 
         //event pump
-
-        bool do_render = false;
-
         while(SDL_PollEvent(&e))
         {
             switch(e.type)
@@ -214,28 +156,39 @@ static void loop()
                     {
                         case SDLK_b:
                             show_blanks = !show_blanks;
-                            do_render = true;
                             break;
                         case SDLK_p:
                             show_points = !show_points;
-                            do_render = true;
                             break;
+                        case SDLK_LEFT:
+                            prev_frame();
+                            break;
+                        case SDLK_RIGHT:
+                            next_frame();
+                            break;
+                    }
+                    break;
+                case SDL_MOUSEWHEEL:
+                    if(e.wheel.y > 0)
+                    {
+                        next_frame();
+                    }
+                    else if(e.wheel.y < 0)
+                    {
+                        prev_frame();
                     }
                     break;
                 case SDL_WINDOWEVENT:
                         if((e.window.event == SDL_WINDOWEVENT_RESIZED) ||
                            (e.window.event == SDL_WINDOWEVENT_MAXIMIZED) ||
                            (e.window.event == SDL_WINDOWEVENT_RESTORED))
-                            do_render = true;
                         break;
                 default:
-                    if(e.type == NEW_FRAME)
-                        do_render = true;
+                    break;
             }
         }
 
-        if(do_render)
-            render();
+        render();
 
         //cap at ~30 fps
         SDL_Delay(33);
@@ -243,10 +196,27 @@ static void loop()
 }
 
 
-int main()
+int main(int argc, char* argv[])
 {
-    zmq_ctx = zmq_ctx_new();
+    if(argc <= 1)
+    {
+        fprintf(stderr, "Usage: ilda <ilda file>\n");
+        return EXIT_SUCCESS;
+    }
 
+    // load the ILDA file
+    ILDA* f = ilda_open(argv[1], "r");
+
+    printf("Found %zu projector(s)\n", ilda_projector_count(f));
+    printf("Found %zu frames for projector 0\n", ilda_frame_count(f, 0));
+
+    if(ilda_read(f, 0, frames) != LZR_SUCCESS)
+    {
+        fprintf(stderr, "Error loading frames\n");
+        return EXIT_FAILURE;
+    }
+
+    ilda_close(f);
 
     //start SDL
     if(SDL_Init(SDL_INIT_VIDEO) != 0)
@@ -277,40 +247,15 @@ int main()
         goto err_render;
     }
 
-    NEW_FRAME = SDL_RegisterEvents(1);
-    if(NEW_FRAME == ((Uint32) -1 ))
-    {
-        fprintf(stderr, "Failed to register custom events\n");
-        goto err_events;
-    }
-
-
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
     // clear the screen to black
     render();
 
-
-    //start a ZMQ worker thread
-    if(pthread_create(&zmq_thread, NULL, zmq_loop, NULL))
-    {
-        fprintf(stderr, "Failed to start ZMQ thread\n");
-        goto err_thread;
-    }
-
     //start the main loop
     loop();
 
-    //shut off all zmq activites. This will free up any blocking recv() calls
-    zmq_ctx_term(zmq_ctx);
-
-    //join the ZMQ reading thread
-    pthread_join(zmq_thread, NULL);
-
-
     //cleanup
-err_events:
-err_thread:
     SDL_DestroyRenderer(renderer);
 err_render:
     SDL_DestroyWindow(window);

@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <assert.h>
 
-#include <lzr.h>
+#include <liblzr.hpp>
 #include "../ilda/ilda_utils.h"
 
 int main()
