@@ -1,13 +1,13 @@
 
 #include <engine.hpp>
-#include <algorithm> // std::sort()
+#include <algorithm> // std::sort(), std::remove()
 
 namespace lzr {
 
 
 Curve::~Curve()
 {
-
+    clear();
 }
 
 double Curve::operator()(Inputs& inputs)
@@ -33,12 +33,26 @@ Curve::CurvePoint* Curve::add(double x_)
 
 void Curve::remove(CurvePoint* point)
 {
-    (void) point;
+    // detach any inputs
+    input_map.erase(&(point->x));
+    input_map.erase(&(point->y));
+    input_map.erase(&(point->lx));
+    input_map.erase(&(point->ly));
+    input_map.erase(&(point->rx));
+    input_map.erase(&(point->ry));
+
+    // remove the point
+    delete point;
+    points.erase(std::remove(points.begin(), points.end(), point));
 }
 
 void Curve::clear()
 {
-
+    // TODO make not hacky
+    while(points.size() > 0)
+    {
+        remove(points[0]);
+    }
 }
 
 double Curve::compute()
