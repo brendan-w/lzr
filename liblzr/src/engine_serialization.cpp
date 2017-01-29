@@ -9,7 +9,7 @@ namespace lzr {
     Shows have the following directory structure:
     .
     ├── clips/
-    │   └── stars/
+    │   └── Stars/
     │       ├── effects.json
     │       └── frames.ild
     ├── inputs.json

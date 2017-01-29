@@ -126,7 +126,9 @@ Frame Show::operator()(double time, Inputs& inputs)
     for(TimelineClip& t_clip : timeline)
     {
         // if we're in this clip
-        if((time > t_clip.start) && (time < t_clip.end))
+        if((time > t_clip.start) &&
+           (time < t_clip.end) &&
+           (t_clip.clip != nullptr))
         {
             // execute this clip at the given time
             inputs["time"] = time;
