@@ -4,8 +4,9 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <endian.h>
 #include <liblzr.h>
+
+#include "include/portable_endian.h"
 
 namespace lzr {
 
