@@ -1,6 +1,6 @@
 
 
-#include <liblzr.h>
+#include <liblzr.hpp>
 #include "pathdock.hpp"
 #include "pathdelegate.hpp"
 

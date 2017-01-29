@@ -1,6 +1,6 @@
 
-#include "dac.h"
-#include "etherdream.h"
+#include "dac.hpp"
+#include "etherdream.hpp"
 
 namespace lzr {
 

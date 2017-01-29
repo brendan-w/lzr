@@ -1,5 +1,5 @@
 
-#include "etherdream.h"
+#include "etherdream.hpp"
 
 namespace lzr {
 

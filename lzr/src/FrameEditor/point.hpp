@@ -3,7 +3,7 @@
 
 #include <QtWidgets>
 #include <QDebug>
-#include <liblzr.h>
+#include <liblzr.hpp>
 #include "frameeditorstate.hpp"
 
 

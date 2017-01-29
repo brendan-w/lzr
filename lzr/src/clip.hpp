@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include <liblzr.h>
+#include <liblzr.hpp>
 #include <QAbstractListModel>
 #include <QColor>
 #include "effects.hpp"

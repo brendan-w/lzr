@@ -14,10 +14,10 @@ SRC += $(wildcard src/*.cpp)
 SRC += $(wildcard src/dac/*.cpp)
 OBJS = $(SRC:.cpp=.o)
 
-HEADERS := liblzr.h \
+HEADERS := liblzr.hpp \
 		   engine.hpp \
-           src/*.h \
-           src/dac/*.h
+           src/*.hpp \
+           src/dac/*.hpp
 
 DACS := src/dac/libetherdream/etherdream.a
 
@@ -51,9 +51,9 @@ src/dac/libetherdream/etherdream.a:
 
 .PHONY: install
 install:
-	install -m 0755 liblzr.a  $(INSTALL_PREFIX)/lib
-	install -m 0755 liblzr.so $(INSTALL_PREFIX)/lib
-	install -m 0755 lzr.h     $(INSTALL_PREFIX)/include
+	install -m 0755 liblzr.a   $(INSTALL_PREFIX)/lib
+	install -m 0755 liblzr.so  $(INSTALL_PREFIX)/lib
+	install -m 0755 liblzr.hpp $(INSTALL_PREFIX)/include
 
 .PHONY: clean
 clean:

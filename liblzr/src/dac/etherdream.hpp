@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "dac.h"
+#include "dac.hpp"
 #include "libetherdream/etherdream.h"
 
 namespace lzr {

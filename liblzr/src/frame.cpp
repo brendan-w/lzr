@@ -1,6 +1,6 @@
 
 #include <vector>
-#include <liblzr.h>
+#include <liblzr.hpp>
 
 namespace lzr {
 

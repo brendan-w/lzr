@@ -1,7 +1,7 @@
 
 #include <string.h> //strcmp() for "ILDA" header
-#include <liblzr.h>
-#include "ilda.h"
+#include <liblzr.hpp>
+#include "ilda.hpp"
 
 namespace lzr {
 

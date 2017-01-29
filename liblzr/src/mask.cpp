@@ -1,6 +1,6 @@
 
 #include <math.h>
-#include <liblzr.h>
+#include <liblzr.hpp>
 
 namespace lzr {
 

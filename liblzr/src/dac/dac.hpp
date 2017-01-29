@@ -7,7 +7,7 @@
 #include <iostream>
 #include <vector>
 #include <math.h>
-#include <liblzr.h>
+#include <liblzr.hpp>
 
 typedef std::vector<std::string> DACList;
 

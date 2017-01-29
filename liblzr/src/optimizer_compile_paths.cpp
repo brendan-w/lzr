@@ -7,8 +7,8 @@
 
 
 #include <stdio.h>
-#include "optimizer.h"
-#include "interpolator.h"
+#include "optimizer.hpp"
+#include "interpolator.hpp"
 
 namespace lzr {
 

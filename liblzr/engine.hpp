@@ -5,7 +5,7 @@
 #include <vector>
 #include <fstream>
 
-#include <liblzr.h>
+#include <liblzr.hpp>
 #include <nlohmann/json.hpp>
 
 using json = nlohmann::json;
