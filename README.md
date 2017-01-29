@@ -6,7 +6,7 @@ LZR
 
 Open Source Laser Projection Software
 
-LZR is currently collection of backend libraries and binaries which can form the bones of laser show GUIs, or creative applications. Here are the main components:
+LZR is currently collection of backend libraries and binaries which can form the bones of laser show GUIs, or creative applications.
 
 liblzr
 ------
@@ -19,17 +19,8 @@ Library containing basic laser utilities:
 - frame interpolator
 - frame optimizer
 - ILDA file reader/writer
-- ZeroMQ frame transport
 
-See [lzr.h](https://github.com/brendanwhitfield/lzr/blob/master/liblzr/liblzr.h) for details.
-
-
-lzrv
-----
-Projector preview application (SDL 2.0). This program will listen to the ZeroMQ data being sent to `lzrd`, and display it. This will allow you to work offline.
-
-
-
+See [liblzr.hpp](https://github.com/brendanwhitfield/lzr/blob/master/liblzr/liblzr.hpp) for details.
 
 Building
 ========
@@ -38,7 +29,7 @@ Dependencies:
 
 - C++11 compiler (g++)
 - Make
-- ZeroMQ 4.x
+- [nlohmann/json](https://github.com/nlohmann/json)
 - SDL 2.0
 
 Very simple right now:
