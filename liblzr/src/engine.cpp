@@ -41,7 +41,7 @@ Curve::CurvePoint* Curve::add(double x_)
 
 void Curve::remove(CurvePoint* point)
 {
-
+    (void) point;
 }
 
 void Curve::clear()
@@ -83,6 +83,7 @@ double Curve::compute()
     }
 
     // TODO: perform the bezier math
+    (void) right_point;
     return left_point->y;
 }
 

@@ -48,13 +48,9 @@ void read_inputs(Inputs& inputs, InputMap& map);
 template <typename T>
 struct Generator
 {
-    Generator(const char* name_) : name(name_) {};
     virtual T operator()(Inputs& inputs)=0;
-
     virtual json serialize()=0;
-    virtual void unserialize(json j)=0;
-
-    const char* name;
+    virtual void unserialize(const json& j)=0;
     InputMap input_map;
 };
 
@@ -64,12 +60,13 @@ struct Generator
 
 struct Constant : public Generator<double>
 {
-    Constant() : Generator("Constant") {};
-    double operator()(Inputs& inputs) { (void) inputs; return v; };
-    double v;
+    static const char* name;
+
+    double operator()(Inputs& inputs) { (void) inputs; return x; };
+    double x;
 
     json serialize();
-    void unserialize(json j);
+    void unserialize(const json& j);
 };
 
 //
@@ -78,7 +75,8 @@ struct Constant : public Generator<double>
 
 struct Linear : public Generator<double>
 {
-    Linear() : Generator("Linear") {};
+    static const char* name;
+
     double operator()(Inputs& inputs)
     {
         read_inputs(inputs, input_map);
@@ -91,7 +89,7 @@ struct Linear : public Generator<double>
     double to_b;
 
     json serialize();
-    void unserialize(json j);
+    void unserialize(const json& j);
 };
 
 //
@@ -101,6 +99,8 @@ struct Linear : public Generator<double>
 class Curve : public Generator<double>
 {
 public:
+    static const char* name;
+
     struct CurvePoint
     {
         double x;
@@ -109,15 +109,17 @@ public:
         double ly;
         double rx;
         double ry;
+
+        json serialize(InputMap& input_map);
+        void unserialize(json& j, InputMap& input_map);
     };
 
-    Curve() : Generator("Curve") {};
     ~Curve();
 
     double operator()(Inputs& inputs);
 
     json serialize();
-    void unserialize(json j);
+    void unserialize(const json& j);
 
     CurvePoint* add(double x_);
     void remove(CurvePoint* point);
@@ -141,10 +143,14 @@ private:
 struct Effect
 {
     virtual void operator()(Frame& frame, Inputs& inputs)=0;
+    virtual json serialize()=0;
+    virtual void unserialize(json& j)=0;
 };
 
 struct FrameEffect : public Effect
 {
+    static const char* name;
+
     FrameList frames;
     Generator<double>* n;
 
@@ -153,10 +159,15 @@ struct FrameEffect : public Effect
         // TODO: clamp to prevent segfaults
         frame = frames[(int)(*n)(inputs)];
     };
+
+    json serialize();
+    void unserialize(const json& j);
 };
 
 struct TranslateEffect : public Effect
 {
+    static const char* name;
+
     Generator<double>* x;
     Generator<double>* y;
 
@@ -164,6 +175,9 @@ struct TranslateEffect : public Effect
     {
         translate(frame, (*x)(inputs), (*y)(inputs));
     };
+
+    json serialize();
+    void unserialize(const json& j);
 };
 
 
@@ -173,6 +187,8 @@ struct TranslateEffect : public Effect
 
 struct Clip
 {
+    Clip(std::string name_) : name(name_) {};
+
     Frame operator()(Inputs& inputs)
     {
         Frame frame;
@@ -183,7 +199,11 @@ struct Clip
         return frame;
     };
 
+    void save(std::string show);
+    void load(std::string show);
+
     std::vector<Effect*> effects;
+    std::string name;
 };
 
 
@@ -191,15 +211,17 @@ struct Clip
 /*  Master Timeline                                                           */
 /******************************************************************************/
 
-struct TimelineClip
-{
-    Clip* clip;
-    double start;
-    double end;
-};
 
 class Show
 {
+public:
+    struct TimelineClip
+    {
+        Clip* clip;
+        double start;
+        double end;
+    };
+
     ~Show()
     {
         for(Clip* clip : clips)
@@ -226,11 +248,17 @@ class Show
         return frame;
     }
 
-    json serialize();
-    void unserialize(json j);
+    void save(std::string show);
+    void load(std::string show);
 
     std::vector<Clip*> clips;
     std::vector<TimelineClip> timeline;
+
+private:
+    Clip* get_clip_by_name(const std::string& name);
+
+    json serialize_timeline();
+    void unserialize_timeline(json& j);
 };
 
 
