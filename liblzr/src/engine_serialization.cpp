@@ -277,6 +277,7 @@ void Show::save(std::string show)
             Clip* clip = it.second;
             std::string path = show + "/" + CLIPS_DIR + "/" + name;
             r = mkdir(path.c_str(), PERMS);
+            (void) r;
             clip->save(show);
         }
     }
