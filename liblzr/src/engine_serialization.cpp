@@ -37,7 +37,6 @@ const char* FrameEffect::name     = "FrameEffect";
 const char* TranslateEffect::name = "TranslateEffect";
 
 
-
 /*
  * Helper to save and load values based on whether they're
  * constant, or have been mapped to inputs.
@@ -92,6 +91,21 @@ static Effect* make_effect(const std::string& name)
     if(name == TranslateEffect::name)
         return new TranslateEffect();
     return nullptr;
+}
+
+inline std::vector<std::string> glob(const std::string& pattern){
+    std::vector<std::string> ret;
+
+    glob_t glob_result;
+    glob(pattern.c_str(), GLOB_TILDE, NULL, &glob_result);
+
+    for(size_t i = 0; i < glob_result.gl_pathc; i++)
+    {
+        ret.push_back(std::string(glob_result.gl_pathv[i]));
+    }
+
+    globfree(&glob_result);
+    return ret;
 }
 
 //
@@ -222,9 +236,9 @@ void TranslateEffect::unserialize(const json& j)
 // Clips
 //
 
-void Clip::save(std::string show)
+void Clip::save(std::string path)
 {
-    std::ofstream f(show + "/" + CLIPS_DIR + "/" + name + "/" + CLIP_EFFECTS);
+    std::ofstream f(path + "/" + CLIP_EFFECTS);
     json j;
     for(size_t i = 0; i < effects.size(); i++)
     {
@@ -233,9 +247,9 @@ void Clip::save(std::string show)
     f << std::setw(4) << j << std::endl;
 }
 
-void Clip::load(std::string show)
+void Clip::load(std::string path)
 {
-    std::ifstream f(show + "/" + CLIPS_DIR + "/" + name + "/" +  + CLIP_EFFECTS);
+    std::ifstream f(path + "/" +  + CLIP_EFFECTS);
     json j;
     f >> j;
 
@@ -257,9 +271,12 @@ void Show::save(std::string show)
     int r = mkdir((show + "/" + CLIPS_DIR).c_str(), PERMS);
 
     {
-        for(Clip* clip : clips)
+        for(auto it : clips)
         {
-            r = mkdir((show + "/" + CLIPS_DIR + "/" + clip->name).c_str(), PERMS);
+            std::string name = it.first;
+            Clip* clip = it.second;
+            std::string path = show + "/" + CLIPS_DIR + "/" + name;
+            r = mkdir(path.c_str(), PERMS);
             clip->save(show);
         }
     }
@@ -272,6 +289,14 @@ void Show::save(std::string show)
 
 void Show::load(std::string show)
 {
+    {
+        for(const std::string& name : glob(show + "/" + CLIPS_DIR + "/*"))
+        {
+            Clip* clip = new Clip(name);
+            clip->load(show + "/" + CLIPS_DIR + "/" + name);
+            clips[name] = clip;
+        }
+    }
     {
         std::ifstream f(show + "/" + TIMELINE);
         json j;
@@ -299,23 +324,17 @@ void Show::unserialize_timeline(json& j)
     for(size_t i = 0; i < j.size(); i++)
     {
         TimelineClip t_clip;
-        std::string name = j[i]["clip"];
+        t_clip.clip      = get_clip_by_name(j[i]["clip"]);
         t_clip.start     = j[i]["start"];
         t_clip.end       = j[i]["end"];
-        t_clip.clip      = get_clip_by_name(name);
         timeline.push_back(t_clip);
     }
 }
 
 Clip* Show::get_clip_by_name(const std::string& name)
 {
-    // TODO: make this not horrible
-    for(Clip* clip : clips)
-    {
-        if(clip->name == name)
-            return clip;
-    }
-
+    if(clips.find(name) != clips.end())
+        return clips[name];
     return nullptr;
 }
 

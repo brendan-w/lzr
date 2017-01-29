@@ -93,4 +93,49 @@ double Curve::compute()
     return left_point->y;
 }
 
+
+//
+// Clips
+//
+
+Frame Clip::operator()(Inputs& inputs)
+{
+    Frame frame;
+    for(Effect* effect : effects)
+    {
+        (*effect)(frame, inputs);
+    }
+    return frame;
+}
+
+//
+// Shows
+//
+
+Show::~Show()
+{
+    for(auto it : clips)
+        delete it.second;
+}
+
+Frame Show::operator()(double time, Inputs& inputs)
+{
+    Frame frame;
+
+    // TODO: make not slow and naive
+    for(TimelineClip& t_clip : timeline)
+    {
+        // if we're in this clip
+        if((time > t_clip.start) && (time < t_clip.end))
+        {
+            // execute this clip at the given time
+            inputs["time"] = time;
+            inputs["clip_time"] = (time - t_clip.start) / (t_clip.end - t_clip.start);
+            frame.add_with_blank_jump( (*(t_clip.clip))(inputs) );
+        }
+    }
+
+    return frame;
+}
+
 } // namespace lzr

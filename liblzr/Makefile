@@ -12,7 +12,6 @@ ARFLAGS   = rs
 
 # ============================= files and paths =============================
 
-
 INSTALL_PREFIX ?= /usr/local
 
 OBJS := src/point.o \
@@ -81,14 +80,8 @@ install:
 
 .PHONY: clean
 clean:
-	rm -f *.a *.o *.so
-	rm -f src/*.o
-	rm -f interpolator/*.o
-	rm -f transforms/*.o
-	rm -f optimizer/*.o
-	rm -f ilda/*.o
-	rm -f zmq/*.o
-	rm -f $(TESTS)
+	find ./ -name "*.o" -type f -delete
+	find ./ -executable -type f -delete
 	$(foreach dac,$(DACS),$(MAKE) -C $(dir $(dac)) clean)
 
 
@@ -99,5 +92,5 @@ simple_server: tests/simple_server.cpp
 .PHONY: test
 test: all tests/*.cpp
 	for test in $(TESTS); do \
-		$(CXX) $(CXXFLAGS) $(LIBS) tests/$$test.cpp ./liblzr.a -o $$test ; \
+		$(CXX) $(CXXFLAGS) $(LIBS) tests/$$test.cpp ./liblzr.a -o tests/$$test ; \
 	done

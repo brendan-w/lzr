@@ -191,20 +191,12 @@ struct TranslateEffect : public Effect
 
 struct Clip
 {
-    Clip(std::string name_) : name(name_) {};
+    Clip(const std::string& name_) : name(name_) {};
 
-    Frame operator()(Inputs& inputs)
-    {
-        Frame frame;
-        for(Effect* effect : effects)
-        {
-            (*effect)(frame, inputs);
-        }
-        return frame;
-    };
+    Frame operator()(Inputs& inputs);
 
-    void save(std::string show);
-    void load(std::string show);
+    void save(std::string path);
+    void load(std::string path);
 
     std::vector<Effect*> effects;
     std::string name;
@@ -226,36 +218,13 @@ public:
         double end;
     };
 
-    ~Show()
-    {
-        for(Clip* clip : clips)
-            delete clip;
-    }
-
-    Frame operator()(double time, Inputs& inputs)
-    {
-        Frame frame;
-
-        // TODO: make not slow and naive
-        for(TimelineClip& t_clip : timeline)
-        {
-            // if we're in this clip
-            if((time > t_clip.start) && (time < t_clip.end))
-            {
-                // execute this clip at the given time
-                inputs["time"] = time;
-                inputs["clip_time"] = (time - t_clip.start) / (t_clip.end - t_clip.start);
-                frame.add_with_blank_jump( (*(t_clip.clip))(inputs) );
-            }
-        }
-
-        return frame;
-    }
+    ~Show();
+    Frame operator()(double time, Inputs& inputs);
 
     void save(std::string show);
     void load(std::string show);
 
-    std::vector<Clip*> clips;
+    std::map<std::string, Clip*> clips;
     std::vector<TimelineClip> timeline;
 
 private:
