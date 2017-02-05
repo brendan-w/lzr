@@ -41,10 +41,11 @@ int main(int argc, char* argv[])
     TranslateEffect* translate = new TranslateEffect();
     Constant* x = new Constant();
     Constant* y = new Constant();
-    x->x = 0.0;
+    x->x = 0.25;
     y->x = 0.0;
     translate->x = x;
     translate->y = y;
+    clip->effects.push_back(translate);
 
     Show show;
     show.clips["test clip"] = clip;
@@ -60,7 +61,7 @@ int main(int argc, char* argv[])
      * Write ILDA file
      */
 
-    f = ilda_open("output.ilda", "w");
+    f = ilda_open("/tmp/output.ilda", "w");
 
     if(ilda_write(f, 0, output) != LZR_SUCCESS)
     {

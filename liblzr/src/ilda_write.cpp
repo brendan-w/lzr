@@ -1,10 +1,18 @@
 
 #include <string.h> //memset() zeroing out struct
+#include <algorithm> //min(), max()
 #include <liblzr.hpp>
 #include "ilda.hpp"
 
-namespace lzr {
+// not in C++11, so stub this out for now
+template<class T>
+constexpr const T& clamp( const T& v, const T& lo, const T& hi )
+{
+    return std::min<T>(std::max<T>(v, lo), hi);
+}
 
+
+namespace lzr {
 
 static int write_point(ILDA* ilda, Point& p, bool is_last)
 {
@@ -12,8 +20,8 @@ static int write_point(ILDA* ilda, Point& p, bool is_last)
     ilda_point_2d_true ilda_p;
     memset(&ilda_p, 0, sizeof(ilda_point_2d_true));
 
-    ilda_p.x = (int16_t) INT16_MAX * p.x;
-    ilda_p.y = (int16_t) INT16_MAX * p.y;
+    ilda_p.x = (int16_t) INT16_MAX * clamp<double>(p.x, LZR_POSITION_MIN, LZR_POSITION_MAX);
+    ilda_p.y = (int16_t) INT16_MAX * clamp<double>(p.y, LZR_POSITION_MIN, LZR_POSITION_MAX);
     ilda_p.r = p.r;
     ilda_p.g = p.g;
     ilda_p.b = p.b;
