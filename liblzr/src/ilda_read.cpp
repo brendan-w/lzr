@@ -38,6 +38,7 @@ static int read_record(ILDA* ilda, void* buffer, size_t buffer_size)
 // ================================ Format 0 ================================
 static int read_3d_indexed(ILDA* ilda, Point& p)
 {
+    static_assert(sizeof(ilda_point_3d_indexed) == 8, "3D Indexed point is not 8 bytes!");
     ilda_point_3d_indexed ilda_p;
 
     int r = read_record(ilda, (void*) &ilda_p, sizeof(ilda_point_3d_indexed));
@@ -64,6 +65,7 @@ static int read_3d_indexed(ILDA* ilda, Point& p)
 // ================================ Format 1 ================================
 static int read_2d_indexed(ILDA* ilda, Point& p)
 {
+    static_assert(sizeof(ilda_point_2d_indexed) == 6, "2D Indexed point is not 6 bytes!");
     ilda_point_2d_indexed ilda_p;
 
     int r = read_record(ilda, (void*) &ilda_p, sizeof(ilda_point_2d_indexed));
@@ -90,6 +92,7 @@ static int read_2d_indexed(ILDA* ilda, Point& p)
 //NOTE: unlike the point readers, this function reads ALL of its records in one call
 static int read_colors(ILDA* ilda)
 {
+    static_assert(sizeof(ilda_color) == 3, "Color point is not 3 bytes!");
     size_t n = ilda->h.number_of_records;
 
     ilda->current_projector()->clear_palette();
@@ -113,6 +116,7 @@ static int read_colors(ILDA* ilda)
 // ================================ Format 4 ================================
 static int read_3d_true(ILDA* ilda, Point& p)
 {
+    static_assert(sizeof(ilda_point_3d_true) == 10, "3D True-color point is not 10 bytes!");
     ilda_point_3d_true ilda_p;
 
     int r = read_record(ilda, (void*) &ilda_p, sizeof(ilda_point_3d_true));
@@ -139,9 +143,10 @@ static int read_3d_true(ILDA* ilda, Point& p)
 // ================================ Format 5 ================================
 static int read_2d_true(ILDA* ilda, Point& p)
 {
+    static_assert(sizeof(ilda_point_2d_true) == 8, "2D True-color point is not 8 bytes!");
     ilda_point_2d_true ilda_p;
 
-    int r = read_record(ilda, (void*) &p, sizeof(ilda_point_2d_true));
+    int r = read_record(ilda, (void*) &ilda_p, sizeof(ilda_point_2d_true));
     if(STATUS_IS_HALTING(r)) return r;
 
     //convert the ILDA point to a Point
@@ -220,6 +225,8 @@ static int read_frame(ILDA* ilda, FrameList& frame_list, point_reader read_point
  */
 static int read_header(ILDA* ilda)
 {
+    static_assert(sizeof(ilda_header) == 32, "ILDA header is not 32 bytes!");
+
     //read one ILDA header
     size_t r = fread((void*) &(ilda->h),
                      1,

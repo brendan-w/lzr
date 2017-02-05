@@ -6,28 +6,29 @@
 namespace lzr {
 
 
-static int write_point(ILDA* ilda, Point& point, bool is_last)
+static int write_point(ILDA* ilda, Point& p, bool is_last)
 {
     // right now, this writer will only output 2D True-Color points
-    ilda_point_2d_true p;
+    ilda_point_2d_true ilda_p;
+    memset(&ilda_p, 0, sizeof(ilda_point_2d_true));
 
-    p.x = (int16_t) INT16_MAX * point.x;
-    p.y = (int16_t) INT16_MAX * point.y;
-    p.r = point.r;
-    p.g = point.g;
-    p.b = point.b;
-    p.status.blanked = point.is_blanked();
-    p.status.last_point = is_last;
+    ilda_p.x = (int16_t) INT16_MAX * p.x;
+    ilda_p.y = (int16_t) INT16_MAX * p.y;
+    ilda_p.r = p.r;
+    ilda_p.g = p.g;
+    ilda_p.b = p.b;
+    ilda_p.status.blanked = p.is_blanked();
+    ilda_p.status.last_point = is_last;
 
     //convert to big-endian
-    htobe_2d(&p);
-    fwrite((void*) &p, 1, sizeof(ilda_point_2d_true), ilda->f);
+    htobe_2d(&ilda_p);
+    fwrite((void*) &ilda_p, 1, sizeof(ilda_point_2d_true), ilda->f);
 
     return LZR_SUCCESS;
 }
 
 
-static int write_frame(ILDA* ilda, Frame& frame, size_t i, size_t pd)
+static int write_frame(ILDA* ilda, Frame& frame, size_t pd)
 {
     //skip empty frames, since they signify the end of a file
     if(frame.size() == 0)
@@ -42,8 +43,8 @@ static int write_frame(ILDA* ilda, Frame& frame, size_t i, size_t pd)
     h.format            = FORMAT_5_2D_TRUE;
     h.number_of_records = (uint16_t) frame.size();
     h.projector_id      = (uint8_t)  pd;
-    h.total_frames      = (uint16_t) ilda->projectors[pd].n_frames;
-    h.frame_number      = (uint16_t) i;
+    //h.total_frames      = (uint16_t) ilda->projectors[pd].n_frames;
+    h.frame_number      = (uint16_t) ilda->projectors[pd].n_frames;
 
     //convert to big-endian
     htobe_header(&h);
@@ -72,6 +73,8 @@ void write_closer(ILDA* ilda)
 
     //write the header
     fwrite((void*) &h, 1, sizeof(ilda_header), ilda->f);
+
+    // TODO: adjust total frame counts
 }
 
 
@@ -93,9 +96,9 @@ int ilda_write(ILDA* ilda, size_t pd, FrameList& frame_list)
         return LZR_FAILURE;
     }
 
-    for(size_t i = 0; i < frame_list.size(); i++)
+    for(Frame& frame : frame_list)
     {
-        int r = write_frame(ilda, frame_list[i], i, pd);
+        int r = write_frame(ilda, frame, pd);
         if(r == LZR_SUCCESS)
         {
             ilda->projectors[pd].n_frames++;
