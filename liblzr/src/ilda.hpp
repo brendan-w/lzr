@@ -28,7 +28,7 @@ namespace lzr {
 /*  ILDA Structure Definitions                                                */
 /******************************************************************************/
 
-typedef struct {
+typedef struct __attribute__ ((packed)) {
     char     ilda[4];
     char     reserved_a[3];
     uint8_t  format;
@@ -42,21 +42,21 @@ typedef struct {
 } ilda_header;
 
 
-typedef struct {
+typedef struct __attribute__ ((packed)) {
     uint8_t            : 6; // the rest of the byte is unused
     uint8_t blanked    : 1;
     uint8_t last_point : 1;
 } ilda_status;
 
 
-typedef struct {
+typedef struct __attribute__ ((packed)) {
     uint8_t r;    
     uint8_t g;
     uint8_t b;
 } ilda_color;
 
 
-typedef struct {
+typedef struct __attribute__ ((packed)) {
     int16_t     x;
     int16_t     y;
     ilda_status status;
@@ -64,7 +64,7 @@ typedef struct {
 } ilda_point_2d_indexed;
 
 
-typedef struct {
+typedef struct __attribute__ ((packed)) {
     int16_t     x;
     int16_t     y;
     ilda_status status;
@@ -74,7 +74,7 @@ typedef struct {
 } ilda_point_2d_true;
 
 
-typedef struct {
+typedef struct __attribute__ ((packed)) {
     int16_t     x;
     int16_t     y;
     int16_t     z;
@@ -83,7 +83,7 @@ typedef struct {
 } ilda_point_3d_indexed;
 
 
-typedef struct {
+typedef struct __attribute__ ((packed)) {
     int16_t     x;
     int16_t     y;
     int16_t     z;
@@ -96,8 +96,21 @@ typedef struct {
 
 
 /******************************************************************************/
-/*  ILDA Color Definitions                                                    */
+/*  ILDA Constants                                                            */
 /******************************************************************************/
+
+// file format
+
+#define ILDA_MAGIC "ILDA"
+#define FORMAT_0_3D_INDEXED 0
+#define FORMAT_1_2D_INDEXED 1
+#define FORMAT_2_PALETTE    2
+#define FORMAT_4_3D_TRUE    4
+#define FORMAT_5_2D_TRUE    5
+
+#define MAX_PROJECTORS 256
+
+// colors
 
 extern const ilda_color ilda_palette[];
 extern const size_t ilda_palette_size;
@@ -116,7 +129,6 @@ extern const size_t ilda_palette_size;
 /*  Parser Context                                                            */
 /******************************************************************************/
 
-#define MAX_PROJECTORS 256
  
 class ILDA_Projector
 {

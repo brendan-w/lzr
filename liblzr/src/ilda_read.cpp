@@ -7,7 +7,7 @@ namespace lzr {
 
 
 // function signiture for point readers
-typedef int (*point_reader)(ILDA* ilda, Point* p);
+typedef int (*point_reader)(ILDA* ilda, Point& p);
 
 
 
@@ -31,12 +31,12 @@ static int read_record(ILDA* ilda, void* buffer, size_t buffer_size)
  * Record readers/decoders
  * These functions translate ILDA structs into LZR structs
  *
- * Data from point records will be loaded into the given lzr::Point* p
+ * Data from point records will be loaded into the given lzr::Point& p
  * Colors are placed in the corresponding projector's color palette array
  */
 
 // ================================ Format 0 ================================
-static int read_3d_indexed(ILDA* ilda, Point* p)
+static int read_3d_indexed(ILDA* ilda, Point& p)
 {
     ilda_point_3d_indexed ilda_p;
 
@@ -46,23 +46,23 @@ static int read_3d_indexed(ILDA* ilda, Point* p)
     //convert the ILDA point to a Point
     betoh_3d(&ilda_p);
 
-    p->x = (double) ilda_p.x / INT16_MAX;
-    p->y = (double) ilda_p.y / INT16_MAX;
+    p.x = (double) ilda_p.x / INT16_MAX;
+    p.y = (double) ilda_p.y / INT16_MAX;
     // ilda_p.z is completely discarded (orthographically projected)
     ilda_color c = ilda->current_projector()->lookup_color(ilda_p.color);
-    p->r = c.r;
-    p->g = c.g;
-    p->b = c.b;
-    p->i = UINT8_MAX;
+    p.r = c.r;
+    p.g = c.g;
+    p.b = c.b;
+    p.i = UINT8_MAX;
     if(ilda_p.status.blanked)
-        p->blank();
+        p.blank();
 
     return ILDA_CONTINUE;
 }
 
 
 // ================================ Format 1 ================================
-static int read_2d_indexed(ILDA* ilda, Point* p)
+static int read_2d_indexed(ILDA* ilda, Point& p)
 {
     ilda_point_2d_indexed ilda_p;
 
@@ -72,15 +72,15 @@ static int read_2d_indexed(ILDA* ilda, Point* p)
     //convert the ILDA point to a Point
     betoh_2d(&ilda_p);
 
-    p->x = (double) ilda_p.x / INT16_MAX;
-    p->y = (double) ilda_p.y / INT16_MAX;
+    p.x = (double) ilda_p.x / INT16_MAX;
+    p.y = (double) ilda_p.y / INT16_MAX;
     ilda_color c = ilda->current_projector()->lookup_color(ilda_p.color);
-    p->r = c.r;
-    p->g = c.g;
-    p->b = c.b;
-    p->i = UINT8_MAX;
+    p.r = c.r;
+    p.g = c.g;
+    p.b = c.b;
+    p.i = UINT8_MAX;
     if(ilda_p.status.blanked)
-        p->blank();
+        p.blank();
 
     return ILDA_CONTINUE;
 }
@@ -110,8 +110,8 @@ static int read_colors(ILDA* ilda)
 }
 
 
-// ================================ Format 3 ================================
-static int read_3d_true(ILDA* ilda, Point* p)
+// ================================ Format 4 ================================
+static int read_3d_true(ILDA* ilda, Point& p)
 {
     ilda_point_3d_true ilda_p;
 
@@ -122,22 +122,22 @@ static int read_3d_true(ILDA* ilda, Point* p)
     betoh_3d(&ilda_p);
 
     //read the point data
-    p->x = (double) ilda_p.x / INT16_MAX;
-    p->y = (double) ilda_p.y / INT16_MAX;
+    p.x = (double) ilda_p.x / INT16_MAX;
+    p.y = (double) ilda_p.y / INT16_MAX;
     // ilda_p.z is completely discarded (orthographically projected)
-    p->r = ilda_p.r;
-    p->g = ilda_p.g;
-    p->b = ilda_p.b;
-    p->i = UINT8_MAX;
+    p.r = ilda_p.r;
+    p.g = ilda_p.g;
+    p.b = ilda_p.b;
+    p.i = UINT8_MAX;
 
     if(ilda_p.status.blanked)
-        p->blank();
+        p.blank();
 
     return ILDA_CONTINUE;
 }
 
-// ================================ Format 4 ================================
-static int read_2d_true(ILDA* ilda, Point* p)
+// ================================ Format 5 ================================
+static int read_2d_true(ILDA* ilda, Point& p)
 {
     ilda_point_2d_true ilda_p;
 
@@ -148,15 +148,15 @@ static int read_2d_true(ILDA* ilda, Point* p)
     betoh_2d(&ilda_p);
 
     //read the point data
-    p->x = (double) ilda_p.x / INT16_MAX;
-    p->y = (double) ilda_p.y / INT16_MAX;
-    p->r = ilda_p.r;
-    p->g = ilda_p.g;
-    p->b = ilda_p.b;
-    p->i = UINT8_MAX;
+    p.x = (double) ilda_p.x / INT16_MAX;
+    p.y = (double) ilda_p.y / INT16_MAX;
+    p.r = ilda_p.r;
+    p.g = ilda_p.g;
+    p.b = ilda_p.b;
+    p.i = UINT8_MAX;
 
     if(ilda_p.status.blanked)
-        p->blank();
+        p.blank();
 
     return ILDA_CONTINUE;
 }
@@ -177,7 +177,7 @@ static int read_frame(ILDA* ilda, FrameList& frame_list, point_reader read_point
 {
     int status = ILDA_CONTINUE;
 
-    //lookup the number of frames
+    //lookup the number of points
     size_t n = ilda->h.number_of_records;
 
     if(n == 0)
@@ -186,9 +186,6 @@ static int read_frame(ILDA* ilda, FrameList& frame_list, point_reader read_point
         status = ILDA_WARN;
     }
 
-    //if there's already a problem, return early
-    if(STATUS_IS_HALTING(status)) return status;
-
     //allocate them all at once
     Frame frame(n);
 
@@ -196,7 +193,7 @@ static int read_frame(ILDA* ilda, FrameList& frame_list, point_reader read_point
     for(size_t i = 0; i < n; i++)
     {
         Point point;
-        int r = read_point(ilda, &point);
+        int r = read_point(ilda, point);
         if(STATUS_IS_HALTING(r)) return r;
 
         //save the new point to the user's buffer
@@ -239,7 +236,7 @@ static int read_header(ILDA* ilda)
     }
 
     //is it prefixed with "ILDA"?
-    if(strcmp("ILDA", ilda->h.ilda) != 0)
+    if(strcmp(ILDA_MAGIC, ilda->h.ilda) != 0)
     {
         ilda->error = "Section header did not contain \"ILDA\"";
         return ILDA_ERROR;
@@ -273,15 +270,15 @@ static int read_section_for_projector(ILDA* ilda, uint8_t pd, FrameList& frame_l
     //invoke the corresponding parser for this section type
     switch(ilda->h.format)
     {
-        case 0:
+        case FORMAT_0_3D_INDEXED:
             status = read_frame(ilda, frame_list, read_3d_indexed); break;
-        case 1:
+        case FORMAT_1_2D_INDEXED:
             status = read_frame(ilda, frame_list, read_2d_indexed); break;
-        case 2:
+        case FORMAT_2_PALETTE:
             status = read_colors(ilda); break;
-        case 4:
+        case FORMAT_4_3D_TRUE:
             status = read_frame(ilda, frame_list, read_3d_true); break;
-        case 5:
+        case FORMAT_5_2D_TRUE:
             status = read_frame(ilda, frame_list, read_2d_true); break;
         default:
             /*
@@ -306,11 +303,11 @@ static bool skip_to_next_section(ILDA* ilda)
 
     switch(ilda->h.format)
     {
-        case 0: skip_bytes = sizeof(ilda_point_3d_indexed); break;
-        case 1: skip_bytes = sizeof(ilda_point_2d_indexed); break;
-        case 2: skip_bytes = sizeof(ilda_color);            break;
-        case 4: skip_bytes = sizeof(ilda_point_3d_true);    break;
-        case 5: skip_bytes = sizeof(ilda_point_2d_true);    break;
+        case FORMAT_0_3D_INDEXED: skip_bytes = sizeof(ilda_point_3d_indexed); break;
+        case FORMAT_1_2D_INDEXED: skip_bytes = sizeof(ilda_point_2d_indexed); break;
+        case FORMAT_2_PALETTE:    skip_bytes = sizeof(ilda_color);            break;
+        case FORMAT_4_3D_TRUE:    skip_bytes = sizeof(ilda_point_3d_true);    break;
+        case FORMAT_5_2D_TRUE:    skip_bytes = sizeof(ilda_point_2d_true);    break;
         default:
             /*
                 In this case, we can't skip past an unknown
@@ -350,10 +347,10 @@ void scan_file(ILDA* ilda)
         //if the section carries point data, count it as a frame
         switch(ilda->h.format)
         {
-            case 0:
-            case 1:
-            case 4:
-            case 5:
+            case FORMAT_0_3D_INDEXED:
+            case FORMAT_1_2D_INDEXED:
+            case FORMAT_4_3D_TRUE:
+            case FORMAT_5_2D_TRUE:
                 //increment the number of frames for this projector
                 ilda->current_projector()->n_frames++;
 

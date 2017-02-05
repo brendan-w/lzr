@@ -118,6 +118,12 @@ Show::~Show()
         delete it.second;
 }
 
+Frame Show::operator()(double time)
+{
+    Inputs inputs; // empty set of inputs
+    return operator()(time, inputs);
+}
+
 Frame Show::operator()(double time, Inputs& inputs)
 {
     Frame frame;

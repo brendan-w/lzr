@@ -32,10 +32,7 @@ TESTS = $(TESTS_SRC:.cpp=)
 # ============================= main targets =============================
 
 .PHONY: all
-all: liblzr.so liblzr.a tools
-
-.PHONY: tools
-tools: all $(TOOLS)
+all: liblzr.so liblzr.a $(TOOLS)
 
 .PHONY: test
 test: all $(TESTS)

@@ -8,7 +8,7 @@ namespace lzr {
 
 static int write_point(ILDA* ilda, Point& point, bool is_last)
 {
-    //right now, this parser will only output 2D True-Color points
+    // right now, this writer will only output 2D True-Color points
     ilda_point_2d_true p;
 
     p.x = (int16_t) INT16_MAX * point.x;
@@ -21,7 +21,7 @@ static int write_point(ILDA* ilda, Point& point, bool is_last)
 
     //convert to big-endian
     htobe_2d(&p);
-    fwrite((void*) &p, 1, sizeof(ilda_header), ilda->f);
+    fwrite((void*) &p, 1, sizeof(ilda_point_2d_true), ilda->f);
 
     return LZR_SUCCESS;
 }
@@ -36,8 +36,10 @@ static int write_frame(ILDA* ilda, Frame& frame, size_t i, size_t pd)
     //zero out a new header
     ilda_header h;
     memset(&h, 0, sizeof(ilda_header));
+    memcpy(h.ilda, ILDA_MAGIC, sizeof(h.ilda));
 
     //set header details
+    h.format            = FORMAT_5_2D_TRUE;
     h.number_of_records = (uint16_t) frame.size();
     h.projector_id      = (uint8_t)  pd;
     h.total_frames      = (uint16_t) ilda->projectors[pd].n_frames;
@@ -52,7 +54,7 @@ static int write_frame(ILDA* ilda, Frame& frame, size_t i, size_t pd)
     //write each point to the file
     for(Point& point : frame)
     {
-        bool is_last = (point == frame.back());
+        bool is_last = (&point == &(frame.back()));
         write_point(ilda, point, is_last);
     }
 
@@ -66,7 +68,7 @@ void write_closer(ILDA* ilda)
     //zero out a new header
     ilda_header h;
     memset(&h, 0, sizeof(ilda_header));
-    memcpy(h.ilda, "ILDA", 4);
+    memcpy(h.ilda, ILDA_MAGIC, sizeof(h.ilda));
 
     //write the header
     fwrite((void*) &h, 1, sizeof(ilda_header), ilda->f);
@@ -80,19 +82,28 @@ void write_closer(ILDA* ilda)
 int ilda_write(ILDA* ilda, size_t pd, FrameList& frame_list)
 {
     if(ilda == NULL)
+    {
         return LZR_FAILURE;
+    }
 
     //check that this file is open for writing
     if(ilda->read)
+    {
+        ilda->error = "Trying to write to ILDA file that is open for reading";
         return LZR_FAILURE;
-
-    ilda->projectors[pd].n_frames = frame_list.size();
+    }
 
     for(size_t i = 0; i < frame_list.size(); i++)
     {
         int r = write_frame(ilda, frame_list[i], i, pd);
-        if(r != LZR_SUCCESS)
+        if(r == LZR_SUCCESS)
+        {
+            ilda->projectors[pd].n_frames++;
+        }
+        else
+        {
             return r;
+        }
     }
 
     return LZR_SUCCESS;

@@ -219,6 +219,7 @@ public:
     };
 
     ~Show();
+    Frame operator()(double time);
     Frame operator()(double time, Inputs& inputs);
 
     void save(std::string show);
