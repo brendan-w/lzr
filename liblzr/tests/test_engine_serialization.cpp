@@ -37,13 +37,30 @@ int main(int argc, char* argv[])
     frame_effect->frames = frames;
     clip->effects.push_back(frame_effect);
 
+
+    //rotation
+    RotateEffect* rotate = new RotateEffect();
+    Constant* cx = new Constant();
+    Constant* cy = new Constant();
+    Linear* theta = new Linear();
+    cx->v = 0.0;
+    cy->v = 0.0;
+    theta->input_map[&(theta->v)] = "clip_time";
+    theta->from_a = 0.0;
+    theta->from_b = 1.0;
+    theta->to_a = 0.0;
+    theta->to_b = 10.0;
+    rotate->cx = cx;
+    rotate->cy = cy;
+    rotate->theta = theta;
+    clip->effects.push_back(rotate);
+
     // make a translate effect
     TranslateEffect* translate = new TranslateEffect();
     Constant* x = new Constant();
     Constant* y = new Constant();
-    x->v = 0.0;
-    y->v = 0.0;
     x->input_map[&(x->v)] = "clip_time";
+    y->v = 0.0;
     translate->x = x;
     translate->y = y;
     clip->effects.push_back(translate);
@@ -56,7 +73,7 @@ int main(int argc, char* argv[])
      * Run the show
      */
     FrameList output;
-    for(double t = 0.0; t <= 1.0; t += 0.05)
+    for(double t = 0.0; t <= 1.0; t += 0.01)
     {
         output.push_back(show(t));
     }

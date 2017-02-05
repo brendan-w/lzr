@@ -35,6 +35,7 @@ const char* Curve::name    = "Curve";
 // Effect names
 const char* FrameEffect::name     = "FrameEffect";
 const char* TranslateEffect::name = "TranslateEffect";
+const char* RotateEffect::name = "RotateEffect";
 
 
 /*
@@ -90,6 +91,8 @@ static Effect* make_effect(const std::string& name)
         return new FrameEffect();
     if(name == TranslateEffect::name)
         return new TranslateEffect();
+    if(name == RotateEffect::name)
+        return new RotateEffect();
     return nullptr;
 }
 
@@ -201,6 +204,7 @@ void Curve::CurvePoint::unserialize(const json& j, InputMap& input_map)
 // Effects
 //
 
+// Frame
 json FrameEffect::serialize()
 {
     json j;
@@ -214,7 +218,7 @@ void FrameEffect::unserialize(const json& j)
     LOAD_GENERATOR(j, n);
 }
 
-
+// Translate
 json TranslateEffect::serialize()
 {
     json j;
@@ -230,6 +234,24 @@ void TranslateEffect::unserialize(const json& j)
     LOAD_GENERATOR(j, y);
 }
 
+// Rotate
+
+json RotateEffect::serialize()
+{
+    json j;
+    j["__effect__"] = name;
+    SAVE_GENERATOR(j, cx);
+    SAVE_GENERATOR(j, cy);
+    SAVE_GENERATOR(j, theta);
+    return j;
+}
+
+void RotateEffect::unserialize(const json& j)
+{
+    LOAD_GENERATOR(j, cx);
+    LOAD_GENERATOR(j, cy);
+    LOAD_GENERATOR(j, theta);
+}
 
 
 //

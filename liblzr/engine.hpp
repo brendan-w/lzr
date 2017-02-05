@@ -188,6 +188,27 @@ struct TranslateEffect : public Effect
     void unserialize(const json& j);
 };
 
+struct RotateEffect : public Effect
+{
+    static const char* name;
+
+    Generator<double>* cx;
+    Generator<double>* cy;
+    Generator<double>* theta;
+
+    void operator()(Frame& frame, Inputs& inputs)
+    {
+        Point center;
+        center.x = (*cx)(inputs);
+        center.y = (*cy)(inputs);
+        rotate(frame, center, (*theta)(inputs));
+    };
+
+    json serialize();
+    void unserialize(const json& j);
+};
+
+
 
 /******************************************************************************/
 /*  Clips                                                                     */
