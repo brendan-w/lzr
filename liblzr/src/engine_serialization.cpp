@@ -115,13 +115,13 @@ inline std::vector<std::string> glob(const std::string& pattern){
 json Constant::serialize()
 {
     json j;
-    SAVE_INPUT(j, input_map, x);
+    SAVE_INPUT(j, input_map, v);
     return j;
 }
 
 void Constant::unserialize(const json& j)
 {
-    LOAD_INPUT(j, input_map, x);
+    LOAD_INPUT(j, input_map, v);
 }
 
 //
@@ -131,7 +131,7 @@ void Constant::unserialize(const json& j)
 json Linear::serialize()
 {
     json j;
-    SAVE_INPUT(j, input_map, x);
+    SAVE_INPUT(j, input_map, v);
     SAVE_INPUT(j, input_map, from_a);
     SAVE_INPUT(j, input_map, from_b);
     SAVE_INPUT(j, input_map, to_a);
@@ -141,7 +141,7 @@ json Linear::serialize()
 
 void Linear::unserialize(const json& j)
 {
-    LOAD_INPUT(j, input_map, x);
+    LOAD_INPUT(j, input_map, v);
     LOAD_INPUT(j, input_map, from_a);
     LOAD_INPUT(j, input_map, from_b);
     LOAD_INPUT(j, input_map, to_a);
@@ -155,7 +155,7 @@ void Linear::unserialize(const json& j)
 json Curve::serialize()
 {
     json j;
-    SAVE_INPUT(j, input_map, x);
+    SAVE_INPUT(j, input_map, v);
     j["__generator__"] = name;
     for(size_t i = 0; i < points.size(); i++)
     {
@@ -166,7 +166,7 @@ json Curve::serialize()
 
 void Curve::unserialize(const json& j)
 {
-    LOAD_INPUT(j, input_map, x);
+    LOAD_INPUT(j, input_map, v);
     for(const json jp : j["points"])
     {
         CurvePoint* p = new CurvePoint();

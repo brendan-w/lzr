@@ -66,8 +66,12 @@ struct Constant : public Generator<double>
 {
     static const char* name;
 
-    double operator()(Inputs& inputs) { (void) inputs; return x; };
-    double x;
+    double operator()(Inputs& inputs)
+    {
+        read_inputs(inputs, input_map);
+        return v;
+    };
+    double v;
 
     json serialize();
     void unserialize(const json& j);
@@ -84,9 +88,9 @@ struct Linear : public Generator<double>
     double operator()(Inputs& inputs)
     {
         read_inputs(inputs, input_map);
-        return (x - from_a) * (to_b - to_a) / (from_b - from_a) + to_a;
+        return (v - from_a) * (to_b - to_a) / (from_b - from_a) + to_a;
     };
-    double x;
+    double v;
     double from_a;
     double from_b;
     double to_a;
@@ -131,7 +135,7 @@ public:
 
     // target for mapping the incoming "time" value for this curve
     // though it need not be set to "time"
-    double x;
+    double v;
     std::vector<CurvePoint*> points;
 
 private:

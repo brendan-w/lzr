@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
 
     FrameEffect* frame_effect = new FrameEffect();
     Constant* n = new Constant();
-    n->x = 0.0;
+    n->v = 0.0;
     frame_effect->n = n;
     frame_effect->frames = frames;
     clip->effects.push_back(frame_effect);
@@ -41,8 +41,9 @@ int main(int argc, char* argv[])
     TranslateEffect* translate = new TranslateEffect();
     Constant* x = new Constant();
     Constant* y = new Constant();
-    x->x = 0.25;
-    y->x = 0.0;
+    x->v = 0.0;
+    y->v = 0.0;
+    x->input_map[&(x->v)] = "clip_time";
     translate->x = x;
     translate->y = y;
     clip->effects.push_back(translate);
@@ -55,7 +56,10 @@ int main(int argc, char* argv[])
      * Run the show
      */
     FrameList output;
-    output.push_back(show(0.5));
+    for(double t = 0.0; t <= 1.0; t += 0.05)
+    {
+        output.push_back(show(t));
+    }
 
     /*
      * Write ILDA file

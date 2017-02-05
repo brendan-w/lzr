@@ -63,10 +63,10 @@ double Curve::compute()
     if(points.size() == 1)
         return points[0]->y;
 
-    if(x <= 0.0)
+    if(v <= 0.0)
         return points.front()->y;
 
-    if(x >= 1.0)
+    if(v >= 1.0)
         return points.back()->y;
 
     // if we've come this far, it means we need to compute a curve
@@ -77,7 +77,7 @@ double Curve::compute()
     Curve::CurvePoint* right_point;
     for(CurvePoint* point : points)
     {
-        if(x < point->x)
+        if(v < point->x)
         {
             right_point = point;
             break;
@@ -132,8 +132,8 @@ Frame Show::operator()(double time, Inputs& inputs)
     for(TimelineClip& t_clip : timeline)
     {
         // if we're in this clip
-        if((time > t_clip.start) &&
-           (time < t_clip.end) &&
+        if((time >= t_clip.start) &&
+           (time <= t_clip.end) &&
            (t_clip.clip != nullptr))
         {
             // execute this clip at the given time
