@@ -10,6 +10,7 @@ using namespace lzr;
 
 #define DEFAULT_WINDOW_SIZE 500
 #define POINT_SIZE 3
+#define FPS 15
 
 
 SDL_Window* window = NULL;
@@ -19,6 +20,7 @@ FrameList frames;
 int frame_n = 0;
 
 //settings
+bool play = false;
 bool show_blanks = false;
 bool show_points = false;
 
@@ -140,7 +142,11 @@ static void loop()
 
     while(running)
     {
-        SDL_WaitEvent(NULL);
+        if(!play)
+        {
+            // if we're not playing, stop, and wait for an event
+            SDL_WaitEvent(NULL);
+        }
 
         //event pump
         while(SDL_PollEvent(&e))
@@ -154,6 +160,9 @@ static void loop()
                 case SDL_KEYDOWN:
                     switch(e.key.keysym.sym)
                     {
+                        case SDLK_SPACE:
+                            play = !play;
+                            break;
                         case SDLK_b:
                             show_blanks = !show_blanks;
                             break;
@@ -190,8 +199,12 @@ static void loop()
 
         render();
 
-        //cap at ~30 fps
-        SDL_Delay(33);
+        if(play)
+        {
+            next_frame();
+        }
+
+        SDL_Delay(1000 / FPS);
     }
 }
 
@@ -217,6 +230,8 @@ int main(int argc, char* argv[])
     }
 
     ilda_close(f);
+
+    play = frames.size() > 1;
 
     //start SDL
     if(SDL_Init(SDL_INIT_VIDEO) != 0)
