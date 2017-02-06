@@ -1,5 +1,6 @@
 
 #include <math.h>
+#include <algorithm> //sort()
 #include <liblzr.hpp>
 
 namespace lzr {
@@ -97,6 +98,9 @@ int mask(Frame& frame, Frame mask, bool inverse)
     // with the mask.
     for(size_t i = 1; i < frame.size(); i++)
     {
+        // list of the intersections this line segment generates
+        Frame intersections;
+
         for(size_t m = 1; m < mask.size(); m++)
         {
             Point intersection;
@@ -112,11 +116,24 @@ int mask(Frame& frame, Frame mask, bool inverse)
                 intersection.g = frame[i - 1].g;
                 intersection.b = frame[i - 1].b;
                 intersection.i = frame[i - 1].i;
-                output.add(intersection);
+                intersections.add(intersection);
             }
 
-            output.add(frame[i]);
         }
+
+        Point& beginning = frame[i - 1];
+
+        // sort the intersections so that we scan them in the right order
+        sort(intersections.begin(),
+             intersections.end(),
+             [beginning](const Point& a, const Point& b) -> bool
+        {
+            return beginning.sq_distance_to(a) < beginning.sq_distance_to(b); 
+        });
+
+        //TODO: de-dupe the new intersection points
+        output.add(intersections);
+        output.add(frame[i]);
     }
 
     /*
@@ -130,7 +147,7 @@ int mask(Frame& frame, Frame mask, bool inverse)
      *    |_|    |_|
      */
 
-    for(size_t i = 1; i < frame.size(); i++)
+    for(size_t i = 1; i < output.size(); i++)
     {
         //get a test point in the middle of the path
         Point mid = output[i - 1].lerp_to(output[i], 0.5);
@@ -139,7 +156,7 @@ int mask(Frame& frame, Frame mask, bool inverse)
         //(using != as a logical XOR)
         if(inverse != point_in_mask(mid, mask))
         {
-            output[i - 1].blank();
+            output[i].blank();
         }
     }
 

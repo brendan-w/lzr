@@ -46,10 +46,10 @@ static int write_point(ILDA* ilda, Point& p, bool is_last)
 static int write_frame(ILDA* ilda, Frame& frame, size_t pd, const char* name, const char* company)
 {
     Frame frame_bounds;
-    frame_bounds.add(Point(-1.0, -1.0));
-    frame_bounds.add(Point(-1.0, 1.0));
-    frame_bounds.add(Point(1.0, 1.0));
     frame_bounds.add(Point(1.0, -1.0));
+    frame_bounds.add(Point(1.0, 1.0));
+    frame_bounds.add(Point(-1.0, 1.0));
+    frame_bounds.add(Point(-1.0, -1.0));
     mask(frame, frame_bounds, true);
 
     //skip empty frames, since they signify the end of a file
