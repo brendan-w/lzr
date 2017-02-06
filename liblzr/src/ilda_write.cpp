@@ -94,7 +94,8 @@ int write_finish(ILDA* ilda)
         size_t pd = h.projector_id;
         h.total_frames = ilda->projectors[pd].n_frames;
 
-        //rewrite this header
+        //rewrite this header by backing up to it's start
+        fseek(ilda->f, -sizeof(ilda_header), SEEK_CUR);
         htobe_header(&h);
         fwrite((void*) &h, 1, sizeof(ilda_header), ilda->f);
 

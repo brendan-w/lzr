@@ -187,7 +187,7 @@ int seek_to_start(ILDA* ilda);
 int init_frame_counts(ILDA* ilda);
 
 /*
-    Call this AFTER reading in a header. If you decide you aren't interested
+    Call this AFTER reading a header. If you decide you aren't interested
     in the data within that frame, call this to skip to the next header.
 */
 int skip_to_next_section(ILDA* ilda);
