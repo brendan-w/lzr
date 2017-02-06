@@ -170,11 +170,31 @@ class ILDA
 /*  ILDA Utils                                                                */
 /******************************************************************************/
 
-//inits a parser context for reading
-void scan_file(ILDA* ilda);
+
+// reads a header from the file
+int read_header(ILDA* ilda);
+
+// seeks to the beginning of a file
+int seek_to_start(ILDA* ilda);
+
+/*
+    This function inits the parser context, and performs a
+    quick scan of the ILDA file. It looks at each section header,
+    and caches the number of frames per projector.
+
+    This should only ever be called once per context lifetime.
+*/
+int init_frame_counts(ILDA* ilda);
+
+/*
+    Call this AFTER reading in a header. If you decide you aren't interested
+    in the data within that frame, call this to skip to the next header.
+*/
+int skip_to_next_section(ILDA* ilda);
 
 //writes the closing section header (where number_of_records is zero)
-void write_closer(ILDA* ilda);
+//this is only applicable to files opened for writing
+int write_finish(ILDA* ilda);
 
 
 /*

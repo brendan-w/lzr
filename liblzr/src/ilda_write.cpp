@@ -51,13 +51,11 @@ static int write_frame(ILDA* ilda, Frame& frame, size_t pd)
     h.format            = FORMAT_5_2D_TRUE;
     h.number_of_records = (uint16_t) frame.size();
     h.projector_id      = (uint8_t)  pd;
-    //h.total_frames      = (uint16_t) ilda->projectors[pd].n_frames;
     h.frame_number      = (uint16_t) ilda->projectors[pd].n_frames;
+    //h.total_frames    // populated at ilda_close()/write_finish() time
 
-    //convert to big-endian
+    //write the header (and convert to big-endian)
     htobe_header(&h);
-
-    //write the header
     fwrite((void*) &h, 1, sizeof(ilda_header), ilda->f);
 
     //write each point to the file
@@ -72,17 +70,39 @@ static int write_frame(ILDA* ilda, Frame& frame, size_t pd)
 
 
 //writes a header where number_of_records is zero
-void write_closer(ILDA* ilda)
+int write_finish(ILDA* ilda)
 {
-    //zero out a new header
+    //zero out and write a new header
     ilda_header h;
     memset(&h, 0, sizeof(ilda_header));
     memcpy(h.ilda, ILDA_MAGIC, sizeof(h.ilda));
-
-    //write the header
     fwrite((void*) &h, 1, sizeof(ilda_header), ilda->f);
 
-    // TODO: adjust total frame counts
+    // adjust total frame counts
+    int status = seek_to_start(ilda);
+
+    // read in the current header
+    while(!STATUS_IS_HALTING(status))
+    {
+        status = read_header(ilda);
+
+        //NOTE: don't operate on ilda->h, since it's used in
+        //skip_to_next_section(), and should be endian-converted
+        ilda_header h = ilda->h;
+
+        //adjust the frame total
+        size_t pd = h.projector_id;
+        h.total_frames = ilda->projectors[pd].n_frames;
+
+        //rewrite this header
+        htobe_header(&h);
+        fwrite((void*) &h, 1, sizeof(ilda_header), ilda->f);
+
+        if(!STATUS_IS_HALTING(status))
+            status = skip_to_next_section(ilda);
+    }
+
+    return status;
 }
 
 

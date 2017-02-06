@@ -220,42 +220,6 @@ static int read_frame(ILDA* ilda, FrameList& frame_list, point_reader read_point
 }
 
 
-/*
- * Header Reader
- */
-static int read_header(ILDA* ilda)
-{
-    static_assert(sizeof(ilda_header) == 32, "ILDA header is not 32 bytes!");
-
-    //read one ILDA header
-    size_t r = fread((void*) &(ilda->h),
-                     1,
-                     sizeof(ilda_header),
-                     ilda->f);
-
-    //did we capture a full header?
-    if(r != sizeof(ilda_header))
-    {
-        if(r > 0)
-            ilda->error = "Encountered incomplete ILDA section header";
-
-        return ILDA_ERROR;
-    }
-
-    //is it prefixed with "ILDA"?
-    if(strcmp(ILDA_MAGIC, ilda->h.ilda) != 0)
-    {
-        ilda->error = "Section header did not contain \"ILDA\"";
-        return ILDA_ERROR;
-    }
-
-    //correct for the big-endianness of the file
-    betoh_header(&(ilda->h));
-
-    return ILDA_CONTINUE;
-}
-
-
 //reads a single section (frame) of the ILDA file
 //returns boolean for whether to continue parsing
 static int read_section_for_projector(ILDA* ilda, uint8_t pd, FrameList& frame_list)
@@ -264,15 +228,15 @@ static int read_section_for_projector(ILDA* ilda, uint8_t pd, FrameList& frame_l
 
     //pull out the next header
     status = read_header(ilda);
-    if(STATUS_IS_HALTING(status)) return status;
-
-    //this section contains no records, halt parsing
-    if(ilda->h.number_of_records == 0)
-        return ILDA_HALT;
+    if(STATUS_IS_HALTING(status))
+        return status;
 
     //if this section isn't marked for projector we're looking for, skip it 
     if(ilda->h.projector_id != pd)
+    {
+        skip_to_next_section(ilda);
         return ILDA_CONTINUE;
+    }
 
     //invoke the corresponding parser for this section type
     switch(ilda->h.format)
@@ -299,76 +263,6 @@ static int read_section_for_projector(ILDA* ilda, uint8_t pd, FrameList& frame_l
 }
 
 
-
-/*
-    Call this AFTER reading in a header. If you decide you aren't interested
-    in the data within that frame, call this to skip to the next header.
-*/
-static bool skip_to_next_section(ILDA* ilda)
-{
-    int skip_bytes = 0;
-
-    switch(ilda->h.format)
-    {
-        case FORMAT_0_3D_INDEXED: skip_bytes = sizeof(ilda_point_3d_indexed); break;
-        case FORMAT_1_2D_INDEXED: skip_bytes = sizeof(ilda_point_2d_indexed); break;
-        case FORMAT_2_PALETTE:    skip_bytes = sizeof(ilda_color);            break;
-        case FORMAT_4_3D_TRUE:    skip_bytes = sizeof(ilda_point_3d_true);    break;
-        case FORMAT_5_2D_TRUE:    skip_bytes = sizeof(ilda_point_2d_true);    break;
-        default:
-            /*
-                In this case, we can't skip past an unknown
-                section type, since we don't know the record size.
-            */
-            return false;
-    }
-
-    skip_bytes *= ilda->h.number_of_records;
-
-    return (fseek(ilda->f, skip_bytes, SEEK_CUR) == 0);
-}
-
-
-/*
-    This function inits the parser context, and performs a
-    quick scan of the ILDA file. It looks at each section header,
-    and caches the number of frames per projector.
-
-    This should only ever be called once per context lifetime.
-*/
-void scan_file(ILDA* ilda)
-{
-
-    //read all of the headers, and take notes
-    while(true)
-    {
-        //pull out the next header
-        int status = read_header(ilda);
-        if(STATUS_IS_HALTING(status))
-            break;
-
-        //this section contains no records, halt parsing
-        if(ilda->h.number_of_records == 0)
-            break;
-
-        //if the section carries point data, count it as a frame
-        switch(ilda->h.format)
-        {
-            case FORMAT_0_3D_INDEXED:
-            case FORMAT_1_2D_INDEXED:
-            case FORMAT_4_3D_TRUE:
-            case FORMAT_5_2D_TRUE:
-                //increment the number of frames for this projector
-                ilda->current_projector()->n_frames++;
-
-            //ignore all other section types
-        }
-
-        skip_to_next_section(ilda);
-    }
-}
-
-
 int ilda_read(ILDA* ilda, size_t pd, FrameList& frame_list)
 {
     if(ilda == NULL)
@@ -378,20 +272,18 @@ int ilda_read(ILDA* ilda, size_t pd, FrameList& frame_list)
     if(!ilda->read)
         return LZR_FAILURE;
 
-    int status;
-
     //seek to the beginning of the file
-    fseek(ilda->f, 0, SEEK_SET); //seek to the beginning of the file
+    int status = seek_to_start(ilda);
+
+    if(STATUS_IS_HALTING(status))
+        return LZR_FAILURE;
 
     frame_list.clear();
 
     //read all sections until the end is reached
-    while(true)
+    while(!STATUS_IS_HALTING(status))
     {
         status = read_section_for_projector(ilda, (uint8_t) pd, frame_list);
-
-        if(STATUS_IS_HALTING(status))
-            break;
     }
 
     //convert internal ILDA status to LZR
@@ -399,7 +291,7 @@ int ilda_read(ILDA* ilda, size_t pd, FrameList& frame_list)
     {
         case ILDA_WARN:  return LZR_WARNING;
         case ILDA_ERROR: return LZR_FAILURE;
-        case ILDA_HALT:  return LZR_SUCCESS;
+        case ILDA_HALT:
         default:         return LZR_SUCCESS;
     }
 }
