@@ -4,6 +4,16 @@
 
 namespace lzr {
 
+// Generator names
+const char* Constant::name = "Constant";
+const char* Linear::name   = "Linear";
+const char* Curve::name    = "Curve";
+
+// Effect names
+const char* FrameEffect::name     = "FrameEffect";
+const char* TranslateEffect::name = "TranslateEffect";
+const char* RotateEffect::name = "RotateEffect";
+
 
 Curve::~Curve()
 {

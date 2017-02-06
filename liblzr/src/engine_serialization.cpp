@@ -1,5 +1,6 @@
 
 #include <sys/stat.h> // mkdir
+#include <errno.h>
 #include <glob.h>
 #include <engine.hpp>
 
@@ -16,7 +17,10 @@ namespace lzr {
     └── timeline.json
 */
 
-static const mode_t PERMS = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
+// 777, let the umask take care of this
+static const mode_t DIR_PERMS = S_IRUSR | S_IWUSR | S_IXUSR | \
+                                S_IRGRP | S_IWGRP | S_IXGRP | \
+                                S_IROTH | S_IWOTH | S_IXOTH;
 
 // show files
 static const char* TIMELINE = "timeline.json";
@@ -25,17 +29,6 @@ static const char* CLIPS_DIR = "clips";
 // clip files
 static const char* CLIP_EFFECTS = "effects.json";
 
-
-
-// Generator names
-const char* Constant::name = "Constant";
-const char* Linear::name   = "Linear";
-const char* Curve::name    = "Curve";
-
-// Effect names
-const char* FrameEffect::name     = "FrameEffect";
-const char* TranslateEffect::name = "TranslateEffect";
-const char* RotateEffect::name = "RotateEffect";
 
 
 /*
@@ -290,18 +283,15 @@ void Clip::load(std::string path)
 
 void Show::save(std::string show)
 {
-    int r = mkdir((show + "/" + CLIPS_DIR).c_str(), PERMS);
+    mkdir((show + "/" + CLIPS_DIR).c_str(), DIR_PERMS);
 
+    for(auto it : clips)
     {
-        for(auto it : clips)
-        {
-            std::string name = it.first;
-            Clip* clip = it.second;
-            std::string path = show + "/" + CLIPS_DIR + "/" + name;
-            r = mkdir(path.c_str(), PERMS);
-            (void) r;
-            clip->save(show);
-        }
+        std::string name = it.first;
+        Clip* clip = it.second;
+        std::string path = show + "/" + CLIPS_DIR + "/" + name;
+        mkdir(path.c_str(), DIR_PERMS);
+        clip->save(path);
     }
 
     {

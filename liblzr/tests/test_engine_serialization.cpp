@@ -94,4 +94,6 @@ int main(int argc, char* argv[])
     printf("Wrote %zu points\n", output[0].size());
 
     ilda_close(f);
+
+    show.save("/tmp/show/");
 }

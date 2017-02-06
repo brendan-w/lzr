@@ -35,7 +35,7 @@ TESTS = $(TESTS_SRC:.cpp=)
 all: liblzr.so liblzr.a $(TOOLS)
 
 .PHONY: test
-test: all $(TESTS)
+test: $(TESTS)
 
 liblzr.so: $(OBJS) $(DACS)
 	$(CXX) -shared $^ $(LIBS) -o $@
@@ -46,7 +46,7 @@ liblzr.a: $(OBJS)
 %.o: %.cpp $(HEADERS)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-tests/%: tests/%.cpp
+tests/%: tests/%.cpp all
 	$(CXX) $(CXXFLAGS) $(LIBS) $< ./liblzr.a -o $@
 
 tools/ilda: tools/ilda.cpp
