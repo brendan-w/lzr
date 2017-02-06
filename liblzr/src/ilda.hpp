@@ -15,13 +15,15 @@ namespace lzr {
 /*  Internal Return Codes                                                     */
 /******************************************************************************/
 
-#define ILDA_CONTINUE  1 //all is well
-#define ILDA_HALT      0 //a peaceful end of parsing
-#define ILDA_WARN     -1 //non-fatal problem
-#define ILDA_ERROR    -2 //fatal problem, halt parsing
+#define ILDA_HALT      1 //a peaceful end of parsing
+#define ILDA_CONTINUE  LZR_SUCCESS //all is well
+#define ILDA_WARN      LZR_WARNING //non-fatal problem
+#define ILDA_ERROR     LZR_FAILURE //fatal problem, halt parsing
 
 #define STATUS_IS_HALTING(s) (( s == ILDA_HALT ) || (s == ILDA_ERROR))
 
+// simple, because we've defined most of them in terms of the LZR codes
+#define ERROR_TO_LZR(e) ((e == ILDA_HALT) ? LZR_SUCCESS : e)
 
 
 /******************************************************************************/

@@ -58,14 +58,18 @@ ILDA* ilda_open(const char* filename, const char* mode)
 }
 
 
-void ilda_close(ILDA* ilda)
+int ilda_close(ILDA* ilda)
 {
     //if we were writing a file, we need to tack on a closing header
+    int status = LZR_SUCCESS;
+
     if(!ilda->read)
-        write_finish(ilda);
+        status = write_finish(ilda);
 
     fclose(ilda->f);
     delete ilda;
+
+    return ERROR_TO_LZR(status);
 }
 
 

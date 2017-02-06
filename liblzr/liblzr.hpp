@@ -43,8 +43,8 @@ namespace lzr {
 /******************************************************************************/
 
 #define LZR_SUCCESS            0
-#define LZR_FAILURE           -1
-#define LZR_WARNING           -2
+#define LZR_WARNING           -1
+#define LZR_FAILURE           -2
 #define LZR_ERROR_INVALID_ARG -3
 
 
@@ -213,7 +213,7 @@ class ILDA;
 LIBLZR_EXPORT ILDA* ilda_open(const char* filename, const char* mode);
 
 //closes the ILDA file, and releases the parsing context
-LIBLZR_EXPORT void ilda_close(ILDA* f);
+LIBLZR_EXPORT int ilda_close(ILDA* f);
 
 //Reads all frames for the the given projector, and returns them
 LIBLZR_EXPORT int ilda_read(ILDA* f, size_t pd, FrameList& frame_list);

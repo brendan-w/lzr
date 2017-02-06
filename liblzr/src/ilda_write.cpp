@@ -32,7 +32,7 @@ static int write_point(ILDA* ilda, Point& p, bool is_last)
     htobe_2d(&ilda_p);
     fwrite((void*) &ilda_p, 1, sizeof(ilda_point_2d_true), ilda->f);
 
-    return LZR_SUCCESS;
+    return ILDA_CONTINUE;
 }
 
 
@@ -40,7 +40,7 @@ static int write_frame(ILDA* ilda, Frame& frame, size_t pd)
 {
     //skip empty frames, since they signify the end of a file
     if(frame.size() == 0)
-        return LZR_SUCCESS;
+        return ILDA_CONTINUE;
 
     //zero out a new header
     ilda_header h;
@@ -65,7 +65,7 @@ static int write_frame(ILDA* ilda, Frame& frame, size_t pd)
         write_point(ilda, point, is_last);
     }
 
-    return LZR_SUCCESS;
+    return ILDA_CONTINUE;
 }
 
 
@@ -125,20 +125,22 @@ int ilda_write(ILDA* ilda, size_t pd, FrameList& frame_list)
         return LZR_FAILURE;
     }
 
+    int status = ILDA_CONTINUE;
+
     for(Frame& frame : frame_list)
     {
-        int r = write_frame(ilda, frame, pd);
-        if(r == LZR_SUCCESS)
+        status = write_frame(ilda, frame, pd);
+        if(status == ILDA_CONTINUE)
         {
             ilda->projectors[pd].n_frames++;
         }
         else
         {
-            return r;
+            return ERROR_TO_LZR(status);
         }
     }
 
-    return LZR_SUCCESS;
+    return ERROR_TO_LZR(status);
 }
 
 

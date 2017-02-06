@@ -286,14 +286,7 @@ int ilda_read(ILDA* ilda, size_t pd, FrameList& frame_list)
         status = read_section_for_projector(ilda, (uint8_t) pd, frame_list);
     }
 
-    //convert internal ILDA status to LZR
-    switch(status)
-    {
-        case ILDA_WARN:  return LZR_WARNING;
-        case ILDA_ERROR: return LZR_FAILURE;
-        case ILDA_HALT:
-        default:         return LZR_SUCCESS;
-    }
+    return ERROR_TO_LZR(status);
 }
 
 
