@@ -114,9 +114,7 @@ int write_finish(ILDA* ilda)
 int ilda_write(ILDA* ilda, size_t pd, FrameList& frame_list)
 {
     if(ilda == NULL)
-    {
-        return LZR_FAILURE;
-    }
+        return LZR_ERROR_INVALID_ARG;
 
     //check that this file is open for writing
     if(ilda->read)

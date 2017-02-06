@@ -227,6 +227,9 @@ LIBLZR_EXPORT size_t ilda_projector_count(ILDA* f);
 //returns the number of frames for the given projector descriptor
 LIBLZR_EXPORT size_t ilda_frame_count(ILDA* f, size_t pd);
 
+//return the error string, set whenever the functions above return an error
+LIBLZR_EXPORT const char* ilda_error(ILDA* ilda);
+
 
 
 /******************************************************************************/

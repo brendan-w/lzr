@@ -60,6 +60,9 @@ ILDA* ilda_open(const char* filename, const char* mode)
 
 int ilda_close(ILDA* ilda)
 {
+    if(ilda == NULL)
+        return LZR_ERROR_INVALID_ARG;
+
     //if we were writing a file, we need to tack on a closing header
     int status = LZR_SUCCESS;
 
@@ -75,8 +78,14 @@ int ilda_close(ILDA* ilda)
 
 size_t ilda_frame_count(ILDA* ilda, size_t pd)
 {
+    if(ilda == NULL)
+        return LZR_ERROR_INVALID_ARG;
+
     if(pd > MAX_PROJECTORS)
-        return 0;
+    {
+        ilda->error = "Projector descriptor outside of 0-255 range";
+        return LZR_ERROR_INVALID_ARG;
+    }
 
     return ilda->projectors[pd].n_frames;
 }
@@ -84,6 +93,9 @@ size_t ilda_frame_count(ILDA* ilda, size_t pd)
 
 size_t ilda_projector_count(ILDA* ilda)
 {
+    if(ilda == NULL)
+        return LZR_ERROR_INVALID_ARG;
+
     size_t n = 0;
 
     for(size_t pd = 0; pd < MAX_PROJECTORS; pd++)
@@ -95,6 +107,10 @@ size_t ilda_projector_count(ILDA* ilda)
     return n;
 }
 
+const char* ilda_error(ILDA* ilda)
+{
+    return ilda->error;
+}
 
 
 /******************************************************************************/
@@ -103,9 +119,9 @@ size_t ilda_projector_count(ILDA* ilda)
 
 
 ILDA::ILDA()
+  : f(nullptr)
+  , error("")
 {
-    f = NULL;
-
     //wipe the projector data (color and frame arrays)
     for(size_t pd = 0; pd < MAX_PROJECTORS; pd++)
     {
