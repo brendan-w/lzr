@@ -6,6 +6,12 @@ using namespace lzr;
 
 int main(int argc, char* argv[])
 {
+    if(argc != 2)
+    {
+        printf("Usage: test_ilda <ilda-file>");
+        return EXIT_SUCCESS;
+    }
+
     /*
      * Open ILDA file
      */

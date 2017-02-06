@@ -5,7 +5,7 @@
 
 using namespace lzr;
 
-
+/*
 static void print_frame(Frame& frame)
 {
     for(Point& p : frame)
@@ -13,6 +13,7 @@ static void print_frame(Frame& frame)
         printf("(%f, %f, r=%d, g=%d, b=%d, i=%d)\n", p.x, p.y, p.r, p.g, p.b, p.i);
     }
 }
+*/
 
 
 static void test_xyrgb_line()
