@@ -1,8 +1,11 @@
 
 #include <liblzr.hpp>
 #include <cstdio>
+#include <string.h>
 
 #define TMP_ILDA_FILE "/tmp/output.ilda"
+#define NAME "NAME----"
+#define COMPANY "COMPANY-"
 
 using namespace lzr;
 
@@ -32,7 +35,7 @@ int compare_frames(FrameList& original, FrameList& frames)
     }
     else
     {
-        fprintf(stderr, "Read a different number of frames\n");
+        fprintf(stderr, "Read a different number of frames (%zu --> %zu)\n", original.size(), frames.size());
         return EXIT_FAILURE;
     }
 
@@ -72,7 +75,7 @@ int main(int argc, char* argv[])
 
     f = ilda_open(TMP_ILDA_FILE, "w");
 
-    if(ilda_write(f, 0, original) != LZR_SUCCESS)
+    if(ilda_write(f, 0, original, NAME, COMPANY) != LZR_SUCCESS)
     {
         fprintf(stderr, "Error saving frames\n");
         return EXIT_FAILURE;
@@ -91,8 +94,10 @@ int main(int argc, char* argv[])
     // printf("Found %zu projector(s)\n", ilda_projector_count(f));
     // printf("Found %zu frames for projector 0\n", ilda_frame_count(f, 0));
 
+    char name[9];
+    char company[9];
     FrameList frames;
-    if(ilda_read(f, 0, frames) != LZR_SUCCESS)
+    if(ilda_read(f, 0, frames, name, company) != LZR_SUCCESS)
     {
         fprintf(stderr, "Error loading frames\n");
         return EXIT_FAILURE;
@@ -101,6 +106,18 @@ int main(int argc, char* argv[])
     ilda_close(f);
 
     std::remove(TMP_ILDA_FILE);
+
+    if(strcmp(NAME, name) != 0)
+    {
+        fprintf(stderr, "name string doesn't match\n");
+        return EXIT_FAILURE;
+    }
+
+    if(strcmp(COMPANY, company) != 0)
+    {
+        fprintf(stderr, "company string doesn't match\n");
+        return EXIT_FAILURE;
+    }
 
     // check that the frames we read are identical to the original
     return compare_frames(original, frames);

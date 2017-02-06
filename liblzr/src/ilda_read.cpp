@@ -167,9 +167,6 @@ static int read_2d_true(ILDA* ilda, Point& p)
 }
 
 
-
-
-
 /*
 
     Generic frame reading function
@@ -265,6 +262,13 @@ static int read_section_for_projector(ILDA* ilda, uint8_t pd, FrameList& frame_l
 
 int ilda_read(ILDA* ilda, size_t pd, FrameList& frame_list)
 {
+    char name[9]; // dummy placeholders, since the user doesn't want them
+    char company[9];
+    return ilda_read(ilda, pd, frame_list, name, company);
+}
+
+int ilda_read(ILDA* ilda, size_t pd, FrameList& frame_list, char* name, char* company)
+{
     if(ilda == NULL)
         return LZR_FAILURE;
 
@@ -281,9 +285,26 @@ int ilda_read(ILDA* ilda, size_t pd, FrameList& frame_list)
     frame_list.clear();
 
     //read all sections until the end is reached
+    bool first = true;
     while(!STATUS_IS_HALTING(status))
     {
         status = read_section_for_projector(ilda, (uint8_t) pd, frame_list);
+
+        if(first)
+        {
+            //copy the name/company strings from the first frame
+            strncpy(name, ilda->h.name, sizeof(ilda->h.name));
+            strncpy(company, ilda->h.company, sizeof(ilda->h.company));
+            
+            //NOTE: the ILDA format does not contain null terminators
+            //while strncpy will null terminate if the string is less
+            //than N bytes, a string of max length (8) will not be terminated
+            //do this manually
+            
+            name[sizeof(ilda->h.name)] = '\0';
+            company[sizeof(ilda->h.name)] = '\0';
+            first = false;
+        }
     }
 
     return ERROR_TO_LZR(status);

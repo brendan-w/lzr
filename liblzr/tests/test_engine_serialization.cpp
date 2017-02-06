@@ -90,7 +90,7 @@ int main(int argc, char* argv[])
 
     f = ilda_open("/tmp/output.ilda", "w");
 
-    if(ilda_write(f, 0, output) != LZR_SUCCESS)
+    if(ilda_write(f, 0, output, "testclip", "LZR") != LZR_SUCCESS)
     {
         fprintf(stderr, "Error saving frames\n");
         return EXIT_FAILURE;

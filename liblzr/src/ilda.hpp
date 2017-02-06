@@ -35,7 +35,7 @@ typedef struct __attribute__ ((packed)) {
     char     reserved_a[3];
     uint8_t  format;
     char     name[8];
-    char     company_name[8];
+    char     company[8];
     uint16_t number_of_records; //number of points of color entries
     uint16_t frame_number; //also denotes color pallete number
     uint16_t total_frames;

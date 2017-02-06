@@ -216,10 +216,16 @@ LIBLZR_EXPORT ILDA* ilda_open(const char* filename, const char* mode);
 LIBLZR_EXPORT int ilda_close(ILDA* f);
 
 //Reads all frames for the the given projector, and returns them
+//The array you pass to "name" or "company" must be at least 9 chars in length
 LIBLZR_EXPORT int ilda_read(ILDA* f, size_t pd, FrameList& frame_list);
+LIBLZR_EXPORT int ilda_read(ILDA* f, size_t pd, FrameList& frame_list, char* name, char* company);
 
 //write frame(s) for the given projector to the ILDA file (file must be opened with lzr_ilda_write() )
+//if no name/company strings are given, the 
+LIBLZR_EXPORT int ilda_write(ILDA* f, size_t pd, Frame& frame);
+LIBLZR_EXPORT int ilda_write(ILDA* f, size_t pd, Frame& frame, const char* name, const char* company);
 LIBLZR_EXPORT int ilda_write(ILDA* f, size_t pd, FrameList& frame_list);
+LIBLZR_EXPORT int ilda_write(ILDA* f, size_t pd, FrameList& frame_list, const char* name, const char* company);
 
 //returns the number of projectors that the ILDA specifies graphics for
 LIBLZR_EXPORT size_t ilda_projector_count(ILDA* f);

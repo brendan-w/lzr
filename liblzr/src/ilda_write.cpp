@@ -11,6 +11,13 @@ constexpr const T& clamp( const T& v, const T& lo, const T& hi )
     return std::min<T>(std::max<T>(v, lo), hi);
 }
 
+// prevent us from reading to ~inifity
+size_t strnlen(const char* str, size_t max_len)
+{
+    const char* end = (const char*) memchr(str, '\0', max_len);
+    return (end == NULL) ? max_len : (end - str);
+}
+
 
 namespace lzr {
 
@@ -36,7 +43,7 @@ static int write_point(ILDA* ilda, Point& p, bool is_last)
 }
 
 
-static int write_frame(ILDA* ilda, Frame& frame, size_t pd)
+static int write_frame(ILDA* ilda, Frame& frame, size_t pd, const char* name, const char* company)
 {
     //skip empty frames, since they signify the end of a file
     if(frame.size() == 0)
@@ -48,6 +55,8 @@ static int write_frame(ILDA* ilda, Frame& frame, size_t pd)
     memcpy(h.ilda, ILDA_MAGIC, sizeof(h.ilda));
 
     //set header details
+    strncpy(h.name, name, strnlen(name, sizeof(h.name)));
+    strncpy(h.company, company, strnlen(company, sizeof(h.company)));
     h.format            = FORMAT_5_2D_TRUE;
     h.number_of_records = (uint16_t) frame.size();
     h.projector_id      = (uint8_t)  pd;
@@ -65,6 +74,7 @@ static int write_frame(ILDA* ilda, Frame& frame, size_t pd)
         write_point(ilda, point, is_last);
     }
 
+    ilda->projectors[pd].n_frames++;
     return ILDA_CONTINUE;
 }
 
@@ -111,7 +121,28 @@ int write_finish(ILDA* ilda)
     Main API function for writing frames
     The ilda_close() call will generate the null ending frame
 */
-int ilda_write(ILDA* ilda, size_t pd, FrameList& frame_list)
+
+int ilda_write(ILDA* ilda, size_t pd, Frame& frame, const char* name, const char* company)
+{
+    if(ilda == NULL)
+        return LZR_ERROR_INVALID_ARG;
+
+    //check that this file is open for writing
+    if(ilda->read)
+    {
+        ilda->error = "Trying to write to ILDA file that is open for reading";
+        return LZR_FAILURE;
+    }
+
+    return ERROR_TO_LZR(write_frame(ilda, frame, pd, name, company));
+}
+
+int ilda_write(ILDA* ilda, size_t pd, Frame& frame)
+{
+    return ilda_write(ilda, pd, frame, "", "");
+}
+
+int ilda_write(ILDA* ilda, size_t pd, FrameList& frame_list, const char* name, const char* company)
 {
     if(ilda == NULL)
         return LZR_ERROR_INVALID_ARG;
@@ -127,18 +158,19 @@ int ilda_write(ILDA* ilda, size_t pd, FrameList& frame_list)
 
     for(Frame& frame : frame_list)
     {
-        status = write_frame(ilda, frame, pd);
-        if(status == ILDA_CONTINUE)
-        {
-            ilda->projectors[pd].n_frames++;
-        }
-        else
-        {
-            return ERROR_TO_LZR(status);
-        }
+        // NOTE: can't simply use the other API function
+        // because ILDA_HALT is returned as LZR_SUCCESS
+        status = write_frame(ilda, frame, pd, name, company);
+        if(STATUS_IS_HALTING(status))
+            break;
     }
 
     return ERROR_TO_LZR(status);
+}
+
+int ilda_write(ILDA* ilda, size_t pd, FrameList& frame_list)
+{
+    return ilda_write(ilda, pd, frame_list, "", "");
 }
 
 
