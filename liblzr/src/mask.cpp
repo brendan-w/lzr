@@ -5,24 +5,17 @@
 namespace lzr {
 
 
-typedef struct {
-
-} Line;
-
-
-/* TODO
-
 //off-the-shelf ray casting test
-static bool point_in_polygon(Point p, const Frame polygon)
+static bool point_in_mask(Point& p, const Frame& mask)
 {
     bool in = false;
     size_t i = 0;
     size_t j = 0;
 
-    for(i = 0, j = polygon.size() - 1; i < polygon.size(); j = i++)
+    for(i = 0, j = mask.size() - 1; i < mask.size(); j = i++)
     {
-        Point a = polygon[i];
-        Point b = polygon[j];
+        Point a = mask[i];
+        Point b = mask[j];
 
         if( ((a.y > p.y) != (b.y > p.y)) &&
             (p.x < (b.x - a.x) * (p.y - a.y) / (b.y - a.y) + a.x) )
@@ -64,16 +57,44 @@ static bool get_line_intersection(const Point& a1,
     return false; // No collision
 }
 
+void close_mask(Frame& mask)
+{
+    if(mask.front() != mask.back())
+    {
+        mask.add(mask.front());
+    }
+}
 
-int mask(Frame& frame, const Frame& mask, bool inverse)
+/*
+ * Algorithm:
+ *  - find all intersections between the frame and the mask, and
+ *    insert a new point at the intersection.
+ *  - test each line segment in the new frame, and perform a
+ *    ray-cast test for whether it's within the mask.
+ *  - blank points that fall outside the mask
+ *  - remove redundant blanked points.
+ */
+int mask(Frame& frame, Frame mask, bool inverse)
 {
     //bail early if there aren't any mask points
     if(frame.empty())
         return LZR_SUCCESS;
 
+    if(mask.size() < 3)
+        return LZR_ERROR_INVALID_ARG;
+
+    // makes sure that we have all our line segments for testing
+    close_mask(mask);
+
     //setup a buffer to build the finished product
+    //TODO: rewrite this to operate in place
     Frame output;
 
+    //since we operating in pairs
+    output.add(frame[0]);
+
+    // First pass, create points for all intersections
+    // with the mask.
     for(size_t i = 1; i < frame.size(); i++)
     {
         for(size_t m = 1; m < mask.size(); m++)
@@ -85,13 +106,51 @@ int mask(Frame& frame, const Frame& mask, bool inverse)
                                      mask[m],
                                      intersection))
             {
-                //TODO
+                //crossed the mask
+                //add the point, with a copied color
+                intersection.r = frame[i - 1].r;
+                intersection.g = frame[i - 1].g;
+                intersection.b = frame[i - 1].b;
+                intersection.i = frame[i - 1].i;
+                output.add(intersection);
             }
+
+            output.add(frame[i]);
         }
     }
 
+    /*
+     * Second pass, test each line segment for being in/out of the mask
+     * NOTE: we can't do this during the point insertion above, because
+     * there are cases where a single segment will cross the mask multiple
+     * times. Consider the arch-shaped mask below:
+     *     ________
+     *    |  ____  |
+     * +--|-|----|-|---+
+     *    |_|    |_|
+     */
+
+    for(size_t i = 1; i < frame.size(); i++)
+    {
+        //get a test point in the middle of the path
+        Point mid = output[i - 1].lerp_to(output[i], 0.5);
+
+        //if this line segment is inside the mask, shut it off
+        //(using != as a logical XOR)
+        if(inverse != point_in_mask(mid, mask))
+        {
+            output[i - 1].blank();
+        }
+    }
+
+    /*
+     * Third pass. Discard the probably-absurd quantity of blanked points
+     */
+
+    // TODO
+
+    frame = output;
     return LZR_SUCCESS;
 }
-*/
 
 } // namespace lzr
