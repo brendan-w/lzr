@@ -66,6 +66,31 @@ void close_mask(Frame& mask)
     }
 }
 
+void discard_blanks(const Frame& source, Frame& dest)
+{
+    Point prev;
+    bool was_lit = true;
+    for(const Point& point : source)
+    {
+        if(point.is_lit())
+        {
+            if(!was_lit)
+            {
+                dest.add(prev);
+            }
+
+            dest.add(point);
+            was_lit = true;
+        }
+        else
+        {
+            was_lit = false;
+        }
+
+        prev = point;
+    }
+}
+
 /*
  * Algorithm:
  *  - find all intersections between the frame and the mask, and
@@ -146,7 +171,6 @@ int mask(Frame& frame, Frame mask, bool inverse)
      * +--|-|----|-|---+
      *    |_|    |_|
      */
-
     for(size_t i = 1; i < output.size(); i++)
     {
         //get a test point in the middle of the path
@@ -163,10 +187,9 @@ int mask(Frame& frame, Frame mask, bool inverse)
     /*
      * Third pass. Discard the probably-absurd quantity of blanked points
      */
+    frame.clear(); //wipe the user's data
+    discard_blanks(output, frame);
 
-    // TODO
-
-    frame = output;
     return LZR_SUCCESS;
 }
 
