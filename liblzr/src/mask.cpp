@@ -58,36 +58,6 @@ static bool get_line_intersection(const Point& a1,
     return false; // No collision
 }
 
-void discard_blanks(Frame& frame)
-{
-    //setup a buffer to build the finished product
-    //TODO: rewrite this to operate in place
-    Frame output;
-
-    Point prev;
-    bool was_lit = true;
-    for(const Point& point : frame)
-    {
-        if(point.is_lit())
-        {
-            if(!was_lit)
-            {
-                output.add(prev);
-            }
-
-            output.add(point);
-            was_lit = true;
-        }
-        else
-        {
-            was_lit = false;
-        }
-
-        prev = point;
-    }
-
-    frame = output;
-}
 
 bool line_crosses_bounding_box(const Point& a, const Point& b,
                                const Point& box_min, const Point& box_max)
@@ -221,7 +191,7 @@ int mask(Frame& frame, Frame mask, bool inverse)
     /*
      * Third pass. Discard the probably-absurd quantity of blanked points
      */
-    discard_blanks(frame);
+    reduce_blanks(frame);
 
     return LZR_SUCCESS;
 }
