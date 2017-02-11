@@ -80,38 +80,44 @@ Frame& Frame::add_with_blank_jump(const Frame& other)
     return *this;
 }
 
-
-Point Frame::bounding_box_center()
+void Frame::bounding_box(Point& min, Point& max) const
 {
-    //edges
-    double left = 1.0; //start these at opposite extremes
-    double right = -1.0;
-    double bottom = 1.0;
-    double top = -1.0;
+    // initialize edges at opposite extremes
+    min.x = 1.0;
+    min.y = -1.0;
+    max.x = 1.0;
+    max.y = -1.0;
 
-    for(Point& p : *this)
+    for(const Point& p : *this)
     {
-        if(p.x < left)   left = p.x;
-        if(p.x > right)  right = p.x;
-        if(p.y < bottom) bottom = p.y;
-        if(p.y > top)    top = p.y;
+        if(p.x < min.x) min.x = p.x; // left
+        if(p.x > min.y) min.y = p.x; // right
+        if(p.y < max.x) max.x = p.y; // bottom
+        if(p.y > max.y) max.y = p.y; // top
     }
+}
+
+Point Frame::bounding_box_center() const
+{
+    Point min;
+    Point max;
+    bounding_box(min, max);
 
     Point center;
-    center.x = (left + right) / 2.0;
-    center.y = (bottom + top) / 2.0;
+    center.x = (min.x + max.x) / 2.0;
+    center.y = (min.y + max.y) / 2.0;
 
     return center;
 }
 
 
-Point Frame::average_center()
+Point Frame::average_center() const
 {
     Point center;
     center.x = 0.0;
     center.y = 0.0;
 
-    for(Point& p : *this)
+    for(const Point& p : *this)
     {
         center.x += p.x;
         center.y += p.y;

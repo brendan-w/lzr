@@ -59,6 +59,22 @@ namespace lzr {
 #define LZR_COLOR_MIN    0
 #define LZR_COLOR_MAX    255
 
+/*
+ * Coordinate system:
+ *
+ *  (-1, 1)        (1, 1)
+ *      _____________
+ *     |      |      |
+ *     |      |      |
+ *     |      |      |
+ *     |------+------|
+ *     |      |      |
+ *     |      |      |
+ *     |______|______|
+ *
+ * (-1, -1)        (1, -1)
+ *
+ */
 
 class LIBLZR_EXPORT Point
 {
@@ -105,8 +121,9 @@ public:
     Frame& add_with_blank_jump(const Point& p);
     Frame& add_with_blank_jump(const Frame& other);
 
-    Point bounding_box_center();
-    Point average_center();
+    void bounding_box(Point& min, Point& max) const;
+    Point bounding_box_center() const;
+    Point average_center() const;
 
 private:
     Frame& add_blank_jump_to(const Point& p);
