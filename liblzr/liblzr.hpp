@@ -92,6 +92,8 @@ public:
 
     void blank();
     void unblank();
+    void set_position(const Point& other);
+    void set_color(const Point& other);
     bool is_blanked() const;
     bool is_lit() const;
     Point lerp_to(const Point& other, double t) const;

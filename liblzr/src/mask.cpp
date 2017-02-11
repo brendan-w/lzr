@@ -123,37 +123,33 @@ int mask(Frame& frame, Frame mask, bool inverse)
     // with the mask.
     for(size_t i = 1; i < frame.size(); i++)
     {
+        // the line segment we're looking at
+        Point& a = frame[i - 1];
+        Point& b = frame[i];
+
         // list of the intersections this line segment generates
         Frame intersections;
 
         for(size_t m = 1; m < mask.size(); m++)
         {
             Point intersection;
-            if(get_line_intersection(frame[i - 1],
-                                     frame[i],
-                                     mask[m - 1],
-                                     mask[m],
-                                     intersection))
+            if(get_line_intersection(a, b, mask[m - 1], mask[m], intersection))
             {
                 //crossed the mask
                 //add the point, with a copied color
-                intersection.r = frame[i - 1].r;
-                intersection.g = frame[i - 1].g;
-                intersection.b = frame[i - 1].b;
-                intersection.i = frame[i - 1].i;
+                intersection.set_color(a);
                 intersections.add(intersection);
             }
 
         }
 
-        Point& beginning = frame[i - 1];
 
         // sort the intersections so that we scan them in the right order
         sort(intersections.begin(),
              intersections.end(),
-             [beginning](const Point& a, const Point& b) -> bool
+             [a](const Point& ia, const Point& ib) -> bool
         {
-            return beginning.sq_distance_to(a) < beginning.sq_distance_to(b); 
+            return a.sq_distance_to(ia) < a.sq_distance_to(ib); 
         });
 
         //TODO: de-dupe the new intersection points

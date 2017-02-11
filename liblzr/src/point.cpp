@@ -64,6 +64,20 @@ void Point::unblank()
     i = 255;
 }
 
+void Point::set_position(const Point& other)
+{
+    x = other.x;
+    y = other.y;
+}
+
+void Point::set_color(const Point& other)
+{
+    r = other.r;
+    g = other.g;
+    b = other.b;
+    i = other.i;
+}
+
 bool Point::is_blanked() const
 {
     return (i == 0) || (r + g + b == 0);
