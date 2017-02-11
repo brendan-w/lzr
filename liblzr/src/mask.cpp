@@ -58,28 +58,24 @@ static bool get_line_intersection(const Point& a1,
     return false; // No collision
 }
 
-void close_mask(Frame& mask)
+void discard_blanks(Frame& frame)
 {
-    if(mask.front() != mask.back())
-    {
-        mask.add(mask.front());
-    }
-}
+    //setup a buffer to build the finished product
+    //TODO: rewrite this to operate in place
+    Frame output;
 
-void discard_blanks(const Frame& source, Frame& dest)
-{
     Point prev;
     bool was_lit = true;
-    for(const Point& point : source)
+    for(const Point& point : frame)
     {
         if(point.is_lit())
         {
             if(!was_lit)
             {
-                dest.add(prev);
+                output.add(prev);
             }
 
-            dest.add(point);
+            output.add(point);
             was_lit = true;
         }
         else
@@ -89,18 +85,17 @@ void discard_blanks(const Frame& source, Frame& dest)
 
         prev = point;
     }
+
+    frame = output;
 }
 
-/*
- * Algorithm:
- *  - find all intersections between the frame and the mask, and
- *    insert a new point at the intersection.
- *  - test each line segment in the new frame, and perform a
- *    ray-cast test for whether it's within the mask.
- *  - blank points that fall outside the mask
- *  - remove redundant blanked points.
- */
-int mask(Frame& frame, Frame mask, bool inverse)
+bool line_crosses_bounding_box(const Point& a, const Point& b,
+                               const Point& box_min, const Point& box_max)
+{
+    return false;
+}
+
+int intersect(Frame& frame, Frame mask)
 {
     //bail early if there aren't any mask points
     if(frame.empty())
@@ -109,8 +104,16 @@ int mask(Frame& frame, Frame mask, bool inverse)
     if(mask.size() < 3)
         return LZR_ERROR_INVALID_ARG;
 
+    // close the mask
     // makes sure that we have all our line segments for testing
-    close_mask(mask);
+    if(mask.front() != mask.back())
+    {
+        mask.add(mask.front());
+    }
+
+    Point mask_min;
+    Point mask_max;
+    mask.bounding_box(mask_min, mask_max);
 
     //setup a buffer to build the finished product
     //TODO: rewrite this to operate in place
@@ -119,8 +122,7 @@ int mask(Frame& frame, Frame mask, bool inverse)
     //since we operating in pairs
     output.add(frame[0]);
 
-    // First pass, create points for all intersections
-    // with the mask.
+    // create points for all intersections with the mask.
     for(size_t i = 1; i < frame.size(); i++)
     {
         // the line segment we're looking at
@@ -143,7 +145,6 @@ int mask(Frame& frame, Frame mask, bool inverse)
 
         }
 
-
         // sort the intersections so that we scan them in the right order
         sort(intersections.begin(),
              intersections.end(),
@@ -157,6 +158,31 @@ int mask(Frame& frame, Frame mask, bool inverse)
         output.add(frame[i]);
     }
 
+    frame = output;
+    return LZR_SUCCESS;
+}
+
+/*
+ * Algorithm:
+ *  - find all intersections between the frame and the mask, and
+ *    insert a new point at the intersection.
+ *  - test each line segment in the new frame, and perform a
+ *    ray-cast test for whether it's within the mask.
+ *  - blank points that fall outside the mask
+ *  - remove redundant blanked points.
+ */
+int mask(Frame& frame, Frame mask, bool inverse)
+{
+    /*
+     * First pass: create points for all intersections with the mask.
+     */
+    int r = intersect(frame, mask);
+
+    if(r != LZR_SUCCESS)
+    {
+        return r;
+    }
+
     /*
      * Second pass, test each line segment for being in/out of the mask
      * NOTE: we can't do this during the point insertion above, because
@@ -167,24 +193,23 @@ int mask(Frame& frame, Frame mask, bool inverse)
      * +--|-|----|-|---+
      *    |_|    |_|
      */
-    for(size_t i = 1; i < output.size(); i++)
+    for(size_t i = 1; i < frame.size(); i++)
     {
         //get a test point in the middle of the path
-        Point mid = output[i - 1].lerp_to(output[i], 0.5);
+        Point mid = frame[i - 1].lerp_to(frame[i], 0.5);
 
         //if this line segment is inside the mask, shut it off
         //(using != as a logical XOR)
         if(inverse != point_in_mask(mid, mask))
         {
-            output[i].blank();
+            frame[i].blank();
         }
     }
 
     /*
      * Third pass. Discard the probably-absurd quantity of blanked points
      */
-    frame.clear(); //wipe the user's data
-    discard_blanks(output, frame);
+    discard_blanks(frame);
 
     return LZR_SUCCESS;
 }
