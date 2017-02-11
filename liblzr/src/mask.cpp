@@ -92,7 +92,12 @@ void discard_blanks(Frame& frame)
 bool line_crosses_bounding_box(const Point& a, const Point& b,
                                const Point& box_min, const Point& box_max)
 {
-    return false;
+    // test the four edges of the bounding box
+    Point _;
+    return get_line_intersection(a, b, box_min, Point(box_min.x, box_max.y), _) ||
+           get_line_intersection(a, b, box_min, Point(box_max.x, box_min.y), _) ||
+           get_line_intersection(a, b, box_max, Point(box_min.x, box_max.y), _) ||
+           get_line_intersection(a, b, box_max, Point(box_max.x, box_min.y), _);
 }
 
 int intersect(Frame& frame, Frame mask)
@@ -129,32 +134,38 @@ int intersect(Frame& frame, Frame mask)
         Point& a = frame[i - 1];
         Point& b = frame[i];
 
-        // list of the intersections this line segment generates
-        Frame intersections;
-
-        for(size_t m = 1; m < mask.size(); m++)
+        // do a basic bounding-box test, before we go iterating through
+        // all line segments in the mask
+        if(!line_crosses_bounding_box(a, b, mask_min, mask_max))
         {
-            Point intersection;
-            if(get_line_intersection(a, b, mask[m - 1], mask[m], intersection))
+            // list of the intersections this line segment generates
+            Frame intersections;
+
+            for(size_t m = 1; m < mask.size(); m++)
             {
-                //crossed the mask
-                //add the point, with a copied color
-                intersection.set_color(a);
-                intersections.add(intersection);
+                Point intersection;
+                if(get_line_intersection(a, b, mask[m - 1], mask[m], intersection))
+                {
+                    //crossed the mask
+                    //add the point, with a copied color
+                    intersection.set_color(a);
+                    intersections.add(intersection);
+                }
+
             }
 
+            // sort the intersections so that we scan them in the right order
+            sort(intersections.begin(),
+                 intersections.end(),
+                 [a](const Point& ia, const Point& ib) -> bool
+            {
+                return a.sq_distance_to(ia) < a.sq_distance_to(ib); 
+            });
+
+            //TODO: de-dupe the new intersection points
+            output.add(intersections);
         }
 
-        // sort the intersections so that we scan them in the right order
-        sort(intersections.begin(),
-             intersections.end(),
-             [a](const Point& ia, const Point& ib) -> bool
-        {
-            return a.sq_distance_to(ia) < a.sq_distance_to(ib); 
-        });
-
-        //TODO: de-dupe the new intersection points
-        output.add(intersections);
         output.add(frame[i]);
     }
 
@@ -190,7 +201,8 @@ int mask(Frame& frame, Frame mask, bool inverse)
      * times. Consider the arch-shaped mask below:
      *     ________
      *    |  ____  |
-     * +--|-|----|-|---+
+     *    | |    | |
+     * +--+-+----+-+---+
      *    |_|    |_|
      */
     for(size_t i = 1; i < frame.size(); i++)
