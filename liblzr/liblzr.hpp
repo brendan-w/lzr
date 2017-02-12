@@ -191,10 +191,10 @@ LIBLZR_EXPORT int interpolate(Frame& frame,
 //deletes unwanted points from the given frame
 
 //removes duplicate lit points (anchor points and beams)
-LIBLZR_EXPORT int remove_duplicates(Frame& frame);
+LIBLZR_EXPORT int reduce_duplicates(Frame& frame);
 
 //removes interpolation from straight, lit lines
-LIBLZR_EXPORT int remove_interpolation(Frame& frame);
+LIBLZR_EXPORT int reduce_interpolation(Frame& frame);
 
 //removes all intersticial blanked points, regardless of path
 LIBLZR_EXPORT int reduce_blanks(Frame& frame);
