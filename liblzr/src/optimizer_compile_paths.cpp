@@ -109,7 +109,7 @@ void Optimizer_Internals::blank_between(Optimizer* settings,
         frame.add(a);
 
     //interpolate from A to B
-    interp_line(frame, settings->blank_max_distance, settings->blank_func, a, b);
+    interp_line(frame, settings->blank_interp_distance, settings->blank_interp_func, a, b);
 
     for(size_t i = 0; i < settings->anchor_points_blanked; i++)
         frame.add(b);

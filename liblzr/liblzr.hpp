@@ -162,8 +162,12 @@ LIBLZR_EXPORT int mask(Frame& frame, Frame mask, bool inverse=false);
 
 
 /******************************************************************************/
-/*  LZR Interpolator                                                          */
+/*  LZR Optimizer                                                             */
 /******************************************************************************/
+
+//interpolation point density (points from one side of the frame to the other)
+#define INTERP_DEFAULT ((LZR_POSITION_MAX - LZR_POSITION_MIN) / 100.0)
+#define BLANK_INTERP_DEFAULT ((LZR_POSITION_MAX - LZR_POSITION_MIN) / 5.0)
 
 //type for interpolation functions
 typedef double (*interpolation_func)(double t);
@@ -172,41 +176,6 @@ typedef double (*interpolation_func)(double t);
 LIBLZR_EXPORT double linear(double t); /*----*----*----*----*----*----*----*----*/
 LIBLZR_EXPORT double quad(double t);   /*---*---*-----*-----*-----*-----*---*---*/
 LIBLZR_EXPORT double quart(double t);  /*-*---*-----*-------*-------*-----*---*-*/
-
-
-//100 points from one side of the frame to the other
-#define INTERP_DEFAULT ((LZR_POSITION_MAX - LZR_POSITION_MIN) / 100.0)
-
-//Interpolates lit points. Use the Optimizer to interpolate blanking jumps
-LIBLZR_EXPORT int interpolate(Frame& frame,
-                              double max_distance=INTERP_DEFAULT,
-                              interpolation_func func=linear);
-
-
-
-/******************************************************************************/
-/*  LZR Reducers                                                              */
-/******************************************************************************/
-
-//deletes unwanted points from the given frame
-
-//removes duplicate lit points (anchor points and beams)
-LIBLZR_EXPORT int reduce_duplicates(Frame& frame);
-
-//removes interpolation from straight, lit lines
-LIBLZR_EXPORT int reduce_interpolation(Frame& frame);
-
-//removes all intersticial blanked points, regardless of path
-LIBLZR_EXPORT int reduce_blanks(Frame& frame);
-
-
-
-/******************************************************************************/
-/*  LZR Optimizer                                                             */
-/******************************************************************************/
-
-//20 points from one side of the frame to the other
-#define BLANK_INTERP_DEFAULT ((LZR_POSITION_MAX - LZR_POSITION_MIN) / 5.0)
 
 //fwrd decl
 class Optimizer_Internals;
@@ -221,17 +190,43 @@ public:
     //main optimizer function
     int run(Frame& frame);
 
-    //settings
-    double path_split_angle       = 45;   //minimum angle (degrees) at which to consider lines to be seperate paths
-    bool   reorder_paths          = true; //allow the optimizer to the change the order in which points are scanned
-    size_t anchor_points_lit      = 1;    //minimum number of lit points to place at the start & end of line segments
-    size_t anchor_points_blanked  = 2;    //minimum number of blanked points to place at the start & end of a line segment
-    double blank_max_distance     = BLANK_INTERP_DEFAULT; //max distance for interpolation of blanking jumps
-    interpolation_func blank_func = linear; //interpolation function to use for blanking jumps
+    // ----- settings -----
+
+    double path_split_angle = 45; //minimum angle (degrees) at which to consider lines to be seperate paths
+    bool   reorder_paths = true;  //allow the optimizer to the change the order in which points are scanned
+
+    //anchor points
+    size_t anchor_points_lit = 1;      //minimum number of lit points to place at the start & end of line segments
+    size_t anchor_points_blanked  = 2; //minimum number of blanked points to place at the start & end of a line segment
+
+    //interpolation
+    double interp_distance = INTERP_DEFAULT; //max distance for interpolation of lit lines
+    interpolation_func interp_func = linear; //interpolation function to use for lit lines
+
+    //blanking interpolation
+    double blank_interp_distance = BLANK_INTERP_DEFAULT; //max distance for interpolation of blanking jumps
+    interpolation_func blank_interp_func = linear;       //interpolation function to use for blanking jumps
 
 private:
     Optimizer_Internals* internal;
 };
+
+
+
+/******************************************************************************/
+/*  LZR Reducers (inverse functions for the optimization above)               */
+/******************************************************************************/
+
+//deletes unwanted points from the given frame
+
+//removes duplicate lit points (anchor points and beams)
+LIBLZR_EXPORT int reduce_duplicates(Frame& frame);
+
+//removes interpolation from straight, lit lines
+LIBLZR_EXPORT int reduce_interpolation(Frame& frame);
+
+//removes all intersticial blanked points, regardless of path
+LIBLZR_EXPORT int reduce_blanks(Frame& frame);
 
 
 

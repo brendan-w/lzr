@@ -1,5 +1,6 @@
 
 #include "optimizer.hpp"
+#include "interpolator.hpp"
 
 namespace lzr {
 
@@ -64,9 +65,13 @@ int Optimizer_Internals::run(Optimizer* settings, Frame& frame)
     find_paths(settings);
 
     if(settings->reorder_paths)
+    {
         reorder_paths(settings); //sorts the path buffer
+    }
 
     compile_paths(settings, frame);
+
+    interpolate(frame, settings->interp_distance, settings->interp_func);
 
     return 0;
 }
