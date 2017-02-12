@@ -14,13 +14,13 @@ namespace lzr {
 Optimizer::Optimizer()
 {
     //assume the laser to be in a default position
-    internal = new Optimizer_Internals(Point());
+    internal = new OptimizerInternals(Point());
 }
 
 
 Optimizer::Optimizer(Point current_laser_position)
 {
-    internal = new Optimizer_Internals(current_laser_position);
+    internal = new OptimizerInternals(current_laser_position);
 }
 
 
@@ -44,7 +44,7 @@ int Optimizer::run(Frame& frame)
  */
 
 
-Optimizer_Internals::Optimizer_Internals(Point current_laser_position)
+OptimizerInternals::OptimizerInternals(Point current_laser_position)
 {
     last_known_point = current_laser_position;
     last_known_point.angle = ANGLE_ANY;
@@ -53,7 +53,7 @@ Optimizer_Internals::Optimizer_Internals(Point current_laser_position)
 
 
 //Main optimization function
-int Optimizer_Internals::run(Optimizer* settings, Frame& frame)
+int OptimizerInternals::run(Optimizer* settings, Frame& frame)
 {
     //save the frame to our working buffer
     points.resize(frame.size());

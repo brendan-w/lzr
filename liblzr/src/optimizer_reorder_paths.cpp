@@ -68,7 +68,7 @@ namespace lzr {
 
 //the deflection gets calculated differently if there's a blanking jump,
 //or if any angle returns ANGLE_ANY
-double Optimizer_Internals::angular_deflection(const Optimizer_Point & laser, const Optimizer_Path & path)
+double OptimizerInternals::angular_deflection(const Optimizer_Point& laser, const Optimizer_Path& path)
 {
     double deflection = 0.0;
 
@@ -107,7 +107,7 @@ double Optimizer_Internals::angular_deflection(const Optimizer_Point & laser, co
 }
 
 
-double Optimizer_Internals::cost(const Optimizer_Point laser, const Optimizer_Path path)
+double OptimizerInternals::cost(const Optimizer_Point laser, const Optimizer_Path path)
 {
     //metrics
     double sq_distance = laser.sq_distance_to(path.front(points)); // [0, 2]
@@ -124,7 +124,7 @@ double Optimizer_Internals::cost(const Optimizer_Point laser, const Optimizer_Pa
 
 
 //scan for the best path to enter next
-void Optimizer_Internals::find_next_and_swap(const size_t current_path, const Optimizer_Point laser)
+void OptimizerInternals::find_next_and_swap(const size_t current_path, const Optimizer_Point laser)
 {
     //running vars
     size_t best_path;      //index of the path with the best (lowest) cost
@@ -174,7 +174,7 @@ void Optimizer_Internals::find_next_and_swap(const size_t current_path, const Op
 }
 
 
-void Optimizer_Internals::reorder_paths(Optimizer* settings)
+void OptimizerInternals::reorder_paths(Optimizer* settings)
 {
     (void) settings;
 

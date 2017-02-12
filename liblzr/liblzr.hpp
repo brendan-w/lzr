@@ -4,15 +4,6 @@
 /*                                                                            */
 /*  liblzr - a suite of common tools for handling laser graphics              */
 /*                                                                            */
-/*  Provides:                                                                 */
-/*      point structures                                                      */
-/*      frame structures                                                      */
-/*      point transformations                                                 */
-/*      frame transformations                                                 */
-/*      frame interpolator                                                    */
-/*      frame optimizer                                                       */
-/*      ILDA file reader/writer                                               */
-/*                                                                            */
 /******************************************************************************/
 
 
@@ -163,22 +154,26 @@ LIBLZR_EXPORT int mask(Frame& frame, Frame mask, bool inverse=false);
 
 /******************************************************************************/
 /*  LZR Optimizer                                                             */
+/*  Converts a stream of raw frames into something friendly for the scanners  */
+/*  Handles:                                                                  */
+/*    - interpolation (for both blanked and lit lines)                        */
+/*    - anchor points                                                         */
+/*    - path scan order                                                       */
+/*    - inter-frame blanking                                                  */
 /******************************************************************************/
 
 //interpolation point density (points from one side of the frame to the other)
 #define INTERP_DEFAULT ((LZR_POSITION_MAX - LZR_POSITION_MIN) / 100.0)
 #define BLANK_INTERP_DEFAULT ((LZR_POSITION_MAX - LZR_POSITION_MIN) / 5.0)
 
-//type for interpolation functions
-typedef double (*interpolation_func)(double t);
-
 //interpolation functions
+typedef double (*interpolation_func)(double t);
 LIBLZR_EXPORT double linear(double t); /*----*----*----*----*----*----*----*----*/
 LIBLZR_EXPORT double quad(double t);   /*---*---*-----*-----*-----*-----*---*---*/
 LIBLZR_EXPORT double quart(double t);  /*-*---*-----*-------*-------*-----*---*-*/
 
 //fwrd decl
-class Optimizer_Internals;
+class OptimizerInternals;
 
 class LIBLZR_EXPORT Optimizer
 {
@@ -208,7 +203,7 @@ public:
     interpolation_func blank_interp_func = linear;       //interpolation function to use for blanking jumps
 
 private:
-    Optimizer_Internals* internal;
+    OptimizerInternals* internal;
 };
 
 

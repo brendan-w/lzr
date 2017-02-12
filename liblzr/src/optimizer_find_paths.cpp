@@ -23,7 +23,7 @@ namespace lzr {
 
 
 //computes the angles from one point to the next
-void Optimizer_Internals::fill_angle()
+void OptimizerInternals::fill_angle()
 {
     /*
 
@@ -56,7 +56,7 @@ void Optimizer_Internals::fill_angle()
 
 
 
-void Optimizer_Internals::path_split(double split_angle)
+void OptimizerInternals::path_split(double split_angle)
 {
     paths.clear(); //dump whatever we had before
 
@@ -118,7 +118,7 @@ void Optimizer_Internals::path_split(double split_angle)
 
 
 
-void Optimizer_Internals::fill_cycle(double split_angle)
+void OptimizerInternals::fill_cycle(double split_angle)
 {
     for(Optimizer_Path& path : paths)
     {
@@ -142,7 +142,7 @@ void Optimizer_Internals::fill_cycle(double split_angle)
     Splits a point buffer into individual path segments.
     Loads the result into the given path buffer.
 */
-void Optimizer_Internals::find_paths(Optimizer* settings)
+void OptimizerInternals::find_paths(Optimizer* settings)
 {
     double split_angle = DEG_TO_RAD(settings->path_split_angle);
 

@@ -40,9 +40,9 @@ static size_t back_anchors(Frame& frame)
  * start of the given path, and will insert any additional needed LIT
  * anchor points.
  */
-void Optimizer_Internals::add_path_to_frame(Optimizer* settings,
-                                            Frame& frame,
-                                            Optimizer_Path path)
+void OptimizerInternals::add_path_to_frame(Optimizer* settings,
+                                           Frame& frame,
+                                           Optimizer_Path path)
 {
     int anchors = settings->anchor_points_lit;
     anchors -= path.front_anchors(points); //the number of leading anchors that are already present
@@ -81,10 +81,10 @@ void Optimizer_Internals::add_path_to_frame(Optimizer* settings,
  * Generates a blanking jump between two Points.
  * Also checks for appropriate number of lit anchor points at the end of the frame.
  */
-void Optimizer_Internals::blank_between(Optimizer* settings,
-                                        Frame& frame,
-                                        Point a,
-                                        Point b)
+void OptimizerInternals::blank_between(Optimizer* settings,
+                                       Frame& frame,
+                                       Point a,
+                                       Point b)
 {
 
     //add any needed closing LIT anchor points
@@ -116,7 +116,7 @@ void Optimizer_Internals::blank_between(Optimizer* settings,
 }
 
 
-void Optimizer_Internals::compile_paths(Optimizer* settings, Frame& frame)
+void OptimizerInternals::compile_paths(Optimizer* settings, Frame& frame)
 {
     frame.clear();
 

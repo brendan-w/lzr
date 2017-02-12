@@ -97,10 +97,10 @@ private:
 /*
  * private optimizer context
  */
-class Optimizer_Internals
+class OptimizerInternals
 {
 public:
-    Optimizer_Internals(Point current_laser_position);
+    OptimizerInternals(Point current_laser_position);
 
     //main optimization function. Accepts pointer for
     //the wrapper/settings holder object.
@@ -136,7 +136,7 @@ private:
     */
     void reorder_paths(Optimizer* settings);
 
-    double angular_deflection(const Optimizer_Point & laser, const Optimizer_Path & path);
+    double angular_deflection(const Optimizer_Point& laser, const Optimizer_Path& path);
     double cost(const Optimizer_Point laser, const Optimizer_Path path);
     void find_next_and_swap(const size_t current_path, const Optimizer_Point laser);
 
