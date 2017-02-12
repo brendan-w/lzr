@@ -49,7 +49,7 @@ liblzr.a: $(OBJS)
 tests/%: tests/%.cpp all
 	$(CXX) $(CXXFLAGS) $(LIBS) $< ./liblzr.a -o $@
 
-tools/ilda: tools/ilda.cpp
+tools/ilda-view: tools/ilda-view.cpp
 	$(CXX) $(CXXFLAGS) -I/usr/include/SDL2 -lSDL2 $< ./liblzr.a -o $@
 
 # DAC specific compilation

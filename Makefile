@@ -1,14 +1,10 @@
 
 .PHONY: all
-all: liblzr lzrv
+all: liblzr
 
 .PHONY: liblzr
 liblzr:
 	$(MAKE) -C liblzr/
-
-.PHONY: lzrv
-lzrv:
-	$(MAKE) -C lzrv/
 
 .PHONY: test
 test:
@@ -17,4 +13,3 @@ test:
 .PHONY: clean
 clean:
 	$(MAKE) -C liblzr/ clean
-	$(MAKE) -C lzrv/ clean
