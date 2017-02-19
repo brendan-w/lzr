@@ -30,7 +30,14 @@ namespace lzr {
 /*  ILDA Structure Definitions                                                */
 /******************************************************************************/
 
-typedef struct __attribute__ ((packed)) {
+#ifdef _MSC_VER
+#define PACKED
+#pragma pack(push,1)
+#else
+#define PACKED __attribute__ ((__packed__))
+#endif
+
+typedef struct PACKED {
     char     ilda[4];
     char     reserved_a[3];
     uint8_t  format;
@@ -44,21 +51,21 @@ typedef struct __attribute__ ((packed)) {
 } ilda_header;
 
 
-typedef struct __attribute__ ((packed)) {
+typedef struct PACKED {
     uint8_t            : 6; // the rest of the byte is unused
     uint8_t blanked    : 1;
     uint8_t last_point : 1;
 } ilda_status;
 
 
-typedef struct __attribute__ ((packed)) {
+typedef struct PACKED {
     uint8_t r;    
     uint8_t g;
     uint8_t b;
 } ilda_color;
 
 
-typedef struct __attribute__ ((packed)) {
+typedef struct PACKED {
     int16_t     x;
     int16_t     y;
     ilda_status status;
@@ -66,7 +73,7 @@ typedef struct __attribute__ ((packed)) {
 } ilda_point_2d_indexed;
 
 
-typedef struct __attribute__ ((packed)) {
+typedef struct PACKED {
     int16_t     x;
     int16_t     y;
     ilda_status status;
@@ -76,7 +83,7 @@ typedef struct __attribute__ ((packed)) {
 } ilda_point_2d_true;
 
 
-typedef struct __attribute__ ((packed)) {
+typedef struct PACKED {
     int16_t     x;
     int16_t     y;
     int16_t     z;
@@ -85,7 +92,7 @@ typedef struct __attribute__ ((packed)) {
 } ilda_point_3d_indexed;
 
 
-typedef struct __attribute__ ((packed)) {
+typedef struct PACKED {
     int16_t     x;
     int16_t     y;
     int16_t     z;
@@ -95,6 +102,11 @@ typedef struct __attribute__ ((packed)) {
     uint8_t     r;
 } ilda_point_3d_true;
 
+#ifdef _MSC_VER
+#pragma pack(pop)
+#endif
+
+#undef PACKED
 
 
 /******************************************************************************/
