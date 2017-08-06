@@ -5,11 +5,8 @@
 #include <sstream>
 #include <iomanip>
 #include <iostream>
-#include <vector>
 #include <math.h>
 #include <liblzr.hpp>
-
-typedef std::vector<std::string> DACList;
 
 #define CLAMP(d) ( fmin(fmax(d, -1.0), 1.0) )
 

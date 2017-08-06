@@ -1,4 +1,6 @@
 
+#include <algorithm>    // std::set_union
+
 #include "dac.hpp"
 #include "etherdream.hpp"
 
@@ -11,20 +13,16 @@ static inline bool starts_with(const std::string& str,
     return str.compare(0, substr.length(), substr) == 0;
 }
 
-static inline void append_dacs(DACList& master, DACList other)
-{
-    master.insert(master.end(), other.begin(), other.end());
-}
-
 void init_dacs()
 {
     etherdream_lib_start();
 }
 
-DACList list_dacs()
+DACNames list_dacs()
 {
-    DACList list;
-    append_dacs(list, EtherDream::list_dacs());
+    DACNames list;
+    DACNames etherdreams = EtherDream::list_dacs();
+    list.insert(etherdreams.begin(), etherdreams.end());
     return list;
 }
 

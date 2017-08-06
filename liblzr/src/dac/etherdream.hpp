@@ -10,7 +10,7 @@ namespace lzr {
 class EtherDream : public DAC
 {
 public:
-    static DACList list_dacs();
+    static DACNames list_dacs();
 
     EtherDream(std::string name);
     ~EtherDream();

@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
         printf("Usage: %s <dac-name> <ilda-file>\n\n", argv[0]);
         printf("Available DACs:\n");
 
-        std::vector<std::string> dacs = list_dacs();
+        DACNames dacs = list_dacs();
 
         for(std::string dac : dacs)
         {

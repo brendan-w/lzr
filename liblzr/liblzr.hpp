@@ -23,6 +23,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <vector>
+#include <set>
 #include <string>
 
 namespace lzr {
@@ -297,7 +298,8 @@ protected:
 void init_dacs();
 
 //get list of connected DACs
-std::vector<std::string> list_dacs();
+typedef std::set<std::string> DACNames;
+DACNames list_dacs();
 
 //connect to a DAC
 DAC* dac_connect(std::string name);
