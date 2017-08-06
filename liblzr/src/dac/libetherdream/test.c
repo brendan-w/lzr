@@ -128,7 +128,7 @@ int main(int argc, char **argv) {
 	i = 0;
 	while (1) {
 		fill_circle((float)i / 50, mode);
-		int res = etherdream_write(d, circle, CIRCLE_POINTS, 30000, -1);
+		int res = etherdream_write(d, circle, CIRCLE_POINTS, 30000, 1);
 		if (res != 0) {
 			printf("write %d\n", res);
 		}

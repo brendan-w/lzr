@@ -54,6 +54,13 @@ struct etherdream *etherdream_get(unsigned long idx);
  */
 unsigned long etherdream_get_id(struct etherdream *d);
 
+/* etherdream_get_in_addr(d)
+ *
+ * Return the IP address of the given Ether Dream. Does not require that
+ * a connection to d has been established.
+ */
+const struct in_addr *etherdream_get_in_addr(struct etherdream *d);
+
 /* etherdream_connect(d)
  *
  * Open a connection to d. This must be called before most other etherdream_

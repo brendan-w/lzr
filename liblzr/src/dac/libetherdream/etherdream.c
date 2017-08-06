@@ -44,10 +44,10 @@
 
 #define BUFFER_POINTS_PER_FRAME 16000
 #define BUFFER_NFRAMES          2
-#define MAX_LATE_ACKS           64
-#define MIN_SEND_POINTS         40
-#define DEFAULT_TIMEOUT         2000000
-#define DEBUG_THRESHOLD_POINTS  800
+#define MAX_LATE_ACKS		64
+#define MIN_SEND_POINTS		40
+#define DEFAULT_TIMEOUT		2000000
+#define DEBUG_THRESHOLD_POINTS	800
 
 struct etherdream_conn {
 	int dc_sock;
@@ -139,19 +139,18 @@ static long long microseconds(void) {
  * Like usleep().
  */
 static void microsleep(long long us) {
-	nanosleep(&(struct timespec){ .tv_sec = us / 1000000,
-	                             .tv_nsec = (us % 1000000) * 1000 }, NULL);
+	struct timespec t;
+	t.tv_sec = us / 1000000;
+	t.tv_nsec = (us % 1000000) * 1000;
+	nanosleep(&t, NULL);
 }
 
 /* trace(d, fmt, ...)
  *
  * Utility function for logging.
  */
-static void trace(struct etherdream *d, char *fmt, ...) {
-#ifndef DEBUG
-	(void) d;
-	(void) fmt;
-#else
+#ifdef DEBUG
+static void trace(struct etherdream *d, const char *fmt, ...) {
 	if (!trace_fp)
 		return;
 
@@ -173,8 +172,10 @@ static void trace(struct etherdream *d, char *fmt, ...) {
 	va_end(args);
 
 	fputs(buf, trace_fp);
-#endif
 }
+#else
+#define trace(...)
+#endif
 
 /* log_socket_error(d, call)
  *
@@ -195,9 +196,11 @@ static int wait_for_fd_activity(struct etherdream *d, int usec, int writable) {
 	fd_set set;
 	FD_ZERO(&set);
 	FD_SET(d->conn.dc_sock, &set);
+	struct timeval t;
+	t.tv_sec = usec / 1000000;
+	t.tv_usec = usec % 1000000;
 	int res = select(d->conn.dc_sock + 1, (writable ? NULL : &set),
-		(writable ? &set : NULL), &set, &(struct timeval){
-		.tv_sec = usec / 1000000, .tv_usec = usec % 1000000 });
+		(writable ? &set : NULL), &set, &t);
 	if (res < 0)
 		log_socket_error(d, "select");
 
@@ -333,52 +336,60 @@ static int dac_connect(struct etherdream *d) {
 	}
 
 	// Wait for connection to go through
-	int res = wait_for_fd_activity(d, DEFAULT_TIMEOUT, 1);
-	if (res < 0)
-		goto bail;
-	if (res == 0) {
-		trace(d, "Connection to %s timed out.\n", inet_ntoa(d->addr));
-		goto bail;
+	{
+		int res = wait_for_fd_activity(d, DEFAULT_TIMEOUT, 1);
+		if (res < 0)
+			goto bail;
+		if (res == 0) {
+			trace(d, "Connection to %s timed out.\n", inet_ntoa(d->addr));
+			goto bail;
+		}
 	}
 
 	// See if we have *actually* connected
-	int error;
-	unsigned int len = sizeof error;
-	if (getsockopt(conn->dc_sock, SOL_SOCKET, SO_ERROR, (char *)&error,
-	                                                           &len) < 0) {
-		log_socket_error(d, "getsockopt");
-		goto bail;
+	{
+		int error;
+		unsigned int len = sizeof error;
+		if (getsockopt(conn->dc_sock, SOL_SOCKET, SO_ERROR, (char *)&error,
+		                                                           &len) < 0) {
+			log_socket_error(d, "getsockopt");
+			goto bail;
+		}
+
+		if (error) {
+			errno = error;
+			log_socket_error(d, "connect");
+			goto bail;
+		}
 	}
 
-	if (error) {
-		errno = error;
-		log_socket_error(d, "connect");
-		goto bail;
-	}
-
-	int ndelay = 1;
-	if (setsockopt(conn->dc_sock, IPPROTO_TCP, TCP_NODELAY,
-	                                (char *)&ndelay, sizeof(ndelay)) < 0) {
-		log_socket_error(d, "setsockopt TCP_NODELAY");
-		goto bail;
+	{
+		int ndelay = 1;
+		if (setsockopt(conn->dc_sock, IPPROTO_TCP, TCP_NODELAY,
+		                                (char *)&ndelay, sizeof(ndelay)) < 0) {
+			log_socket_error(d, "setsockopt TCP_NODELAY");
+			goto bail;
+		}
 	}
 
 	// After we connect, the DAC will send an initial status response
 	if (read_resp(d) < 0)
 		goto bail;
 
-	char c = 'p';
-	send_all(d, &c, 1);
+    {
+	    char c = 'p';
+	    send_all(d, &c, 1);
+    }
 
 	if (read_resp(d) < 0)
 		goto bail;
 	dump_resp(d);
 
 	if (d->sw_revision >= 2) {
-		c = 'v';
+		char c = 'v';
 		if (send_all(d, &c, 1) < 0)
 			goto bail;
-		res = read_bytes(d, d->version, sizeof(d->version));
+		int res = read_bytes(d, d->version, sizeof(d->version));
 		if (res < 0)
 			return res;
 	} else {
@@ -471,7 +482,7 @@ static int dac_send_data(struct etherdream *d, struct dac_point *data,
 	    && !d->conn.dc_begin_sent) {
 		trace(d, "L: Sending begin command...\n");
 
-		struct begin_command b = { .command = 'b', .point_rate = rate,
+		struct begin_command b = { .command = 'b', .point_rate = (uint32_t)rate,
 		                           .low_water_mark = 0 };
 		if ((res = send_all(d, (const char *)&b, sizeof b)) < 0)
 			return res;
@@ -645,10 +656,13 @@ static void *dac_loop(void *dv) {
 
 	trace(d, "L: Shutting down.\n");
 	d->state = ST_SHUTDOWN;
+	pthread_cond_broadcast(&d->loop_cond);
 	return 0;
 }
 
 int etherdream_connect(struct etherdream *d) {
+	trace(d, "L: Connecting.\n");
+
 	// Initialize buffer
 	d->frame_buffer_read = 0;
 	d->frame_buffer_fullness = 0;
@@ -674,6 +688,8 @@ int etherdream_connect(struct etherdream *d) {
 }
 
 void etherdream_disconnect(struct etherdream *d) {
+	trace(d, "L: Disconnecting.\n");
+
 	pthread_mutex_lock(&d->mutex);
 	if (d->state == ST_READY)
 		pthread_cond_broadcast(&d->loop_cond);
@@ -690,6 +706,14 @@ void etherdream_disconnect(struct etherdream *d) {
  */
 unsigned long etherdream_get_id(struct etherdream *d) {
 	return d->dac_id;
+}
+
+/* etherdream_get_in_addr(d)
+ *
+ * Documented in etherdream.h.
+ */
+const struct in_addr *etherdream_get_in_addr(struct etherdream *d) {
+    return &d->addr;
 }
 
 /* etherdream_write(d, pts, npts, pps, reps)
@@ -770,10 +794,17 @@ int etherdream_is_ready(struct etherdream *d) {
  */
 int etherdream_wait_for_ready(struct etherdream *d) {
 	pthread_mutex_lock(&d->mutex);
-	while (d->frame_buffer_fullness == BUFFER_NFRAMES)
+	while (d->frame_buffer_fullness == BUFFER_NFRAMES && d->state != ST_SHUTDOWN) {
 		pthread_cond_wait(&d->loop_cond, &d->mutex);
+	}
+	int is_shutdown = (d->state == ST_SHUTDOWN);
 	pthread_mutex_unlock(&d->mutex);
-	return 0;
+
+	if (is_shutdown) {
+		return -1;
+	} else {
+		return 0;
+	}
 }
 
 /* etherdream_stop(d)
@@ -849,7 +880,7 @@ static void *watch_for_dacs(void *arg) {
 
 		/* Make a new DAC entry */
 		struct etherdream *new_dac;
-		new_dac = (void *)malloc(sizeof (struct etherdream));
+		new_dac = (struct etherdream *)malloc(sizeof (struct etherdream));
 		if (!new_dac) {
 			trace(NULL, "!! malloc(struct etherdream) failed\n");
 			continue;
@@ -898,8 +929,8 @@ int etherdream_lib_start(void) {
 	// Set up the logging fd (just stderr for now)
 	trace_fp = stderr;
 	trace(NULL, "----------\n");
-	fflush(trace_fp);
 	trace(NULL, "== libetherdream started ==\n");
+	fflush(trace_fp);
 
 	pthread_mutex_init(&dac_list_lock, NULL);
 
