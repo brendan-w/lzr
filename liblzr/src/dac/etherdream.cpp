@@ -56,10 +56,21 @@ int EtherDream::send(Frame frame)
 
             ep.x = (int16_t) (CLAMP(p.x) * 32767);
             ep.y = (int16_t) (CLAMP(p.y) * 32767);
-            ep.r = (uint16_t) (p.r * 255);
-            ep.g = (uint16_t) (p.g * 255);
-            ep.b = (uint16_t) (p.b * 255);
             ep.i = (uint16_t) (p.i * 255);
+
+            // liblzr preserves color when intensity is zero
+            if(p.i == 0.0)
+            {
+                ep.r = (uint16_t) 0;
+                ep.g = (uint16_t) 0;
+                ep.b = (uint16_t) 0;
+            }
+            else
+            {
+                ep.r = (uint16_t) (p.r * 255);
+                ep.g = (uint16_t) (p.g * 255);
+                ep.b = (uint16_t) (p.b * 255);
+            }
 
             buffer[i] = ep;
         }

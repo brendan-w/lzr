@@ -52,6 +52,9 @@ tests/%: tests/%.cpp all
 tools/ilda-view: tools/ilda-view.cpp
 	$(CXX) $(CXXFLAGS) -I/usr/include/SDL2 -lSDL2 $< ./liblzr.a -o $@
 
+tools/%: tools/%.cpp
+	$(CXX) $(CXXFLAGS) $< ./liblzr.a $(DACS) $(LIBS) -o $@
+
 # DAC specific compilation
 src/dac/libetherdream/etherdream.a:
 	$(MAKE) -C $(dir $@)

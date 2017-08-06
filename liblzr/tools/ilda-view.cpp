@@ -213,7 +213,7 @@ int main(int argc, char* argv[])
 {
     if(argc <= 1)
     {
-        fprintf(stderr, "Usage: ilda <ilda file>\n");
+        fprintf(stderr, "Usage: ilda-view <ilda file>\n");
         return EXIT_SUCCESS;
     }
 
