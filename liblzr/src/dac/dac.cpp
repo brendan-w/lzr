@@ -62,7 +62,7 @@ DAC_Internals::DAC_Internals() : name(""),
  * DAC class functions
  */
 
-DAC::DAC(std::string name)
+DAC::DAC(const std::string& name)
 {
     internal = new DAC_Internals();
     internal->name = name;

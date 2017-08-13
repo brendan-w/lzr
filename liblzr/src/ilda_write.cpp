@@ -62,8 +62,16 @@ static int write_frame(ILDA* ilda, Frame& frame, size_t pd, const char* name, co
     memcpy(h.ilda, ILDA_MAGIC, sizeof(h.ilda));
 
     //set header details
-    strncpy(h.name, name, strnlen(name, sizeof(h.name)));
-    strncpy(h.company, company, strnlen(company, sizeof(h.company)));
+    if (name != nullptr)
+    {
+        strncpy(h.name, name, strnlen(name, sizeof(h.name)));
+    }
+
+    if (company != nullptr)
+    {
+        strncpy(h.company, company, strnlen(company, sizeof(h.company)));
+    }
+
     h.format            = FORMAT_5_2D_TRUE;
     h.number_of_records = (uint16_t) frame.size();
     h.projector_id      = (uint8_t)  pd;
@@ -144,11 +152,6 @@ int ilda_write(ILDA* ilda, size_t pd, Frame& frame, const char* name, const char
     return ERROR_TO_LZR(write_frame(ilda, frame, pd, name, company));
 }
 
-int ilda_write(ILDA* ilda, size_t pd, Frame& frame)
-{
-    return ilda_write(ilda, pd, frame, "", "");
-}
-
 int ilda_write(ILDA* ilda, size_t pd, FrameList& frame_list, const char* name, const char* company)
 {
     if(ilda == NULL)
@@ -173,11 +176,6 @@ int ilda_write(ILDA* ilda, size_t pd, FrameList& frame_list, const char* name, c
     }
 
     return ERROR_TO_LZR(status);
-}
-
-int ilda_write(ILDA* ilda, size_t pd, FrameList& frame_list)
-{
-    return ilda_write(ilda, pd, frame_list, "", "");
 }
 
 
