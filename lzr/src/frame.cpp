@@ -2,33 +2,9 @@
 #include "frame.hpp"
 
 
-Frame::Frame(lzr::Frame& frame)
+Frame::Frame(const lzr::Frame& frame)
+  : paths(lzr::split_frame(frame))
 {
-    //split the frame into paths
-    bool was_lit = false;
-    lzr::Frame path;
-
-    for(lzr::Point& p : frame)
-    {
-        if(p.is_lit()) //if the laser just turned on
-        {
-            path.add(p);
-        }
-        else if(p.is_blanked() && was_lit) //if the laser just turned off
-        {
-            paths.append(path);
-            path.clear();
-        }
-
-        was_lit = p.is_lit();
-    }
-
-    //if a path was left open, close it
-    if(was_lit)
-    {
-        paths.append(path);
-        path.clear();
-    }
 }
 
 int Frame::rowCount(const QModelIndex& parent) const
@@ -82,7 +58,7 @@ bool Frame::removeRow(int row, const QModelIndex& parent)
         return false;
 
     beginRemoveRows(parent, row, row);
-    paths.removeAt(row);
+    paths.erase(paths.begin() + row);
     endRemoveRows();
     return true;
 }
@@ -107,7 +83,7 @@ QModelIndex Frame::add_path(const lzr::Frame& path)
     int newRow = paths.size();
 
     beginInsertRows(QModelIndex(), newRow, newRow);
-    paths.append(path); //copy the data to the new path
+    paths.push_back(path); //copy the data to the new path
     endInsertRows();
 
     return this->index(newRow);

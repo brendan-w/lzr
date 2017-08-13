@@ -19,7 +19,7 @@ class Frame : public QAbstractListModel
     Q_OBJECT
 
 public:
-    Frame(lzr::Frame& frame);
+    Frame(const lzr::Frame& frame);
 
     //QAbstractItemModel functions
     int rowCount(const QModelIndex& parent = QModelIndex()) const; //reports the number of paths in the frame
@@ -37,7 +37,7 @@ public:
     bool set_path(const QModelIndex& index, lzr::Frame path);
 
 private:
-    QList<lzr::Frame> paths; //partial laser frames, split by blanking jumps
+    lzr::FrameList paths; //partial laser frames, split by blanking jumps
 };
 
 
