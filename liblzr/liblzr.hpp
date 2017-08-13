@@ -107,8 +107,8 @@ public:
 class LIBLZR_EXPORT Frame : public std::vector<Point>
 {
 public:
-    Frame();
-    Frame(size_t n);
+    Frame() : std::vector<Point>() {};
+    Frame(size_t n) : std::vector<Point>(n) {};
 
     Frame& add(const Point& p);
     Frame& add(const Frame& other);
