@@ -21,22 +21,18 @@ Frame::Frame(size_t n) : std::vector<Point>(n) { }
 
 Frame& Frame::add(const Point& p)
 {
-    push_back(Point(p));
+    push_back(p);
     return *this;
 }
 
 
 Frame& Frame::add(const Frame& other)
 {
-    for(Point p : other)
-    {
-        push_back(Point(p));
-    }
-
+    insert(end(), other.begin(), other.end());
     return *this;
 }
 
-
+// private utility for creating a blanked segment
 Frame& Frame::add_blank_jump_to(const Point& p)
 {
     //only works when we already have a point in the frame
@@ -55,16 +51,6 @@ Frame& Frame::add_blank_jump_to(const Point& p)
     return *this;
 }
 
-
-Frame& Frame::add_blank_jump_to(const Frame& other)
-{
-    if(other.size() > 0)
-        add_blank_jump_to(other.front());
-
-    return *this;
-}
-
-
 Frame& Frame::add_with_blank_jump(const Point& p)
 {
     add_blank_jump_to(p);
@@ -72,11 +58,14 @@ Frame& Frame::add_with_blank_jump(const Point& p)
     return *this;
 }
 
-
 Frame& Frame::add_with_blank_jump(const Frame& other)
 {
-    add_blank_jump_to(other);
-    add(other);
+    if(other.size() > 0)
+    {
+        add_blank_jump_to(other.front());
+        add(other);
+    }
+
     return *this;
 }
 
@@ -127,6 +116,48 @@ Point Frame::average_center() const
     center.y /= (double) size();
 
     return center;
+}
+
+FrameList split_frame(const Frame& frame)
+{
+    FrameList paths;
+
+    bool was_lit = false;
+    Frame path;
+
+    for(const Point& p : frame)
+    {
+        if(p.is_lit()) //if the laser just turned on
+        {
+            path.add(p);
+        }
+        else if(p.is_blanked() && was_lit) //if the laser just turned off
+        {
+            paths.push_back(path);
+            path.clear();
+        }
+
+        was_lit = p.is_lit();
+    }
+
+    //if a path was left open, close it
+    if(was_lit)
+    {
+        paths.push_back(path);
+        path.clear();
+    }
+
+    return paths;
+}
+
+Frame combine_frames(const FrameList& frames)
+{
+    Frame frame;
+    for (const Frame& f : frames)
+    {
+        frame.add_with_blank_jump(f);
+    }
+    return frame;
 }
 
 

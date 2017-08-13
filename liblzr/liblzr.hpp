@@ -121,16 +121,18 @@ public:
 
 private:
     Frame& add_blank_jump_to(const Point& p);
-    Frame& add_blank_jump_to(const Frame& other);
 };
 
 
 /******************************************************************************/
-/*  LZR Animations                                                            */
+/*  LZR Animations & Partial Frames                                           */
 /******************************************************************************/
 
 typedef std::vector<Frame> FrameList;
 
+//splits a single frame into lit paths.
+FrameList split_frame(const Frame& frame);
+Frame combine_frames(const FrameList& frames);
 
 
 /******************************************************************************/

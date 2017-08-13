@@ -19,10 +19,10 @@ LZR::LZR()
     f.add(                lzr::Point(0,  0,  255, 255, 255, 255));
     f.add(                lzr::Point(-1, -1,  0, 255, 255, 255));
 
-    //Frame* frame = new Frame(f);
-    //show_frameeditor(frame);
-    Clip* clip = new Clip();
-    show_clipeditor(clip);
+    Frame* frame = new Frame(f);
+    show_frameeditor(frame);
+    // Clip* clip = new Clip();
+    // show_clipeditor(clip);
 }
 
 LZR::~LZR()
