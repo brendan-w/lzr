@@ -27,8 +27,8 @@ static int write_point(ILDA* ilda, Point& p, bool is_last)
     ilda_point_2d_true ilda_p;
     memset(&ilda_p, 0, sizeof(ilda_point_2d_true));
 
-    ilda_p.x = (int16_t) INT16_MAX * clamp<float>(p.x, LZR_POSITION_MIN, LZR_POSITION_MAX);
-    ilda_p.y = (int16_t) INT16_MAX * clamp<float>(p.y, LZR_POSITION_MIN, LZR_POSITION_MAX);
+    ilda_p.x = (int16_t) INT16_MAX * clamp<float>(p.x, Point::POSITION_MIN, Point::POSITION_MAX);
+    ilda_p.y = (int16_t) INT16_MAX * clamp<float>(p.y, Point::POSITION_MIN, Point::POSITION_MAX);
     ilda_p.r = p.r;
     ilda_p.g = p.g;
     ilda_p.b = p.b;

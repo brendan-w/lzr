@@ -18,7 +18,13 @@ namespace lzr {
     16-bit laser DACs also allow us to store information in single-precision floats,
     which are capable of storing 2^23 (8388608) fractional parts.
 */
-#define FLOAT_EQUAL_TOLERANCE 0.0000152
+static constexpr float FLOAT_EQUAL_TOLERANCE = 0.0000152;
+
+
+constexpr float Point::POSITION_MIN;
+constexpr float Point::POSITION_MAX;
+constexpr uint8_t Point::COLOR_MIN;
+constexpr uint8_t Point::COLOR_MAX;
 
 
 /*

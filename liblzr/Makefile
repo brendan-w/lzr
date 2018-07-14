@@ -2,7 +2,7 @@
 
 CXX       = g++
 CXXFLAGS += -std=c++14 -Wall -Wextra -pedantic -fPIC -ggdb
-CXXFLAGS += -I.
+CXXFLAGS += -I./include
 LIBS      = -lm -lpthread
 ARFLAGS   = rs
 
@@ -63,7 +63,7 @@ src/dac/libetherdream/etherdream.a:
 install:
 	install -m 0755 liblzr.a   $(INSTALL_PREFIX)/lib
 	install -m 0755 liblzr.so  $(INSTALL_PREFIX)/lib
-	install -m 0755 liblzr.hpp $(INSTALL_PREFIX)/include
+	install -m 0755 include/*  $(INSTALL_PREFIX)/include/liblzr
 
 .PHONY: clean
 clean:

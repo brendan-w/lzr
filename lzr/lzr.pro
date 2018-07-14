@@ -17,7 +17,7 @@ HEADERS += src/*.hpp
 HEADERS += src/FrameEditor/*.hpp
 HEADERS += src/ClipEditor/*.hpp
 
-INCLUDEPATH += ../liblzr
+INCLUDEPATH += ../liblzr/include
 
 # TODO: switch this to the installed path
 LIBS += ../liblzr/liblzr.so
