@@ -27,7 +27,7 @@ DACNames list_dacs()
 }
 
 //factory for DAC connection objects
-DAC* dac_connect(std::string name)
+DAC* dac_connect(const std::string& name)
 {
     DAC* dac = NULL;
 
