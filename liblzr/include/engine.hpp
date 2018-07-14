@@ -54,7 +54,7 @@ struct Generator
 {
     virtual T operator()(Inputs& inputs)=0;
     virtual json serialize()=0;
-    virtual void unserialize(const json& j)=0;
+    virtual void deserialize(const json& j)=0;
     InputMap input_map;
 };
 
@@ -74,7 +74,7 @@ struct Constant : public Generator<double>
     double v;
 
     json serialize();
-    void unserialize(const json& j);
+    void deserialize(const json& j);
 };
 
 //
@@ -97,7 +97,7 @@ struct Linear : public Generator<double>
     double to_b;
 
     json serialize();
-    void unserialize(const json& j);
+    void deserialize(const json& j);
 };
 
 //
@@ -119,7 +119,7 @@ public:
         double ry;
 
         json serialize(InputMap& input_map);
-        void unserialize(const json& j, InputMap& input_map);
+        void deserialize(const json& j, InputMap& input_map);
     };
 
     ~Curve();
@@ -127,7 +127,7 @@ public:
     double operator()(Inputs& inputs);
 
     json serialize();
-    void unserialize(const json& j);
+    void deserialize(const json& j);
 
     CurvePoint* add(double x_);
     void remove(CurvePoint* point);
@@ -152,7 +152,7 @@ struct Effect
 {
     virtual void operator()(Frame& frame, Inputs& inputs)=0;
     virtual json serialize()=0;
-    virtual void unserialize(const json& j)=0;
+    virtual void deserialize(const json& j)=0;
 };
 
 struct FrameEffect : public Effect
@@ -169,7 +169,7 @@ struct FrameEffect : public Effect
     };
 
     json serialize();
-    void unserialize(const json& j);
+    void deserialize(const json& j);
 };
 
 struct TranslateEffect : public Effect
@@ -185,7 +185,7 @@ struct TranslateEffect : public Effect
     };
 
     json serialize();
-    void unserialize(const json& j);
+    void deserialize(const json& j);
 };
 
 struct RotateEffect : public Effect
@@ -205,7 +205,7 @@ struct RotateEffect : public Effect
     };
 
     json serialize();
-    void unserialize(const json& j);
+    void deserialize(const json& j);
 };
 
 
@@ -257,7 +257,7 @@ private:
     Clip* get_clip_by_name(const std::string& name);
 
     json serialize_timeline();
-    void unserialize_timeline(json& j);
+    void deserialize_timeline(json& j);
 };
 
 

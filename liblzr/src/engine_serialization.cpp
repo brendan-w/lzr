@@ -59,7 +59,7 @@ static const char* CLIP_EFFECTS = "effects.json";
 
 #define LOAD_GENERATOR(json, variable) {                                     \
     (variable) = make_double_generator(json[#variable]["__generator__"]);    \
-    (variable)->unserialize(json[#variable]);                                \
+    (variable)->deserialize(json[#variable]);                                \
 }
 
 /*
@@ -115,7 +115,7 @@ json Constant::serialize()
     return j;
 }
 
-void Constant::unserialize(const json& j)
+void Constant::deserialize(const json& j)
 {
     LOAD_INPUT(j, input_map, v);
 }
@@ -135,7 +135,7 @@ json Linear::serialize()
     return j;
 }
 
-void Linear::unserialize(const json& j)
+void Linear::deserialize(const json& j)
 {
     LOAD_INPUT(j, input_map, v);
     LOAD_INPUT(j, input_map, from_a);
@@ -160,13 +160,13 @@ json Curve::serialize()
     return j;
 }
 
-void Curve::unserialize(const json& j)
+void Curve::deserialize(const json& j)
 {
     LOAD_INPUT(j, input_map, v);
     for(const json jp : j["points"])
     {
         CurvePoint* p = new CurvePoint();
-        p->unserialize(jp, input_map);
+        p->deserialize(jp, input_map);
         points.push_back(p);
     }
 }
@@ -183,7 +183,7 @@ json Curve::CurvePoint::serialize(InputMap& input_map)
     return j;
 }
 
-void Curve::CurvePoint::unserialize(const json& j, InputMap& input_map)
+void Curve::CurvePoint::deserialize(const json& j, InputMap& input_map)
 {
     LOAD_INPUT(j, input_map, x);
     LOAD_INPUT(j, input_map, y);
@@ -206,7 +206,7 @@ json FrameEffect::serialize()
     return j;
 }
 
-void FrameEffect::unserialize(const json& j)
+void FrameEffect::deserialize(const json& j)
 {
     LOAD_GENERATOR(j, n);
 }
@@ -221,7 +221,7 @@ json TranslateEffect::serialize()
     return j;
 }
 
-void TranslateEffect::unserialize(const json& j)
+void TranslateEffect::deserialize(const json& j)
 {
     LOAD_GENERATOR(j, x);
     LOAD_GENERATOR(j, y);
@@ -239,7 +239,7 @@ json RotateEffect::serialize()
     return j;
 }
 
-void RotateEffect::unserialize(const json& j)
+void RotateEffect::deserialize(const json& j)
 {
     LOAD_GENERATOR(j, cx);
     LOAD_GENERATOR(j, cy);
@@ -271,7 +271,7 @@ void Clip::load(std::string path)
     for(const json je : j)
     {
         Effect* effect = make_effect(je["__effect__"]);
-        effect->unserialize(je);
+        effect->deserialize(je);
         effects.push_back(effect);
     }
 }
@@ -314,7 +314,7 @@ void Show::load(std::string show)
         std::ifstream f(show + "/" + TIMELINE);
         json j;
         f >> j;
-        unserialize_timeline(j);
+        deserialize_timeline(j);
     }
 }
 
@@ -331,7 +331,7 @@ json Show::serialize_timeline()
     return j;
 }
 
-void Show::unserialize_timeline(json& j)
+void Show::deserialize_timeline(json& j)
 {
     // load clips
     for(size_t i = 0; i < j.size(); i++)
