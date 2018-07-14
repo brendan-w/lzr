@@ -102,8 +102,8 @@ Point Frame::average_center() const
         center.y += p.y;
     }
 
-    center.x /= (double) size();
-    center.y /= (double) size();
+    center.x /= (float) size();
+    center.y /= (float) size();
 
     return center;
 }

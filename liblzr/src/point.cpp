@@ -14,6 +14,9 @@ namespace lzr {
     call the points equal if we're inside a half step:
 
     (2.0 / 65536) / 2.0 = 0.0000152
+
+    16-bit laser DACs also allow us to store information in single-precision floats,
+    which are capable of storing 2^23 (8388608) fractional parts.
 */
 #define FLOAT_EQUAL_TOLERANCE 0.0000152
 
@@ -31,7 +34,7 @@ Point::Point() :
     i(0)
 { }
 
-Point::Point(double x, double y) :
+Point::Point(float x, float y) :
     x(x),
     y(y),
     r(0),
@@ -40,7 +43,7 @@ Point::Point(double x, double y) :
     i(0)
 { }
 
-Point::Point(double x, double y, uint8_t r, uint8_t g, uint8_t b, uint8_t i) :
+Point::Point(float x, float y, uint8_t r, uint8_t g, uint8_t b, uint8_t i) :
     x(x),
     y(y),
     r(r),
@@ -89,18 +92,18 @@ bool Point::is_lit() const
 }
 
 //run-of-the-mill linear interpolation
-static inline double lerp(double v0, double v1, double t)
+static inline float lerp(float v0, float v1, float t)
 {
     return (1-(t))*(v0) + (t)*(v1);
 }
 
 //wrapper for lerping a uint8_t
-static inline uint8_t lerp_uint8(uint8_t v0, uint8_t v1, double t)
+static inline uint8_t lerp_uint8(uint8_t v0, uint8_t v1, float t)
 {
-    return (uint8_t) round(lerp((double) v0, (double) v1, t));
+    return (uint8_t) round(lerp((float) v0, (float) v1, t));
 }
 
-Point Point::lerp_to(const Point& other, double t) const
+Point Point::lerp_to(const Point& other, float t) const
 {
     Point p(lerp(x, other.x, t),
             lerp(y, other.y, t),
@@ -111,7 +114,7 @@ Point Point::lerp_to(const Point& other, double t) const
     return p;
 }
 
-double Point::sq_distance_to(const Point& other) const
+float Point::sq_distance_to(const Point& other) const
 {
     return (x - other.x)*(x - other.x) + (y - other.y)*(y - other.y);
 }

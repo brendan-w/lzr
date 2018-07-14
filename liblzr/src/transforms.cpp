@@ -11,7 +11,7 @@ namespace lzr {
     and seperate XY vars for scalars.
 */
 
-int translate(Frame& frame, double x, double y)
+int translate(Frame& frame, float x, float y)
 {
     for(Point& p : frame)
     {
@@ -23,20 +23,20 @@ int translate(Frame& frame, double x, double y)
 }
 
 
-int rotate(Frame& frame, Point center, double theta)
+int rotate(Frame& frame, Point center, float theta)
 {
     // x' = cos(theta) * (x-ox) - sin(theta) * (y-oy) + ox
     // y' = sin(theta) * (x-ox) + cos(theta) * (y-oy) + oy
     // where (ox, oy) is the axis/origin to rotate around
 
     //cache the sin and cos values
-    double s = std::sin(theta);
-    double c = std::cos(theta);
+    float s = std::sin(theta);
+    float c = std::cos(theta);
 
     for(Point& p : frame)
     {
-        double x = p.x - center.x;
-        double y = p.y - center.y;
+        float x = p.x - center.x;
+        float y = p.y - center.y;
         p.x = c*x - s*y + center.x;
         p.y = s*x + c*y + center.y;
     }
@@ -45,7 +45,7 @@ int rotate(Frame& frame, Point center, double theta)
 }
 
 
-int scale(Frame& frame, Point center, double x, double y)
+int scale(Frame& frame, Point center, float x, float y)
 {
     for(Point& p : frame)
     {
@@ -101,8 +101,8 @@ int dup_linear(Frame& frame, Point offset, size_t n_dups, bool blank)
     Frame copy = frame;
 
     //compute the offset for one duplication
-    offset.x /= (double) n_dups;
-    offset.y /= (double) n_dups;
+    offset.x /= (float) n_dups;
+    offset.y /= (float) n_dups;
 
     for(size_t i = 0; i < n_dups; i++)
     {
@@ -118,7 +118,7 @@ int dup_linear(Frame& frame, Point offset, size_t n_dups, bool blank)
 }
 
 
-int dup_radial(Frame& frame, Point center, size_t n_dups, double angle, bool blank)
+int dup_radial(Frame& frame, Point center, size_t n_dups, float angle, bool blank)
 {
     //TODO: decide
     //n_dups--; //give a visually correct readout of the number

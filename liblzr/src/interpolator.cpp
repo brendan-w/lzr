@@ -11,16 +11,16 @@ namespace lzr {
  * Range:  [0.0, 1.0]
  */
 
-static const double b = 0.0; //start value
-static const double c = 1.0; //change in value
-static const double d = 1.0; //duration
+static const float b = 0.0; //start value
+static const float c = 1.0; //change in value
+static const float d = 1.0; //duration
 
-double linear(double t)
+float linear(float t)
 {
     return t;
 }
 
-double quad(double t)
+float quad(float t)
 {
     t /= d/2;
     if(t < 1) return c/2*t*t + b;
@@ -28,7 +28,7 @@ double quad(double t)
     return -c/2 * (t*(t-2) - 1) + b;
 }
 
-double quart(double t)
+float quart(float t)
 {
     t /= d/2;
     if(t < 1) return c/2*t*t*t*t + b;
@@ -41,11 +41,11 @@ double quart(double t)
 
 //generates extra points on a line
 //only adds the interior points, not the endpoints
-int interp_line(Frame& working, double max_distance, interpolation_func func, Point start, Point end)
+int interp_line(Frame& working, float max_distance, interpolation_func func, Point start, Point end)
 {
     //find out if the endpoints of the line are far enough apart to require interpolation
-    double sq_dist     = start.sq_distance_to(end);
-    double sq_max_dist = max_distance * max_distance;
+    float sq_dist     = start.sq_distance_to(end);
+    float sq_max_dist = max_distance * max_distance;
 
     if(sq_dist > sq_max_dist)
     {
@@ -63,7 +63,7 @@ int interp_line(Frame& working, double max_distance, interpolation_func func, Po
         for(size_t i = 1; i < n; i++)
         {
             //get the normalized position of the new point
-            double t = (double) i / n;
+            float t = (float) i / n;
 
             //apply the user's interpolation function
             t = func(t);
@@ -84,7 +84,7 @@ int interp_line(Frame& working, double max_distance, interpolation_func func, Po
 }
 
 
-int interpolate(Frame& frame, double max_distance, interpolation_func func)
+int interpolate(Frame& frame, float max_distance, interpolation_func func)
 {
     //prevent stupidity
     if(max_distance == 0.0)

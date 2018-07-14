@@ -71,16 +71,16 @@ namespace lzr {
 class LIBLZR_EXPORT Point
 {
 public:
-    double x;  //Position X   [-1.0, 1.0]
-    double y;  //Position Y   [-1.0, 1.0]
+    float x;   //Position X   [-1.0, 1.0]
+    float y;   //Position Y   [-1.0, 1.0]
     uint8_t r; //Red          [0, 255]
     uint8_t g; //Green        [0, 255]
     uint8_t b; //Blue         [0, 255]
     uint8_t i; //Blanking     [0, 255]
 
     Point();
-    Point(double x, double y);
-    Point(double x, double y, uint8_t r, uint8_t g, uint8_t b, uint8_t i);
+    Point(float x, float y);
+    Point(float x, float y, uint8_t r, uint8_t g, uint8_t b, uint8_t i);
 
     void blank();
     void unblank();
@@ -88,8 +88,8 @@ public:
     void set_color(const Point& other);
     bool is_blanked() const;
     bool is_lit() const;
-    Point lerp_to(const Point& other, double t) const;
-    double sq_distance_to(const Point& other) const;
+    Point lerp_to(const Point& other, float t) const;
+    float sq_distance_to(const Point& other) const;
     bool same_position_as(const Point& other) const;
     bool same_color_as(const Point& other) const;
     bool operator==(const Point& other) const;
@@ -139,13 +139,13 @@ Frame combine_frames(const FrameList& frames);
 /*  LZR Frame Transforms                                                      */
 /******************************************************************************/
 
-LIBLZR_EXPORT int translate(Frame& frame, double x, double y);
-LIBLZR_EXPORT int rotate(Frame& frame, Point center, double theta);
-LIBLZR_EXPORT int scale(Frame& frame, Point center, double x, double y);
+LIBLZR_EXPORT int translate(Frame& frame, float x, float y);
+LIBLZR_EXPORT int rotate(Frame& frame, Point center, float theta);
+LIBLZR_EXPORT int scale(Frame& frame, Point center, float x, float y);
 LIBLZR_EXPORT int mirror(Frame& frame, Point center, bool x, bool y);
 LIBLZR_EXPORT int dup_mirror(Frame& frame, Point center, bool x, bool y, bool blank=true);
 LIBLZR_EXPORT int dup_linear(Frame& frame, Point offset, size_t n_dups, bool blank=true);
-LIBLZR_EXPORT int dup_radial(Frame& frame, Point center, size_t n_dups, double angle, bool blank=true);
+LIBLZR_EXPORT int dup_radial(Frame& frame, Point center, size_t n_dups, float angle, bool blank=true);
 
 
 //clips a frame using the given mask. Points in the mask should define a closed
@@ -170,10 +170,10 @@ LIBLZR_EXPORT int mask(Frame& frame, Frame mask, bool inverse=false);
 #define BLANK_INTERP_DEFAULT ((LZR_POSITION_MAX - LZR_POSITION_MIN) / 5.0)
 
 //interpolation functions
-typedef double (*interpolation_func)(double t);
-LIBLZR_EXPORT double linear(double t); /*----*----*----*----*----*----*----*----*/
-LIBLZR_EXPORT double quad(double t);   /*---*---*-----*-----*-----*-----*---*---*/
-LIBLZR_EXPORT double quart(double t);  /*-*---*-----*-------*-------*-----*---*-*/
+typedef float (*interpolation_func)(float t);
+LIBLZR_EXPORT float linear(float t); /*----*----*----*----*----*----*----*----*/
+LIBLZR_EXPORT float quad(float t);   /*---*---*-----*-----*-----*-----*---*---*/
+LIBLZR_EXPORT float quart(float t);  /*-*---*-----*-------*-------*-----*---*-*/
 
 //fwrd decl
 class OptimizerInternals;
@@ -190,20 +190,20 @@ public:
 
     // ----- settings -----
 
-    double path_split_angle = 45; //minimum angle (degrees) at which to consider lines to be seperate paths
-    bool   reorder_paths = true;  //allow the optimizer to the change the order in which points are scanned
+    float path_split_angle = 45; //minimum angle (degrees) at which to consider lines to be seperate paths
+    bool  reorder_paths = true;  //allow the optimizer to the change the order in which points are scanned
 
     //anchor points
     size_t anchor_points_lit = 1;      //minimum number of lit points to place at the start & end of line segments
     size_t anchor_points_blanked  = 2; //minimum number of blanked points to place at the start & end of a line segment
 
     //interpolation
-    double interp_distance = INTERP_DEFAULT; //max distance for interpolation of lit lines
+    float interp_distance = INTERP_DEFAULT;  //max distance for interpolation of lit lines
     interpolation_func interp_func = linear; //interpolation function to use for lit lines
 
     //blanking interpolation
-    double blank_interp_distance = BLANK_INTERP_DEFAULT; //max distance for interpolation of blanking jumps
-    interpolation_func blank_interp_func = linear;       //interpolation function to use for blanking jumps
+    float blank_interp_distance = BLANK_INTERP_DEFAULT; //max distance for interpolation of blanking jumps
+    interpolation_func blank_interp_func = linear;      //interpolation function to use for blanking jumps
 
 private:
     OptimizerInternals* internal;

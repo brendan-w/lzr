@@ -68,14 +68,14 @@ namespace lzr {
 
 //the deflection gets calculated differently if there's a blanking jump,
 //or if any angle returns ANGLE_ANY
-double OptimizerInternals::angular_deflection(const Optimizer_Point& laser, const Optimizer_Path& path)
+float OptimizerInternals::angular_deflection(const Optimizer_Point& laser, const Optimizer_Path& path)
 {
-    double deflection = 0.0;
+    float deflection = 0.0;
 
     //grab the current angle of travel for the laser, and the entrance angle
     //for the potential path
-    double laser_angle = laser.angle;
-    double path_angle  = path.entrance_angle();
+    float laser_angle = laser.angle;
+    float path_angle  = path.entrance_angle();
 
 
     //if distance is basically zero
@@ -91,7 +91,7 @@ double OptimizerInternals::angular_deflection(const Optimizer_Point& laser, cons
     else
     {
         //a blank jump is needed
-        double blank_angle = POINT_ANGLE(laser, path.front(points)); //from the end of A to the start of B
+        float blank_angle = POINT_ANGLE(laser, path.front(points)); //from the end of A to the start of B
 
         //if any of these angles returned ANGLE_ANY, then they shouldn't contribute
         //any angular deflection. There's no need to worry about them.
@@ -107,11 +107,11 @@ double OptimizerInternals::angular_deflection(const Optimizer_Point& laser, cons
 }
 
 
-double OptimizerInternals::cost(const Optimizer_Point laser, const Optimizer_Path path)
+float OptimizerInternals::cost(const Optimizer_Point laser, const Optimizer_Path path)
 {
     //metrics
-    double sq_distance = laser.sq_distance_to(path.front(points)); // [0, 2]
-    double deflection = angular_deflection(laser, path);           // [0, 2Pi)
+    float sq_distance = laser.sq_distance_to(path.front(points)); // [0, 2]
+    float deflection = angular_deflection(laser, path);           // [0, 2Pi)
 
     //normalize the costs
     sq_distance /= MAX_SQ_DISTANCE;
@@ -127,10 +127,10 @@ double OptimizerInternals::cost(const Optimizer_Point laser, const Optimizer_Pat
 void OptimizerInternals::find_next_and_swap(const size_t current_path, const Optimizer_Point laser)
 {
     //running vars
-    size_t best_path;      //index of the path with the best (lowest) cost
-    bool invert;           //whether or not the best_path should be inverted
-    double c;              //temp var for computing cost
-    double min_cost = 0.0; //optimize for least cost
+    size_t best_path;     //index of the path with the best (lowest) cost
+    bool invert;          //whether or not the best_path should be inverted
+    float c;              //temp var for computing cost
+    float min_cost = 0.0; //optimize for least cost
 
 
     //helper macro for recording stats

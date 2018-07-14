@@ -48,7 +48,7 @@ void Optimizer_Path::invert()
 }
 
 
-double Optimizer_Path::entrance_angle() const
+float Optimizer_Path::entrance_angle() const
 {
     if(INVERTED)
         return ANGLE_OPPOSITE(exit);
@@ -56,7 +56,7 @@ double Optimizer_Path::entrance_angle() const
         return entrance;
 }
 
-double Optimizer_Path::exit_angle() const
+float Optimizer_Path::exit_angle() const
 {
     if(INVERTED)
         return ANGLE_OPPOSITE(entrance);

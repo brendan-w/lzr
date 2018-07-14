@@ -47,8 +47,8 @@ static int read_3d_indexed(ILDA* ilda, Point& p)
     //convert the ILDA point to a Point
     betoh_3d(&ilda_p);
 
-    p.x = (double) ilda_p.x / INT16_MAX;
-    p.y = (double) ilda_p.y / INT16_MAX;
+    p.x = (float) ilda_p.x / INT16_MAX;
+    p.y = (float) ilda_p.y / INT16_MAX;
     // ilda_p.z is completely discarded (orthographically projected)
     ilda_color c = ilda->current_projector()->lookup_color(ilda_p.color);
     p.r = c.r;
@@ -74,8 +74,8 @@ static int read_2d_indexed(ILDA* ilda, Point& p)
     //convert the ILDA point to a Point
     betoh_2d(&ilda_p);
 
-    p.x = (double) ilda_p.x / INT16_MAX;
-    p.y = (double) ilda_p.y / INT16_MAX;
+    p.x = (float) ilda_p.x / INT16_MAX;
+    p.y = (float) ilda_p.y / INT16_MAX;
     ilda_color c = ilda->current_projector()->lookup_color(ilda_p.color);
     p.r = c.r;
     p.g = c.g;
@@ -126,8 +126,8 @@ static int read_3d_true(ILDA* ilda, Point& p)
     betoh_3d(&ilda_p);
 
     //read the point data
-    p.x = (double) ilda_p.x / INT16_MAX;
-    p.y = (double) ilda_p.y / INT16_MAX;
+    p.x = (float) ilda_p.x / INT16_MAX;
+    p.y = (float) ilda_p.y / INT16_MAX;
     // ilda_p.z is completely discarded (orthographically projected)
     p.r = ilda_p.r;
     p.g = ilda_p.g;
@@ -153,8 +153,8 @@ static int read_2d_true(ILDA* ilda, Point& p)
     betoh_2d(&ilda_p);
 
     //read the point data
-    p.x = (double) ilda_p.x / INT16_MAX;
-    p.y = (double) ilda_p.y / INT16_MAX;
+    p.x = (float) ilda_p.x / INT16_MAX;
+    p.y = (float) ilda_p.y / INT16_MAX;
     p.r = ilda_p.r;
     p.g = ilda_p.g;
     p.b = ilda_p.b;

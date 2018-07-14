@@ -56,7 +56,7 @@ void OptimizerInternals::fill_angle()
 
 
 
-void OptimizerInternals::path_split(double split_angle)
+void OptimizerInternals::path_split(float split_angle)
 {
     paths.clear(); //dump whatever we had before
 
@@ -118,7 +118,7 @@ void OptimizerInternals::path_split(double split_angle)
 
 
 
-void OptimizerInternals::fill_cycle(double split_angle)
+void OptimizerInternals::fill_cycle(float split_angle)
 {
     for(Optimizer_Path& path : paths)
     {
@@ -144,7 +144,7 @@ void OptimizerInternals::fill_cycle(double split_angle)
 */
 void OptimizerInternals::find_paths(Optimizer* settings)
 {
-    double split_angle = DEG_TO_RAD(settings->path_split_angle);
+    float split_angle = DEG_TO_RAD(settings->path_split_angle);
 
     fill_angle();
     path_split(split_angle);

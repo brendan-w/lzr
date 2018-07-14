@@ -54,7 +54,7 @@ namespace lzr {
 class Optimizer_Point : public Point
 {
 public:
-    double angle; //the angle for entering the path at this point (radians)
+    float angle; //the angle for entering the path at this point (radians)
 
     const Optimizer_Point& operator=(const Point& rhs); //for Optimizer_Point = Point
     Point to_point();
@@ -75,8 +75,8 @@ public:
     //(ie. the last_known_point)
     size_t size() const;
     void invert();
-    double entrance_angle() const;
-    double exit_angle() const;
+    float entrance_angle() const;
+    float exit_angle() const;
     size_t front_anchors(const std::vector<Optimizer_Point> & points) const;
     size_t back_anchors(const std::vector<Optimizer_Point> & points) const;
     Optimizer_Point front(const std::vector<Optimizer_Point> & points) const;
@@ -88,8 +88,8 @@ public:
 private:
     size_t a; //index of the front point
     size_t b; //index of the back point
-    double entrance; //angle
-    double exit; //angle
+    float entrance; //angle
+    float exit; //angle
 };
 
 
@@ -126,8 +126,8 @@ private:
     void find_paths(Optimizer* settings);
 
     void fill_angle();
-    void path_split(double split_angle);
-    void fill_cycle(double split_angle);
+    void path_split(float split_angle);
+    void fill_cycle(float split_angle);
 
 
     /*
@@ -136,8 +136,8 @@ private:
     */
     void reorder_paths(Optimizer* settings);
 
-    double angular_deflection(const Optimizer_Point& laser, const Optimizer_Path& path);
-    double cost(const Optimizer_Point laser, const Optimizer_Path path);
+    float angular_deflection(const Optimizer_Point& laser, const Optimizer_Path& path);
+    float cost(const Optimizer_Point laser, const Optimizer_Path path);
     void find_next_and_swap(const size_t current_path, const Optimizer_Point laser);
 
 
