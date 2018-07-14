@@ -1,7 +1,7 @@
 # ============================= compile settings =============================
 
 CXX       = g++
-CXXFLAGS += -std=c++11 -Wall -Wextra -pedantic -fPIC -ggdb
+CXXFLAGS += -std=c++14 -Wall -Wextra -pedantic -fPIC -ggdb
 CXXFLAGS += -I.
 LIBS      = -lm -lpthread
 ARFLAGS   = rs
