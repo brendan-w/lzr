@@ -84,7 +84,7 @@ void OptimizerInternals::path_split(float split_angle)
             if(in_path)
             {
                 //test the angle this point makes with previous/next points
-                if( (i+1 < paths.size()) && points[i+1].is_lit() ) //is the next point valid to check against
+                if( (i+1 < points.size()) && points[i+1].is_lit() ) //is the next point valid to check against
                 {
                     Optimizer_Point next = points[i + 1];
 
