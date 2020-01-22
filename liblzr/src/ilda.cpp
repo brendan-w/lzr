@@ -57,6 +57,29 @@ ILDA* ilda_open(const char* filename, const char* mode)
     return ilda;
 }
 
+ILDA* ilda_open(const char* data, size_t size)
+{
+    ILDA* ilda = new ILDA();
+    ilda->read = true;
+    ilda->data = data;
+    ilda->data_size = size;
+
+    if(!data || size == 0)
+    {
+        perror("Invalid data options");
+        delete ilda;
+        return NULL;
+    }
+
+    if(init_frame_counts(ilda) != ILDA_CONTINUE)
+    {
+        perror("Failed to initialize frame counts");
+        delete ilda;
+        return NULL;
+    }
+
+    return ilda;
+}
 
 int ilda_close(ILDA* ilda)
 {
@@ -69,7 +92,9 @@ int ilda_close(ILDA* ilda)
     if(!ilda->read)
         status = write_finish(ilda);
 
-    fclose(ilda->f);
+    if(ilda->f)
+        fclose(ilda->f);
+
     delete ilda;
 
     return ERROR_TO_LZR(status);
@@ -120,6 +145,10 @@ const char* ilda_error(ILDA* ilda)
 
 ILDA::ILDA()
   : f(nullptr)
+  , read(true)
+  , data(nullptr)
+  , data_size(0)
+  , data_index(0)
   , error("")
 {
     //wipe the projector data (color and frame arrays)
@@ -179,18 +208,36 @@ int read_header(ILDA* ilda)
     static_assert(sizeof(ilda_header) == 32, "ILDA header is not 32 bytes!");
 
     //read one ILDA header
-    size_t r = fread((void*) &(ilda->h),
-                     1,
-                     sizeof(ilda_header),
-                     ilda->f);
-
-    //did we capture a full header?
-    if(r != sizeof(ilda_header))
+    if(ilda->f)
     {
-        if(r > 0)
-            ilda->error = "Encountered incomplete ILDA section header";
+        size_t r = fread((void*) &(ilda->h),
+                         1,
+                         sizeof(ilda_header),
+                         ilda->f);
 
-        return ILDA_ERROR;
+        //did we capture a full header?
+        if(r != sizeof(ilda_header))
+        {
+            if(r > 0)
+                ilda->error = "Encountered incomplete ILDA section header";
+
+            return ILDA_ERROR;
+        }
+    }
+    else if(ilda->data)
+    {
+        // check if data is available for header
+        if(ilda->data_index + sizeof(ilda_header) >= ilda->data_size)
+        {
+            ilda->error = "Encountered incomplete ILDA section header";
+            return ILDA_ERROR;
+        }
+
+        memcpy((void*) &(ilda->h),
+               (const void*) &(ilda->data[ilda->data_index]),
+               sizeof(ilda_header));
+
+        ilda->data_index += sizeof(ilda_header);
     }
 
     //is it prefixed with "ILDA"?
@@ -232,7 +279,17 @@ int skip_to_next_section(ILDA* ilda)
 
     skip_bytes *= ilda->h.number_of_records;
 
-    if(fseek(ilda->f, skip_bytes, SEEK_CUR) != 0)
+    bool is_skip_error = false;
+    if(ilda->f)
+    {
+        is_skip_error = fseek(ilda->f, skip_bytes, SEEK_CUR) != 0;
+    }
+    else if(ilda->data)
+    {
+        ilda->data_index += skip_bytes;
+        is_skip_error = (ilda->data_index >= ilda->data_size);
+    }
+    if(is_skip_error)
     {
         ilda->error = "Failed to skip to next section";
         return ILDA_ERROR;
@@ -244,10 +301,17 @@ int skip_to_next_section(ILDA* ilda)
 int seek_to_start(ILDA* ilda)
 {
     //seek to the start of the file
-    if(fseek(ilda->f, 0, SEEK_SET) != 0)
+    if(ilda->f)
     {
-        ilda->error = "Failed to seek to start of file";
-        return ILDA_ERROR;
+        if(fseek(ilda->f, 0, SEEK_SET) != 0)
+        {
+            ilda->error = "Failed to seek to start of file";
+            return ILDA_ERROR;
+        }
+    }
+    else if(ilda->data)
+    {
+        ilda->data_index = 0;
     }
 
     return ILDA_CONTINUE;

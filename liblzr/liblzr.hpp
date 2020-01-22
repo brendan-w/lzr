@@ -240,6 +240,10 @@ class ILDA;
 //Will return NULL on failure
 LIBLZR_EXPORT ILDA* ilda_open(const char* filename, const char* mode);
 
+// Read ILDA from plain data
+//Will return NULL on failure
+LIBLZR_EXPORT ILDA* ilda_open(const char* data, size_t size);
+
 //closes the ILDA file, and releases the parsing context
 LIBLZR_EXPORT int ilda_close(ILDA* f);
 

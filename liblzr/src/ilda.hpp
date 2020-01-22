@@ -167,6 +167,11 @@ class ILDA
 
         FILE* f;     // the current file
         bool read;   // if false, we're in write mode
+
+        const char* data; // data
+        size_t data_size; // data size
+        size_t data_index; // data current index
+
         const char* error; // error string
 
         ILDA_Projector* current_projector();

@@ -14,13 +14,30 @@ typedef int (*point_reader)(ILDA* ilda, Point& p);
 //reads a single record, and error checks the size
 static int read_record(ILDA* ilda, void* buffer, size_t buffer_size)
 {
-    size_t r = fread(buffer, 1, buffer_size, ilda->f);
-
-    //make sure we got everything...
-    if(r != buffer_size)
+    if(ilda->f)
     {
-        ilda->error = "Encountered incomplete record";
-        return ILDA_ERROR;
+        size_t r = fread(buffer, 1, buffer_size, ilda->f);
+
+        //make sure we got everything...
+        if(r != buffer_size)
+        {
+            ilda->error = "Encountered incomplete record";
+            return ILDA_ERROR;
+        }
+    }
+    else if(ilda->data)
+    {
+        // check if data is available for record
+        if(ilda->data_index + buffer_size >= ilda->data_size)
+        {
+            ilda->error = "Encountered incomplete record";
+            return ILDA_ERROR;
+        }
+
+        memcpy(buffer,
+               (const void*) &(ilda->data[ilda->data_index]),
+               buffer_size);
+        ilda->data_index += buffer_size;
     }
 
     return ILDA_CONTINUE;
