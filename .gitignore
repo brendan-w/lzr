@@ -35,3 +35,10 @@
 # Debug files
 *.dSYM/
 
+# Bazel
+bazel
+bazel-lzr
+bazel-bin
+bazel-genfiles
+bazel-out
+bazel-testlogs
