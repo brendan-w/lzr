@@ -14,6 +14,10 @@
 
 namespace lzr {
 
+//interpolation point density (points from one side of the frame to the other)
+static constexpr float INTERP_DEFAULT = ((Point::POSITION_MAX - Point::POSITION_MIN) / 100.0);
+static constexpr float BLANK_INTERP_DEFAULT = ((Point::POSITION_MAX - Point::POSITION_MIN) / 5.0);
+
 //fwrd decl
 class OptimizerInternals;
 

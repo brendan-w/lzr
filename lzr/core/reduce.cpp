@@ -35,9 +35,11 @@ int reduce_blanks(Frame& frame)
     //TODO: rewrite this to operate in place
     Frame output;
 
-    Point prev(0.0, 0.0, 0, 0, 0, 0); // initialize as blanked
-    for(const Point& point : frame)
+    output.add(frame[0]);
+    Point prev = frame[0];
+    for (size_t i = 1; i < frame.size(); i++)
     {
+        const Point& point = frame[i];
         if(point.is_lit())
         {
             if(prev.is_blanked())

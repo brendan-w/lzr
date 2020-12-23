@@ -21,6 +21,8 @@ namespace lzr {
 #define STATUS_IS_HALTING(s) (( s == ILDA_HALT ) || (s == ILDA_ERROR))
 
 // simple, because we've defined most of them in terms of the LZR codes
+// TODO: This is disgustingly unsafe when called with a function invocation as "e"
+//       We should rip out all of these crappy preprocessor macros.
 #define ERROR_TO_LZR(e) ((e == ILDA_HALT) ? LZR_SUCCESS : e)
 
 

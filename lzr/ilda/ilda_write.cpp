@@ -148,7 +148,11 @@ int ilda_write(ILDA* ilda, size_t pd, Frame& frame, const char* name, const char
         return LZR_FAILURE;
     }
 
-    return ERROR_TO_LZR(write_frame(ilda, frame, pd, name, company));
+    // NOTE: There is a bug with the ERROR_TO_LZR macro where it double-executes
+    //       function calls. Cache in a variable first. This is trash and we should
+    //       remove all of the preprocessor macros.
+    int status = write_frame(ilda, frame, pd, name, company);
+    return ERROR_TO_LZR(status);
 }
 
 int ilda_write(ILDA* ilda, size_t pd, FrameList& frame_list, const char* name, const char* company)

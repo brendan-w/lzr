@@ -9,7 +9,7 @@
 using namespace lzr;
 
 
-#define DEFAULT_WINDOW_SIZE 500
+#define DEFAULT_WINDOW_SIZE 1024
 #define POINT_SIZE 3
 #define FPS 15
 
@@ -82,6 +82,28 @@ static inline SDL_Color lzr_color_to_screen(Point p)
     return c;
 }
 
+static void render_line(const Point& p1, const Point& p2)
+{
+    SDL_Point sp1 = lzr_point_to_sdl_point(p1);
+    SDL_Point sp2 = lzr_point_to_sdl_point(p2);
+
+    //TODO: double check that color is actually
+    //      a property of the second point
+    SDL_Color c   = lzr_color_to_screen(p2);
+    SDL_SetRenderDrawColor(renderer, c.r, c.g, c.b, c.a);
+
+    //test whether this is a static point, or a line
+    if(p1.same_position_as(p2))
+    {
+        SDL_Rect r = lzr_point_to_sdl_rect(p1);
+        SDL_RenderFillRect(renderer, &r);
+    }
+    else
+    {
+        SDL_RenderDrawLine(renderer, sp1.x, sp1.y, sp2.x, sp2.y);
+    }
+}
+
 static void render()
 {
     // clear the screen to black
@@ -98,27 +120,13 @@ static void render()
     //NOTE: using int's to avoid rollover problems with -1 (empty frames)
     for(int i = 0; i < ((int)frame.size() - 1); i++)
     {
-        Point p1 = frame[i];
-        Point p2 = frame[i+1];
-        SDL_Point sp1 = lzr_point_to_sdl_point(p1);
-        SDL_Point sp2 = lzr_point_to_sdl_point(p2);
+        render_line(frame[i], frame[i+1]);
+    }
 
-        //TODO: double check that color is actually
-        //      a property of the second point
-        SDL_Color c   = lzr_color_to_screen(p2);
-        SDL_SetRenderDrawColor(renderer, c.r, c.g, c.b, c.a);
-
-        //test whether this is a static point, or a line
-        if(p1.same_position_as(p2))
-        {
-            SDL_Rect r = lzr_point_to_sdl_rect(p1);
-            SDL_RenderFillRect(renderer, &r);
-        }
-        else
-        {
-            SDL_RenderDrawLine(renderer, sp1.x, sp1.y, sp2.x, sp2.y);
-        }
-
+    // Draw the return-to-home line, if there is any
+    if (!frame.front().same_position_as(frame.back()))
+    {
+        render_line(frame.back(), frame.front());
     }
 
     //draw points overtop of the lines

@@ -62,17 +62,22 @@ Frame& Frame::add_with_blank_jump(const Frame& other)
 
 void Frame::bounding_box(Point& min, Point& max) const
 {
-    // initialize edges at opposite extremes
-    min.x = 1.0;
-    min.y = -1.0;
-    max.x = 1.0;
-    max.y = -1.0;
+    if (empty()) {
+        min.x = 0.0;
+        min.y = 0.0;
+        max.x = 0.0;
+        max.y = 0.0;
+        return;
+    }
+
+    min = operator[](0);
+    max = operator[](0);
 
     for(const Point& p : *this)
     {
         if(p.x < min.x) min.x = p.x; // left
-        if(p.x > min.y) min.y = p.x; // right
-        if(p.y < max.x) max.x = p.y; // bottom
+        if(p.x > max.x) max.x = p.x; // right
+        if(p.y < min.y) min.y = p.y; // bottom
         if(p.y > max.y) max.y = p.y; // top
     }
 }

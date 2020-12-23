@@ -73,7 +73,7 @@ bool line_crosses_bounding_box(const Point& a, const Point& b,
 
 int intersect(Frame& frame, Frame mask)
 {
-    //bail early if there aren't any mask points
+    // bail early if there aren't any mask points
     if(frame.empty())
         return LZR_SUCCESS;
 
@@ -91,12 +91,13 @@ int intersect(Frame& frame, Frame mask)
     Point mask_max;
     mask.bounding_box(mask_min, mask_max);
 
-    //setup a buffer to build the finished product
-    //TODO: rewrite this to operate in place
+    // setup a buffer to build the finished product
+    // TODO: rewrite this to operate in place
     Frame output;
 
-    //since we operating in pairs
+    // since we're operating in pairs
     output.add(frame[0]);
+
 
     // create points for all intersections with the mask.
     for(size_t i = 1; i < frame.size(); i++)
