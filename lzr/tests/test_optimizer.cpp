@@ -1,20 +1,10 @@
+#include "gtest/gtest.h"
 
-#include <assert.h>
-#include <liblzr.hpp>
+#include "lzr/lzr.hpp"
 
 using namespace lzr;
 
-
-static void print_frame(Frame& frame)
-{
-    for(Point& p : frame)
-    {
-        printf("(%f, %f, r=%d, g=%d, b=%d, i=%d)\n", p.x, p.y, p.r, p.g, p.b, p.i);
-    }
-}
-
-
-static void test_blanking_interpolation()
+TEST(Interpolator, BlankingInterpolation)
 {
     Frame frame;
     Frame target;
@@ -30,25 +20,28 @@ static void test_blanking_interpolation()
 
     //make sure that the right points are blanked
     for(int i = 0; i <= 5; i++)
-       assert(frame[i].is_blanked());
+    {
+        EXPECT_TRUE(frame[i].is_blanked());
+    }
 
-    assert(frame[6].is_lit());
+    EXPECT_TRUE(frame[6].is_lit());
 
     for(int i = 7; i <= 12; i++)
-       assert(frame[i].is_blanked());
+    {
+       EXPECT_TRUE(frame[i].is_blanked());
+    }
 
-    assert(frame[13].is_lit());
-
+    EXPECT_TRUE(frame[13].is_lit());
 
     //check positioning
-    assert(frame[0] == Point(0.0, 0.0, 0, 0, 0, 0));
-    assert(frame[5].same_position_as(target[0]));
-    assert(frame[7].same_position_as(target[0]));
-    assert(frame[12].same_position_as(target[3]));
+    EXPECT_TRUE(frame[0] == Point(0.0, 0.0, 0, 0, 0, 0));
+    EXPECT_TRUE(frame[5].same_position_as(target[0]));
+    EXPECT_TRUE(frame[7].same_position_as(target[0]));
+    EXPECT_TRUE(frame[12].same_position_as(target[3]));
 }
 
 
-static void test_raster_zigzag()
+TEST(Interpolator, RasterZigZag)
 {
     Frame frame;
     Frame target;
@@ -68,14 +61,4 @@ static void test_raster_zigzag()
 
     Optimizer opt(Point(-1.0, 1.0, 255, 255, 255, 255));
     opt.run(frame);
-
-    print_frame(frame);
-
-}
-
-int main()
-{
-    test_blanking_interpolation();
-    test_raster_zigzag();
-    return 0;
 }

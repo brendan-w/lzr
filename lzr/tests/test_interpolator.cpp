@@ -1,22 +1,10 @@
+#include "gtest/gtest.h"
 
-#include <stdio.h>
-#include <assert.h>
-#include <liblzr.hpp>
+#include "lzr/lzr.hpp"
 
 using namespace lzr;
 
-/*
-static void print_frame(Frame& frame)
-{
-    for(Point& p : frame)
-    {
-        printf("(%f, %f, r=%d, g=%d, b=%d, i=%d)\n", p.x, p.y, p.r, p.g, p.b, p.i);
-    }
-}
-*/
-
-
-static void test_xyrgb_line()
+TEST(Interpolator, XYRGBLine)
 {
     Frame orig;
     Frame frame;
@@ -38,7 +26,7 @@ static void test_xyrgb_line()
     frame = orig;
     interpolate(frame, 0.75, linear);
     // print_frame(frame);
-    assert(frame == target);
+    EXPECT_TRUE(frame == target);
 
 
     //max_distance = 1.0 -----------------------------
@@ -52,10 +40,10 @@ static void test_xyrgb_line()
     frame = orig;
     interpolate(frame, 1.0, linear);
     // print_frame(frame);
-    assert(frame == target);
+    EXPECT_TRUE(frame == target);
 }
 
-static void test_interp_func()
+TEST(Interpolator, InterpFunc)
 {
     Frame orig;
     Frame frame;
@@ -76,7 +64,7 @@ static void test_interp_func()
     frame = orig;
     interpolate(frame, 1.0, linear);
     // print_frame(frame);
-    assert(frame == target);
+    EXPECT_TRUE(frame == target);
 
     // QUAD --------------------------------------------------
     target.clear();
@@ -89,7 +77,7 @@ static void test_interp_func()
     frame = orig;
     interpolate(frame, 1.0, quad);
     // print_frame(frame);
-    assert(frame == target);
+    EXPECT_TRUE(frame == target);
 
     // QUART --------------------------------------------------
     target.clear();
@@ -102,10 +90,10 @@ static void test_interp_func()
     frame = orig;
     interpolate(frame, 1.0, quart);
     // print_frame(frame);
-    assert(frame == target);
+    EXPECT_TRUE(frame == target);
 }
 
-static void test_skip_blank_jumps()
+TEST(Interpolator, SkipBlankJumps)
 {
     Frame orig;
     Frame frame;
@@ -137,14 +125,5 @@ static void test_skip_blank_jumps()
     frame = orig;
     interpolate(frame, 0.2, linear);
     // print_frame(frame);
-    assert(frame == target);
-}
-
-
-int main()
-{
-    test_xyrgb_line();
-    test_interp_func();
-    test_skip_blank_jumps();
-    return 0;
+    EXPECT_TRUE(frame == target);
 }
