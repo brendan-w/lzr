@@ -1,6 +1,6 @@
 #pragma once
 
-#include "liblzr/core/core.hpp"
+#include "lzr/core/core.hpp"
 
 namespace lzr {
 

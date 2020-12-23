@@ -4,7 +4,7 @@
 #include <iostream>
 #include <unistd.h>
 
-#include "liblzr/liblzr.hpp"
+#include "lzr/lzr.hpp"
 
 using namespace lzr;
 
