@@ -31,10 +31,20 @@ Very simple right now:
 $ bazel build //...
 ```
 
-This will build the library, as well as tools. Some example invocations:
+This will build the library, as well as tools.
+
+Example Commands
+================
 
 ```shell
 $ ./bazel-bin/tools/ilda-view share/ildatest.ild
+```
+
+Running the Tests
+=================
+
+```shell
+$ bazel test //tests/...
 ```
 
 License
