@@ -28,7 +28,7 @@ bool show_points = false;
 
 // point scanning display
 bool show_scan = false;
-int show_scan_n_points = 0;  // -1 indicates "show all"
+int show_scan_n_points = 0;
 bool animate_scan = false;
 
 static inline void next_frame()
