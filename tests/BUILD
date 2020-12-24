@@ -32,3 +32,14 @@ cc_test(
         "@gtest//:gtest_main",
     ],
 )
+
+cc_test(
+    name = "test_optimizer2",
+    srcs = ["test_optimizer2.cpp"],
+    deps = [
+        "//lzr",
+        "//lzr/optimizer2",
+        "@gtest//:gtest",
+        "@gtest//:gtest_main",
+    ],
+)
