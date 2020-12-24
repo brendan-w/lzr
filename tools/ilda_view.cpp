@@ -309,8 +309,6 @@ int main(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
-    printf("Found %zu projector(s)\n", ilda_projector_count(f));
-    printf("Found %zu frames for projector 0\n", ilda_frame_count(f, 0));
 
     keybindings();
 
@@ -321,6 +319,10 @@ int main(int argc, char* argv[])
     }
 
     ilda_close(f);
+
+    printf("Found %zu projector(s)\n", ilda_projector_count(f));
+    printf("Found %zu frames for projector 0\n", ilda_frame_count(f, 0));
+    printf("Found %zu points in frame zero for projector 0\n", frames[0].size());
 
     // Simulate any return-to-home lines within single frames by adding
     // jumps if the laser isn't already at the beginning.
