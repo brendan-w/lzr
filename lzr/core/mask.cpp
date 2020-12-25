@@ -193,7 +193,7 @@ int mask(Frame& frame, Frame mask, bool inverse)
     /*
      * Third pass. Discard the probably-absurd quantity of blanked points
      */
-    reduce_blanks(frame);
+    // reduce_blanks(frame);  // TODO: prune it ourselves
 
     return LZR_SUCCESS;
 }

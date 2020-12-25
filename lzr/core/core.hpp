@@ -212,20 +212,13 @@ int interp_line(Frame& working, float max_distance, interpolation_func func, Poi
 int interpolate(Frame& frame, float max_distance, interpolation_func func);
 
 
-
-/******************************************************************************/
-/*  LZR Reducers (inverse functions for the optimization above)               */
-/******************************************************************************/
-
-//deletes unwanted points from the given frame
-
-//removes duplicate lit points (anchor points and beams)
-LIBLZR_EXPORT int reduce_duplicates(Frame& frame);
-
-//removes interpolation from straight, lit lines
-LIBLZR_EXPORT int reduce_interpolation(Frame& frame);
-
-//removes all intersticial blanked points, regardless of path
-LIBLZR_EXPORT int reduce_blanks(Frame& frame);
+/**
+ * Removes interpolation and stacked points with minimal change to the shape.
+ * Effectively the inverse of frame optimization.
+ *
+ * @param frame             Frame to decimate. Operates in-place on this frame.
+ * @param beam_threshold    Number of stacked points it takes for a point to be classified as a "beam"
+ */
+LIBLZR_EXPORT int decimate(Frame& frame, const size_t beam_threshold = 4);
 
 } // namespace lzr

@@ -1,3 +1,4 @@
+
 load("@rules_cc//cc:defs.bzl", "cc_library")
 
 cc_library(
@@ -7,11 +8,14 @@ cc_library(
         "interpolator.cpp",
         "mask.cpp",
         "point.cpp",
-        "reduce.cpp",
+        "decimate.cpp",
         "transforms.cpp",
     ],
     hdrs = [
         "core.hpp"
+    ],
+    deps = [
+        "@gsl",
     ],
     visibility = ["//visibility:public"],
 )
