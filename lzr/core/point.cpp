@@ -1,10 +1,8 @@
-
 #include <cmath>
 
 #include "lzr/core/core.hpp"
 
 namespace lzr {
-
 
 /*
     The LZR coordinate system is [-1.0, 1.0] (2.0 units wide),
@@ -21,82 +19,10 @@ namespace lzr {
 */
 static constexpr float FLOAT_EQUAL_TOLERANCE = 0.0000152;
 
-
 constexpr float Point::POSITION_MIN;
 constexpr float Point::POSITION_MAX;
 constexpr uint8_t Point::COLOR_MIN;
 constexpr uint8_t Point::COLOR_MAX;
-
-
-/*
- * Constructors
- */
-
-Point::Point() :
-    x(0.0),
-    y(0.0),
-    r(0),
-    g(0),
-    b(0),
-    i(0)
-{ }
-
-Point::Point(float x, float y) :
-    x(x),
-    y(y),
-    r(0),
-    g(0),
-    b(0),
-    i(0)
-{ }
-
-Point::Point(float x, float y, uint8_t r, uint8_t g, uint8_t b, uint8_t i) :
-    x(x),
-    y(y),
-    r(r),
-    g(g),
-    b(b),
-    i(i)
-{ }
-
-
-/*
- * functions
- */
-
-void Point::blank()
-{
-    i = 0;
-}
-
-void Point::unblank()
-{
-    i = 255;
-}
-
-void Point::set_position(const Point& other)
-{
-    x = other.x;
-    y = other.y;
-}
-
-void Point::set_color(const Point& other)
-{
-    r = other.r;
-    g = other.g;
-    b = other.b;
-    i = other.i;
-}
-
-bool Point::is_blanked() const
-{
-    return (i == 0) || (r + g + b == 0);
-}
-
-bool Point::is_lit() const
-{
-    return (i > 0) && (r + g + b > 0);
-}
 
 //run-of-the-mill linear interpolation
 static inline float lerp(float v0, float v1, float t)
@@ -112,13 +38,17 @@ static inline uint8_t lerp_uint8(uint8_t v0, uint8_t v1, float t)
 
 Point Point::lerp_to(const Point& other, float t) const
 {
-    Point p(lerp(x, other.x, t),
-            lerp(y, other.y, t),
-            lerp_uint8(r, other.r, t),
-            lerp_uint8(g, other.g, t),
-            lerp_uint8(b, other.b, t),
-            lerp_uint8(i, other.i, t));
-    return p;
+    return Point(lerp(x, other.x, t),
+                 lerp(y, other.y, t),
+                 lerp_uint8(r, other.r, t),
+                 lerp_uint8(g, other.g, t),
+                 lerp_uint8(b, other.b, t),
+                 lerp_uint8(i, other.i, t));
+}
+
+float Point::distance_to(const Point& other) const
+{
+    return std::sqrt(sq_distance_to(other));
 }
 
 float Point::sq_distance_to(const Point& other) const
@@ -137,19 +67,8 @@ bool Point::same_color_as(const Point& other) const
     return ((r == other.r) &&
             (g == other.g) &&
             (b == other.b) &&
-            (i == other.i));
+            (i == other.i) &&
+            (beam == other.beam));
 }
-
-bool Point::operator==(const Point& other) const
-{
-    return (same_position_as(other) &&
-            same_color_as(other));
-}
-
-bool Point::operator!=(const Point& other) const
-{
-    return !operator==(other);
-}
-
 
 } // namespace lzr

@@ -64,29 +64,75 @@ public:
     static constexpr uint8_t COLOR_MIN  = 0;
     static constexpr uint8_t COLOR_MAX  = 255;
 
-    float x;   //Position X   [-1.0, 1.0]
-    float y;   //Position Y   [-1.0, 1.0]
-    uint8_t r; //Red          [0, 255]
-    uint8_t g; //Green        [0, 255]
-    uint8_t b; //Blue         [0, 255]
-    uint8_t i; //Blanking     [0, 255]
+    float x = 0.0; // Position X   [-1.0, 1.0]
+    float y = 0.0; // Position Y   [-1.0, 1.0]
+    uint8_t r = 0; // Red          [0, 255]
+    uint8_t g = 0; // Green        [0, 255]
+    uint8_t b = 0; // Blue         [0, 255]
+    uint8_t i = 0; // Blanking     [0, 255]
+    bool beam = false; // Bright single-point beam. This is a meta-parameter that is consumed by the
+                       // optimizer to indicate that it should stack multiple pionts in the final laser
+                       // output to create a single bright beam in the image. The intensity of the beam
+                       // is governed by "i" as normal, and the exact point counts used are a parameter
+                       // of the optimizer.
 
-    Point();
-    Point(float x, float y);
-    Point(float x, float y, uint8_t r, uint8_t g, uint8_t b, uint8_t i);
+    Point() = default;
+    Point(float x, float y)
+      : x(x)
+      , y(y)
+    {}
+    Point(float x, float y, uint8_t r, uint8_t g, uint8_t b, uint8_t i)
+      : x(x)
+      , y(y)
+      , r(r)
+      , g(g)
+      , b(b)
+      , i(i)
+    {}
 
-    void blank();
-    void unblank();
-    void set_position(const Point& other);
-    void set_color(const Point& other);
-    bool is_blanked() const;
-    bool is_lit() const;
-    Point lerp_to(const Point& other, float t) const;
-    float sq_distance_to(const Point& other) const;
+    /**
+     * Trivial setters and getters
+     */
+    void blank() { i = 0; }
+    void unblank() { i = 222; }
+    bool is_blanked() const { return (i == 0) || (r + g + b == 0); }
+    bool is_lit() const { return (i > 0) && (r + g + b > 0); }
+
+    void set_position(const Point& other)
+    {
+        x = other.x;
+        y = other.y;
+    }
+
+    void set_color(const Point& other)
+    {
+        r = other.r;
+        g = other.g;
+        b = other.b;
+        i = other.i;
+        beam = other.beam;
+    }
+
     bool same_position_as(const Point& other) const;
     bool same_color_as(const Point& other) const;
-    bool operator==(const Point& other) const;
-    bool operator!=(const Point& other) const;
+
+    bool operator==(const Point& other) const
+    {
+        return (same_position_as(other) &&
+                same_color_as(other));
+    }
+
+    bool operator!=(const Point& other) const
+    {
+        return !operator==(other);
+    }
+
+    /**
+     * Computation and point generation
+     */
+    Point lerp_to(const Point& other, float t) const;
+    float distance_to(const Point& other) const;
+    float sq_distance_to(const Point& other) const;
 };
 
 
