@@ -4,21 +4,6 @@
 
 namespace lzr {
 
-/*
-    The LZR coordinate system is [-1.0, 1.0] (2.0 units wide),
-    and Laser DACs are usually 16 bit, so:
-
-    2.0 / 65536 = 0.0000305 units per DAC step
-
-    call the points equal if we're inside a half step:
-
-    (2.0 / 65536) / 2.0 = 0.0000152
-
-    16-bit laser DACs also allow us to store information in single-precision floats,
-    which are capable of storing 2^23 (8388608) fractional parts.
-*/
-static constexpr float FLOAT_EQUAL_TOLERANCE = 0.0000152;
-
 constexpr float Point::POSITION_MIN;
 constexpr float Point::POSITION_MAX;
 constexpr uint8_t Point::COLOR_MIN;
@@ -56,10 +41,10 @@ float Point::sq_distance_to(const Point& other) const
     return (x - other.x)*(x - other.x) + (y - other.y)*(y - other.y);
 }
 
-bool Point::same_position_as(const Point& other) const
+bool Point::same_position_as(const Point& other, const float tolerance) const
 {
-    return ((std::abs(x - other.x) <= FLOAT_EQUAL_TOLERANCE) &&
-            (std::abs(y - other.y) <= FLOAT_EQUAL_TOLERANCE));
+    return ((std::abs(x - other.x) < tolerance) &&
+            (std::abs(y - other.y) < tolerance));
 }
 
 bool Point::same_color_as(const Point& other) const

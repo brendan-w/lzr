@@ -64,6 +64,21 @@ public:
     static constexpr uint8_t COLOR_MIN  = 0;
     static constexpr uint8_t COLOR_MAX  = 255;
 
+    /*
+        The LZR coordinate system is [-1.0, 1.0] (2.0 units wide),
+        and Laser DACs are usually 16 bit, so:
+
+        2.0 / 65536 = 0.0000305 units per DAC step
+
+        call the points equal if we're inside a half step:
+
+        (2.0 / 65536) / 2.0 = 0.0000152
+
+        16-bit laser DACs also allow us to store information in single-precision floats,
+        which are capable of storing 2^23 (8388608) fractional parts.
+    */
+    static constexpr float POINT_EQUAL_DISTANCE = 0.0000152;
+
     float x = 0.0; // Position X   [-1.0, 1.0]
     float y = 0.0; // Position Y   [-1.0, 1.0]
     uint8_t r = 0; // Red          [0, 255]
@@ -113,7 +128,7 @@ public:
         beam = other.beam;
     }
 
-    bool same_position_as(const Point& other) const;
+    bool same_position_as(const Point& other, const float tolerance = POINT_EQUAL_DISTANCE) const;
     bool same_color_as(const Point& other) const;
 
     bool operator==(const Point& other) const
@@ -213,11 +228,23 @@ int interpolate(Frame& frame, float max_distance, interpolation_func func);
 
 
 /**
- * Removes interpolation and stacked points with minimal change to the shape.
+ * Removes dense/interpolated and stacked points with ~no change to the shape.
  * Effectively the inverse of frame optimization.
  *
  * @param frame             Frame to decimate. Operates in-place on this frame.
  * @param beam_threshold    Number of stacked points it takes for a point to be classified as a "beam"
+ *
+ * The output of this function will be a "pure" frame by LZR standards. One that meets the following criteria:
+ *   - There is no interpolation
+ *   - There are no stacked points of the same color
+ *   - There are no blanked points at the beginning or end of the frame
+ *   - There is exactly one blanked point between lit segments (at the *end* of the jump)
+ *
+ * Note that these frames are *not* suitable for transmission to the laser (mostly because of the
+ * lack of interpolation), though they are perfect for high-level composition tooling/GUIs.
+ * Use the optimizer on these frames when you're ready to display them.
+ *
+ * This function is currently O(n).
  */
 LIBLZR_EXPORT int decimate(Frame& frame, const size_t beam_threshold = 4);
 
