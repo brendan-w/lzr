@@ -1,6 +1,6 @@
 
 #include <string.h> //memset() zeroing out struct
-#include <algorithm> //min(), max()
+#include <algorithm> //min(), max(), clamp()
 #include "ilda_utils.hpp"
 
 // not in C++11, so stub this out for now
@@ -44,12 +44,18 @@ static int write_point(ILDA* ilda, Point& p, bool is_last)
 
 static int write_frame(ILDA* ilda, Frame& frame, size_t pd, const char* name, const char* company)
 {
-    Frame frame_bounds;
-    frame_bounds.add(Point(1.0, -1.0));
-    frame_bounds.add(Point(1.0, 1.0));
-    frame_bounds.add(Point(-1.0, 1.0));
-    frame_bounds.add(Point(-1.0, -1.0));
-    mask(frame, frame_bounds, true);
+    // TODO: fix masking. It appears to be buggy and deletes my interpolated blanked points :(
+    // Frame frame_bounds;
+    // frame_bounds.add(Point(1.0, -1.0));
+    // frame_bounds.add(Point(1.0, 1.0));
+    // frame_bounds.add(Point(-1.0, 1.0));
+    // frame_bounds.add(Point(-1.0, -1.0));
+    // mask(frame, frame_bounds, true);
+    for (Point& p : frame)
+    {
+        p.x = std::clamp(p.x, -1.0f, 1.0f);
+        p.y = std::clamp(p.y, -1.0f, 1.0f);
+    }
 
     //skip empty frames, since they signify the end of a file
     if(frame.size() == 0)
