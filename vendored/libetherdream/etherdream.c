@@ -39,7 +39,7 @@
 #include <mach/mach_time.h>
 #endif
 
-#include "protocol.h"
+#include <protocol.h>
 #include "etherdream.h"
 
 #define BUFFER_POINTS_PER_FRAME 16000
@@ -149,7 +149,6 @@ static void microsleep(long long us) {
  *
  * Utility function for logging.
  */
-#ifdef DEBUG
 static void trace(struct etherdream *d, const char *fmt, ...) {
 	if (!trace_fp)
 		return;
@@ -173,9 +172,6 @@ static void trace(struct etherdream *d, const char *fmt, ...) {
 
 	fputs(buf, trace_fp);
 }
-#else
-#define trace(...)
-#endif
 
 /* log_socket_error(d, call)
  *
@@ -819,6 +815,16 @@ int etherdream_stop(struct etherdream *d) {
 	return 0;
 }
 
+static void add_dac(struct etherdream *d) {
+    if (dac_list) {
+        struct etherdream *ptr = dac_list;
+        while (ptr->next != NULL) ptr = ptr->next;
+        ptr->next = d;
+    } else {
+        dac_list = d;
+    }
+}
+
 /* watch_for_dacs(arg)
  *
  * Thread function for the broadcast monitor thread. This listens for UDP
@@ -901,8 +907,7 @@ static void *watch_for_dacs(void *arg) {
 		trace(NULL, "_: Found new DAC: %s\n", inet_ntoa(src.sin_addr));
 
 		pthread_mutex_lock(&dac_list_lock);
-		new_dac->next = dac_list;
-		dac_list = new_dac;
+        add_dac(new_dac);
 		pthread_mutex_unlock(&dac_list_lock);
 	}
 
@@ -928,9 +933,9 @@ int etherdream_lib_start(void) {
 
 	// Set up the logging fd (just stderr for now)
 	trace_fp = stderr;
-	trace(NULL, "----------\n");
-	trace(NULL, "== libetherdream started ==\n");
+	fprintf(trace_fp, "----------\n");
 	fflush(trace_fp);
+	trace(NULL, "== libetherdream started ==\n");
 
 	pthread_mutex_init(&dac_list_lock, NULL);
 
@@ -940,20 +945,23 @@ int etherdream_lib_start(void) {
 	return 0;
 }
 
-/* etherdream_dac_count()
- *
- * Documented in etherdream.h.
- */
-int etherdream_dac_count(void) {
-	pthread_mutex_lock(&dac_list_lock);
-
+static int dac_list_length() {
 	int count = 0;
 	struct etherdream *d = dac_list;
 	while (d) {
 		d = d->next;
 		count++;
 	}
+    return count;
+}
 
+/* etherdream_dac_count()
+ *
+ * Documented in etherdream.h.
+ */
+int etherdream_dac_count(void) {
+	pthread_mutex_lock(&dac_list_lock);
+	int count = dac_list_length();
 	pthread_mutex_unlock(&dac_list_lock);
 	trace(NULL, "== etherdream_lib_get_dac_count(): %d\n", count);
 	return count;
@@ -976,4 +984,35 @@ struct etherdream *etherdream_get(unsigned long idx) {
 	}
 
 	return NULL;
+}
+
+/* etherdream_add()
+ *
+ * Documented in etherdream.h
+ */
+int etherdream_add(const char *ipaddr) {
+
+    struct sockaddr_in sa;
+    inet_pton(AF_INET, ipaddr, &(sa.sin_addr));
+
+	/* Make a new DAC entry */
+	struct etherdream *new_dac;
+	new_dac = (struct etherdream *)malloc(sizeof (struct etherdream));
+	if (!new_dac) {
+		trace(NULL, "!! malloc(struct etherdream) failed\n");
+		return -1;
+	}
+
+	memset(new_dac, 0, sizeof *new_dac);
+	pthread_cond_init(&new_dac->loop_cond, NULL);
+	pthread_mutex_init(&new_dac->mutex, NULL);
+
+	new_dac->addr = sa.sin_addr;
+	new_dac->state = ST_DISCONNECTED;
+
+	pthread_mutex_lock(&dac_list_lock);
+	int count = dac_list_length();
+    add_dac(new_dac);
+	pthread_mutex_unlock(&dac_list_lock);
+    return count;
 }

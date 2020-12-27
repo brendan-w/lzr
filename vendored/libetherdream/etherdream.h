@@ -111,6 +111,12 @@ int etherdream_stop(struct etherdream *d);
  */
 void etherdream_disconnect(struct etherdream *d);
 
+/* etherdream_add(ipaddr)
+ *
+ * Add a new assumed-to-exist DAC at the given IP address. Returns its ID.
+ */
+int etherdream_add(const char *ipaddr);
+
 #ifdef __cplusplus
 } // extern "c"
 #endif

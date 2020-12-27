@@ -4,10 +4,13 @@ cc_library(
     name = "etherdream",
     srcs=[
         "etherdream.c",
+        "protocol.h",
     ],
     hdrs = [
         "etherdream.h",
-        "protocol.h",
+    ],
+    includes = [
+        "./",  # libetherdream has a system include for <protocol.h>
     ],
     linkopts = ["-pthread"],
     visibility = ["//visibility:public"],
