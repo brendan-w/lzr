@@ -118,7 +118,7 @@ static void render_line(const Point& p1, const Point& p2)
     SDL_SetRenderDrawColor(renderer, c.r, c.g, c.b, c.a);
 
     //test whether this is a static point, or a line
-    if(p1.same_position_as(p2))
+    if(p1.same_position_as(p2) && p1.is_lit() && p2.is_lit())
     {
         SDL_Rect r = lzr_point_to_sdl_rect(p1);
         SDL_RenderFillRect(renderer, &r);
