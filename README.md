@@ -23,6 +23,7 @@ Building
 Dependencies:
 
 - C++17 compiler (g++)
+- Bazel
 - SDL 2.0
 
 Very simple right now:
