@@ -153,9 +153,29 @@ void prune_collinear_points(Frame& frame)
 
     frame = output;
 }
+
+/**
+ * Deletes consequtive points that are within "min_distance" of the current point
+ */
+void cluster_reduction(Frame& frame, const float min_distance)
+{
+    Frame output;
+
+    const float sq_min_distance = min_distance * min_distance;
+    for (const Point& p : frame)
+    {
+        if (output.empty() || (output.back().sq_distance_to(p) >= sq_min_distance))
+        {
+            output.add(p);
+        }
+    }
+
+    frame = output;
+}
+
 }  // anonymous namespace
 
-int decimate(Frame& frame, const size_t beam_threshold)
+int decimate(Frame& frame, const size_t beam_threshold, const float min_distance)
 {
     // First, we toss all blanks, and look for perfectly stacked points that would produce
     // beams. It's important to capture the beam information early, before successive
@@ -165,6 +185,12 @@ int decimate(Frame& frame, const size_t beam_threshold)
     // Toss interpolation of straight lines. This can trim thousands of points in some
     // images, which speeds up any remaining decimation steps considerably.
     prune_collinear_points(frame);
+
+    // Note that we do this *after* having assembled stacked points into beams, and
+    // pruning collinear points. This operation may distort the shape slightly, which may
+    // make some lines non-linear.
+    cluster_reduction(frame, min_distance);
+
     return LZR_SUCCESS;
 }
 

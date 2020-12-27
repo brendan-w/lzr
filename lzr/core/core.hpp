@@ -233,6 +233,7 @@ int interpolate(Frame& frame, float max_distance, interpolation_func func);
  *
  * @param frame             Frame to decimate. Operates in-place on this frame.
  * @param beam_threshold    Number of stacked points it takes for a point to be classified as a "beam"
+ * @param min_distance      Minimum distance allowed between consequtive points (failing points are removed).
  *
  * The output of this function will be a "pure" frame by LZR standards. One that meets the following criteria:
  *   - There is no interpolation
@@ -246,6 +247,8 @@ int interpolate(Frame& frame, float max_distance, interpolation_func func);
  *
  * This function is currently O(n).
  */
-LIBLZR_EXPORT int decimate(Frame& frame, const size_t beam_threshold = 4);
+LIBLZR_EXPORT int decimate(Frame& frame,
+                           const size_t beam_threshold = 4,
+                           const float min_distance = 0.01);
 
 } // namespace lzr
